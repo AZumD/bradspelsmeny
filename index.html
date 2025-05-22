@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board Game Menu</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #fffaf5;
+    }
+    aside {
+      background-color: #8b0000;
+      color: gold;
+      padding: 20px;
+      width: 250px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    aside img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+    aside h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    aside ul {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+    }
+    aside li {
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    aside li:hover {
+      background-color: gold;
+      color: #8b0000;
+    }
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .language-toggle {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .game-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      background: #fff;
+    }
+    .game-card img {
+      width: 100px;
+      height: auto;
+      margin-right: 15px;
+      border-radius: 5px;
+    }
+    .game-info h3 {
+      margin: 0 0 10px;
+    }
+    .tags {
+      font-size: 0.9em;
+      color: #555;
+    }
+    #intro {
+      margin-bottom: 30px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <img src="https://catalog.pinchos.se/android-chrome-192x192.png" alt="Pinchos logo" />
+    <h2 id="categoryTitle">Kategorier</h2>
+    <ul id="categoryList"></ul>
+  </aside>
+  <main>
+    <div class="language-toggle">
+      <button onclick="setLanguage('sv')">🇸🇪</button>
+      <button onclick="setLanguage('en')">🇬🇧</button>
+    </div>
+    <div id="intro"></div>
+    <div id="gameList"></div>
+  </main>
+
+  <script>
+    const translations = {
+      sv: {
+        intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan. Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig!",
+        categories: {
+          all: "Alla Spel",
+          party: "Partyspel",
+          strategy: "Strategispel",
+          social: "Sociala Spel",
+          "2p": "För 2 Spelare",
+          family: "Familjevänliga"
+        },
+        ui: {
+          categoryTitle: "Kategorier",
+          players: "Spelare",
+          time: "Tid",
+          age: "Ålder"
+        }
+      },
+      en: {
+        intro: "We have a wide range of board games here at Pinchos Linnégatan. If you see something you like, talk to our staff and we'll bring it to you!",
+        categories: {
+          all: "All Games",
+          party: "Party Games",
+          strategy: "Strategy",
+          social: "Social Deduction",
+          "2p": "2 Player Friendly",
+          family: "Family Friendly"
+        },
+        ui: {
+          categoryTitle: "Categories",
+          players: "Players",
+          time: "Play time",
+          age: "Age"
+        }
+      }
+    };
+
+    const games = [
+      {
+        title: {
+          sv: "Motståndsrörelsen",
+          en: "The Resistance"
+        },
+        description: {
+          sv: "Ett socialt bluffspel där du aldrig kan lita på någon.",
+          en: "A social deduction game of trust and betrayal."
+        },
+        players: "5–10",
+        time: "30 min",
+        age: "13+",
+        tags: ["social", "party"],
+        img: "https://upload.wikimedia.org/wikipedia/en/0/02/The_Resistance_%28game%29.jpg"
+      },
+      {
+        title: {
+          sv: "Avalon - Motståndsrörelsen",
+          en: "Avalon - The Resistance"
+        },
+        description: {
+          sv: "Medeltida version av Motståndsrörelsen med specialroller.",
+          en: "A medieval-themed variant of The Resistance."
+        },
+        players: "5–10",
+        time: "30 min",
+        age: "13+",
+        tags: ["social", "strategy"],
+        img: "https://cf.geekdo-images.com/xPmtqiUCUKSnGFzR1nYeWw__itemrep/img/Ecb9VHXV5VG3S_J0v8yWTeQhJYQ=/fit-in/246x300/filters:strip_icc()/pic1391443.jpg"
+      }
+    ];
+
+    let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      renderCategories();
+      renderIntro();
+      renderGames();
+    }
+
+    function renderCategories() {
+      const list = document.getElementById('categoryList');
+      const catTitle = document.getElementById('categoryTitle');
+      catTitle.textContent = translations[currentLang].ui.categoryTitle;
+      list.innerHTML = '';
+      for (const tag in translations[currentLang].categories) {
+        const li = document.createElement('li');
+        li.textContent = translations[currentLang].categories[tag];
+        li.onclick = () => renderGames(tag);
+        list.appendChild(li);
+      }
+    }
+
+    function renderIntro() {
+      document.getElementById('intro').textContent = translations[currentLang].intro;
+    }
+
+    function renderGames(filter = 'all') {
+      const container = document.getElementById('gameList');
+      container.innerHTML = '';
+      const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
+      filtered.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `
+          <img src="${game.img}" alt="${game.title[currentLang]}" />
+          <div class="game-info">
+            <h3>${game.title[currentLang]}</h3>
+            <p>${game.description[currentLang]}</p>
+            <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    setLanguage(currentLang);
+  </script>
+</body>
+</html>
