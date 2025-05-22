@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -18,14 +17,14 @@
       color: gold;
       padding: 20px;
       width: 250px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.2);
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       transition: transform 0.3s ease-in-out;
+      z-index: 1001;
     }
-    aside.collapsed { transform: translateX(-100%); position: absolute; z-index: 1000; }
+    aside.collapsed { transform: translateX(-100%); position: absolute; }
     #toggleMenu {
       display: none;
       background: #8b0000;
@@ -37,9 +36,9 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 1001;
+      z-index: 1002;
     }
-    aside img { width: 80px; margin-bottom: 20px; }
+    aside img.logo { width: 80px; margin-bottom: 20px; }
     aside h2 { margin-top: 0; font-size: 1.5em; }
     aside ul { list-style: none; padding: 0; width: 100%; }
     aside li {
@@ -58,6 +57,16 @@
     }
     .collapsed + main { margin-left: 0; }
     .language-toggle { text-align: right; margin-bottom: 10px; }
+    #banner {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 20px;
+    }
+    #banner img {
+      max-height: 150px;
+      height: auto;
+    }
     .game-card {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -88,127 +97,103 @@
   </style>
 </head>
 <body>
-<button id="toggleMenu" onclick="toggleSidebar()">☰</button>
-<div class="wrapper">
-<aside id="sidebar">
-  <img src="https://catalog.pinchos.se/android-chrome-192x192.png" alt="Pinchos logo" />
-  <h2 id="categoryTitle">Kategorier</h2>
-  <ul id="categoryList"></ul>
-</aside>
-<main>
-  <div class="language-toggle">
-    <button onclick="setLanguage('sv')">🇸🇪</button>
-    <button onclick="setLanguage('en')">🇬🇧</button>
-  </div>
-  <div id="intro"></div>
-  <div id="gameList"></div>
-</main>
-</div>
-<script>
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('collapsed');
-}
-
-const translations = {
-  sv: {
-    intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan. Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig!",
-    categories: {
-      all: "Alla Spel",
-      party: "Partyspel",
-      strategy: "Strategispel",
-      social: "Sociala Spel",
-      "2p": "För 2 Spelare",
-      family: "Familjevänliga"
-    },
-    ui: {
-      categoryTitle: "Kategorier",
-      players: "Spelare",
-      time: "Tid",
-      age: "Ålder"
-    }
-  },
-  en: {
-    intro: "We have a wide range of board games here at Pinchos Linnégatan. If you see something you like, talk to our staff and we'll bring it to you!",
-    categories: {
-      all: "All Games",
-      party: "Party Games",
-      strategy: "Strategy",
-      social: "Social Deduction",
-      "2p": "2 Player Friendly",
-      family: "Family Friendly"
-    },
-    ui: {
-      categoryTitle: "Categories",
-      players: "Players",
-      time: "Play time",
-      age: "Age"
-    }
-  }
-};
-
-const games = [
-  {
-    title: { sv: "Motståndsrörelsen", en: "The Resistance" },
-    description: {
-      sv: "Ett socialt bluffspel där du aldrig kan lita på någon.",
-      en: "A social deduction game of trust and betrayal."
-    },
-    players: "5–10",
-    time: "30 min",
-    age: "13+",
-    tags: ["social", "party"],
-    img: "https://upload.wikimedia.org/wikipedia/en/0/02/The_Resistance_%28game%29.jpg"
-  }
-];
-
-let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
-
-function setLanguage(lang) {
-  currentLang = lang;
-  renderCategories();
-  renderIntro();
-  renderGames();
-}
-
-function renderCategories() {
-  const list = document.getElementById('categoryList');
-  const catTitle = document.getElementById('categoryTitle');
-  catTitle.textContent = translations[currentLang].ui.categoryTitle;
-  list.innerHTML = '';
-  for (const tag in translations[currentLang].categories) {
-    const li = document.createElement('li');
-    li.textContent = translations[currentLang].categories[tag];
-    li.onclick = () => renderGames(tag);
-    list.appendChild(li);
-  }
-}
-
-function renderIntro() {
-  document.getElementById('intro').textContent = translations[currentLang].intro;
-}
-
-function renderGames(filter = 'all') {
-  const container = document.getElementById('gameList');
-  container.innerHTML = '';
-  const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
-  filtered.forEach(game => {
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.innerHTML = `
-      <img src="${game.img}" alt="${game.title[currentLang]}" />
-      <div class="game-info">
-        <h3>${game.title[currentLang]}</h3>
-        <p>${game.description[currentLang]}</p>
-        <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>
+  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
+  <div class="wrapper">
+    <aside id="sidebar">
+      <img src="https://catalog.pinchos.se/android-chrome-192x192.png" class="logo" alt="Pinchos logo" />
+      <h2 id="categoryTitle">Kategorier</h2>
+      <ul id="categoryList"></ul>
+    </aside>
+    <main>
+      <div class="language-toggle">
+        <button onclick="setLanguage('sv')">🇸🇪</button>
+        <button onclick="setLanguage('en')">🇬🇧</button>
       </div>
-    `;
-    container.appendChild(card);
-  });
-}
+      <div id="banner">
+        <img src="banner_left.png" alt="Character Left" />
+        <img src="banner_right.png" alt="Character Right" />
+      </div>
+      <div id="intro"></div>
+      <div id="gameList"></div>
+    </main>
+  </div>
+  <script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  }
 
-setLanguage(currentLang);
-</script>
+  const translations = {
+    sv: {
+      intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan. Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig!",
+      categories: {
+        all: "Alla Spel", party: "Partyspel", strategy: "Strategispel",
+        social: "Sociala Spel", "2p": "För 2 Spelare", family: "Familjevänliga"
+      },
+      ui: { categoryTitle: "Kategorier", players: "Spelare", time: "Tid", age: "Ålder" }
+    },
+    en: {
+      intro: "We have a wide range of board games here at Pinchos Linnégatan. If you see something you like, talk to our staff and we'll bring it to you!",
+      categories: {
+        all: "All Games", party: "Party Games", strategy: "Strategy",
+        social: "Social Deduction", "2p": "2 Player Friendly", family: "Family Friendly"
+      },
+      ui: { categoryTitle: "Categories", players: "Players", time: "Play time", age: "Age" }
+    }
+  };
+
+  const games = [{"title": {"sv": "Motståndsrörelsen", "en": "The Resistance"}, "description": {"sv": "Ett socialt bluffspel där du aldrig kan lita på någon.", "en": "A social deduction game of trust and betrayal."}, "players": "5–10", "time": "30 min", "age": "13+", "tags": ["social", "party"], "img": "https://upload.wikimedia.org/wikipedia/en/0/02/The_Resistance_%28game%29.jpg"}, {"title": {"sv": "Avalon - Motståndsrörelsen", "en": "Avalon - The Resistance"}, "description": {"sv": "Medeltida version av Motståndsrörelsen med specialroller.", "en": "A medieval-themed variant of The Resistance."}, "players": "5–10", "time": "30 min", "age": "13+", "tags": ["social", "strategy"], "img": "https://cf.geekdo-images.com/xPmtqiUCUKSnGFzR1nYeWw__itemrep/img/Ecb9VHXV5VG3S_J0v8yWTeQhJYQ=/fit-in/246x300/filters:strip_icc()/pic1391443.jpg"}, {"title": {"sv": "Sriracha: Spelet", "en": "Sriracha - The Game"}, "description": {"sv": "Ett snabbt och enkelt kortspel med hetta.", "en": "A fast-paced spicy card game."}, "players": "2–4", "time": "15 min", "age": "7+", "tags": ["party", "family"], "img": "https://cf.geekdo-images.com/gPoyj1aOx15U9SEvlFaQkQ__imagepage/img/yHcA4x-7cYp2EJt7tZJlmpuWDhw=/fit-in/900x600/filters:no_upscale():strip_icc()/pic6843901.jpg"}, {"title": {"sv": "Equinox", "en": "Equinox"}, "description": {"sv": "Ett fantasifullt kortspel där mystiska varelser tävlar om att gå till historien.", "en": "A whimsical game of mythical creatures competing for survival in legends."}, "players": "2–5", "time": "45 min", "age": "10+", "tags": ["strategy", "family"], "img": "https://cf.geekdo-images.com/LbFnF4DE9grzywL-L4u4Nw__imagepage/img/UpT89Su3NAtOJ0-Zk_iCHCrcyTE=/fit-in/900x600/filters:no_upscale():strip_icc()/pic6184569.jpg"}, {"title": {"sv": "Alhambra", "en": "Alhambra"}, "description": {"sv": "Bygg ditt eget palats med rätt resurser och strategi.", "en": "Build your palace with the right resources and clever planning."}, "players": "2–6", "time": "60 min", "age": "8+", "tags": ["strategy", "family"], "img": "https://cf.geekdo-images.com/Wkl9mFVNlDwsB9nLbh3eXA__imagepage/img/xlsuNSSPlTRXHqq8pbA1pIB0VXM=/fit-in/900x600/filters:no_upscale():strip_icc()/pic2419375.jpg"}, {"title": {"sv": "Exploding Kittens - Party Pack", "en": "Exploding Kittens - Party Pack"}, "description": {"sv": "Ett absurt och roligt kortspel för många spelare.", "en": "An absurd and hilarious card game for many players."}, "players": "2–10", "time": "15 min", "age": "7+", "tags": ["party", "family"], "img": "https://cf.geekdo-images.com/9Q9BLcK7PBWsR5WxBpUw3g__imagepage/img/tMoJx-gLR4NYqIkilMccfnVsmnQ=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5000054.jpg"}, {"title": {"sv": "Coup", "en": "Coup"}, "description": {"sv": "Ett snabbt bluffspel om makt och eliminering.", "en": "A fast bluffing game of influence and elimination."}, "players": "2–6", "time": "15 min", "age": "10+", "tags": ["social", "strategy"], "img": "https://cf.geekdo-images.com/lQFjFbDEMeKgIYayOvJ4Tw__imagepage/img/aeW2HQPZLRzFzboRkYfdEbU5Ybc=/fit-in/900x600/filters:no_upscale():strip_icc()/pic2016054.jpg"}, {"title": {"sv": "Munchkin", "en": "Munchkin"}, "description": {"sv": "Ett parodiskt äventyrsspel där vänner snabbt blir fiender.", "en": "A parody dungeon-crawling game where friendships don't last."}, "players": "3–6", "time": "60–90 min", "age": "10+", "tags": ["strategy", "party"], "img": "https://cf.geekdo-images.com/ToVj2TWZC8P7uD4KATYZ5g__imagepage/img/tu4NjKWBmEvpi6pDKmdAHDFDkq0=/fit-in/900x600/filters:no_upscale():strip_icc()/pic20575.jpg"}, {"title": {"sv": "Scout", "en": "Scout"}, "description": {"sv": "Ett innovativt kortspel med cirkus-tema och smarta drag.", "en": "A clever card game with a circus twist and multi-use cards."}, "players": "2–5", "time": "20 min", "age": "9+", "tags": ["strategy", "2p", "fast"], "img": "https://cf.geekdo-images.com/FqI0Aq4PBF50G5_J1Qfcdg__imagepage/img/GIX99Bf8V3uMrqD07MxWPAydxTA=/fit-in/900x600/filters:no_upscale():strip_icc()/pic6500535.jpg"}];
+
+  let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    renderCategories();
+    renderIntro();
+    renderGames();
+  }
+
+  function renderCategories() {
+    const list = document.getElementById('categoryList');
+    const catTitle = document.getElementById('categoryTitle');
+    catTitle.textContent = translations[currentLang].ui.categoryTitle;
+    list.innerHTML = '';
+    for (const tag in translations[currentLang].categories) {
+      const li = document.createElement('li');
+      li.textContent = translations[currentLang].categories[tag];
+      li.onclick = () => {
+        renderGames(tag);
+        if (window.innerWidth <= 768) {
+          document.getElementById('sidebar').classList.add('collapsed');
+        }
+      };
+      list.appendChild(li);
+    }
+  }
+
+  function renderIntro() {
+    document.getElementById('intro').textContent = translations[currentLang].intro;
+  }
+
+  function renderGames(filter = 'all') {
+    const container = document.getElementById('gameList');
+    container.innerHTML = '';
+    const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
+    filtered.forEach(game => {
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      card.innerHTML = `
+        <img src="${game.img}" alt="${game.title[currentLang]}" />
+        <div class="game-info">
+          <h3>${game.title[currentLang]}</h3>
+          <p>${game.description[currentLang]}</p>
+          <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  setLanguage(currentLang);
+  </script>
 </body>
 </html>
-
