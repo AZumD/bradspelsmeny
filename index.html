@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Board Game Menu</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #fffaf5;
     }
-    .wrapper {
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
+    .wrapper { display: flex; height: 100vh; overflow: hidden; }
     aside {
       background-color: #8b0000;
       color: gold;
@@ -30,11 +24,7 @@
       align-items: center;
       transition: transform 0.3s ease-in-out;
     }
-    aside.collapsed {
-      transform: translateX(-100%);
-      position: absolute;
-      z-index: 1000;
-    }
+    aside.collapsed { transform: translateX(-100%); position: absolute; z-index: 1000; }
     #toggleMenu {
       display: none;
       background: #8b0000;
@@ -48,29 +38,16 @@
       left: 10px;
       z-index: 1001;
     }
-    aside img {
-      width: 80px;
-      margin-bottom: 20px;
-    }
-    aside h2 {
-      margin-top: 0;
-      font-size: 1.5em;
-    }
-    aside ul {
-      list-style: none;
-      padding: 0;
-      width: 100%;
-    }
+    aside img { width: 80px; margin-bottom: 20px; }
+    aside h2 { margin-top: 0; font-size: 1.5em; }
+    aside ul { list-style: none; padding: 0; width: 100%; }
     aside li {
       cursor: pointer;
       padding: 8px;
       border-radius: 5px;
       text-align: center;
     }
-    aside li:hover {
-      background-color: gold;
-      color: #8b0000;
-    }
+    aside li:hover { background-color: gold; color: #8b0000; }
     main {
       flex-grow: 1;
       padding: 20px;
@@ -78,13 +55,8 @@
       margin-left: 250px;
       transition: margin-left 0.3s ease-in-out;
     }
-    .collapsed + main {
-      margin-left: 0;
-    }
-    .language-toggle {
-      text-align: right;
-      margin-bottom: 10px;
-    }
+    .collapsed + main { margin-left: 0; }
+    .language-toggle { text-align: right; margin-bottom: 10px; }
     .game-card {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -101,64 +73,140 @@
       border-radius: 5px;
       flex-shrink: 0;
     }
-    .game-info {
-      flex: 1 1 200px;
-      min-width: 0;
-    }
-    .game-info h3 {
-      margin: 0 0 10px;
-      word-wrap: break-word;
-    }
-    .game-info p {
-      word-wrap: break-word;
-    }
-    .tags {
-      font-size: 0.9em;
-      color: #555;
-    }
-    #intro {
-      margin-bottom: 30px;
-      font-size: 1.2em;
-    }
+    .game-info { flex: 1 1 200px; min-width: 0; }
+    .game-info h3 { margin: 0 0 10px; word-wrap: break-word; }
+    .game-info p { word-wrap: break-word; }
+    .tags { font-size: 0.9em; color: #555; }
+    #intro { margin-bottom: 30px; font-size: 1.2em; }
     @media (max-width: 768px) {
-      #toggleMenu {
-        display: block;
-      }
-      .wrapper {
-        flex-direction: column;
-      }
-      aside {
-        height: 100vh;
-      }
-      main {
-        margin-left: 0 !important;
-      }
+      #toggleMenu { display: block; }
+      .wrapper { flex-direction: column; }
+      aside { height: 100vh; }
+      main { margin-left: 0 !important; }
     }
   </style>
 </head>
 <body>
-  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
-  <div class="wrapper">
-    <aside id="sidebar">
-      <img src="https://catalog.pinchos.se/android-chrome-192x192.png" alt="Pinchos logo" />
-      <h2 id="categoryTitle">Kategorier</h2>
-      <ul id="categoryList"></ul>
-    </aside>
-    <main>
-      <div class="language-toggle">
-        <button onclick="setLanguage('sv')">🇸🇪</button>
-        <button onclick="setLanguage('en')">🇬🇧</button>
-      </div>
-      <div id="intro"></div>
-      <div id="gameList"></div>
-    </main>
+<button id="toggleMenu" onclick="toggleSidebar()">☰</button>
+<div class="wrapper">
+<aside id="sidebar">
+  <img src="https://catalog.pinchos.se/android-chrome-192x192.png" alt="Pinchos logo" />
+  <h2 id="categoryTitle">Kategorier</h2>
+  <ul id="categoryList"></ul>
+</aside>
+<main>
+  <div class="language-toggle">
+    <button onclick="setLanguage('sv')">🇸🇪</button>
+    <button onclick="setLanguage('en')">🇬🇧</button>
   </div>
-  <script>
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('collapsed');
+  <div id="intro"></div>
+  <div id="gameList"></div>
+</main>
+</div>
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('collapsed');
+}
+
+const translations = {
+  sv: {
+    intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan. Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig!",
+    categories: {
+      all: "Alla Spel",
+      party: "Partyspel",
+      strategy: "Strategispel",
+      social: "Sociala Spel",
+      "2p": "För 2 Spelare",
+      family: "Familjevänliga"
+    },
+    ui: {
+      categoryTitle: "Kategorier",
+      players: "Spelare",
+      time: "Tid",
+      age: "Ålder"
     }
-  </script>
+  },
+  en: {
+    intro: "We have a wide range of board games here at Pinchos Linnégatan. If you see something you like, talk to our staff and we'll bring it to you!",
+    categories: {
+      all: "All Games",
+      party: "Party Games",
+      strategy: "Strategy",
+      social: "Social Deduction",
+      "2p": "2 Player Friendly",
+      family: "Family Friendly"
+    },
+    ui: {
+      categoryTitle: "Categories",
+      players: "Players",
+      time: "Play time",
+      age: "Age"
+    }
+  }
+};
+
+const games = [
+  {
+    title: { sv: "Motståndsrörelsen", en: "The Resistance" },
+    description: {
+      sv: "Ett socialt bluffspel där du aldrig kan lita på någon.",
+      en: "A social deduction game of trust and betrayal."
+    },
+    players: "5–10",
+    time: "30 min",
+    age: "13+",
+    tags: ["social", "party"],
+    img: "https://upload.wikimedia.org/wikipedia/en/0/02/The_Resistance_%28game%29.jpg"
+  }
+];
+
+let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  renderCategories();
+  renderIntro();
+  renderGames();
+}
+
+function renderCategories() {
+  const list = document.getElementById('categoryList');
+  const catTitle = document.getElementById('categoryTitle');
+  catTitle.textContent = translations[currentLang].ui.categoryTitle;
+  list.innerHTML = '';
+  for (const tag in translations[currentLang].categories) {
+    const li = document.createElement('li');
+    li.textContent = translations[currentLang].categories[tag];
+    li.onclick = () => renderGames(tag);
+    list.appendChild(li);
+  }
+}
+
+function renderIntro() {
+  document.getElementById('intro').textContent = translations[currentLang].intro;
+}
+
+function renderGames(filter = 'all') {
+  const container = document.getElementById('gameList');
+  container.innerHTML = '';
+  const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
+  filtered.forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.innerHTML = `
+      <img src="${game.img}" alt="${game.title[currentLang]}" />
+      <div class="game-info">
+        <h3>${game.title[currentLang]}</h3>
+        <p>${game.description[currentLang]}</p>
+        <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+setLanguage(currentLang);
+</script>
 </body>
 </html>
-
