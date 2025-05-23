@@ -5,15 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
-    #categoryDropdown {
-  padding: 8px 12px;
-  margin: 10px 0 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: 2px solid #8b0000;
-  background: #fff;
-  color: #8b0000;
+    .category-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
 }
+
+.category-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  padding: 8px 10px;
+  border: 2px solid #8b0000;
+  background: #fffaf0;
+  color: #8b0000;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 2px 2px 0 #8b0000;
+  transition: all 0.2s ease-in-out;
+}
+
+.category-badge.active {
+  background: #8b0000;
+  color: gold;
+  box-shadow: 2px 2px 0 #444;
+}
+    #categoryDropdown,
+#searchBar {
+  padding: 12px;
+  margin: 10px 0 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  border-radius: 4px;
+  border: 3px solid #8b0000;
+  background: #fffaf0;
+  color: #8b0000;
+  width: 100%;
+  box-shadow: 3px 3px 0 #8b0000;
+  outline: none;
+}
+
+#searchBar::placeholder {
+  color: #8b0000;
+  opacity: 0.6;
+  font-family: 'Press Start 2P', monospace;
+}
+
+    #gameList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+    
+
     
     * { box-sizing: border-box; }  
     body {  
@@ -35,6 +81,11 @@
       transition: transform 0.3s ease-in-out;  
       z-index: 1001;  
     }  
+    .filters {
+  margin: 20px auto;
+  max-width: 600px;
+  padding: 0 10px;
+}
     aside.collapsed { transform: translateX(-100%); position: absolute; }  
     #toggleMenu {  
       display: none;  
@@ -79,15 +130,28 @@
       max-height: 270px;  
       height: auto;  
     }  
-    .game-card {  
-      border: 2px dashed gold;
+      
+       
+    }  
+    .game-card {
       background: #fffdf8;
       border-radius: 8px;  
       padding: 15px;  
       margin-bottom: 20px;  
       display: flex;  
-      flex-wrap: wrap;  
-    }  
+      flex-wrap: wrap; 
+  border: 2px dashed gold;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
     .game-card img {  
       width: 150px;  
       height: auto;  
@@ -95,28 +159,79 @@
       border-radius: 5px;  
       flex-shrink: 0;  
     }  
+    .filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 40px auto 20px;
+  max-width: 600px;
+  padding: 0 10px;
+}
     .game-info { flex: 1 1 200px; min-width: 0; }  
     .game-info h3 { margin: 0 0 10px; word-wrap: break-word; }  
     .game-info p { word-wrap: break-word; }
     .game-info a { color: #8b0000; text-decoration: underline; font-weight: bold;}
     .tags { font-size: 0.9em; color: #555; }  
     #intro { margin-bottom: 30px; font-size: 1.2em; }  
-    @media (max-width: 768px) {  
-      #toggleMenu { display: block; }  
-      .wrapper { flex-direction: column; }  
-      aside { height: 100vh; }  
-      main { margin-left: 0 !important; }  
-    }  
+    #categoryDropdown:focus, #searchBar:focus {
+  box-shadow: 3px 3px 0 #d2691e; /* or another Pinchos-like hue */
+}
+
+    #searchBar,
+#categoryDropdown {
+  flex: 1 1 200px;
+  max-width: 100%;
+}
+    @media (max-width: 768px) {
+  #gameList {
+    display: block;
+  }
+}
+
+  #searchBar,
+  #categoryDropdown {
+    font-size: 0.6rem;
+    margin: 10px 0;
+  }
+  #categoryDropdown, #searchBar {
+  transition: box-shadow 0.2s ease;
+}
+
+
+  .language-toggle {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  #banner {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .game-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .game-card img {
+    margin: 0 0 10px 0;
+  }
+
+  .game-info {
+    padding: 0 5px;
+  }
+}
   </style>  
 </head>  
 <body>  
-  <!--<button id="toggleMenu" onclick="toggleSidebar()">☰</button>-->
+  <div class="filters">
+    <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+    <div id="categoryBadges" class="category-badges"></div>
+  </div>
+
   <div class="wrapper">  
-   <!-- <aside id="sidebar" class="collapsed">  
-      <img src="B.png" class="logo" alt="Pinchos logo" />  
-      <h2 id="categoryTitle">Kategorier</h2>  
-      <ul id="categoryList"></ul>  
-    </aside>  -->
     <main>  
       <div class="language-toggle">  
         <button onclick="setLanguage('sv')">🇸🇪</button>  
@@ -124,11 +239,8 @@
       </div>  
       <div id="banner">  
         <img src="banner3.png" alt="Banner" />  
-        <!--<img src="banner_left.png" alt="Character Right" />-->  
       </div>  
       <div id="intro"></div>
-      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
-      <select id="categoryDropdown" onchange="changeCategory(this.value)"></select>
       <h2 id="categoryHeading"></h2>
       <div id="gameList"></div>  
     </main>  
@@ -434,28 +546,23 @@ let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 
 function renderCategories() {
-  const dropdown = document.getElementById('categoryDropdown');
-  dropdown.innerHTML = '';
-
-  const emojis = {
-    all: "🎲",
-    party: "🎉",
-    strategy: "♟️",
-    social: "🕵️‍♂️",
-    "2p": "👥",
-    family: "👨‍👩‍👧"
-  };
+  const badgeContainer = document.getElementById('categoryBadges');
+  badgeContainer.innerHTML = '';
 
   for (const tag in translations[currentLang].categories) {
-    const option = document.createElement('option');
-    option.value = tag;
-    option.textContent = `${emojis[tag] || "🎯"} ${translations[currentLang].categories[tag]}`;
-    dropdown.appendChild(option);
+    const badge = document.createElement('div');
+    badge.className = 'category-badge';
+    if (tag === currentCategory) badge.classList.add('active');
+    badge.textContent = translations[currentLang].categories[tag];
+    badge.onclick = () => {
+      currentCategory = tag;
+      renderCategories();
+      renderGames();
+    };
+    badgeContainer.appendChild(badge);
   }
+};
 
-  // Set and apply current category
-  dropdown.value = currentCategory;
-  changeCategory(currentCategory); // <-- ADD THIS LINE
 }
 ;
 
