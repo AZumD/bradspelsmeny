@@ -436,7 +436,7 @@ const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(fi
 filtered.forEach(game => {
 const card = document.createElement('div');
 card.className = 'game-card';
-card.innerHTML =   <img src="${game.img}" alt="${game.title[currentLang]}" />   <div class="game-info">   <h3>${game.title[currentLang]}</h3>   <p>${game.description[currentLang]}   ${game.rules ?<br><a href="${game.rules}" target="_blank">📄 Rules</a>: ''}</p>   <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>   </div>  ;
+card.innerHTML =  ` <img src="${game.img}" alt="${game.title[currentLang]}" />   <div class="game-info">   <h3>${game.title[currentLang]}</h3>   <p>${game.description[currentLang]}   ${game.rules ?`<br><a href="${game.rules}" target="_blank">📄 Rules</a>`: ''}</p>   <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>   </div>  `;
 container.appendChild(card);
 });
 }
