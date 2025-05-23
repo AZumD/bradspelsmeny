@@ -76,7 +76,3 @@ const games = [
     rules: "https://cdn.1j1ju.com/medias/2b/62/72-equinox-rulebook.pdf"
   }
 ];
-
-
-Done! Your
-
