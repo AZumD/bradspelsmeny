@@ -459,8 +459,10 @@ const emojis = {
 
 function changeCategory(value) {
   currentCategory = value;
+  document.getElementById('categoryDropdown').value = value;
   renderGames();
 }
+
     
 
 function renderIntro() {
@@ -471,7 +473,7 @@ function setLanguage(lang) {
   currentLang = lang;
   renderCategories();
   renderIntro();
-  renderGames();
+  changeCategory('all'); // <--- instead of just renderGames()
 }
 
 function renderGames() {
