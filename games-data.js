@@ -34,7 +34,7 @@ const translations = {
     }
   }
 };
-
+/*
 const games = [
   {
     title: { sv: "Kortlek", en: "Deck of cards" },
@@ -74,5 +74,5 @@ const games = [
     tags: ["strategy", "family", "2p"],
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFjZG9j6DfeHVOeSi2AhTakJuyTLzgCox4TQ&s",
     rules: "https://cdn.1j1ju.com/medias/2b/62/72-equinox-rulebook.pdf"
-  }
+  }*/
 ];
