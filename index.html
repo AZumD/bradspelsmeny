@@ -72,68 +72,21 @@
       margin: 0 auto;
       padding: 0 20px;
     }
-    
-    aside {  
-      background-color: #8b0000;  
-      font-family: 'Press Start 2P', monospace;
-      color: gold;  
-      padding: 15px;  
-      width: auto;  
-      flex-shrink: 0;  
-      display: flex;  
-      flex-direction: column;  
-      align-items: center;  
-      transition: transform 0.3s ease-in-out;  
-      z-index: 1001;  
-    }  
-    .filters {
-      margin: 20px auto;
-      max-width: 600px;
-      padding: 0 10px;
-    }
-    aside.collapsed { transform: translateX(-100%); position: absolute; }  
-    #toggleMenu {  
-      display: none;  
-      background: #8b0000;  
-      color: gold;  
-      border: none;  
-      font-size: 1.5rem;  
-      padding: 10px 20px;  
-      cursor: pointer;  
-      position: fixed;  
-      top: 10px;  
-      left: 10px;  
-      z-index: 1002;  
-    }  
-    aside img.logo { width: 80px; margin-bottom: 20px; }  
-    aside h2 { margin-top: 0; font-size: 1.2em; text-align: left; }  
-    aside ul { list-style: none; padding: 0; width: 100%; }  
-    aside li {  
-      cursor: pointer;  
-      padding: 8px;  
-      border-radius: 5px;  
-      text-align: left;
-      font-size: 1em;
-    }  
-    aside li:hover { background-color: gold; color: #8b0000; }  
-    main {  
+
+    main {
       width: 100%;
-      padding: 20px 0;  
-    }  
-    .language-toggle { text-align: center; margin-bottom: 10px; }  
-    #banner {  
-      display: flex;  
-      justify-content: center;  
-      gap: 40px;  
+      padding: 20px 0;
+    }
+
+    #banner {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
       margin-top: 20px;
-      margin-bottom: 20px;  
+      margin-bottom: 20px;
       flex-direction: column;
       align-items: center;
-    }  
-    #banner img {  
-      max-height: 270px;  
-      height: auto;  
-    }  
+    }
 
     .game-card {
       background: #fffdf8;
@@ -197,7 +150,7 @@
       <img src="banner3.png" alt="Banner" />  
     </div>  
     <div class="filters">
-      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+      <input type="text" id="searchBar" placeholder="Search..." />
       <div id="categoryBadges" class="category-badges"></div>
     </div>
 
@@ -212,28 +165,12 @@
     </main>  
   </div>  
   <script>
-</head>  
-<body>  
-   <div id="banner">  
-        <img src="banner3.png" alt="Banner" />  
-      </div>  
-  <div class="filters">
-    <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
-    <div id="categoryBadges" class="category-badges"></div>
-  </div>
-
-  <div class="wrapper">  
-    <main>  
-      <div class="language-toggle">  
-        <button onclick="setLanguage('sv')">🇸🇪</button>  
-        <button onclick="setLanguage('en')">🇬🇧</button>  
-      </div>  
-      <div id="intro"></div>
-      <h2 id="categoryHeading"></h2>
-      <div id="gameList"></div>  
-    </main>  
-  </div>  
-  <script> 
+    // You must re-add the full renderCategories, renderGames, setLanguage, and game data JS here.
+    // For now, ensure this line triggers rendering after everything is ready
+    window.onload = () => {
+      setLanguage(navigator.language.startsWith('sv') ? 'sv' : 'en');
+    };
+  </script>
     const translations = {
 sv: {
 intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan (eller vi aspirerar i alla fall att ha det). Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig! (Det är 16+ som gäller för alla spelutlåningar då vi är väldigt rädda om dem, och vi behöver ett ID i pant)",
