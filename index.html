@@ -168,6 +168,34 @@
     </main>  
   </div>  
  <script src="games-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tabletop@1.6.1/tabletop.min.js"></script>
+<script>
+  window.onload = function () {
+    Tabletop.init({
+      key: '2PACX-1vSvX65BMdgaiQR4jKrjkR0i68lPR9mlV08pA-FqlJxLSmZaixagegKDtmWSeUrzrHYVXtaIImqcnQnE',
+      callback: function (data) {
+        games = data.map(row => ({
+          title: {
+            sv: row["title_sv"],
+            en: row["title_en"]
+          },
+          description: {
+            sv: row["description_sv"],
+            en: row["description_en"]
+          },
+          players: row.players,
+          time: row.time,
+          age: row.age,
+          tags: row.tags.split(",").map(tag => tag.trim()),
+          img: row.img,
+          rules: row.rules
+        }));
+        setLanguage(currentLang); // trigger the initial render
+      },
+      simpleSheet: true
+    });
+  };
+</script>
  <script src="main.js"></script>
 </body>  
 </html>  
