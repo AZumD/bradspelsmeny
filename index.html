@@ -449,7 +449,7 @@ const emojis = {
     option.value = tag;
     
 
-    option.textContent = `🎯 ${translations[currentLang].categories[tag]}`;
+    option.textContent = `${emojis[tag] || "🎯"} ${translations[currentLang].categories[tag]}`;
     dropdown.appendChild(option);
   }
 
