@@ -113,7 +113,9 @@
         <img src="banner3.png" alt="Banner" />  
         <!--<img src="banner_left.png" alt="Character Right" />-->  
       </div>  
-      <div id="intro"></div>  
+      <div id="intro"></div>
+      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+      <h2 id="categoryHeading"></h2>
       <div id="gameList"></div>  
     </main>  
   </div>  
@@ -414,6 +416,9 @@ const games = [
 "img": "https://cf.geekdo-images.com/cf0xxkevbwTGF3VUZymKjg__itemrep/img/SBOXfC-WOg_Iko_2lHw3VMymsow=/fit-in/246x300/filters:strip_icc()/pic6398727.png",  
 "rules": ""}];
 
+
+let currentCategory = 'all';
+    
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 
 function setLanguage(lang) {
@@ -432,11 +437,13 @@ for (const tag in translations[currentLang].categories) {
 const li = document.createElement('li');
 li.textContent = translations[currentLang].categories[tag];
 li.onclick = () => {
-renderGames(tag);
-if (window.innerWidth <= 768) {
-document.getElementById('sidebar').classList.add('collapsed');
-}
+  currentCategory = tag;
+  renderGames();
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
 };
+
 list.appendChild(li);
 }
 }
@@ -445,21 +452,51 @@ function renderIntro() {
 document.getElementById('intro').textContent = translations[currentLang].intro;
 }
 
-function renderGames(filter = 'all') {
-const container = document.getElementById('gameList');
-container.innerHTML = '';
-const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
-filtered.sort((a, b) => {
-  const titleA = a.title[currentLang].toLowerCase();
-  const titleB = b.title[currentLang].toLowerCase();
-  return titleA.localeCompare(titleB);
-});
-filtered.forEach(game => {
-const card = document.createElement('div');
-card.className = 'game-card';
-card.innerHTML =  ` <img src="${game.img}" alt="${game.title[currentLang]}" />   <div class="game-info">   <h3>${game.title[currentLang]}</h3>   <p>${game.description[currentLang]}   ${game.rules ?`<br><a href="${game.rules}" target="_blank">📄 Rules</a>`: ''}</p>   <div class="tags">👥 ${translations[currentLang].ui.players}: ${game.players} ・ ⏱ ${translations[currentLang].ui.time}: ${game.time} ・ 👶 ${translations[currentLang].ui.age}: ${game.age}</div>   </div>  `;
-container.appendChild(card);
-});
+function renderGames() {
+  const container = document.getElementById('gameList');
+  const search = document.getElementById('searchBar').value.toLowerCase();
+  const heading = document.getElementById('categoryHeading');
+
+  // Show current category
+  heading.textContent = translations[currentLang].categories[currentCategory];
+
+  // Filter games
+  let filtered = currentCategory === 'all'
+    ? games
+    : games.filter(g => g.tags.includes(currentCategory));
+
+  // Apply search filter
+  filtered = filtered.filter(game =>
+    game.title[currentLang].toLowerCase().includes(search)
+  );
+
+  // Sort alphabetically
+  filtered.sort((a, b) =>
+    a.title[currentLang].toLowerCase().localeCompare(b.title[currentLang].toLowerCase())
+  );
+
+  // Render cards
+  container.innerHTML = '';
+  filtered.forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.innerHTML = `
+      <img src="${game.img}" alt="${game.title[currentLang]}" />
+      <div class="game-info">
+        <h3>${game.title[currentLang]}</h3>
+        <p>
+          ${game.description[currentLang]}
+          ${game.rules ? `<br><a href="${game.rules}" target="_blank">📄 Rules</a>` : ''}
+        </p>
+        <div class="tags">
+          👥 ${translations[currentLang].ui.players}: ${game.players} ・
+          ⏱ ${translations[currentLang].ui.time}: ${game.time} ・
+          👶 ${translations[currentLang].ui.age}: ${game.age}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 setLanguage(currentLang);
