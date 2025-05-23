@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
+    #categoryDropdown {
+  padding: 8px 12px;
+  margin: 10px 0 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 2px solid #8b0000;
+  background: #fff;
+  color: #8b0000;
+}
     
     * { box-sizing: border-box; }  
     body {  
@@ -101,13 +110,13 @@
   </style>  
 </head>  
 <body>  
-  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>  
+  <!--<button id="toggleMenu" onclick="toggleSidebar()">☰</button>-->
   <div class="wrapper">  
-    <aside id="sidebar" class="collapsed">  
+   <!-- <aside id="sidebar" class="collapsed">  
       <img src="B.png" class="logo" alt="Pinchos logo" />  
       <h2 id="categoryTitle">Kategorier</h2>  
       <ul id="categoryList"></ul>  
-    </aside>  
+    </aside>  -->
     <main>  
       <div class="language-toggle">  
         <button onclick="setLanguage('sv')">🇸🇪</button>  
@@ -119,14 +128,13 @@
       </div>  
       <div id="intro"></div>
       <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+      <select id="categoryDropdown" onchange="changeCategory(this.value)"></select>
       <h2 id="categoryHeading"></h2>
       <div id="gameList"></div>  
     </main>  
   </div>  
   <script>  
-  function toggleSidebar() {  
-    document.getElementById('sidebar').classList.toggle('collapsed');  
-  }  const translations = {
+    const translations = {
 sv: {
 intro: "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan (eller vi aspirerar i alla fall att ha det). Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig! (Det är 16+ som gäller för alla spelutlåningar då vi är väldigt rädda om dem, och vi behöver ett ID i pant)",
 categories: {
@@ -425,35 +433,45 @@ let currentCategory = 'all';
     
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 
-function setLanguage(lang) {
-currentLang = lang;
-renderCategories();
-renderIntro();
-renderGames();
-}
-
 function renderCategories() {
-const list = document.getElementById('categoryList');
-const catTitle = document.getElementById('categoryTitle');
-catTitle.textContent = translations[currentLang].ui.categoryTitle;
-list.innerHTML = '';
-for (const tag in translations[currentLang].categories) {
-const li = document.createElement('li');
-li.textContent = translations[currentLang].categories[tag];
-li.onclick = () => {
-  currentCategory = tag;
-  renderGames();
-  if (window.innerWidth <= 768) {
-    document.getElementById('sidebar').classList.add('collapsed');
+  const dropdown = document.getElementById('categoryDropdown');
+  dropdown.innerHTML = '';
+const emojis = {
+  all: "🎲",
+  party: "🎉",
+  strategy: "♟️",
+  social: "🕵️‍♂️",
+  "2p": "👥",
+  family: "👨‍👩‍👧"
+};
+  for (const tag in translations[currentLang].categories) {
+    const option = document.createElement('option');
+    option.value = tag;
+    
+
+    option.textContent = `🎯 ${translations[currentLang].categories[tag]}`;
+    dropdown.appendChild(option);
   }
+
+  // Set current selection
+  dropdown.value = currentCategory;
 };
 
-list.appendChild(li);
+function changeCategory(value) {
+  currentCategory = value;
+  renderGames();
 }
-}
+    
 
 function renderIntro() {
 document.getElementById('intro').textContent = translations[currentLang].intro;
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  renderCategories();
+  renderIntro();
+  renderGames();
 }
 
 function renderGames() {
@@ -502,8 +520,6 @@ function renderGames() {
     container.appendChild(card);
   });
 }
-
-setLanguage(currentLang);
 </script>
 
 </body>  
