@@ -436,26 +436,28 @@ let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 function renderCategories() {
   const dropdown = document.getElementById('categoryDropdown');
   dropdown.innerHTML = '';
-const emojis = {
-  all: "🎲",
-  party: "🎉",
-  strategy: "♟️",
-  social: "🕵️‍♂️",
-  "2p": "👥",
-  family: "👨‍👩‍👧"
-};
+
+  const emojis = {
+    all: "🎲",
+    party: "🎉",
+    strategy: "♟️",
+    social: "🕵️‍♂️",
+    "2p": "👥",
+    family: "👨‍👩‍👧"
+  };
+
   for (const tag in translations[currentLang].categories) {
     const option = document.createElement('option');
     option.value = tag;
-    
-
     option.textContent = `${emojis[tag] || "🎯"} ${translations[currentLang].categories[tag]}`;
     dropdown.appendChild(option);
   }
 
-  // Set current selection
+  // Set and apply current category
   dropdown.value = currentCategory;
-};
+  changeCategory(currentCategory); // <-- ADD THIS LINE
+}
+;
 
 function changeCategory(value) {
   currentCategory = value;
@@ -522,6 +524,9 @@ function renderGames() {
     container.appendChild(card);
   });
 }
+window.onload = () => {
+  setLanguage(currentLang);
+};
 </script>
 
 </body>  
