@@ -449,6 +449,11 @@ function renderGames(filter = 'all') {
 const container = document.getElementById('gameList');
 container.innerHTML = '';
 const filtered = filter === 'all' ? games : games.filter(g => g.tags.includes(filter));
+filtered.sort((a, b) => {
+  const titleA = a.title[currentLang].toLowerCase();
+  const titleB = b.title[currentLang].toLowerCase();
+  return titleA.localeCompare(titleB);
+});
 filtered.forEach(game => {
 const card = document.createElement('div');
 card.className = 'game-card';
