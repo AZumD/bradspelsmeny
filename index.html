@@ -65,7 +65,14 @@
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
       background: radial-gradient(circle at top center, #fffaf5, #f5e6dc);
     }  
-    .wrapper { display: flex; height: 100vh; overflow: hidden; }  
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
     aside {  
       background-color: #8b0000;  
       font-family: 'Press Start 2P', monospace;
@@ -110,19 +117,18 @@
     }  
     aside li:hover { background-color: gold; color: #8b0000; }  
     main {  
-      flex-grow: 1;  
-      padding: 20px;  
-      overflow-y: auto;  
-      margin-left: 250px;  
-      transition: margin-left 0.3s ease-in-out;  
+      width: 100%;
+      padding: 20px 0;  
     }  
-    .collapsed + main { margin-left: 0; }  
-    .language-toggle { text-align: right; margin-bottom: 10px; }  
+    .language-toggle { text-align: center; margin-bottom: 10px; }  
     #banner {  
       display: flex;  
       justify-content: center;  
       gap: 40px;  
+      margin-top: 20px;
       margin-bottom: 20px;  
+      flex-direction: column;
+      align-items: center;
     }  
     #banner img {  
       max-height: 270px;  
@@ -140,6 +146,9 @@
       opacity: 0;
       transform: translateY(10px);
       animation: fadeInUp 0.4s ease forwards;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     @keyframes fadeInUp {
@@ -152,27 +161,17 @@
     .game-card img {  
       width: 150px;  
       height: auto;  
-      margin-right: 15px;  
+      margin: 0 0 10px 0;  
       border-radius: 5px;  
       flex-shrink: 0;  
     }  
 
-    .filters {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 40px auto 20px;
-      max-width: 600px;
-      padding: 0 10px;
-    }
-
-    .game-info { flex: 1 1 200px; min-width: 0; }  
+    .game-info { flex: 1 1 200px; min-width: 0; padding: 0 5px; }  
     .game-info h3 { margin: 0 0 10px; word-wrap: break-word; }  
     .game-info p { word-wrap: break-word; }
     .game-info a { color: #8b0000; text-decoration: underline; font-weight: bold;}
     .tags { font-size: 0.9em; color: #555; }  
-    #intro { margin-bottom: 30px; font-size: 1.2em; }  
+    #intro { margin-bottom: 30px; font-size: 1.2em; text-align: center; }  
     #searchBar:focus {
       box-shadow: 3px 3px 0 #d2691e;
     }
@@ -180,6 +179,9 @@
     #searchBar {
       flex: 1 1 200px;
       max-width: 100%;
+      font-size: 0.6rem;
+      margin: 10px 0;
+      transition: box-shadow 0.2s ease;
     }
 
     @media (max-width: 768px) {
@@ -187,40 +189,29 @@
         display: block;
       }
     }
-
-    #searchBar {
-      font-size: 0.6rem;
-      margin: 10px 0;
-    }
-
-    #searchBar {
-      transition: box-shadow 0.2s ease;
-    }
-
-    .language-toggle {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #banner {
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .game-card {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .game-card img {
-      margin: 0 0 10px 0;
-    }
-
-    .game-info {
-      padding: 0 5px;
-    }
   </style>  
+</head>  
+<body>  
+  <div class="wrapper">  
+    <div id="banner">  
+      <img src="banner3.png" alt="Banner" />  
+    </div>  
+    <div class="filters">
+      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+      <div id="categoryBadges" class="category-badges"></div>
+    </div>
+
+    <main>  
+      <div class="language-toggle">  
+        <button onclick="setLanguage('sv')">🇸🇪</button>  
+        <button onclick="setLanguage('en')">🇬🇧</button>  
+      </div>  
+      <div id="intro"></div>
+      <h2 id="categoryHeading"></h2>
+      <div id="gameList"></div>  
+    </main>  
+  </div>  
+  <script>
 </head>  
 <body>  
    <div id="banner">  
