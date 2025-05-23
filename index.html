@@ -223,6 +223,9 @@
   </style>  
 </head>  
 <body>  
+   <div id="banner">  
+        <img src="banner3.png" alt="Banner" />  
+      </div>  
   <div class="filters">
     <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
     <div id="categoryBadges" class="category-badges"></div>
@@ -233,9 +236,6 @@
       <div class="language-toggle">  
         <button onclick="setLanguage('sv')">🇸🇪</button>  
         <button onclick="setLanguage('en')">🇬🇧</button>  
-      </div>  
-      <div id="banner">  
-        <img src="banner3.png" alt="Banner" />  
       </div>  
       <div id="intro"></div>
       <h2 id="categoryHeading"></h2>
@@ -555,7 +555,7 @@ function renderCategories() {
       currentCategory = tag;
       renderCategories();
       renderGames();
-    };
+    
     badgeContainer.appendChild(badge);
   }
 };
@@ -563,11 +563,7 @@ function renderCategories() {
 }
 ;
 
-function changeCategory(value) {
-  currentCategory = value;
-  document.getElementById('categoryDropdown').value = value;
-  renderGames();
-}
+
 
     
 
@@ -577,10 +573,12 @@ document.getElementById('intro').textContent = translations[currentLang].intro;
 
 function setLanguage(lang) {
   currentLang = lang;
-  renderCategories();
+  renderCategories(); // Should re-render badges
   renderIntro();
-  changeCategory('all'); // <--- instead of just renderGames()
+  currentCategory = 'all'; // Reset
+  renderGames(); // Explicit call ensures games render
 }
+
 
 function renderGames() {
   const container = document.getElementById('gameList');
