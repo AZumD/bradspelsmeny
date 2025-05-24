@@ -45,7 +45,7 @@ const games = [
     time: "? min",
     age: "6+",
     tags: ["2p", "strategy", "family", "party"],
-    img: "https://smartpress.imgix.net/resources/offering_images/playing_cards_3qtr_resting_front_cp_grandier-20240226_135448636.jpg",
+    img: "cards.jpg",
     rules: "https://blogs.glowscotland.org.uk/re/public/west/uploads/sites/2327/2019/02/Card-Games.pdf"
   },
   {
@@ -58,7 +58,7 @@ const games = [
     time: "30 min",
     age: "13+",
     tags: ["social", "party"],
-    img: "https://www.worldofboardgames.com/product_images/11041-1-L.jpg",
+    img: "the-resistance.jpg",
     rules: "The Resistance Rulebook.pdf"
   },
   {
@@ -71,7 +71,7 @@ const games = [
     time: "45 min",
     age: "10+",
     tags: ["strategy", "family", "2p"],
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFjZG9j6DfeHVOeSi2AhTakJuyTLzgCox4TQ&s",
+    img: "equinox.jpg",
     rules: "https://cdn.1j1ju.com/medias/2b/62/72-equinox-rulebook.pdf"
   },
 {
@@ -84,7 +84,7 @@ const games = [
   "time": "60–90 min",
   "age": "10+",
   "tags": ["humor", "fantasy", "card game"],
-  "img": "https://www.cnss.gov.lb/munchkins-slots/Munchkin-Deluxe-Board-Game-Base-Game-Family-Board-Card-Game-6634081/",
+  "img": "munchkin.jpg",
   "rules": "https://munchkin.game/site-munchkin/assets/files/1138/munchkin_rules-1.pdf"
 },
 {
@@ -97,7 +97,7 @@ const games = [
   "time": "30 min",
   "age": "13+",
   "tags": ["social", "deduction", "party"],
-  "img": "https://www.mightyape.co.nz/product/the-resistance-avalon-card-game/21450378",
+  "img": "avalon.jpg",
   "rules": "https://avalon.fun/pdfs/rules.pdf"
 },
 {
@@ -110,7 +110,7 @@ const games = [
   "time": "15 min",
   "age": "14+",
   "tags": ["bluff", "strategy", "card game"],
-  "img": "https://www.cnss.gov.lb/jogo-coup/Coup-card-game-review-The-Board-Game-Family-1575418/",
+  "img": "coup.jpg",
   "rules": "https://boardgame.bg/coup%20rules%20pdf.pdf"
 },
 {
@@ -123,7 +123,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "https://www.toysrus.ca/fr/Exploding-Kittens-Original-Edition-Board-Game---Edition-anglaise/74876AC0.html",
+  "img": "exploding-kittena.jpg",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -136,7 +136,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "https://www.explodingkittens.com/cdn/shop/products/EXPLODINGKITTENS-PARTYPACK-BOX-front_1200x1200.png",
+  "img": "exploding-kittens-party-pack.jpg",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens-party"
 },
 {
@@ -149,7 +149,7 @@ const games = [
   "time": "15 min",
   "age": "17+",
   "tags": ["party", "humor", "card game", "adult"],
-  "img": "https://www.explodingkittens.com/cdn/shop/products/EXPLODINGKITTENS-NSFW-BOX-front_1200x1200.png",
+  "img": "exploding-kittens-nsfw.jpg",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -162,7 +162,7 @@ const games = [
   "time": "60–120 min",
   "age": "13+",
   "tags": ["strategy", "cooperative", "zombie"],
-  "img": "https://cf.geekdo-images.com/oy_2Ht3G7GHcIYdv7owD8g__itemrep/img/IphIMpHrs2ktYRp0aPAQ0qNlU2k=/fit-in/246x300/filters:strip_icc()/pic2230549.jpg",
+  "img": "dead-of-winter.jpg",
   "rules": "https://images.plaidhatgames.com/filer_public/7b/70/7b703bbc-0c6f-44c1-8a45-5a317c1b8bd2/dead_of_winter_rulebook.pdf"
 },
 {
@@ -175,7 +175,7 @@ const games = [
   "time": "45–60 min",
   "age": "8+",
   "tags": ["strategy", "tile placement", "family"],
-  "img": "https://cf.geekdo-images.com/EBEJz_xFjpukB1IpEJLgCg__itemrep/img/g_ImX9fAztqG8E4kx-5zAFwHbi0=/fit-in/246x300/filters:strip_icc()/pic241937.jpg",
+  "img": "alhambra.jpg",
   "rules": "https://www.qworksgames.com/uploads/4/9/5/3/4953747/alhambra_rulebook.pdf"
 },
 {
@@ -188,7 +188,7 @@ const games = [
   "time": "30–90 min",
   "age": "17+",
   "tags": ["party", "humor", "adult"],
-  "img": "https://cdn.shopify.com/s/files/1/0266/6276/4597/products/cards_against_muggles.jpg",
+  "img": "cards-against-muggles.jpg",
   "rules": "https://familygameshelf.com/2023/08/22/how-to-play-cards-against-muggles/"
 },
 {
@@ -201,7 +201,7 @@ const games = [
   "time": "30 min",
   "age": "10+",
   "tags": ["strategy", "card game", "nature"],
-  "img": "https://cf.geekdo-images.com/6RGmuYOj8j_vTOhS9VE03Q__itemrep/img/luhKFnFZoGyksKbcYzi-Wz8eEis=/fit-in/246x300/filters:strip_icc()/pic2637235.jpg",
+  "img": "fungi",
   "rules": "https://lookout-spiele.de/media/pdf/49/f0/e2/fungi_en.pdf"
 },
 {
@@ -214,7 +214,7 @@ const games = [
   "time": "15–30 min",
   "age": "11+",
   "tags": ["word game", "cooperative", "puzzle"],
-  "img": "https://cf.geekdo-images.com/fySzW8kEb7bXVkG_1aZ1aQ__itemrep/img/1vPFoZ_pFjTQKJUSqWx4GJ4xHbU=/fit-in/246x300/filters:strip_icc()/pic3536616.jpg",
+  "img": "codenames-duet.jpg",
   "rules": "https://czechgames.com/files/rules/codenames-duet-rules-en.pdf"
 },
 {
@@ -227,7 +227,7 @@ const games = [
   "time": "20 min",
   "age": "10+",
   "tags": ["strategy", "card game", "romance"],
-  "img": "https://cf.geekdo-images.com/nkl0myxBMuZJYk_x-rx8fg__itemrep/img/ldZmNRu_WVfGSEr-QnK_Mqf_ZIk=/fit-in/246x300/filters:strip_icc()/pic2596399.jpg",
+  "img": "love-letter.jpg",
   "rules": "https://www.zmangames.com/en/products/love-letter/"
 },
 {
@@ -240,7 +240,7 @@ const games = [
   "time": "20 min",
   "age": "9+",
   "tags": ["card game", "strategy", "tactical"],
-  "img": "https://cf.geekdo-images.com/VeK7cojQDRzNym6xEkVaEw__itemrep/img/pazUXN8LSI-XFiYybZMFsCtllX4=/fit-in/246x300/filters:strip_icc()/pic6672269.jpg",
+  "img": "scout.jpg",
   "rules": "https://boardgamegeek.com/filepage/226090/scout-english-rules"
 },
 {
@@ -253,7 +253,7 @@ const games = [
   "time": "10–15 min",
   "age": "7+",
   "tags": ["party", "quick", "card game"],
-  "img": "https://images.squarespace-cdn.com/content/v1/5f3c31440bdc2939f50f02c5/1c6a397f-3c38-4e3c-bda4-1b23ae91ef2c/sriracha-game-1.png",
+  "img": "sriracha.jpg",
   "rules": "https://www.srirachathegame.com/rules"
 },
 {
@@ -266,7 +266,7 @@ const games = [
   "time": "10–40 min",
   "age": "8+",
   "tags": ["party", "zombie", "chaotic"],
-  "img": "https://cf.geekdo-images.com/WT8ldJb0WMWaNhqF3G3MNA__itemrep/img/BYJWwaTRchog7zqxSCNDO6HmvLQ=/fit-in/246x300/filters:strip_icc()/pic316343.jpg",
+  "img": "zombie-fluxx.jpg",
   "rules": "https://www.looneylabs.com/sites/default/files/literature/ZombieFluxx-Rules_0.pdf"
 },
 {
@@ -279,7 +279,7 @@ const games = [
   "time": "20–45 min",
   "age": "17+",
   "tags": ["party", "humor", "adult", "satire"],
-  "img": "https://nepobabiesgame.com/cdn/shop/files/nepo-babies-game-box.png",
+  "img": "nepo-babies.jpg",
   "rules": "https://nepobabiesgame.com/pages/how-to-play"
 },
 {
@@ -292,7 +292,7 @@ const games = [
   "time": "30–60 min",
   "age": "8+",
   "tags": ["classic", "strategy", "abstract"],
-  "img": "https://cf.geekdo-images.com/kT3HoNnvcftQ_x0fXtr00w__itemrep/img/GW0Juxtw1cqGDNvTbMNtMWgxJtg=/fit-in/246x300/filters:strip_icc()/pic259767.jpg",
+  "img": "backgammon.jpg",
   "rules": "https://bkgm.com/rules.html"
 }
 
