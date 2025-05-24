@@ -123,7 +123,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "exploding-kittena.webp",
+  "img": "exploding-kittens.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -181,8 +181,8 @@ const games = [
 {
   "title": { "sv": "Cards Against Muggles", "en": "Cards Against Muggles" },
   "description": {
-    "sv": "Ett vuxet kortspel med Harry Potter-tema, fyllt med humor och referenser.",
-    "en": "An adult card game with a Harry Potter theme, filled with humor and references."
+    "sv": "Ett vuxet kortspel med Harry Potter-tema, fyllt med humor och referenser. (olicenserat, så inga pengar har gått till J.K. Rowling)",
+    "en": "An adult card game with a Harry Potter theme, filled with humor and references. (unlicensed, no money went to J.K. Rowling making this)"
   },
   "players": "4–20",
   "time": "30–90 min",
@@ -218,7 +218,7 @@ const games = [
   "rules": "https://czechgames.com/files/rules/codenames-duet-rules-en.pdf"
 },
 {
-  "title": { "sv": "Kärleksbrev", "en": "Love Letter" },
+  "title": { "sv": "Love Letter", "en": "Love Letter" },
   "description": {
     "sv": "Ett snabbt kortspel där du försöker leverera ditt kärleksbrev till prinsessan.",
     "en": "A quick card game where you try to deliver your love letter to the princess."
