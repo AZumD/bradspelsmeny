@@ -181,8 +181,8 @@ const games = [
 {
   "title": { "sv": "Cards Against Muggles", "en": "Cards Against Muggles" },
   "description": {
-    "sv": "Ett vuxet kortspel med Harry Potter-tema, fyllt med humor och referenser. (olicenserat, så inga pengar har gått till J.K. Rowling)",
-    "en": "An adult card game with a Harry Potter theme, filled with humor and references. (unlicensed, no money went to J.K. Rowling making this)"
+    "sv": "Ett vuxet kortspel med Harry Potter-tema, fyllt med humor och referenser. (olicenserat, så inga pengar har gått till J.K. Rowling🏳️‍⚧️)",
+    "en": "An adult card game with a Harry Potter theme, filled with humor and references. (unlicensed, no money went to J.K. Rowling making this🏳️‍⚧️)"
   },
   "players": "4–20",
   "time": "30–90 min",
