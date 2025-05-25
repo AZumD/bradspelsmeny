@@ -84,7 +84,7 @@ const games = [
   "time": "60–90 min",
   "age": "10+",
   "tags": ["humor", "fantasy", "card game"],
-  "img": "img/munchkin.wepb",
+  "img": "img/munchkin.webp",
   "rules": "https://munchkin.game/site-munchkin/assets/files/1138/munchkin_rules-1.pdf"
 },
 {
@@ -136,7 +136,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "/imgexploding-kittens-party-pack.webp",
+  "img": "img/exploding-kittens-party-pack.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens-party"
 },
 {
