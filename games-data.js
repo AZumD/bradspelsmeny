@@ -58,7 +58,7 @@ const games = [
     time: "30 min",
     age: "13+",
     tags: ["social", "party"],
-    img: "the-resistance.webp",
+    img: "img/the-resistance.webp",
     rules: "The Resistance Rulebook.pdf"
   },
   {
@@ -71,7 +71,7 @@ const games = [
     time: "45 min",
     age: "10+",
     tags: ["strategy", "family", "2p"],
-    img: "equinox.webp",
+    img: "img/equinox.webp",
     rules: "https://cdn.1j1ju.com/medias/2b/62/72-equinox-rulebook.pdf"
   },
 {
@@ -84,7 +84,7 @@ const games = [
   "time": "60–90 min",
   "age": "10+",
   "tags": ["humor", "fantasy", "card game"],
-  "img": "munchkin.wepb",
+  "img": "img/munchkin.wepb",
   "rules": "https://munchkin.game/site-munchkin/assets/files/1138/munchkin_rules-1.pdf"
 },
 {
@@ -97,7 +97,7 @@ const games = [
   "time": "30 min",
   "age": "13+",
   "tags": ["social", "deduction", "party"],
-  "img": "avalon.webp",
+  "img": "img/avalon.webp",
   "rules": "https://avalon.fun/pdfs/rules.pdf"
 },
 {
@@ -110,7 +110,7 @@ const games = [
   "time": "15 min",
   "age": "14+",
   "tags": ["bluff", "strategy", "card game"],
-  "img": "coup.webp",
+  "img": "img/coup.webp",
   "rules": "https://boardgame.bg/coup%20rules%20pdf.pdf"
 },
 {
@@ -123,7 +123,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "exploding-kittens.webp",
+  "img": "img/exploding-kittens.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -136,7 +136,7 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "exploding-kittens-party-pack.webp",
+  "img": "/imgexploding-kittens-party-pack.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens-party"
 },
 {
@@ -149,7 +149,7 @@ const games = [
   "time": "15 min",
   "age": "17+",
   "tags": ["party", "humor", "card game", "adult"],
-  "img": "exploding-kittens-nsfw.webp",
+  "img": "img/exploding-kittens-nsfw.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -162,7 +162,7 @@ const games = [
   "time": "60–120 min",
   "age": "13+",
   "tags": ["strategy", "cooperative", "zombie"],
-  "img": "dead-of-winter.webp",
+  "img": "img/dead-of-winter.webp",
   "rules": "https://images.plaidhatgames.com/filer_public/7b/70/7b703bbc-0c6f-44c1-8a45-5a317c1b8bd2/dead_of_winter_rulebook.pdf"
 },
 {
@@ -175,7 +175,7 @@ const games = [
   "time": "45–60 min",
   "age": "8+",
   "tags": ["strategy", "tile placement", "family"],
-  "img": "alhambra.webp",
+  "img": "img/alhambra.webp",
   "rules": "https://www.qworksgames.com/uploads/4/9/5/3/4953747/alhambra_rulebook.pdf"
 },
 {
@@ -188,7 +188,7 @@ const games = [
   "time": "30–90 min",
   "age": "17+",
   "tags": ["party", "humor", "adult"],
-  "img": "cards-against-muggles.webp",
+  "img": "img/cards-against-muggles.webp",
   "rules": "https://familygameshelf.com/2023/08/22/how-to-play-cards-against-muggles/"
 },
 {
@@ -201,7 +201,7 @@ const games = [
   "time": "30 min",
   "age": "10+",
   "tags": ["strategy", "card game", "nature"],
-  "img": "fungi.webp",
+  "img": "img/fungi.webp",
   "rules": "https://lookout-spiele.de/media/pdf/49/f0/e2/fungi_en.pdf"
 },
 {
@@ -214,7 +214,7 @@ const games = [
   "time": "15–30 min",
   "age": "11+",
   "tags": ["word game", "cooperative", "puzzle"],
-  "img": "codenames-duet.webp",
+  "img": "img/codenames-duet.webp",
   "rules": "https://czechgames.com/files/rules/codenames-duet-rules-en.pdf"
 },
 {
@@ -227,7 +227,7 @@ const games = [
   "time": "20 min",
   "age": "10+",
   "tags": ["strategy", "card game", "romance"],
-  "img": "love-letter.webp",
+  "img": "img/love-letter.webp",
   "rules": "https://www.zmangames.com/en/products/love-letter/"
 },
 {
@@ -240,7 +240,7 @@ const games = [
   "time": "20 min",
   "age": "9+",
   "tags": ["card game", "strategy", "tactical"],
-  "img": "scout.webp",
+  "img": "img/scout.webp",
   "rules": "https://boardgamegeek.com/filepage/226090/scout-english-rules"
 },
 {
@@ -253,7 +253,7 @@ const games = [
   "time": "10–15 min",
   "age": "7+",
   "tags": ["party", "quick", "card game"],
-  "img": "sriracha.webp",
+  "img": "img/sriracha.webp",
   "rules": "https://www.srirachathegame.com/rules"
 },
 {
@@ -266,7 +266,7 @@ const games = [
   "time": "10–40 min",
   "age": "8+",
   "tags": ["party", "zombie", "chaotic"],
-  "img": "zombie-fluxx.webp",
+  "img": "img/zombie-fluxx.webp",
   "rules": "https://www.looneylabs.com/sites/default/files/literature/ZombieFluxx-Rules_0.pdf"
 },
 {
@@ -279,7 +279,7 @@ const games = [
   "time": "20–45 min",
   "age": "17+",
   "tags": ["party", "humor", "adult", "satire"],
-  "img": "nepo-babies.webp",
+  "img": "img/nepo-babies.webp",
   "rules": "https://nepobabiesgame.com/pages/how-to-play"
 },
 {
@@ -292,7 +292,7 @@ const games = [
   "time": "30–60 min",
   "age": "8+",
   "tags": ["classic", "strategy", "abstract"],
-  "img": "backgammon.webp",
+  "img": "img/backgammon.webp",
   "rules": "https://bkgm.com/rules.html"
 }
 
