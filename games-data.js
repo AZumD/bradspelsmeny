@@ -45,7 +45,7 @@ const games = [
     time: "? min",
     age: "6+",
     tags: ["2p", "strategy", "family", "party"],
-    img: "cards.webp",
+    img: "/img/cards.webp",
     rules: "https://blogs.glowscotland.org.uk/re/public/west/uploads/sites/2327/2019/02/Card-Games.pdf"
   },
   {
