@@ -55,9 +55,10 @@ function renderGames() {
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
+    <h3>${game.title[currentLang]}</h3>
       <img src="${game.img}" alt="${game.title[currentLang]}" />
       <div class="game-info">
-        <h3>${game.title[currentLang]}</h3>
+        
         <p>
           ${game.description[currentLang]}
           ${game.rules ? `<br><a href="${game.rules}" target="_blank">📄 Rules</a>` : ''}
