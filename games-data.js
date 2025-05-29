@@ -45,11 +45,11 @@ const games = [
     time: "? min",
     age: "6+",
     tags: ["2p", "strategy", "family", "party"],
-    img: "img/cards.webp",
+    img: "img/cards-pxl.webp",
     rules: "https://blogs.glowscotland.org.uk/re/public/west/uploads/sites/2327/2019/02/Card-Games.pdf"
   },
   {
-    title: { sv: "Motståndsrörelsen", en: "The Resistance" },
+    title: { sv: "The Resistance", en: "The Resistance" },
     description: {
       sv: "Ett socialt bluffspel där du aldrig kan lita på någon.",
       en: "A social deduction game of trust and betrayal."
@@ -58,7 +58,7 @@ const games = [
     time: "30 min",
     age: "13+",
     tags: ["social", "party"],
-    img: "img/the-resistance.webp",
+    img: "img/the-resistance-pxl.webp",
     rules: "The Resistance Rulebook.pdf"
   },
   {
@@ -71,7 +71,7 @@ const games = [
     time: "45 min",
     age: "10+",
     tags: ["strategy", "family", "2p"],
-    img: "img/equinox.webp",
+    img: "img/equinox-pxl.webp",
     rules: "https://cdn.1j1ju.com/medias/2b/62/72-equinox-rulebook.pdf"
   },
 {
@@ -84,11 +84,11 @@ const games = [
   "time": "60–90 min",
   "age": "10+",
   "tags": ["humor", "fantasy", "card game"],
-  "img": "img/munchkin.webp",
+  "img": "img/munchkin-pxl.webp",
   "rules": "https://munchkin.game/site-munchkin/assets/files/1138/munchkin_rules-1.pdf"
 },
 {
-  "title": { "sv": "Motståndsrörelsen: Avalon", "en": "The Resistance: Avalon" },
+  "title": { "sv": "The Resistance: Avalon", "en": "The Resistance: Avalon" },
   "description": {
     "sv": "Ett socialt bluffspel i Arthur-legenden där goda och onda kämpar om framtiden.",
     "en": "A social deduction game set in Arthurian legend where good and evil battle for the future."
@@ -97,7 +97,7 @@ const games = [
   "time": "30 min",
   "age": "13+",
   "tags": ["social", "deduction", "party"],
-  "img": "img/avalon.webp",
+  "img": "img/avalon-pxl.webp",
   "rules": "https://avalon.fun/pdfs/rules.pdf"
 },
 {
@@ -110,11 +110,11 @@ const games = [
   "time": "15 min",
   "age": "14+",
   "tags": ["bluff", "strategy", "card game"],
-  "img": "img/coup.webp",
+  "img": "img/coup-pxl.webp",
   "rules": "https://boardgame.bg/coup%20rules%20pdf.pdf"
 },
 {
-  "title": { "sv": "Exploderande Kattungar", "en": "Exploding Kittens" },
+  "title": { "sv": "Exploding Kittens", "en": "Exploding Kittens" },
   "description": {
     "sv": "Ett snabbt och humoristiskt kortspel där du försöker undvika exploderande kattungar.",
     "en": "A fast and humorous card game where you try to avoid exploding kittens."
@@ -123,11 +123,11 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "img/exploding-kittens.webp",
+  "img": "img/exploding-kittens-pxl.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
-  "title": { "sv": "Exploderande Kattungar: Party Pack", "en": "Exploding Kittens: Party Pack" },
+  "title": { "sv": "Exploding Kittens: Party Pack", "en": "Exploding Kittens: Party Pack" },
   "description": {
     "sv": "En utökad version av det populära spelet med plats för fler spelare.",
     "en": "An expanded version of the popular game accommodating more players."
@@ -136,11 +136,11 @@ const games = [
   "time": "15 min",
   "age": "7+",
   "tags": ["party", "humor", "card game"],
-  "img": "img/exploding-kittens-party-pack.webp",
+  "img": "img/exploding-kittens-party-pack-pxl.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens-party"
 },
 {
-  "title": { "sv": "Exploderande Kattungar: NSFW Edition", "en": "Exploding Kittens: NSFW Edition" },
+  "title": { "sv": "Exploding Kittens: NSFW Edition", "en": "Exploding Kittens: NSFW Edition" },
   "description": {
     "sv": "En vuxenversion av det populära spelet med olämpligt innehåll.",
     "en": "An adult version of the popular game with inappropriate content."
@@ -149,7 +149,7 @@ const games = [
   "time": "15 min",
   "age": "17+",
   "tags": ["party", "humor", "card game", "adult"],
-  "img": "img/exploding-kittens-nsfw.webp",
+  "img": "img/exploding-kittens-nsfw-pxl.webp",
   "rules": "https://www.explodingkittens.com/pages/rules-kittens"
 },
 {
@@ -162,7 +162,7 @@ const games = [
   "time": "60–120 min",
   "age": "13+",
   "tags": ["strategy", "cooperative", "zombie"],
-  "img": "img/dead-of-winter.webp",
+  "img": "img/dead-of-winter-pxl.webp",
   "rules": "https://images.plaidhatgames.com/filer_public/7b/70/7b703bbc-0c6f-44c1-8a45-5a317c1b8bd2/dead_of_winter_rulebook.pdf"
 },
 {
@@ -175,7 +175,7 @@ const games = [
   "time": "45–60 min",
   "age": "8+",
   "tags": ["strategy", "tile placement", "family"],
-  "img": "img/alhambra.webp",
+  "img": "img/alhambra-pxl.webp",
   "rules": "https://www.qworksgames.com/uploads/4/9/5/3/4953747/alhambra_rulebook.pdf"
 },
 {
@@ -188,7 +188,7 @@ const games = [
   "time": "30–90 min",
   "age": "17+",
   "tags": ["party", "humor", "adult"],
-  "img": "img/cards-against-muggles.webp",
+  "img": "img/cards-against-muggles-pxl.webp",
   "rules": "https://familygameshelf.com/2023/08/22/how-to-play-cards-against-muggles/"
 },
 {
@@ -201,11 +201,11 @@ const games = [
   "time": "30 min",
   "age": "10+",
   "tags": ["strategy", "card game", "nature"],
-  "img": "img/fungi.webp",
+  "img": "img/fungi-pxl.webp",
   "rules": "https://lookout-spiele.de/media/pdf/49/f0/e2/fungi_en.pdf"
 },
 {
-  "title": { "sv": "Kodnamn: Duett", "en": "Codenames Duet" },
+  "title": { "sv": "Codenames: Duet", "en": "Codenames Duet" },
   "description": {
     "sv": "Ett kooperativt ordspel där ni tillsammans försöker hitta alla agenter.",
     "en": "A cooperative word game where you work together to find all the agents."
@@ -214,7 +214,7 @@ const games = [
   "time": "15–30 min",
   "age": "11+",
   "tags": ["word game", "cooperative", "puzzle"],
-  "img": "img/codenames-duet.webp",
+  "img": "img/codenames-duet-pxl.webp",
   "rules": "https://czechgames.com/files/rules/codenames-duet-rules-en.pdf"
 },
 {
@@ -227,7 +227,7 @@ const games = [
   "time": "20 min",
   "age": "10+",
   "tags": ["strategy", "card game", "romance"],
-  "img": "img/love-letter.webp",
+  "img": "img/love-letter-pxl.webp",
   "rules": "https://www.zmangames.com/en/products/love-letter/"
 },
 {
@@ -240,7 +240,7 @@ const games = [
   "time": "20 min",
   "age": "9+",
   "tags": ["card game", "strategy", "tactical"],
-  "img": "img/scout.webp",
+  "img": "img/scout-pxl.webp",
   "rules": "https://boardgamegeek.com/filepage/226090/scout-english-rules"
 },
 {
@@ -253,7 +253,7 @@ const games = [
   "time": "10–15 min",
   "age": "7+",
   "tags": ["party", "quick", "card game"],
-  "img": "img/sriracha.webp",
+  "img": "img/sriracha-pxl.webp",
   "rules": "https://www.srirachathegame.com/rules"
 },
 {
@@ -266,7 +266,7 @@ const games = [
   "time": "10–40 min",
   "age": "8+",
   "tags": ["party", "zombie", "chaotic"],
-  "img": "img/zombie-fluxx.webp",
+  "img": "img/zombie-fluxx-pxl.webp",
   "rules": "https://www.looneylabs.com/sites/default/files/literature/ZombieFluxx-Rules_0.pdf"
 },
 {
@@ -279,7 +279,7 @@ const games = [
   "time": "20–45 min",
   "age": "17+",
   "tags": ["party", "humor", "adult", "satire"],
-  "img": "img/nepo-babies.webp",
+  "img": "img/nepo-babies-pxl.webp",
   "rules": "https://nepobabiesgame.com/pages/how-to-play"
 },
 {
@@ -292,7 +292,7 @@ const games = [
   "time": "30–60 min",
   "age": "8+",
   "tags": ["classic", "strategy", "abstract"],
-  "img": "img/backgammon.webp",
+  "img": "img/backgammon-pxl.webp",
   "rules": "https://bkgm.com/rules.html"
 }
 
