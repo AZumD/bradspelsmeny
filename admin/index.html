@@ -30,8 +30,7 @@
       border: 2px solid #8b0000;
       border-radius: 5px;
     }
-    #resetButton, #exportButton {
-      display: inline-block;
+    button {
       margin: 0 10px 20px 0;
       padding: 10px 20px;
       background-color: #8b0000;
@@ -53,7 +52,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 100%;
     }
     .game-title {
       font-weight: bold;
@@ -63,16 +61,27 @@
       color: #555;
       margin-top: 6px;
     }
-    .toggle-button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      background-color: #8b0000;
-      color: white;
-      cursor: pointer;
+    form#gameForm {
+      display: none;
+      flex-direction: column;
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #8b0000;
+      border-radius: 10px;
+      margin-bottom: 30px;
     }
-    .toggle-button.lent {
-      background-color: #999;
+    form#gameForm input,
+    form#gameForm textarea {
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 1rem;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form#gameForm label {
+      font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -80,8 +89,37 @@
   <div class="wrapper">
     <h1>Admin Panel</h1>
     <input type="text" id="searchBar" placeholder="Search games...">
+    <button id="addGameButton">➕ Add New Game</button>
     <button id="resetButton">Reset All</button>
     <button id="exportButton">Download Sync File</button>
+
+    <!-- Game Form -->
+    <form id="gameForm">
+      <h2 id="formTitle">Add/Edit Game</h2>
+      <input type="hidden" id="editingIndex" />
+      <label for="titleSv">Title (sv)</label>
+      <input id="titleSv" required />
+      <label for="titleEn">Title (en)</label>
+      <input id="titleEn" required />
+      <label for="descSv">Description (sv)</label>
+      <textarea id="descSv" required></textarea>
+      <label for="descEn">Description (en)</label>
+      <textarea id="descEn" required></textarea>
+      <label for="players">Players</label>
+      <input id="players" />
+      <label for="time">Time</label>
+      <input id="time" />
+      <label for="age">Age</label>
+      <input id="age" />
+      <label for="tags">Tags (comma-separated)</label>
+      <input id="tags" />
+      <label for="img">Image URL</label>
+      <input id="img" />
+      <label for="rules">Rules URL (optional)</label>
+      <input id="rules" />
+      <button type="submit">💾 Save</button>
+    </form>
+
     <div id="gameList"></div>
   </div>
 
