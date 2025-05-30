@@ -13,15 +13,28 @@ async function loadLentStatus() {
   }
 }
 const tableSelect = document.getElementById("tableSelect");
-function getSelectedTables() {
-  return JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
+const selectedDisplay = document.getElementById("selectedTablesDisplay");
+
+function updateSelectedTablesDisplay() {
+  const selected = Array.from(tableSelect.selectedOptions).map(opt => opt.textContent);
+  selectedDisplay.textContent = selected.length
+    ? `Du har valt: ${selected.join(', ')}`
+    : '';
 }
+
 if (tableSelect) {
   tableSelect.addEventListener("change", () => {
     const selected = Array.from(tableSelect.selectedOptions).map(opt => opt.value);
     sessionStorage.setItem("selectedTables", JSON.stringify(selected));
-    console.log("Selected tables:", selected);
+    updateSelectedTablesDisplay();
   });
+
+  // Show saved selection on load
+  const preSelected = JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
+  Array.from(tableSelect.options).forEach(opt => {
+    if (preSelected.includes(opt.value)) opt.selected = true;
+  });
+  updateSelectedTablesDisplay();
 }
 
 function renderCategories() {
