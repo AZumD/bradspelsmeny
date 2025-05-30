@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
+
+
+    .loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #8b0000;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
     @media (max-width: 768px) {
   #gameList {
     display: grid;
@@ -171,6 +190,9 @@
       </div>  
       <div id="intro"></div>
       <h2 id="categoryHeading"></h2>
+      <div id="loadingSpinner" class="loading-spinner">
+  <span>Laddar spel...</span>
+</div>
       <div id="gameList"></div>  
     </main>  
   </div>  
