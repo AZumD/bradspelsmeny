@@ -294,7 +294,7 @@ const games = [
   "tags": ["classic", "strategy", "abstract"],
   "img": "img/backgammon-pxl.webp",
   "rules": "https://bkgm.com/rules.html"
-},
+}
 
 
 ];
