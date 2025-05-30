@@ -13,6 +13,7 @@ function renderCategories() {
     badge.onclick = () => {
       currentCategory = tag;
       renderCategories();
+      renderGames();
     };
     badgeContainer.appendChild(badge);
   }
