@@ -13,7 +13,6 @@ function renderCategories() {
     badge.onclick = () => {
       currentCategory = tag;
       renderCategories();
-      renderGames();
     };
     badgeContainer.appendChild(badge);
   }
@@ -74,6 +73,16 @@ function renderGames() {
   });
 }
 
-window.onload = () => {
-  setLanguage(currentLang);
-};
+document.addEventListener("DOMContentLoaded", () => {
+  const spinner = document.getElementById("loadingSpinner");
+  const gameList = document.getElementById("gameList");
+
+  spinner.style.display = "flex";
+  gameList.style.display = "none";
+
+  setTimeout(() => {
+    setLanguage(currentLang); // this will call renderGames()
+    spinner.style.display = "none";
+    gameList.style.display = "grid";
+  }, 500);
+});
