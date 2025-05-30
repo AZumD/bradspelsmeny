@@ -5,6 +5,8 @@ let resetButton = document.getElementById('resetButton');
 let exportButton = document.getElementById('exportButton');
 let addGameButton = document.getElementById('addGameButton');
 
+let modal = document.getElementById('gameModal');
+let closeModalButton = document.getElementById('closeModal');
 let form = document.getElementById('gameForm');
 let formTitle = document.getElementById('formTitle');
 let editingIndexInput = document.getElementById('editingIndex');
@@ -54,7 +56,7 @@ function renderGameList() {
 
 function editGame(index) {
   const game = games[index];
-  form.style.display = 'flex';
+  openForm();
   formTitle.textContent = 'Edit Game';
   editingIndexInput.value = index;
   titleSv.value = game.title.sv;
@@ -69,12 +71,22 @@ function editGame(index) {
   rules.value = game.rules || '';
 }
 
+function openForm() {
+  form.reset();
+  modal.style.display = 'block';
+}
+
+function closeForm() {
+  modal.style.display = 'none';
+}
+
 addGameButton.onclick = () => {
-  form.style.display = 'flex';
+  openForm();
   formTitle.textContent = 'Add New Game';
   editingIndexInput.value = '';
-  form.reset();
-}
+};
+
+closeModalButton.onclick = closeForm;
 
 form.onsubmit = (e) => {
   e.preventDefault();
@@ -102,7 +114,7 @@ form.onsubmit = (e) => {
   } else {
     games.push(newGame);
   }
-  form.style.display = 'none';
+  closeForm();
   renderGameList();
 };
 
@@ -129,3 +141,4 @@ exportButton.onclick = () => {
 searchBar.oninput = renderGameList;
 
 window.onload = renderGameList;
+
