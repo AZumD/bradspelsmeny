@@ -3,9 +3,10 @@ let lentStatus = {};
 async function loadLentStatus() {
   try {
     const res = await fetch('lent-status.json');
+    if (!res.ok) throw new Error("File not found or error fetching lent-status.json");
     lentStatus = await res.json();
   } catch (err) {
-    console.warn("Could not load lent-status.json", err);
+    console.warn("Could not load lent-status.json — falling back to empty status", err);
     lentStatus = {};
   }
 }
