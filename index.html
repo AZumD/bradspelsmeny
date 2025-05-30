@@ -174,6 +174,12 @@
   </style>  
 </head>  
 <body>  
+  <svg id="table-map" width="300" height="300" viewBox="0 0 300 300" style="border:1px solid #ccc">
+  <rect x="20" y="20" width="60" height="40" fill="#f0f0f0" stroke="#333" data-table="1" />
+  <rect x="100" y="20" width="60" height="40" fill="#f0f0f0" stroke="#333" data-table="2" />
+  <rect x="180" y="20" width="60" height="40" fill="#f0f0f0" stroke="#333" data-table="3" />
+</svg>
+
   <div class="wrapper">  
     <div id="banner">  
       <img src="banner3.png" alt="Banner" />  
@@ -196,6 +202,25 @@
       <div id="gameList"></div>  
     </main>  
   </div>  
+  <script>
+  const selectedTables = new Set();
+
+  document.getElementById("table-map").addEventListener("click", function (e) {
+    if (e.target.tagName === "rect") {
+      const table = e.target.dataset.table;
+
+      if (selectedTables.has(table)) {
+        selectedTables.delete(table);
+        e.target.setAttribute("fill", "#f0f0f0");
+      } else {
+        selectedTables.add(table);
+        e.target.setAttribute("fill", "#add8e6");
+      }
+
+      console.log("Selected tables:", Array.from(selectedTables));
+    }
+  });
+</script>
 <script src="games-data.js"></script>
  <script src="main.js"></script>
 </body>  
