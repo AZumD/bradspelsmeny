@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
+    @media (max-width: 768px) {
+  #gameList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    
+  }
+}
+@media (max-width: 768px) {
+  .game-card img {
+    width: 100%;
+  }
+}
     .category-badges {
       display: flex;
       flex-wrap: wrap;
@@ -138,12 +151,6 @@
       font-size: 0.6rem;
       margin: 10px 0;
       transition: box-shadow 0.2s ease;
-    }
-
-    @media (max-width: 768px) {
-      #gameList {
-        display: block;
-      }
     }
   </style>  
 </head>  
