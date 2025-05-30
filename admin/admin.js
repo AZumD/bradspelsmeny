@@ -16,13 +16,18 @@ function renderGameList() {
     const card = document.createElement('div');
     card.className = 'game-card';
 
+    const header = document.createElement('div');
+    header.className = 'game-header';
+
     const title = document.createElement('div');
     title.className = 'game-title';
     title.textContent = game.title.en;
 
     const toggle = document.createElement('button');
     toggle.className = 'toggle-button';
-    if (lentStatus[game.title.en]) {
+    const isLent = lentStatus[game.title.en];
+
+    if (isLent) {
       toggle.textContent = 'Lent Out';
       toggle.classList.add('lent');
     } else {
@@ -30,18 +35,42 @@ function renderGameList() {
     }
 
     toggle.onclick = () => {
-      lentStatus[game.title.en] = !lentStatus[game.title.en];
+      if (!isLent) {
+        const who = prompt("Who is borrowing this game?");
+        lentStatus[game.title.en] = {
+          by: who || "Unknown",
+          time: new Date().toLocaleString()
+        };
+      } else {
+        delete lentStatus[game.title.en];
+      }
       localStorage.setItem('lentStatus', JSON.stringify(lentStatus));
       renderGameList();
     };
 
-    card.appendChild(title);
-    card.appendChild(toggle);
+    header.appendChild(title);
+    header.appendChild(toggle);
+    card.appendChild(header);
+
+    if (isLent) {
+      const info = document.createElement('div');
+      info.className = 'lent-info';
+      info.textContent = `Borrowed by: ${isLent.by} at ${isLent.time}`;
+      card.appendChild(info);
+    }
+
     container.appendChild(card);
   });
 }
 
 document.getElementById('searchBar').addEventListener('input', renderGameList);
+document.getElementById('resetButton').addEventListener('click', () => {
+  if (confirm("Are you sure you want to reset all lent-out statuses?")) {
+    lentStatus = {};
+    localStorage.setItem('lentStatus', '{}');
+    renderGameList();
+  }
+});
 
 // Initialize
 renderGameList();
