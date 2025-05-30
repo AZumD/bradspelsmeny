@@ -125,5 +125,25 @@
 
   <script src="../games-data.js"></script>
   <script src="admin.js"></script>
+  <div id="gameModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:white; padding:20px; border-radius:10px; max-width:500px; width:90%; font-family:sans-serif; position:relative;">
+    <button id="closeModal" style="position:absolute; top:10px; right:10px; font-size:16px;">✖️</button>
+    <h2 id="formTitle" style="margin-top:0;">Add/Edit Game</h2>
+    <form id="gameForm">
+      <input type="hidden" id="editingIndex" />
+      <label>Title (SV):<br><input id="titleSv" required></label><br><br>
+      <label>Title (EN):<br><input id="titleEn" required></label><br><br>
+      <label>Description (SV):<br><textarea id="descSv" required></textarea></label><br><br>
+      <label>Description (EN):<br><textarea id="descEn" required></textarea></label><br><br>
+      <label>Players:<br><input id="players" required></label><br><br>
+      <label>Time:<br><input id="time" required></label><br><br>
+      <label>Age:<br><input id="age" required></label><br><br>
+      <label>Tags (comma-separated):<br><input id="tags"></label><br><br>
+      <label>Image URL:<br><input id="img" required></label><br><br>
+      <label>Rules URL:<br><input id="rules"></label><br><br>
+      <button type="submit">💾 Save Game</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>
