@@ -1,4 +1,6 @@
 // admin.js
+console.log('Games array:', games);
+
 let searchBar = document.getElementById('searchBar');
 let gameList = document.getElementById('gameList');
 let resetButton = document.getElementById('resetButton');
