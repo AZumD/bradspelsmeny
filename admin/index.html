@@ -1,122 +1,138 @@
-<!-- admin/index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Board Game Admin Panel</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      padding: 0;
+      padding: 1em;
+      background: #f7f7f7;
     }
-    .wrapper {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #8b0000;
-    }
-    #searchBar {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      border: 2px solid #8b0000;
-      border-radius: 5px;
-    }
-    button {
-      margin: 0 10px 20px 0;
-      padding: 10px 20px;
-      background-color: #8b0000;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .game-card {
+
+    #gameList {
       display: flex;
       flex-direction: column;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      gap: 1em;
     }
+
+    .game-card {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+    }
+
     .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .game-title {
       font-weight: bold;
     }
+
     .lent-info {
-      font-size: 0.8rem;
-      color: #555;
-      margin-top: 6px;
+      margin-top: 0.5em;
+      font-size: 0.9em;
+      white-space: pre-wrap;
     }
-    form#gameForm {
-      display: none;
-      flex-direction: column;
-      background: #fff;
-      padding: 20px;
-      border: 2px solid #8b0000;
-      border-radius: 10px;
-      margin-bottom: 30px;
-    }
-    form#gameForm input,
-    form#gameForm textarea {
-      margin-bottom: 10px;
-      padding: 8px;
-      font-size: 1rem;
-      width: 100%;
-      border: 1px solid #ccc;
+
+    .edit-button {
+      background: #eee;
+      border: none;
+      padding: 0.5em;
       border-radius: 4px;
+      cursor: pointer;
     }
-    form#gameForm label {
-      font-weight: bold;
-      margin-top: 10px;
+
+    #gameModal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    #modalContent {
+      background: white;
+      padding: 2em;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #gameForm input, #gameForm textarea {
+      width: 100%;
+      margin-bottom: 1em;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1em;
+      gap: 0.5em;
+      flex-wrap: wrap;
+    }
+
+    .top-bar input[type="text"] {
+      flex-grow: 1;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h1>Admin Panel</h1>
-    <input type="text" id="searchBar" placeholder="Search games...">
-    <button id="addGameButton">➕ Add New Game</button>
-    <button id="resetButton">Reset All</button>
-    <button id="exportButton">Download Sync File</button>
+  <h1>Game Admin Panel</h1>
 
-    <div id="gameList"></div>
+  <div class="top-bar">
+    <input id="searchBar" type="text" placeholder="Search games..." />
+    <button id="addGameButton">Add Game</button>
+    <button id="resetButton">Reset Lent Data</button>
+    <button id="exportButton">Export Games</button>
   </div>
 
-  <script src="../games-data.js"></script>
+  <div id="gameList"></div>
+
+  <div id="gameModal">
+    <div id="modalContent">
+      <h2 id="formTitle">Add/Edit Game</h2>
+      <form id="gameForm">
+        <input type="hidden" id="editingIndex" />
+        <label>Title (SV): <input id="titleSv" required /></label>
+        <label>Title (EN): <input id="titleEn" required /></label>
+        <label>Description (SV): <textarea id="descSv" required></textarea></label>
+        <label>Description (EN): <textarea id="descEn" required></textarea></label>
+        <label>Players: <input id="players" required /></label>
+        <label>Time: <input id="time" required /></label>
+        <label>Age: <input id="age" required /></label>
+        <label>Tags (comma separated): <input id="tags" required /></label>
+        <label>Image URL: <input id="img" required /></label>
+        <label>Rules URL: <input id="rules" /></label>
+        <button type="submit">Save</button>
+        <button type="button" id="closeModal">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="games-data.js"></script>
   <script src="admin.js"></script>
-  <div id="gameModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
-  <div style="background:white; padding:20px; border-radius:10px; max-width:500px; width:90%; font-family:sans-serif; position:relative;">
-    <button id="closeModal" style="position:absolute; top:10px; right:10px; font-size:16px;">✖️</button>
-    <h2 id="formTitle" style="margin-top:0;">Add/Edit Game</h2>
-    <form id="gameForm">
-      <input type="hidden" id="editingIndex" />
-      <label>Title (SV):<br><input id="titleSv" required></label><br><br>
-      <label>Title (EN):<br><input id="titleEn" required></label><br><br>
-      <label>Description (SV):<br><textarea id="descSv" required></textarea></label><br><br>
-      <label>Description (EN):<br><textarea id="descEn" required></textarea></label><br><br>
-      <label>Players:<br><input id="players" required></label><br><br>
-      <label>Time:<br><input id="time" required></label><br><br>
-      <label>Age:<br><input id="age" required></label><br><br>
-      <label>Tags (comma-separated):<br><input id="tags"></label><br><br>
-      <label>Image URL:<br><input id="img" required></label><br><br>
-      <label>Rules URL:<br><input id="rules"></label><br><br>
-      <button type="submit">💾 Save Game</button>
-    </form>
-  </div>
-</div>
 </body>
 </html>
+
+Let me know if you’d like to:
+
+Add a delete button
+
+Sort games alphabetically
+
+Add category filters
+
+Improve mobile styling further
+
+Localize the admin panel text into Swedish
+
+
+Or anything else!
+
