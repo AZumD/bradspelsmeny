@@ -30,18 +30,38 @@
       border: 2px solid #8b0000;
       border-radius: 5px;
     }
+    #resetButton, #exportButton {
+      display: inline-block;
+      margin: 0 10px 20px 0;
+      padding: 10px 20px;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
     .game-card {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
       background: #fff;
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
     .game-title {
       font-weight: bold;
+    }
+    .lent-info {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 6px;
     }
     .toggle-button {
       padding: 6px 12px;
@@ -60,6 +80,8 @@
   <div class="wrapper">
     <h1>Admin Panel</h1>
     <input type="text" id="searchBar" placeholder="Search games...">
+    <button id="resetButton">Reset All</button>
+    <button id="exportButton">Download Sync File</button>
     <div id="gameList"></div>
   </div>
 
