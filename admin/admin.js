@@ -64,12 +64,25 @@ function renderGameList() {
 }
 
 document.getElementById('searchBar').addEventListener('input', renderGameList);
+
 document.getElementById('resetButton').addEventListener('click', () => {
   if (confirm("Are you sure you want to reset all lent-out statuses?")) {
     lentStatus = {};
     localStorage.setItem('lentStatus', '{}');
     renderGameList();
   }
+});
+
+document.getElementById('exportButton').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(lentStatus, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lent-status.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
 // Initialize
