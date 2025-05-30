@@ -25,9 +25,9 @@ function renderIntro() {
 
 function setLanguage(lang) {
   currentLang = lang;
+  currentCategory = 'all';
   renderCategories();
   renderIntro();
-  currentCategory = 'all';
   renderGames();
 }
 
