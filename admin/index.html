@@ -1,0 +1,120 @@
+<!-- admin/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Board Game Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #8b0000;
+    }
+    #searchBar {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      border: 2px solid #8b0000;
+      border-radius: 5px;
+    }
+    .game-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .game-title {
+      font-weight: bold;
+    }
+    .toggle-button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #8b0000;
+      color: white;
+      cursor: pointer;
+    }
+    .toggle-button.lent {
+      background-color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Admin Panel</h1>
+    <input type="text" id="searchBar" placeholder="Search games...">
+    <div id="gameList"></div>
+  </div>
+
+  <script>
+    let games = [];
+    let lentStatus = JSON.parse(localStorage.getItem('lentStatus') || '{}');
+
+    async function fetchGames() {
+      const res = await fetch('../games-data.json');
+      games = await res.json();
+      renderGameList();
+    }
+
+    function renderGameList() {
+      const container = document.getElementById('gameList');
+      const search = document.getElementById('searchBar').value.toLowerCase();
+      container.innerHTML = '';
+
+      const filtered = games.filter(game =>
+        game.title.en.toLowerCase().includes(search) ||
+        game.title.sv.toLowerCase().includes(search)
+      );
+
+      filtered.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+
+        const title = document.createElement('div');
+        title.className = 'game-title';
+        title.textContent = game.title.en;
+
+        const toggle = document.createElement('button');
+        toggle.className = 'toggle-button';
+        if (lentStatus[game.title.en]) {
+          toggle.textContent = 'Lent Out';
+          toggle.classList.add('lent');
+        } else {
+          toggle.textContent = 'Available';
+        }
+
+        toggle.onclick = () => {
+          lentStatus[game.title.en] = !lentStatus[game.title.en];
+          localStorage.setItem('lentStatus', JSON.stringify(lentStatus));
+          renderGameList();
+        };
+
+        card.appendChild(title);
+        card.appendChild(toggle);
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('searchBar').addEventListener('input', renderGameList);
+
+    fetchGames();
+  </script>
+</body>
+</html>
