@@ -21,7 +21,22 @@ let tags = document.getElementById('tags');
 let img = document.getElementById('img');
 let rules = document.getElementById('rules');
 
-function renderGameList() {
+let lentStatus = {};
+
+async function loadLentStatus() {
+  try {
+    const res = await fetch('../lent-status.json');
+    if (!res.ok) throw new Error("Failed to load lent-status.json");
+    lentStatus = await res.json();
+  } catch (err) {
+    console.warn("Could not load lent-status.json", err);
+    lentStatus = {};
+  }
+}
+
+async function renderGameList() {
+  await loadLentStatus();
+
   const query = searchBar.value.toLowerCase();
   gameList.innerHTML = '';
 
@@ -44,8 +59,16 @@ function renderGameList() {
 
       const info = document.createElement('div');
       info.className = 'lent-info';
-      info.textContent = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
+      let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
 
+      const lentEntry = lentStatus[game.title.en] || lentStatus[game.title.sv];
+      if (lentEntry) {
+        lentInfoText += `\n🔒 Lent out by ${lentEntry.by} at ${lentEntry.time}`;
+        card.style.opacity = 0.5;
+        card.style.filter = 'grayscale(1)';
+      }
+
+      info.textContent = lentInfoText;
       card.appendChild(header);
       card.appendChild(info);
 
@@ -73,7 +96,7 @@ function editGame(index) {
 
 function openForm() {
   form.reset();
-  modal.style.display = 'block';
+  modal.style.display = 'flex';
 }
 
 function closeForm() {
