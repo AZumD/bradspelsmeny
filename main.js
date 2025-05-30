@@ -1,37 +1,18 @@
-let currentCategory = 'all';
-let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
+let lentStatus = {};
 
-function renderCategories() {
-  const badgeContainer = document.getElementById('categoryBadges');
-  badgeContainer.innerHTML = '';
-
-  for (const tag in translations[currentLang].categories) {
-    const badge = document.createElement('div');
-    badge.className = 'category-badge';
-    if (tag === currentCategory) badge.classList.add('active');
-    badge.textContent = translations[currentLang].categories[tag];
-    badge.onclick = () => {
-      currentCategory = tag;
-      renderCategories();
-      renderGames();
-    };
-    badgeContainer.appendChild(badge);
+async function loadLentStatus() {
+  try {
+    const res = await fetch('lent-status.json');
+    lentStatus = await res.json();
+  } catch (err) {
+    console.warn("Could not load lent-status.json", err);
+    lentStatus = {};
   }
 }
 
-function renderIntro() {
-  document.getElementById('intro').textContent = translations[currentLang].intro;
-}
+async function renderGames() {
+  await loadLentStatus(); // 👈 Load lent status before rendering
 
-function setLanguage(lang) {
-  currentLang = lang;
-  currentCategory = 'all';
-  renderCategories();
-  renderIntro();
-  renderGames();
-}
-
-function renderGames() {
   const container = document.getElementById('gameList');
   const search = document.getElementById('searchBar').value.toLowerCase();
   const heading = document.getElementById('categoryHeading');
@@ -54,15 +35,16 @@ function renderGames() {
   filtered.forEach(game => {
     const card = document.createElement('div');
     card.className = 'game-card';
+
+    const title = game.title[currentLang];
+    const isLent = lentStatus[title];
+
     card.innerHTML = `
-    <h3>${game.title[currentLang]}</h3>
-      <img src="${game.img}" alt="${game.title[currentLang]}" />
+      <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
+      <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
       <div class="game-info">
-        
-        <p>
-          ${game.description[currentLang]}
-          ${game.rules ? `<br><a href="${game.rules}" target="_blank">📄 Rules</a>` : ''}
-        </p>
+        <p>${game.description[currentLang]}</p>
+        ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
         <div class="tags">
           👥 ${translations[currentLang].ui.players}: ${game.players} ・
           ⏱ ${translations[currentLang].ui.time}: ${game.time} ・
@@ -70,20 +52,7 @@ function renderGames() {
         </div>
       </div>
     `;
+
     container.appendChild(card);
   });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const spinner = document.getElementById("loadingSpinner");
-  const gameList = document.getElementById("gameList");
-
-  spinner.style.display = "flex";
-  gameList.style.display = "none";
-
-  setTimeout(() => {
-    setLanguage(currentLang); // this will call renderGames()
-    spinner.style.display = "none";
-    gameList.style.display = "grid";
-  }, 500);
-});
