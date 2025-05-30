@@ -12,6 +12,17 @@ async function loadLentStatus() {
     lentStatus = {};
   }
 }
+const tableSelect = document.getElementById("tableSelect");
+function getSelectedTables() {
+  return JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
+}
+if (tableSelect) {
+  tableSelect.addEventListener("change", () => {
+    const selected = Array.from(tableSelect.selectedOptions).map(opt => opt.value);
+    sessionStorage.setItem("selectedTables", JSON.stringify(selected));
+    console.log("Selected tables:", selected);
+  });
+}
 
 function renderCategories() {
   const badgeContainer = document.getElementById('categoryBadges');
