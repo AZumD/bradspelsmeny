@@ -1,3 +1,4 @@
+const spinner = document.getElementById('loadingSpinner');
 let searchBar = document.getElementById('searchBar');
 let gameList = document.getElementById('gameList');
 let resetButton = document.getElementById('resetButton');
@@ -40,14 +41,16 @@ async function loadLentStatus() {
 }
 
 async function renderGameList() {
+  if (spinner) spinner.style.display = 'block';
   await loadLentStatus();
+
   const query = searchBar.value.toLowerCase();
   gameList.innerHTML = '';
 
-  games.forEach((game) => {
+  games.forEach((game, index) => {
     if (
-      game.title_sv.toLowerCase().includes(query) ||
-      game.title_en.toLowerCase().includes(query)
+      game.title.sv.toLowerCase().includes(query) ||
+      game.title.en.toLowerCase().includes(query)
     ) {
       const card = document.createElement('div');
       card.className = 'game-card';
@@ -55,9 +58,9 @@ async function renderGameList() {
       const header = document.createElement('div');
       header.className = 'game-header';
       header.innerHTML = `
-        <span class="game-title">${game.title_sv} / ${game.title_en}</span>
+        <span class="game-title">${game.title.sv} / ${game.title.en}</span>
         <div>
-          <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
+          <button class="edit-button" onclick="editGame(${index})">✏️ Edit</button>
         </div>
       `;
 
@@ -65,7 +68,7 @@ async function renderGameList() {
       info.className = 'lent-info';
       let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
 
-      const lentEntry = lentStatus[game.title_en] || lentStatus[game.title_sv];
+      const lentEntry = lentStatus[game.title.en] || lentStatus[game.title.sv];
       if (lentEntry) {
         lentInfoText += `\n🔒 Lent out by ${lentEntry.by} at ${lentEntry.time}`;
         card.style.opacity = 0.5;
@@ -75,9 +78,12 @@ async function renderGameList() {
       info.textContent = lentInfoText;
       card.appendChild(header);
       card.appendChild(info);
+
       gameList.appendChild(card);
     }
   });
+
+  if (spinner) spinner.style.display = 'none';
 }
 
 window.editGame = (id) => {
