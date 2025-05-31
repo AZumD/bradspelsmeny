@@ -1,217 +1,131 @@
 // admin.js
 
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.getElementById('languageToggle');
-  const html = document.documentElement;
+let games = [];
+let editingIndex = null;
 
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      const isSwedish = html.lang === 'sv';
-      html.lang = isSwedish ? 'en' : 'sv';
-      toggle.textContent = isSwedish ? '🇬🇧 English' : '🇸🇪 Svenska';
-      location.reload();
-    });
+const gameList = document.getElementById("gameList");
+const searchBar = document.getElementById("searchBar");
+const gameModal = document.getElementById("gameModal");
+const gameForm = document.getElementById("gameForm");
+const loadingSpinner = document.getElementById("loadingSpinner");
+const addGameButton = document.getElementById("addGameButton");
+
+async function fetchGames() {
+  loadingSpinner.style.display = "block";
+  const res = await fetch("https://bradspelsmeny-backend.onrender.com/games");
+  games = await res.json();
+  loadingSpinner.style.display = "none";
+  renderGames();
+}
+
+function renderGames() {
+  const search = searchBar.value.toLowerCase();
+  gameList.innerHTML = "";
+  games.filter(game => game.title.toLowerCase().includes(search)).forEach((game, index) => {
+    const card = document.createElement("div");
+    card.className = "game-card";
+
+    const header = document.createElement("div");
+    header.className = "game-header";
+
+    const title = document.createElement("div");
+    title.className = "game-title";
+    title.textContent = game.title;
+
+    const buttons = document.createElement("div");
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-button";
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => openModal(index);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-button";
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = () => deleteGame(index);
+
+    buttons.appendChild(editBtn);
+    buttons.appendChild(deleteBtn);
+    header.appendChild(title);
+    header.appendChild(buttons);
+
+    const lentInfo = document.createElement("div");
+    lentInfo.className = "lent-info";
+    lentInfo.textContent = game.lent ? "Lent out" : "Available";
+
+    card.appendChild(header);
+    card.appendChild(lentInfo);
+    gameList.appendChild(card);
+  });
+}
+
+function openModal(index = null) {
+  editingIndex = index;
+  const isNew = index === null;
+  document.getElementById("formTitle").textContent = isNew ? "Lägg till spel" : "Redigera spel";
+
+  const game = isNew ? {} : games[index];
+
+  gameForm.reset();
+  document.getElementById("editingIndex").value = index ?? "";
+  document.getElementById("titleEn").value = game.title || "";
+  document.getElementById("descSv").value = game.description_sv || "";
+  document.getElementById("descEn").value = game.description_en || "";
+  document.getElementById("players").value = game.players || "";
+  document.getElementById("time").value = game.time || "";
+  document.getElementById("age").value = game.age || "";
+  document.getElementById("tags").value = game.tags || "";
+  document.getElementById("img").value = game.img || "";
+  document.getElementById("rules").value = game.rules || "";
+
+  gameModal.style.display = "flex";
+}
+
+document.getElementById("closeModal").onclick = () => {
+  gameModal.style.display = "none";
+};
+
+gameForm.onsubmit = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+
+  formData.append("title", document.getElementById("titleEn").value);
+  formData.append("description_sv", document.getElementById("descSv").value);
+  formData.append("description_en", document.getElementById("descEn").value);
+  formData.append("players", document.getElementById("players").value);
+  formData.append("time", document.getElementById("time").value);
+  formData.append("age", document.getElementById("age").value);
+  formData.append("tags", document.getElementById("tags").value);
+  formData.append("img", document.getElementById("img").value);
+  formData.append("rules", document.getElementById("rules").value);
+
+  const imgFile = document.getElementById("imgFile").files[0];
+  const rulesFile = document.getElementById("rulesFile").files[0];
+
+  if (imgFile) formData.append("imgFile", imgFile);
+  if (rulesFile) formData.append("rulesFile", rulesFile);
+
+  const index = document.getElementById("editingIndex").value;
+  const method = index === "" ? "POST" : "PUT";
+  const url = index === ""
+    ? "https://bradspelsmeny-backend.onrender.com/games"
+    : `https://bradspelsmeny-backend.onrender.com/games/${index}`;
+
+  const res = await fetch(url, {
+    method,
+    body: formData
+  });
+
+  if (res.ok) {
+    await fetchGames();
+    gameModal.style.display = "none";
+  } else {
+    alert("Något gick fel vid sparandet.");
   }
+};
 
-  const spinner = document.getElementById('loadingSpinner');
-  const searchBar = document.getElementById('searchBar');
-  const gameList = document.getElementById('gameList');
-  const resetButton = document.getElementById('resetButton');
-  const exportButton = document.getElementById('exportButton');
-  const addGameButton = document.getElementById('addGameButton');
+document.getElementById("addGameButton").onclick = () => openModal();
 
-  const modal = document.getElementById('gameModal');
-  const closeModalButton = document.getElementById('closeModal');
-  const form = document.getElementById('gameForm');
-  const formTitle = document.getElementById('formTitle');
-  const editingIdInput = document.getElementById('editingIndex');
-  const titleSv = document.getElementById('titleSv');
-  const titleEn = document.getElementById('titleEn');
-  const descSv = document.getElementById('descSv');
-  const descEn = document.getElementById('descEn');
-  const players = document.getElementById('players');
-  const time = document.getElementById('time');
-  const age = document.getElementById('age');
-  const tags = document.getElementById('tags');
-  const img = document.getElementById('img');
-  const rules = document.getElementById('rules');
+searchBar.addEventListener("input", renderGames);
 
-  let games = [];
-
-  async function fetchGames() {
-    if (spinner) spinner.style.display = 'block';
-    try {
-      const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
-      games = await res.json();
-      if (searchBar && gameList) await renderGameList();
-    } catch (err) {
-      console.error('Failed to fetch games:', err);
-      if (gameList) {
-        gameList.innerHTML = `<p style="color:red;">⚠️ Failed to load games.</p>`;
-      }
-    } finally {
-      if (spinner) spinner.style.display = 'none';
-    }
-  }
-
-  async function renderGameList() {
-    const query = searchBar.value.toLowerCase();
-    gameList.innerHTML = '';
-
-    games.forEach((game, index) => {
-      if (
-        game.title_en.toLowerCase().includes(query)
-      ) {
-        const card = document.createElement('div');
-        card.className = 'game-card';
-
-        const header = document.createElement('div');
-        header.className = 'game-header';
-        header.innerHTML = `
-          <span class="game-title">${game.title_en}</span>
-          <div>
-            <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
-            <button class="delete-button" onclick="deleteGame(${game.id})">🗑️ Delete</button>
-          </div>
-        `;
-
-        const info = document.createElement('div');
-        info.className = 'lent-info';
-        let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
-
-        info.textContent = lentInfoText;
-        card.appendChild(header);
-        card.appendChild(info);
-
-        gameList.appendChild(card);
-      }
-    });
-
-    if (spinner) spinner.style.display = 'none';
-  }
-
-  window.editGame = (id) => {
-    const game = games.find(g => g.id === id);
-    if (!game) {
-      alert("⚠️ Could not find a game with ID " + id);
-      return;
-    }
-
-    openForm();
-    formTitle.textContent = 'Edit Game';
-    editingIdInput.value = id;
-    titleEn.value = game.title_en;
-    descSv.value = game.description_sv;
-    descEn.value = game.description_en;
-    players.value = game.players;
-    time.value = game.time;
-    age.value = game.age;
-    tags.value = game.tags;
-    img.value = game.img;
-    rules.value = game.rules || '';
-  };
-
-  window.deleteGame = async (id) => {
-    if (!confirm("❗ Are you sure you want to delete this game?")) return;
-    try {
-      const res = await fetch(`https://bradspelsmeny-backend.onrender.com/games/${id}`, {
-        method: 'DELETE'
-      });
-      const result = await res.json();
-      if (res.ok) {
-        alert(result.message);
-        await fetchGames();
-      } else {
-        alert(`⚠️ Failed to delete: ${result.error}`);
-      }
-    } catch (err) {
-      console.error("❌ Error deleting game:", err);
-      alert("Unexpected error occurred while deleting.");
-    }
-  };
-
-  function openForm() {
-    form.reset();
-    modal.style.display = 'flex';
-  }
-
-  function closeForm() {
-    modal.style.display = 'none';
-  }
-
-  if (addGameButton) {
-    addGameButton.onclick = () => {
-      openForm();
-      formTitle.textContent = 'Add New Game';
-      editingIdInput.value = '';
-    };
-  }
-
-  if (closeModalButton) {
-    closeModalButton.onclick = closeForm;
-  }
-
-  if (form) {
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const gameData = {
-        title_sv: titleSv.value,
-        title_en: titleEn.value,
-        description_sv: descSv.value,
-        description_en: descEn.value,
-        players: players.value,
-        time: time.value,
-        age: age.value,
-        tags: tags.value.split(',').map(tag => tag.trim()),
-        img: img.value,
-        rules: rules.value || ''
-      };
-      const id = editingIdInput.value;
-      if (id) {
-        await fetch(`https://bradspelsmeny-backend.onrender.com/games/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(gameData)
-        });
-      } else {
-        await fetch('https://bradspelsmeny-backend.onrender.com/games', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(gameData)
-        });
-      }
-      closeForm();
-      await fetchGames();
-    };
-  }
-
-  if (resetButton) {
-    resetButton.onclick = () => {
-      if (confirm("Reset all lent out data?")) {
-        localStorage.clear();
-        location.reload();
-      }
-    };
-  }
-
-  if (exportButton) {
-    exportButton.onclick = () => {
-      const blob = new Blob([
-        'const games = ' + JSON.stringify(games, null, 2) + ';'
-      ], { type: 'application/javascript' });
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'games-data.js';
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-  }
-
-  if (searchBar) {
-    searchBar.oninput = renderGameList;
-  }
-
-  fetchGames();
-});
+document.addEventListener("DOMContentLoaded", fetchGames);
