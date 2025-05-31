@@ -47,12 +47,7 @@ function renderGames() {
     header.appendChild(title);
     header.appendChild(buttons);
 
-    const lentInfo = document.createElement("div");
-    lentInfo.className = "lent-info";
-    lentInfo.textContent = game.lent ? "Lent out" : "Available";
-
-    card.appendChild(header);
-    card.appendChild(lentInfo);
+ card.appendChild(header);
     gameList.appendChild(card);
   });
 }
