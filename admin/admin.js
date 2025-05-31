@@ -76,6 +76,8 @@ function openModal(index = null) {
   document.getElementById("tags").value = game.tags || "";
   document.getElementById("img").value = game.img || "";
   document.getElementById("rules").value = game.rules || "";
+  document.getElementById("imgFile").value = "";
+  document.getElementById("rulesFile").value = "";
 
   gameModal.style.display = "flex";
 }
