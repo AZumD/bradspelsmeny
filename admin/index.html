@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Console</title>
+  <title>Admin Konsol</title>
   <style>
     body {
       font-family: 'Press Start 2P', monospace;
@@ -50,6 +50,18 @@
 
     nav a:hover::after {
       transform: scaleX(1);
+    }
+
+    .language-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.7rem;
+      background: #e6b35c;
+      border: 2px solid #3c2415;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
     h1 {
@@ -106,37 +118,38 @@
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script defer src="admin.js"></script>
 </head>
 <body>
+  <div class="language-toggle" onclick="toggleLanguage()">🇸🇪 Svenska</div>
   <header>
     <nav>
       <a href="#">Dashboard</a>
-      <a href="edit-games.html">Games</a>
-      <a href="lend-games.html">Lend Out</a>
-      <a href="add-game.html">Add Game</a>
-      <a href="help.html">Help</a>
+      <a href="#">Användare</a>
+      <a href="#">Statistik</a>
+      <a href="#">Hjälp</a>
     </nav>
   </header>
 
-  <h1>ADMIN CONSOLE</h1>
+  <h1>ADMIN KONSOL</h1>
   <div class="dashboard">
     <div class="tile">
-      <h2>Games Lent Out</h2>
+      <h2>Utlånade spel</h2>
       <div class="value">3</div>
     </div>
     <div class="tile">
-      <h2>Total Games</h2>
+      <h2>Totalt antal spel</h2>
       <div class="value">42</div>
     </div>
     <div class="tile large">
-      <h2>Most Played Today</h2>
+      <h2>Mest spelade idag</h2>
       <div class="value">Secret Hitler</div>
     </div>
   </div>
 
   <div class="actions">
-    <a href="lend-games.html">Lend Out Game</a>
-    <a href="add-game.html">Add New Game</a>
+    <a href="#">Låna ut spel</a>
+    <a href="#">Lägg till nytt spel</a>
   </div>
 </body>
 </html>
