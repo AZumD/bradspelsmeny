@@ -6,54 +6,137 @@
   <title>Admin Console</title>
   <style>
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #000;
-      color: #0f0;
+      font-family: 'Press Start 2P', monospace;
+      background-color: #f3e2c7;
+      color: #3c2415;
       margin: 0;
-      padding: 2rem;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
+    }
+
+    header {
+      background-color: #8c3c1a;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+      box-shadow: 0 4px 0 #4a1f0f;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: #fff4d9;
+      text-decoration: none;
+      font-size: 0.8rem;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      display: block;
+      height: 4px;
+      background: #fff4d9;
+      margin-top: 4px;
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+      transform-origin: left;
+    }
+
+    nav a:hover::after {
+      transform: scaleX(1);
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      margin: 2rem 0 1rem;
     }
 
-    .menu {
-      display: flex;
-      flex-direction: column;
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 1rem;
-      width: 100%;
-      max-width: 400px;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
     }
 
-    .menu a {
-      display: block;
+    .tile {
+      background: #fff4d9;
+      border: 2px solid #3c2415;
       padding: 1rem;
-      background-color: #111;
-      color: #0f0;
-      text-decoration: none;
-      border: 1px solid #0f0;
       border-radius: 6px;
-      transition: all 0.2s ease-in-out;
+      box-shadow: 4px 4px 0 #c19761;
     }
 
-    .menu a:hover {
-      background-color: #0f0;
-      color: #000;
+    .tile h2 {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tile .value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .tile.large {
+      grid-column: span 2;
+    }
+
+    .actions {
+      display: flex;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .actions a {
+      background: #e6b35c;
+      padding: 1rem;
+      text-decoration: none;
+      color: #3c2415;
+      font-weight: bold;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      box-shadow: 4px 4px 0 #c19761;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>🕹️ Admin Console</h1>
-  <div class="menu">
-    <a href="edit-games.html">🎮 Edit Games</a>
-    <a href="lend-games.html">📋 Lend Games</a>
-    <a href="stats.html">📊 Usage Stats</a>
-    <a href="settings.html">⚙️ Settings</a>
+  <header>
+    <nav>
+      <a href="#">Dashboard</a>
+      <a href="edit-games.html">Games</a>
+      <a href="lend-games.html">Lend Out</a>
+      <a href="add-game.html">Add Game</a>
+      <a href="help.html">Help</a>
+    </nav>
+  </header>
+
+  <h1>ADMIN CONSOLE</h1>
+  <div class="dashboard">
+    <div class="tile">
+      <h2>Games Lent Out</h2>
+      <div class="value">3</div>
+    </div>
+    <div class="tile">
+      <h2>Total Games</h2>
+      <div class="value">42</div>
+    </div>
+    <div class="tile large">
+      <h2>Most Played Today</h2>
+      <div class="value">Secret Hitler</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="lend-games.html">Lend Out Game</a>
+    <a href="add-game.html">Add New Game</a>
   </div>
 </body>
 </html>
