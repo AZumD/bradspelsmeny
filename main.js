@@ -14,7 +14,7 @@ const translations = {
       social: "Socialt",
       humor: "Humor",
       card: "Kortspel",
-      2p: "2 spelare"
+      "2p": "2 spelare"
     }
   },
   en: {
@@ -32,7 +32,7 @@ const translations = {
       social: "Social",
       humor: "Humor",
       card: "Card game",
-      2p: "2 players"
+      "2p": "2 players"
     }
   }
 };
