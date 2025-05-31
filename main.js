@@ -1,3 +1,4 @@
+let games = []; // Add this at the top
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 let lentStatus = {};
@@ -75,9 +76,12 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  let filtered = currentCategory === 'all'
-    ? games
-    : games.filter(g => g.tags.includes(currentCategory));
+  const res = await fetch('http://localhost:3000/games'); // or use your Render URL later
+  games = await res.json();
+
+let filtered = currentCategory === 'all'
+  ? games
+  : games.filter(g => g.tags.split(',').includes(currentCategory));
 
   filtered = filtered.filter(game =>
     game.title[currentLang].toLowerCase().includes(search)
