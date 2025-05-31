@@ -118,21 +118,25 @@ async function renderGames() {
   const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
   games = await res.json();
 
-let filtered = currentCategory === 'all'
-  ? games
-  : games.filter(g => g.tags.split(',').includes(currentCategory));
+  let filtered = currentCategory === 'all'
+    ? games
+    : games.filter(g => g.tags.split(',').includes(currentCategory));
 
-  filtered = filtered.filter(game =>
-    game.title[currentLang].toLowerCase().includes(search)
-  );
+  filtered = filtered.filter(game => {
+    const title = currentLang === 'sv' ? game.title_sv : game.title_en;
+    return title?.toLowerCase().includes(search);
+  });
 
-  filtered.sort((a, b) =>
-    a.title[currentLang].toLowerCase().localeCompare(b.title[currentLang].toLowerCase())
-  );
+  filtered.sort((a, b) => {
+    const aTitle = currentLang === 'sv' ? a.title_sv : a.title_en;
+    const bTitle = currentLang === 'sv' ? b.title_sv : b.title_en;
+    return aTitle?.toLowerCase().localeCompare(bTitle?.toLowerCase());
+  });
 
   container.innerHTML = '';
   filtered.forEach(game => {
-    const title = game.title[currentLang];
+    const title = currentLang === 'sv' ? game.title_sv : game.title_en;
+    const description = currentLang === 'sv' ? game.description_sv : game.description_en;
     const isLent = lentStatus[title];
 
     const card = document.createElement('div');
@@ -141,7 +145,7 @@ let filtered = currentCategory === 'all'
       <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
       <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
       <div class="game-info">
-        <p>${game.description[currentLang]}</p>
+        <p>${description}</p>
         ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
         <div class="tags">
           👥 ${translations[currentLang].ui.players}: ${game.players} ・
