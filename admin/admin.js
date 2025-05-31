@@ -102,10 +102,12 @@ gameForm.onsubmit = async (e) => {
   if (rulesFile) formData.append("rulesFile", rulesFile);
 
   const index = document.getElementById("editingIndex").value;
-  const method = index === "" ? "POST" : "PUT";
-  const url = index === ""
-    ? "https://bradspelsmeny-backend.onrender.com/games"
-    : `https://bradspelsmeny-backend.onrender.com/games/${index}`;
+const isNew = index === "";
+const gameId = isNew ? null : games[index]?.id;
+const method = isNew ? "POST" : "PUT";
+const url = isNew
+  ? "https://bradspelsmeny-backend.onrender.com/games"
+  : `https://bradspelsmeny-backend.onrender.com/games/${gameId}`;
 
   const res = await fetch(url, {
     method,
