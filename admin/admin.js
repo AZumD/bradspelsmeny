@@ -56,8 +56,8 @@ async function renderGameList() {
 
   games.forEach((game, index) => {
     if (
-      game.title.sv.toLowerCase().includes(query) ||
-      game.title.en.toLowerCase().includes(query)
+      game.title_sv.toLowerCase().includes(query) ||
+      game.title_en.toLowerCase().includes(query)
     ) {
       const card = document.createElement('div');
       card.className = 'game-card';
@@ -65,7 +65,7 @@ async function renderGameList() {
       const header = document.createElement('div');
       header.className = 'game-header';
       header.innerHTML = `
-        <span class="game-title">${game.title.sv} / ${game.title.en}</span>
+        <span class="game-title">${game.title_sv} / ${game.title_en}</span>
         <div>
           <button class="edit-button" onclick="editGame(${index})">✏️ Edit</button>
         </div>
