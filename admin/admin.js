@@ -75,7 +75,7 @@ async function renderGameList() {
       info.className = 'lent-info';
       let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
 
-      const lentEntry = lentStatus[game.title.en] || lentStatus[game.title.sv];
+      const lentEntry = lentStatus[game.title_en] || lentStatus[game.title_sv];
       if (lentEntry) {
         lentInfoText += `\n🔒 Lent out by ${lentEntry.by} at ${lentEntry.time}`;
         card.style.opacity = 0.5;
