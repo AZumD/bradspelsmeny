@@ -89,17 +89,21 @@
     }
 
     .actions a {
-      background: #e6b35c;
-      padding: 0.75rem 0.5rem; /* smaller horizontal padding */
-      text-decoration: none;
-      color: #3c2415;
-      font-weight: bold;
-      border: 2px solid #3c2415;
-      border-radius: 6px;
-      box-shadow: 4px 4px 0 #c19761;
-      min-width: 180px;
-      text-align: center;
-    }
+  background: #e6b35c;
+  padding: 0.5rem 0.5rem; /* slightly less vertical padding */
+  text-decoration: none;
+  color: #3c2415;
+  font-weight: bold;
+  border: 2px solid #3c2415;
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 #c19761;
+  min-width: 140px; /* reduce a bit for mobile */
+  text-align: center;
+  line-height: 1.2;
+  font-size: 0.6rem; /* smaller font size if needed */
+  word-break: break-word;
+}
+
 
     @media (max-width: 600px) {
       .dashboard-title {
