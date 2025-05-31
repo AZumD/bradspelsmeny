@@ -1,3 +1,17 @@
+// admin.js
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('languageToggle');
+  const html = document.documentElement;
+
+  toggle.addEventListener('click', () => {
+    const isSwedish = html.lang === 'sv';
+    html.lang = isSwedish ? 'en' : 'sv';
+    toggle.textContent = isSwedish ? '🇬🇧 English' : '🇸🇪 Svenska';
+    location.reload();
+  });
+});
+
 const spinner = document.getElementById('loadingSpinner');
 let searchBar = document.getElementById('searchBar');
 let gameList = document.getElementById('gameList');
@@ -37,20 +51,7 @@ async function fetchGames() {
   }
 }
 
-async function loadLentStatus() {
-  try {
-    const res = await fetch('../lent-status.json');
-    if (!res.ok) throw new Error("Failed to load lent-status.json");
-    lentStatus = await res.json();
-  } catch (err) {
-    console.warn("Could not load lent-status.json", err);
-    lentStatus = {};
-  }
-}
-
 async function renderGameList() {
-  await loadLentStatus();
-
   const query = searchBar.value.toLowerCase();
   gameList.innerHTML = '';
 
@@ -64,24 +65,17 @@ async function renderGameList() {
 
       const header = document.createElement('div');
       header.className = 'game-header';
-     header.innerHTML = `
-  <span class="game-title">${game.title_sv} / ${game.title_en}</span>
-  <div>
-    <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
-    <button class="delete-button" onclick="deleteGame(${game.id})">🗑️ Delete</button>
-  </div>
-`;
+      header.innerHTML = `
+        <span class="game-title">${game.title_sv} / ${game.title_en}</span>
+        <div>
+          <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
+          <button class="delete-button" onclick="deleteGame(${game.id})">🗑️ Delete</button>
+        </div>
+      `;
 
       const info = document.createElement('div');
       info.className = 'lent-info';
       let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
-
-      const lentEntry = lentStatus[game.title_en] || lentStatus[game.title_sv];
-      if (lentEntry) {
-        lentInfoText += `\n🔒 Lent out by ${lentEntry.by} at ${lentEntry.time}`;
-        card.style.opacity = 0.5;
-        card.style.filter = 'grayscale(1)';
-      }
 
       info.textContent = lentInfoText;
       card.appendChild(header);
