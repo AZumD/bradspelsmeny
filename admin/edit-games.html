@@ -176,20 +176,32 @@
   <div id="gameModal">
     <div class="modal-content">
       <h2 id="formTitle">Redigera spel</h2>
-      <form id="gameForm">
-        <input type="hidden" id="editingIndex">
-        <input id="titleEn" placeholder="Title" required />
-        <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
-        <textarea id="descEn" placeholder="Description (en)"></textarea>
-        <input id="players" placeholder="Antal spelare" />
-        <input id="time" placeholder="Tid" />
-        <input id="age" placeholder="Ålder" />
-        <input id="tags" placeholder="Taggar (kommaseparerade)" />
-        <input id="img" placeholder="Bild-URL" />
-        <input id="rules" placeholder="Regellänk (valfritt)" />
-        <button type="submit">💾 Spara</button>
-        <button type="button" id="closeModal">❌ Avbryt</button>
-      </form>
+      <form id="gameForm" enctype="multipart/form-data">
+  <input type="hidden" id="editingIndex">
+
+  <input id="titleEn" placeholder="Title" required />
+
+  <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
+  <textarea id="descEn" placeholder="Description (en)"></textarea>
+
+  <input id="players" placeholder="Antal spelare" />
+  <input id="time" placeholder="Tid" />
+  <input id="age" placeholder="Ålder" />
+  <input id="tags" placeholder="Taggar (kommaseparerade)" />
+
+  <!-- Image link and file upload -->
+  <input id="img" placeholder="Bild-URL" />
+  <label for="imgFile" style="font-size: 0.5rem; display: block; margin: 0.3rem 0;">Eller ladda upp en bild:</label>
+  <input type="file" id="imgFile" accept="image/*" />
+
+  <!-- Rules link and file upload -->
+  <input id="rules" placeholder="Regellänk (valfritt)" />
+  <label for="rulesFile" style="font-size: 0.5rem; display: block; margin: 0.3rem 0;">Eller ladda upp regler (PDF):</label>
+  <input type="file" id="rulesFile" accept=".pdf" />
+
+  <button type="submit">💾 Spara</button>
+  <button type="button" id="closeModal">❌ Avbryt</button>
+</form>
     </div>
   </div>
 </body>
