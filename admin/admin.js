@@ -142,7 +142,7 @@ form.onsubmit = async (e) => {
     players: players.value,
     time: time.value,
     age: age.value,
-    tags: tags.value,
+    tags: tags.value.split(',').map(tag => tag.trim()),
     img: img.value,
     rules: rules.value || ''
   };
