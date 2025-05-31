@@ -122,18 +122,21 @@ async function renderGames() {
     ? games
     : games.filter(g => g.tags.split(',').includes(currentCategory));
 
-  filtered = filtered.filter(game =>
-    game.title_en?.toLowerCase().includes(search)
-  );
+  filtered = filtered.filter(game => {
+    const title = game.title_en;
+    return title?.toLowerCase().includes(search);
+  });
 
-  filtered.sort((a, b) =>
-    a.title_en?.toLowerCase().localeCompare(b.title_en?.toLowerCase())
-  );
+  filtered.sort((a, b) => {
+    const aTitle = a.title_en;
+    const bTitle = b.title_en;
+    return aTitle?.toLowerCase().localeCompare(bTitle?.toLowerCase());
+  });
 
   container.innerHTML = '';
   filtered.forEach(game => {
     const title = game.title_en;
-    const description = game.description_en;
+    const description = currentLang === 'sv' ? game.description_sv : game.description_en;
     const isLent = lentStatus[title];
 
     const card = document.createElement('div');
@@ -162,6 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
+
     await setLanguage(currentLang);
   } catch (err) {
     console.error("Unexpected loading error:", err);
