@@ -116,6 +116,25 @@ window.editGame = (id) => {
   rules.value = game.rules || '';
 };
 
+window.deleteGame = async (id) => {
+  if (!confirm("❗ Are you sure you want to delete this game?")) return;
+  try {
+    const res = await fetch(`https://bradspelsmeny-backend.onrender.com/games/${id}`, {
+      method: 'DELETE'
+    });
+    const result = await res.json();
+    if (res.ok) {
+      alert(result.message);
+      await fetchGames();
+    } else {
+      alert(`⚠️ Failed to delete: ${result.error}`);
+    }
+  } catch (err) {
+    console.error("❌ Error deleting game:", err);
+    alert("Unexpected error occurred while deleting.");
+  }
+};
+
 function openForm() {
   form.reset();
   modal.style.display = 'flex';
