@@ -68,6 +68,60 @@
       font-size: 1.5rem;
       margin: 2rem 0 1rem;
     }
+    .topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #2d2d2d;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px;
+  flex-wrap: wrap; /* allow wrapping */
+  z-index: 1000;
+}
+
+.topbar h1 {
+  font-size: 1rem;
+  margin: 0;
+  flex: 1 0 100%; /* full width on small screens */
+}
+
+.topbar nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.topbar nav a {
+  color: white;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.topbar nav a:hover {
+  background: #444;
+}
+
+@media (max-width: 600px) {
+  .topbar nav {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .topbar {
+    padding: 10px;
+  }
+
+  .topbar nav a {
+    padding: 8px;
+  }
+}
+
 
     .dashboard {
       display: grid;
