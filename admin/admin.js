@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     games.forEach((game, index) => {
       if (
-        game.title_sv.toLowerCase().includes(query) ||
         game.title_en.toLowerCase().includes(query)
       ) {
         const card = document.createElement('div');
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const header = document.createElement('div');
         header.className = 'game-header';
         header.innerHTML = `
-          <span class="game-title">${game.title_sv} / ${game.title_en}</span>
+          <span class="game-title">${game.title_en}</span>
           <div>
             <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
             <button class="delete-button" onclick="deleteGame(${game.id})">🗑️ Delete</button>
@@ -101,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
     openForm();
     formTitle.textContent = 'Edit Game';
     editingIdInput.value = id;
-    titleSv.value = game.title_sv;
     titleEn.value = game.title_en;
     descSv.value = game.description_sv;
     descEn.value = game.description_en;
