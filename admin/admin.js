@@ -21,8 +21,7 @@ async function fetchGames() {
 function renderGames() {
   const search = searchBar.value.toLowerCase();
   gameList.innerHTML = "";
-  games.filter(game => game.title.toLowerCase().includes(search)).forEach((game, index) => {
-    const card = document.createElement("div");
+  games.filter(game => (game.title || game.title_en || "").toLowerCase().includes(search)).forEach((game, index) => {    const card = document.createElement("div");
     card.className = "game-card";
 
     const header = document.createElement("div");
@@ -30,7 +29,7 @@ function renderGames() {
 
     const title = document.createElement("div");
     title.className = "game-title";
-    title.textContent = game.title;
+    title.textContent = game.title || game.title_en || "(No Title)";
 
     const buttons = document.createElement("div");
     const editBtn = document.createElement("button");
