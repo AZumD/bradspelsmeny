@@ -1,121 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console</title>
   <style>
     body {
-      font-family: sans-serif;
-      padding: 1em;
-      background: #f7f7f7;
-    }
-
-    #gameList {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #000;
+      color: #0f0;
+      margin: 0;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1em;
-    }
-
-    .game-card {
-      background: white;
-      border: 1px solid #ddd;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
-    }
-
-    .game-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-weight: bold;
+      text-align: center;
     }
 
-    .lent-info {
-      margin-top: 0.5em;
-      font-size: 0.9em;
-      white-space: pre-wrap;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
 
-    .edit-button {
-      background: #eee;
-      border: none;
-      padding: 0.5em;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #gameModal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-
-    #modalContent {
-      background: white;
-      padding: 2em;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 600px;
-    }
-
-    #gameForm input, #gameForm textarea {
-      width: 100%;
-      margin-bottom: 1em;
-    }
-
-    .top-bar {
+    .menu {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 1em;
-      gap: 0.5em;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 400px;
     }
 
-    .top-bar input[type="text"] {
-      flex-grow: 1;
+    .menu a {
+      display: block;
+      padding: 1rem;
+      background-color: #111;
+      color: #0f0;
+      text-decoration: none;
+      border: 1px solid #0f0;
+      border-radius: 6px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .menu a:hover {
+      background-color: #0f0;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <h1>Game Admin Panel</h1>
-  <div id="loadingSpinner" style="text-align:center; padding: 1em;">Loading games…</div>
-
-  <div class="top-bar">
-    <input id="searchBar" type="text" placeholder="Search games..." />
-    <button id="addGameButton">Add Game</button>
-    <button id="resetButton">Reset Lent Data</button>
-    <button id="exportButton">Export Games</button>
+  <h1>🕹️ Admin Console</h1>
+  <div class="menu">
+    <a href="edit-games.html">🎮 Edit Games</a>
+    <a href="lend-games.html">📋 Lend Games</a>
+    <a href="stats.html">📊 Usage Stats</a>
+    <a href="settings.html">⚙️ Settings</a>
   </div>
-
-  <div id="gameList"></div>
-
-  <div id="gameModal">
-    <div id="modalContent">
-      <h2 id="formTitle">Add/Edit Game</h2>
-      <form id="gameForm">
-        <input type="hidden" id="editingIndex" />
-        <label>Title (SV): <input id="titleSv" required /></label>
-        <label>Title (EN): <input id="titleEn" required /></label>
-        <label>Description (SV): <textarea id="descSv" required></textarea></label>
-        <label>Description (EN): <textarea id="descEn" required></textarea></label>
-        <label>Players: <input id="players" required /></label>
-        <label>Time: <input id="time" required /></label>
-        <label>Age: <input id="age" required /></label>
-        <label>Tags (comma separated): <input id="tags" required /></label>
-        <label>Image URL: <input id="img" required /></label>
-        <label>Rules URL: <input id="rules" /></label>
-        <button type="submit">Save</button>
-        <button type="button" id="closeModal">Cancel</button>
-      </form>
-    </div>
-  </div>
-  <script src="admin.js" defer></script>
 </body>
 </html>
