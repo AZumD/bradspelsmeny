@@ -1,5 +1,4 @@
-// admin.js
-console.log('Games array:', games);
+// Updated admin.js to fetch and update games from backend
 
 let searchBar = document.getElementById('searchBar');
 let gameList = document.getElementById('gameList');
@@ -11,7 +10,7 @@ let modal = document.getElementById('gameModal');
 let closeModalButton = document.getElementById('closeModal');
 let form = document.getElementById('gameForm');
 let formTitle = document.getElementById('formTitle');
-let editingIndexInput = document.getElementById('editingIndex');
+let editingIdInput = document.getElementById('editingIndex');
 let titleSv = document.getElementById('titleSv');
 let titleEn = document.getElementById('titleEn');
 let descSv = document.getElementById('descSv');
@@ -23,7 +22,13 @@ let tags = document.getElementById('tags');
 let img = document.getElementById('img');
 let rules = document.getElementById('rules');
 
-let lentStatus = {};
+let games = [];
+
+async function fetchGames() {
+  const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
+  games = await res.json();
+  renderGameList();
+}
 
 async function loadLentStatus() {
   try {
@@ -38,14 +43,13 @@ async function loadLentStatus() {
 
 async function renderGameList() {
   await loadLentStatus();
-
   const query = searchBar.value.toLowerCase();
   gameList.innerHTML = '';
 
-  games.forEach((game, index) => {
+  games.forEach((game) => {
     if (
-      game.title.sv.toLowerCase().includes(query) ||
-      game.title.en.toLowerCase().includes(query)
+      game.title_sv.toLowerCase().includes(query) ||
+      game.title_en.toLowerCase().includes(query)
     ) {
       const card = document.createElement('div');
       card.className = 'game-card';
@@ -53,9 +57,9 @@ async function renderGameList() {
       const header = document.createElement('div');
       header.className = 'game-header';
       header.innerHTML = `
-        <span class="game-title">${game.title.sv} / ${game.title.en}</span>
+        <span class="game-title">${game.title_sv} / ${game.title_en}</span>
         <div>
-          <button class="edit-button" onclick="editGame(${index})">✏️ Edit</button>
+          <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
         </div>
       `;
 
@@ -63,7 +67,7 @@ async function renderGameList() {
       info.className = 'lent-info';
       let lentInfoText = `${game.players || ''} ・ ${game.time || ''} ・ ${game.age || ''}`;
 
-      const lentEntry = lentStatus[game.title.en] || lentStatus[game.title.sv];
+      const lentEntry = lentStatus[game.title_en] || lentStatus[game.title_sv];
       if (lentEntry) {
         lentInfoText += `\n🔒 Lent out by ${lentEntry.by} at ${lentEntry.time}`;
         card.style.opacity = 0.5;
@@ -73,28 +77,27 @@ async function renderGameList() {
       info.textContent = lentInfoText;
       card.appendChild(header);
       card.appendChild(info);
-
       gameList.appendChild(card);
     }
   });
 }
 
-function editGame(index) {
-  const game = games[index];
+window.editGame = (id) => {
+  const game = games.find(g => g.id === id);
   openForm();
   formTitle.textContent = 'Edit Game';
-  editingIndexInput.value = index;
-  titleSv.value = game.title.sv;
-  titleEn.value = game.title.en;
-  descSv.value = game.description.sv;
-  descEn.value = game.description.en;
+  editingIdInput.value = id;
+  titleSv.value = game.title_sv;
+  titleEn.value = game.title_en;
+  descSv.value = game.description_sv;
+  descEn.value = game.description_en;
   players.value = game.players;
   time.value = game.time;
   age.value = game.age;
-  tags.value = game.tags.join(', ');
+  tags.value = game.tags;
   img.value = game.img;
   rules.value = game.rules || '';
-}
+};
 
 function openForm() {
   form.reset();
@@ -108,39 +111,41 @@ function closeForm() {
 addGameButton.onclick = () => {
   openForm();
   formTitle.textContent = 'Add New Game';
-  editingIndexInput.value = '';
+  editingIdInput.value = '';
 };
 
 closeModalButton.onclick = closeForm;
 
-form.onsubmit = (e) => {
+form.onsubmit = async (e) => {
   e.preventDefault();
-
-  const newGame = {
-    title: {
-      sv: titleSv.value,
-      en: titleEn.value,
-    },
-    description: {
-      sv: descSv.value,
-      en: descEn.value,
-    },
+  const gameData = {
+    title_sv: titleSv.value,
+    title_en: titleEn.value,
+    description_sv: descSv.value,
+    description_en: descEn.value,
     players: players.value,
     time: time.value,
     age: age.value,
-    tags: tags.value.split(',').map(t => t.trim()),
+    tags: tags.value,
     img: img.value,
     rules: rules.value || ''
   };
-
-  const index = editingIndexInput.value;
-  if (index) {
-    games[parseInt(index)] = newGame;
+  const id = editingIdInput.value;
+  if (id) {
+    await fetch(`https://bradspelsmeny-backend.onrender.com/games/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(gameData)
+    });
   } else {
-    games.push(newGame);
+    await fetch('https://bradspelsmeny-backend.onrender.com/games', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(gameData)
+    });
   }
   closeForm();
-  renderGameList();
+  await fetchGames();
 };
 
 resetButton.onclick = () => {
@@ -164,6 +169,4 @@ exportButton.onclick = () => {
 };
 
 searchBar.oninput = renderGameList;
-
-window.onload = renderGameList;
-
+window.onload = fetchGames;
