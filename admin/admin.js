@@ -67,7 +67,7 @@ async function renderGameList() {
       header.innerHTML = `
         <span class="game-title">${game.title_sv} / ${game.title_en}</span>
         <div>
-          <button class="edit-button" onclick="editGame(${index})">✏️ Edit</button>
+          <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
         </div>
       `;
 
@@ -95,6 +95,11 @@ async function renderGameList() {
 
 window.editGame = (id) => {
   const game = games.find(g => g.id === id);
+  if (!game) {
+    alert("⚠️ Could not find a game with ID " + id);
+    return;
+  }
+
   openForm();
   formTitle.textContent = 'Edit Game';
   editingIdInput.value = id;
