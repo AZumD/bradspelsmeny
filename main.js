@@ -1,38 +1,38 @@
 const translations = {
   sv: {
-    intro: "Välj ett spel från listan nedan!",
-    categories: {
-      all: "Alla spel",
-      party: "Fest",
-      strategy: "Strategi",
-      family: "Familj",
-      card: "Kortspel",
-      humor: "Humor",
-      social: "Socialt",
-      2p: "2 spelare"
-    },
+    intro: "Välj ett spel att låna!",
     ui: {
       players: "Spelare",
       time: "Tid",
       age: "Ålder"
+    },
+    categories: {
+      all: "Alla",
+      strategy: "Strategi",
+      family: "Familj",
+      party: "Party",
+      social: "Socialt",
+      humor: "Humor",
+      card: "Kortspel",
+      2p: "2 spelare"
     }
   },
   en: {
-    intro: "Pick a game from the list below!",
-    categories: {
-      all: "All games",
-      party: "Party",
-      strategy: "Strategy",
-      family: "Family",
-      card: "Card Game",
-      humor: "Humor",
-      social: "Social",
-      2p: "2 players"
-    },
+    intro: "Choose a game to borrow!",
     ui: {
       players: "Players",
       time: "Time",
       age: "Age"
+    },
+    categories: {
+      all: "All",
+      strategy: "Strategy",
+      family: "Family",
+      party: "Party",
+      social: "Social",
+      humor: "Humor",
+      card: "Card game",
+      2p: "2 players"
     }
   }
 };
@@ -115,7 +115,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetch('https://your-url.onrender.com/games');
+  const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
   games = await res.json();
 
 let filtered = currentCategory === 'all'
