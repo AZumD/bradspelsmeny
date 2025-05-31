@@ -37,7 +37,7 @@ const translations = {
   }
 };
 
-let games = []; // Add this at the top
+let games = [];
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
 let lentStatus = {};
@@ -52,6 +52,7 @@ async function loadLentStatus() {
     lentStatus = {};
   }
 }
+
 const tableSelect = document.getElementById("tableSelect");
 const selectedDisplay = document.getElementById("selectedTablesDisplay");
 
@@ -69,7 +70,6 @@ if (tableSelect) {
     updateSelectedTablesDisplay();
   });
 
-  // Show saved selection on load
   const preSelected = JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
   Array.from(tableSelect.options).forEach(opt => {
     if (preSelected.includes(opt.value)) opt.selected = true;
@@ -122,21 +122,18 @@ async function renderGames() {
     ? games
     : games.filter(g => g.tags.split(',').includes(currentCategory));
 
-  filtered = filtered.filter(game => {
-    const title = currentLang === 'sv' ? game.title_sv : game.title_en;
-    return title?.toLowerCase().includes(search);
-  });
+  filtered = filtered.filter(game =>
+    game.title_en?.toLowerCase().includes(search)
+  );
 
-  filtered.sort((a, b) => {
-    const aTitle = currentLang === 'sv' ? a.title_sv : a.title_en;
-    const bTitle = currentLang === 'sv' ? b.title_sv : b.title_en;
-    return aTitle?.toLowerCase().localeCompare(bTitle?.toLowerCase());
-  });
+  filtered.sort((a, b) =>
+    a.title_en?.toLowerCase().localeCompare(b.title_en?.toLowerCase())
+  );
 
   container.innerHTML = '';
   filtered.forEach(game => {
-    const title = currentLang === 'sv' ? game.title_sv : game.title_en;
-    const description = currentLang === 'sv' ? game.description_sv : game.description_en;
+    const title = game.title_en;
+    const description = game.description_en;
     const isLent = lentStatus[title];
 
     const card = document.createElement('div');
@@ -165,7 +162,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
-
     await setLanguage(currentLang);
   } catch (err) {
     console.error("Unexpected loading error:", err);
