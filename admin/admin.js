@@ -64,12 +64,13 @@ async function renderGameList() {
 
       const header = document.createElement('div');
       header.className = 'game-header';
-      header.innerHTML = `
-        <span class="game-title">${game.title_sv} / ${game.title_en}</span>
-        <div>
-          <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
-        </div>
-      `;
+     header.innerHTML = `
+  <span class="game-title">${game.title_sv} / ${game.title_en}</span>
+  <div>
+    <button class="edit-button" onclick="editGame(${game.id})">✏️ Edit</button>
+    <button class="delete-button" onclick="deleteGame(${game.id})">🗑️ Delete</button>
+  </div>
+`;
 
       const info = document.createElement('div');
       info.className = 'lent-info';
