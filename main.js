@@ -1,3 +1,42 @@
+const translations = {
+  sv: {
+    intro: "Välj ett spel från listan nedan!",
+    categories: {
+      all: "Alla spel",
+      party: "Fest",
+      strategy: "Strategi",
+      family: "Familj",
+      card: "Kortspel",
+      humor: "Humor",
+      social: "Socialt",
+      2p: "2 spelare"
+    },
+    ui: {
+      players: "Spelare",
+      time: "Tid",
+      age: "Ålder"
+    }
+  },
+  en: {
+    intro: "Pick a game from the list below!",
+    categories: {
+      all: "All games",
+      party: "Party",
+      strategy: "Strategy",
+      family: "Family",
+      card: "Card Game",
+      humor: "Humor",
+      social: "Social",
+      2p: "2 players"
+    },
+    ui: {
+      players: "Players",
+      time: "Time",
+      age: "Age"
+    }
+  }
+};
+
 let games = []; // Add this at the top
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
