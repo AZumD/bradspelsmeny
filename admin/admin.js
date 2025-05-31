@@ -1,5 +1,3 @@
-// Updated admin.js to fetch and update games from backend
-
 let searchBar = document.getElementById('searchBar');
 let gameList = document.getElementById('gameList');
 let resetButton = document.getElementById('resetButton');
