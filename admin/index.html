@@ -85,6 +85,7 @@
 </head>
 <body>
   <h1>Game Admin Panel</h1>
+  <div id="loadingSpinner" style="text-align:center; padding: 1em;">Loading games…</div>
 
   <div class="top-bar">
     <input id="searchBar" type="text" placeholder="Search games..." />
@@ -115,8 +116,6 @@
       </form>
     </div>
   </div>
-
-  <script src="../games-data.js"></script>
-  <script src="admin.js"></script>
+  <script src="admin.js" defer></script>
 </body>
 </html>
