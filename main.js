@@ -76,7 +76,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetch('http://localhost:3000/games'); // or use your Render URL later
+  const res = await fetch('https://your-url.onrender.com/games');
   games = await res.json();
 
 let filtered = currentCategory === 'all'
