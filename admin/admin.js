@@ -24,9 +24,17 @@ let rules = document.getElementById('rules');
 let games = [];
 
 async function fetchGames() {
-  const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
-  games = await res.json();
-  renderGameList();
+  if (spinner) spinner.style.display = 'block';
+  try {
+    const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
+    games = await res.json();
+    await renderGameList();
+  } catch (err) {
+    console.error('Failed to fetch games:', err);
+    gameList.innerHTML = `<p style="color:red;">⚠️ Failed to load games.</p>`;
+  } finally {
+    if (spinner) spinner.style.display = 'none';
+  }
 }
 
 async function loadLentStatus() {
@@ -41,7 +49,6 @@ async function loadLentStatus() {
 }
 
 async function renderGameList() {
-  if (spinner) spinner.style.display = 'block';
   await loadLentStatus();
 
   const query = searchBar.value.toLowerCase();
