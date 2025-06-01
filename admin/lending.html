@@ -4,15 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" /> <!-- assumes shared CSS file -->
+  <link rel="stylesheet" href="styles.css" />
   <title>Lending</title>
   <style>
-    .search-bar {
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background-color: #f3e2c7;
+      color: #3c2415;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topbar {
+      background-color: #8c3c1a;
+      color: white;
       width: 100%;
-      max-width: 700px;
-      margin: 1rem auto;
+      padding: 1rem;
+      box-shadow: 0 4px 0 #4a1f0f;
       display: flex;
       justify-content: center;
+      align-items: center;
+    }
+
+    .dashboard-title {
+      color: #fff4d9;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem 1rem;
+      box-sizing: border-box;
     }
 
     .search-bar input {
@@ -24,6 +52,7 @@
       border-radius: 6px;
       background-color: #fffaf0;
       color: #3c2415;
+      box-sizing: border-box;
     }
 
     .collapsible-section {
@@ -51,7 +80,7 @@
       padding: 1rem;
     }
 
-    .game-card {
+    .user-card {
       background-color: #fffaf0;
       border: 2px solid #3c2415;
       padding: 1rem;
@@ -59,17 +88,18 @@
       box-shadow: 2px 2px 0 #c19761;
     }
 
-    .game-header {
+    .user-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .game-title {
+    .user-title {
       font-size: 0.65rem;
     }
 
-    .game-buttons button {
+    .edit-button,
+    .delete-button {
       font-size: 0.6rem;
       margin-left: 0.5rem;
       cursor: pointer;
@@ -102,18 +132,20 @@
     <a href="index.html" class="dashboard-title">Admin Dashboard</a>
   </header>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
-  </div>
+  <div class="form-container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
+    </div>
 
-  <div class="collapsible-section">
-    <button class="collapsible-header" onclick="toggleSection('availableGames')">🎲 Tillgängliga spel</button>
-    <div id="availableGames" class="collapsible-content"></div>
-  </div>
+    <div class="collapsible-section">
+      <button class="collapsible-header" onclick="toggleSection('availableGames')">🎲 Tillgängliga spel</button>
+      <div id="availableGames" class="collapsible-content"></div>
+    </div>
 
-  <div class="collapsible-section">
-    <button class="collapsible-header" onclick="toggleSection('lentGames')">📦 Utlånade spel</button>
-    <div id="lentGames" class="collapsible-content"></div>
+    <div class="collapsible-section">
+      <button class="collapsible-header" onclick="toggleSection('lentGames')">📦 Utlånade spel</button>
+      <div id="lentGames" class="collapsible-content"></div>
+    </div>
   </div>
 
   <!-- Game Preview Modal -->
