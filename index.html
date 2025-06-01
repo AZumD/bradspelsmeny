@@ -7,21 +7,25 @@
   <title>Board Game Menu</title>  
   <style>
     html, body {
-      height: 100%;
       margin: 0;
       padding: 0;
-    }
-
-    body {
+      height: 100%;
+      overflow-x: hidden;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
-      background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/main/Vintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
-      background-attachment: scroll;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-      background-color: #000;
     }
 
+    .bg {
+      background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/main/Vintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+    }
 
     * { box-sizing: border-box; }  
 
@@ -218,6 +222,8 @@
   </style>  
 </head>  
 <body>  
+  <div class="bg"></div>
+
   <div class="wrapper">  
     <div id="banner">  
       <img src="banner3.png" alt="Banner" />  
