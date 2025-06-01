@@ -60,8 +60,7 @@ function openModal(index = null) {
   const game = isNew ? {} : games[index];
 
   gameForm.reset();
-  document.getElementById("editingIndex").value = index ?? "";
-  document.getElementById("titleEn").value = game.title || "";
+  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;  document.getElementById("titleEn").value = game.title || "";
   document.getElementById("descSv").value = game.description_sv || "";
   document.getElementById("descEn").value = game.description_en || "";
   document.getElementById("players").value = game.players || "";
@@ -101,9 +100,8 @@ gameForm.onsubmit = async (e) => {
   if (imgFile) formData.append("imgFile", imgFile);
   if (rulesFile) formData.append("rulesFile", rulesFile);
 
-  const index = document.getElementById("editingIndex").value;
-const isNew = index === "";
-const gameId = isNew ? null : games[index]?.id;
+const gameId = document.getElementById("editingIndex").value;
+const isNew = gameId === "";
 const method = isNew ? "POST" : "PUT";
 const url = isNew
   ? "https://bradspelsmeny-backend.onrender.com/games"
