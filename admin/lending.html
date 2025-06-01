@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" /> <!-- assumes shared CSS file -->
+  <title>Lending</title>
+  <style>
+    .search-bar {
+      width: 100%;
+      max-width: 700px;
+      margin: 1rem auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 0.6rem;
+      font-family: 'Press Start 2P', monospace;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      background-color: #fffaf0;
+      color: #3c2415;
+    }
+
+    .collapsible-section {
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 1rem;
+    }
+
+    .collapsible-header {
+      background-color: #8c3c1a;
+      color: white;
+      padding: 1rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-family: 'Press Start 2P', monospace;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .collapsible-content {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .game-card {
+      background-color: #fffaf0;
+      border: 2px solid #3c2415;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 #c19761;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .game-title {
+      font-size: 0.65rem;
+    }
+
+    .game-buttons button {
+      font-size: 0.6rem;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #fffaf0;
+      padding: 2rem;
+      border: 2px solid #3c2415;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
+  </div>
+
+  <div class="collapsible-section">
+    <button class="collapsible-header" onclick="toggleSection('availableGames')">🎲 Tillgängliga spel</button>
+    <div id="availableGames" class="collapsible-content"></div>
+  </div>
+
+  <div class="collapsible-section">
+    <button class="collapsible-header" onclick="toggleSection('lentGames')">📦 Utlånade spel</button>
+    <div id="lentGames" class="collapsible-content"></div>
+  </div>
+
+  <!-- Game Preview Modal -->
+  <div id="previewModal" class="modal">
+    <div class="modal-content" id="previewContent"></div>
+  </div>
+
+  <!-- Game History Modal -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content" id="historyContent"></div>
+  </div>
+
+  <!-- Lend Out Modal -->
+  <div id="lendModal" class="modal">
+    <div class="modal-content" id="lendContent"></div>
+  </div>
+
+  <script src="lending.js" defer></script>
+</body>
+</html>
