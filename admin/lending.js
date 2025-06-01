@@ -103,3 +103,10 @@ function closeHistoryModal() {
 searchInput.addEventListener('input', renderGameLists);
 
 window.onload = fetchGames;
+
+function closeModal() {
+  const modal = document.querySelector('.modal.open');
+  if (modal) {
+    modal.classList.remove('open');
+  }
+}
