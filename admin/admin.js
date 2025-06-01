@@ -21,7 +21,7 @@ async function fetchGames() {
 function renderGames() {
   const search = searchBar.value.toLowerCase();
   gameList.innerHTML = "";
-  games.filter(game => (game.title || game.title_en || "").toLowerCase().includes(search)).forEach((game, index) => {    const card = document.createElement("div");
+  games.filter(game => (game.title || "").toLowerCase().includes(search)).forEach((game, index) => {
     card.className = "game-card";
 
     const header = document.createElement("div");
@@ -29,7 +29,7 @@ function renderGames() {
 
     const title = document.createElement("div");
     title.className = "game-title";
-    title.textContent = game.title || game.title_en || "(No Title)";
+    title.textContent = game.title || "(No Title)";
 
     const buttons = document.createElement("div");
     const editBtn = document.createElement("button");
@@ -60,7 +60,7 @@ function openModal(index = null) {
   const game = isNew ? {} : games[index];
 
   gameForm.reset();
-  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;  document.getElementById("titleEn").value = game.title || "";
+  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;  document.getElementById("title").value = game.title || "";
   document.getElementById("descSv").value = game.description_sv || "";
   document.getElementById("descEn").value = game.description_en || "";
   document.getElementById("players").value = game.players || "";
@@ -84,8 +84,7 @@ gameForm.onsubmit = async (e) => {
 
   const formData = new FormData();
 
-  formData.append("title_sv", document.getElementById("titleEn").value); // 👈 add this line
-  formData.append("title_en", document.getElementById("titleEn").value);
+  formData.append("title", document.getElementById("title").value);
   formData.append("description_sv", document.getElementById("descSv").value);
   formData.append("description_en", document.getElementById("descEn").value);
   formData.append("players", document.getElementById("players").value);
