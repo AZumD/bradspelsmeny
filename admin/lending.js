@@ -1,6 +1,6 @@
 // lending.js
 
-const API_BASE = 'https://bradspelsmeny-backend.onrender.com';
+const API_BASE = 'https://bradspelsmeny-backend.up.railway.app';
 
 const searchInput = document.getElementById('searchInput');
 const availableContainer = document.getElementById('availableGames');
