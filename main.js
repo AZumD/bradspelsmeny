@@ -115,7 +115,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetch('https://bradspelsmeny-backend.onrender.com/games');
+  const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/games');
   games = await res.json();
 
   let filtered = currentCategory === 'all'
