@@ -50,7 +50,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadUsers() {
     const res = await fetch(API_URL);
-    const users = await res.json();
+    const text = await res.text();
+try {
+  const users = JSON.parse(text);
+  users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+  userList.innerHTML = "";
+
+  users.forEach(user => {
+    const card = document.createElement("div");
+    card.className = "user-card";
+
+    const header = document.createElement("div");
+    header.className = "user-header";
+
+    const title = document.createElement("div");
+    title.className = "user-title";
+    title.textContent = `${user.first_name} ${user.last_name}`;
+
+    const buttons = document.createElement("div");
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-button";
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => {
+      userForm.reset();
+      editingIdInput.value = user.id;
+      userForm.username.value = user.username || "";
+      userForm.password.value = ""; // do not prefill password
+      userForm.firstName.value = user.first_name;
+      userForm.lastName.value = user.last_name;
+      userForm.phone.value = user.phone;
+      userForm.email.value = user.email || "";
+      userForm.idNumber.value = user.id_number || "";
+      userModal.style.display = "flex";
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-button";
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = () => deleteUser(user.id);
+
+    buttons.appendChild(editBtn);
+    buttons.appendChild(deleteBtn);
+    header.appendChild(title);
+    header.appendChild(buttons);
+    card.appendChild(header);
+    userList.appendChild(card);
+  });
+} catch (e) {
+  console.error("Failed to parse JSON:", text);
+  alert("❌ Server error – check console for details");
+}
+
     users.sort((a, b) => a.last_name.localeCompare(b.last_name));
     userList.innerHTML = "";
 
