@@ -23,7 +23,7 @@ function renderGames() {
   gameList.innerHTML = "";
   
   games
-    .filter(game => (game.title || "").toLowerCase().includes(search))
+    .filter(game => (game.title_en || game.title || "").toLowerCase().includes(search))
     .forEach((game, index) => {
       const card = document.createElement("div");
       card.className = "game-card";
@@ -33,7 +33,7 @@ function renderGames() {
 
       const title = document.createElement("div");
       title.className = "game-title";
-      title.textContent = game.title || "(No Title)";
+      title.textContent = game.title_en || game.title || "(No Title)";
 
       const buttons = document.createElement("div");
       const editBtn = document.createElement("button");
