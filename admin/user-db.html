@@ -23,7 +23,7 @@
       padding: 1rem;
       box-shadow: 0 4px 0 #4a1f0f;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       box-sizing: border-box;
     }
@@ -33,6 +33,10 @@
       font-size: 1rem;
       text-decoration: none;
       font-weight: bold;
+    }
+
+    .add-button-wrapper {
+      margin: 1rem 0;
     }
 
     .add-button {
@@ -155,13 +159,20 @@
 <body>
   <header class="topbar">
     <a href="index.html" class="dashboard-title">Admin Dashboard</a>
-    <button id="addUserButton" class="add-button">➕ Add Member</button>
   </header>
 
+  <!-- Add Member Button -->
+  <div class="add-button-wrapper">
+    <button id="addUserButton" class="add-button">➕ Add Member</button>
+  </div>
+
+  <!-- Modal Form -->
   <div id="userModal">
     <div class="modal-content">
       <h1>📂 Lägg till användare</h1>
       <form id="userForm">
+        <input type="hidden" id="editingId" name="editingId" />
+
         <label for="username">Användarnamn (valfritt)</label>
         <input type="text" id="username" name="username" />
 
@@ -191,8 +202,9 @@
     </div>
   </div>
 
+  <!-- User List -->
   <div class="user-list" id="userList"></div>
 
-<script defer src="user-db.js"></script>   
+  <script defer src="user-db.js"></script>
 </body>
 </html>
