@@ -23,8 +23,9 @@
       padding: 1rem;
       box-shadow: 0 4px 0 #4a1f0f;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
+      box-sizing: border-box;
     }
 
     .dashboard-title {
@@ -34,7 +35,19 @@
       font-weight: bold;
     }
 
-    .form-container {
+    .add-button {
+      font-size: 0.6rem;
+      background-color: #e6b35c;
+      border: 2px solid #3c2415;
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 #c19761;
+      color: #3c2415;
+    }
+
+    .form-container,
+    .user-list {
       width: 100%;
       max-width: 700px;
       padding: 2rem 1rem;
@@ -45,6 +58,34 @@
       text-align: center;
       font-size: 1rem;
       margin-bottom: 1.5rem;
+    }
+
+    .user-card {
+      background-color: #fffaf0;
+      border: 2px solid #3c2415;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 #c19761;
+    }
+
+    .user-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-title {
+      font-size: 0.65rem;
+    }
+
+    .edit-button,
+    .delete-button {
+      font-size: 0.6rem;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
     }
 
     form {
@@ -86,42 +127,72 @@
       box-shadow: 3px 3px 0 #c19761;
       align-self: center;
     }
+
+    #userModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #fffaf0;
+      padding: 2rem;
+      border: 2px solid #3c2415;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
   <header class="topbar">
     <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+    <button id="addUserButton" class="add-button">➕ Add Member</button>
   </header>
 
-  <div class="form-container">
-    <h1>📂 Lägg till användare</h1>
-    <form id="userForm">
-      <label for="username">Användarnamn (valfritt)</label>
-      <input type="text" id="username" name="username" />
+  <div id="userModal">
+    <div class="modal-content">
+      <h1>📂 Lägg till användare</h1>
+      <form id="userForm">
+        <label for="username">Användarnamn (valfritt)</label>
+        <input type="text" id="username" name="username" />
 
-      <label for="password">Lösenord (valfritt)</label>
-      <input type="password" id="password" name="password" />
+        <label for="password">Lösenord (valfritt)</label>
+        <input type="password" id="password" name="password" />
 
-      <label for="firstName">Förnamn</label>
-      <input type="text" id="firstName" name="firstName" required />
+        <label for="firstName">Förnamn</label>
+        <input type="text" id="firstName" name="firstName" required />
 
-      <label for="lastName">Efternamn</label>
-      <input type="text" id="lastName" name="lastName" required />
+        <label for="lastName">Efternamn</label>
+        <input type="text" id="lastName" name="lastName" required />
 
-      <label for="phone">Telefonnummer</label>
-      <input type="tel" id="phone" name="phone" required />
+        <label for="phone">Telefonnummer</label>
+        <input type="tel" id="phone" name="phone" required />
 
-      <label for="email">E-post (valfritt)</label>
-      <input type="email" id="email" name="email" />
+        <label for="email">E-post (valfritt)</label>
+        <input type="email" id="email" name="email" />
 
-      <label for="idNumber">Personnummer (valfritt)</label>
-      <input type="text" id="idNumber" name="idNumber" />
+        <label for="idNumber">Personnummer (valfritt)</label>
+        <input type="text" id="idNumber" name="idNumber" />
 
-      <label for="idImage">ID-bild (valfritt)</label>
-      <input type="file" id="idImage" name="idImage" accept="image/*" />
+        <label for="idImage">ID-bild (valfritt)</label>
+        <input type="file" id="idImage" name="idImage" accept="image/*" />
 
-      <button type="submit">💾 Spara användare</button>
-    </form>
+        <button type="submit">💾 Spara användare</button>
+      </form>
+    </div>
   </div>
+
+  <div class="user-list" id="userList"></div>
+
+<script defer src="user-db.js"></script>   
 </body>
 </html>
