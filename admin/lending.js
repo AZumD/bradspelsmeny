@@ -34,7 +34,9 @@ function createGameCard(game) {
   card.innerHTML = `
     <h3>${game.title_sv}</h3>
     <div class="buttons">
-      <button class="btn-action" onclick="openLendModal(${game.id})">${game.lent_out ? 'Return' : 'Lend Out'}</button>
+      <button class="btn-action" onclick="${game.lent_out ? `returnGame(${game.id})` : `openLendModal(${game.id})`}">
+        ${game.lent_out ? 'Return' : 'Lend Out'}
+      </button>
       <button onclick="openImageModal('${game.img}')">🖼️</button>
       <button onclick="openHistoryModal(${game.id})">📜</button>
     </div>
@@ -51,6 +53,7 @@ async function openLendModal(gameId) {
     users.map(u => `<option value="${u.id}">${u.first_name} ${u.last_name}</option>`).join('');
 
   document.getElementById('lendGameId').value = gameId;
+  document.getElementById('lendNote').value = '';
   modal.style.display = 'block';
 }
 
@@ -70,6 +73,16 @@ async function confirmLend() {
   });
 
   closeLendModal();
+  fetchGames();
+}
+
+async function returnGame(gameId) {
+  await fetch(`${API_BASE}/return/${gameId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note: 'Returned manually' }) // Optional note
+  });
+
   fetchGames();
 }
 
@@ -101,12 +114,4 @@ function closeHistoryModal() {
 }
 
 searchInput.addEventListener('input', renderGameLists);
-
 window.onload = fetchGames;
-
-function closeModal() {
-  const modal = document.querySelector('.modal.open');
-  if (modal) {
-    modal.classList.remove('open');
-  }
-}
