@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userForm = document.getElementById("userForm");
   const userList = document.getElementById("userList");
 
-  const API_URL = "https://bradspelsmeny-backend.onrender.com/users";
+  const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
 
   addUserButton.onclick = () => {
     userForm.reset();
