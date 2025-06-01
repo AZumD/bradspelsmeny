@@ -56,6 +56,29 @@ function renderGames() {
     });
 }
 
+function deleteGame(index) {
+  const game = games[index];
+  if (!game || !game.id) return;
+
+  const confirmed = confirm(`Är du säker på att du vill radera spelet "${game.title_en || game.title || "(no title)"}"?`);
+  if (!confirmed) return;
+
+  fetch(`https://bradspelsmeny-backend.onrender.com/games/${game.id}`, {
+    method: "DELETE"
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Delete failed");
+    return res.json();
+  })
+  .then(() => {
+    fetchGames(); // refresh list
+  })
+  .catch(err => {
+    alert("Något gick fel vid radering.");
+    console.error(err);
+  });
+}
+
 function openModal(index = null) {
   editingIndex = index;
   const isNew = index === null;
