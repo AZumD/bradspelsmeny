@@ -11,24 +11,36 @@
       padding: 0;
       height: 100%;
       overflow-x: hidden;
+      overflow-y: auto;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
     }
 
-    .bg {
-  background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/main/Vintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: -1;
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
+    /* Fixed wrapper + absolute image background */
+    .bg-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/main/Vintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      will-change: transform;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      backface-visibility: hidden;
+    }
 
     * { box-sizing: border-box; }  
 
@@ -225,8 +237,12 @@
   </style>  
 </head>  
 <body>  
-  <div class="bg"></div>
+  <!-- Background -->
+  <div class="bg-wrapper">
+    <div class="bg-image"></div>
+  </div>
 
+  <!-- Content -->
   <div class="wrapper">  
     <div id="banner">  
       <img src="banner3.png" alt="Banner" />  
