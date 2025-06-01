@@ -3,6 +3,7 @@
 let games = [];
 let editingIndex = null;
 
+const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
 const gameList = document.getElementById("gameList");
 const searchBar = document.getElementById("searchBar");
 const gameModal = document.getElementById("gameModal");
@@ -13,7 +14,7 @@ const closeModalButton = document.getElementById("closeModal");
 
 async function fetchGames() {
   loadingSpinner.style.display = "block";
-  const res = await fetch("https://bradspelsmeny-backend.onrender.com/games");
+  const res = await fetch("const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/games");");
   games = await res.json();
   loadingSpinner.style.display = "none";
   renderGames();
@@ -131,9 +132,8 @@ gameForm.onsubmit = async (e) => {
   const isNew = gameId === "";
   const method = isNew ? "POST" : "PUT";
   const url = isNew
-    ? "https://bradspelsmeny-backend.onrender.com/games"
-    : `https://bradspelsmeny-backend.onrender.com/games/${gameId}`;
-
+  ? "https://bradspelsmeny-backend-production.up.railway.app/games"
+  : `https://bradspelsmeny-backend-production.up.railway.app/games/${gameId}`;
   const res = await fetch(url, {
     method,
     body: formData
