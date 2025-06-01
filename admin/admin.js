@@ -21,35 +21,38 @@ async function fetchGames() {
 function renderGames() {
   const search = searchBar.value.toLowerCase();
   gameList.innerHTML = "";
-  games.filter(game => (game.title || "").toLowerCase().includes(search)).forEach((game, index) => {
-    card.className = "game-card";
+  
+  games
+    .filter(game => (game.title || "").toLowerCase().includes(search))
+    .forEach((game, index) => {
+      const card = document.createElement("div");
+      card.className = "game-card";
 
-    const header = document.createElement("div");
-    header.className = "game-header";
+      const header = document.createElement("div");
+      header.className = "game-header";
 
-    const title = document.createElement("div");
-    title.className = "game-title";
-    title.textContent = game.title || "(No Title)";
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = game.title || "(No Title)";
 
-    const buttons = document.createElement("div");
-    const editBtn = document.createElement("button");
-    editBtn.className = "edit-button";
-    editBtn.textContent = "✏️";
-    editBtn.onclick = () => openModal(index);
+      const buttons = document.createElement("div");
+      const editBtn = document.createElement("button");
+      editBtn.className = "edit-button";
+      editBtn.textContent = "✏️";
+      editBtn.onclick = () => openModal(index);
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-button";
-    deleteBtn.textContent = "🗑️";
-    deleteBtn.onclick = () => deleteGame(index);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-button";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.onclick = () => deleteGame(index);
 
-    buttons.appendChild(editBtn);
-    buttons.appendChild(deleteBtn);
-    header.appendChild(title);
-    header.appendChild(buttons);
-
- card.appendChild(header);
-    gameList.appendChild(card);
-  });
+      buttons.appendChild(editBtn);
+      buttons.appendChild(deleteBtn);
+      header.appendChild(title);
+      header.appendChild(buttons);
+      card.appendChild(header);
+      gameList.appendChild(card);
+    });
 }
 
 function openModal(index = null) {
