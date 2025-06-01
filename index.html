@@ -1,42 +1,74 @@
-<!DOCTYPE html>  <html lang="sv">  
+<!DOCTYPE html>
+<html lang="sv">  
 <head>  
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
+      background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/main/Vintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      background-color: #000;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 250, 240, 0.8);
+      z-index: -1;
+    }
+
+    * { box-sizing: border-box; }  
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
     .loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  color: #8b0000;
-  animation: pulse 1.5s infinite ease-in-out;
-}
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      color: #8b0000;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
 
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
 
     @media (max-width: 768px) {
-  #gameList {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    
-  }
-}
-@media (max-width: 768px) {
-  .game-card img {
-    width: 100%;
-  }
-}
+      #gameList {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .game-card img {
+        width: 100%;
+      }
+    }
+
     .category-badges {
       display: flex;
       flex-wrap: wrap;
@@ -66,21 +98,21 @@
     }
 
     #searchBar {
-  padding: 12px;
-  margin: 10px 0 20px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  border-radius: 4px;
-  border: 3px solid #8b0000;
-  background: #fffaf0;
-  color: #8b0000;
-  width: 100%;
-  box-shadow: 3px 3px 0 #8b0000;
-  outline: none;
-  flex: 1 1 200px;
-  max-width: 100%;
-  transition: box-shadow 0.2s ease;
-}
+      padding: 12px;
+      margin: 10px 0 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      border-radius: 4px;
+      border: 3px solid #8b0000;
+      background: #fffaf0;
+      color: #8b0000;
+      width: 100%;
+      box-shadow: 3px 3px 0 #8b0000;
+      outline: none;
+      flex: 1 1 200px;
+      max-width: 100%;
+      transition: box-shadow 0.2s ease;
+    }
 
     #gameList {
       display: grid;
@@ -88,47 +120,32 @@
       gap: 20px;
     }
 
-    * { box-sizing: border-box; }  
-    body {  
-      margin: 0;  
-      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
-      background: radial-gradient(circle at top center, #fffaf5, #f5e6dc);
-    }  
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    
     .table-select-wrapper {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  color: #8b0000;
-}
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      color: #8b0000;
+    }
 
-#tableSelect {
-  margin-top: 10px;
-  padding: 10px;
-  border: 2px solid #8b0000;
-  border-radius: 5px;
-  background: #fffaf0;
-  color: #8b0000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.55rem;
-  box-shadow: 2px 2px 0 #8b0000;
-}
+    #tableSelect {
+      margin-top: 10px;
+      padding: 10px;
+      border: 2px solid #8b0000;
+      border-radius: 5px;
+      background: #fffaf0;
+      color: #8b0000;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.55rem;
+      box-shadow: 2px 2px 0 #8b0000;
+    }
 
     main {
       width: 100%;
       padding: 20px 0;
     }
-    
-    
+
     #banner {
       display: flex;
       justify-content: center;
@@ -139,11 +156,11 @@
       align-items: center;
     }
 
-#banner img {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-}
+    #banner img {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+    }
 
     .game-card {
       background: #fffdf8;
@@ -186,94 +203,56 @@
       box-shadow: 3px 3px 0 #d2691e;
     }
 
-    #searchBar {
-      flex: 1 1 200px;
-      max-width: 100%;
-      font-size: 0.6rem;
-      margin: 10px 0;
-      transition: box-shadow 0.2s ease;
+    .language-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
     }
+
+    .language-toggle button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 2px solid #8b0000;
+      background-color: #fffaf0;
+      color: #8b0000;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.5rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #8b0000;
+    }
+
   </style>  
 </head>  
 <body>  
-  
   <div class="wrapper">  
     <div id="banner">  
       <img src="banner3.png" alt="Banner" />  
     </div>  
-  <!-- <div class="table-select-wrapper">
-     <label for="tableSelect"><strong>Vilket bord sitter du vid? (se lappen som ni fick vid ankomst!)</strong></label><br />
-<select id="tableSelect" style="width: 100%; max-width: 300px;">    
-    <option value="0">Bord 0</option>
-    <option value="1">Bord 1</option>
-    <option value="2">Bord 2</option>
-    <option value="3">Bord 3</option>
-    <option value="4">Bord 4,5</option>
-    <option value="5">Bord 6,7</option>
-    <option value="6">Bord 4,5,6,7</option>
-    <option value="7">Bord 8,9</option>
-    <option value="8">Bord 10,11</option>
-    <option value="9">Bord 8,9,10,11</option>
-    <option value="10">Bord 12</option>
-    <option value="11">Bord 13</option>
-    <option value="12">Bord 14,15</option>
-    <option value="13">Bord 16,17</option>
-    <option value="14">Bord 20,21</option>
-    <option value="15">Bord 22,23</option>
-    <option value="16">Bord 20,21,22,23</option>
-    <option value="19">Bord 20,21,22,23,15</option>
-    <option value="18">Bord 20,21,22,23,14,15</option>
-    <option value="17">Bord 20,21,22,23,14,15,16,17,24,25,26,27</option>
-    <option value="20">Bord 24,25</option>
-    <option value="21">Bord 26,27</option>
-    <option value="22">Bord 24,25,26,27</option>
-    <option value="23">Bord 24,25,26,27,16</option>
-    <option value="24">Bord 24,25,26,27,16,16</option>
-    <option value="25">Bord 24,25,26,27,16,16,30,31</option>
-    <option value="26">Bord 30,31</option>
-    <option value="27">Bord 32,33,34</option>
-    <option value="28">Bord 35</option>
-    <option value="29">Bord 36,37</option>
-    <option value="30">Bord 38,39</option>
-    <option value="31">Bord 40</option>
-    <option value="32">Bord 41</option>
-    <option value="33">Bord 42,43</option>
-    <option value="34">Bord 100</option>
-    <option value="35">Bord 101,102</option>
-    <option value="36">Bord 103</option>
-    <option value="37">Bord 104</option>
-    <option value="38">Bord 106</option>
-    <option value="39">Bord 107</option>
-    <option value="40">Bord 108</option>
-    <option value="41">Bord 110</option>
-    <option value="42">Bord 108,109,110</option>
-    <option value="43">Bord 111</option>
-    <option value="44">Bord 112</option>
-  </select> -->
-      <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
-      </div>
+
+    <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
+
     <div class="filters">
-<input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
       <div id="categoryBadges" class="category-badges"></div>
     </div>
 
     <main>
-      
       <div class="language-toggle">  
         <button onclick="setLanguage('sv')">🇸🇪</button>  
         <button onclick="setLanguage('en')">🇬🇧</button>  
       </div>  
       <div id="intro"></div>
-      <div style="margin-bottom: 20px;">
-</div>
       <h2 id="categoryHeading"></h2>
+
       <div id="loadingSpinner" class="loading-spinner">
-  <span>Laddar spel...</span>
-</div>
+        <span>Laddar spel...</span>
+      </div>
+
       <div id="gameList"></div>  
     </main>  
   </div>  
-<!--<script src="games-data.js"></script>-->
- <script src="main.js"></script>
+
+  <script src="main.js"></script>
 </body>  
-</html>  
+</html>
