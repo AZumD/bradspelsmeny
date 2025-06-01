@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background-color: #f3e2c7;
+      color: #3c2415;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topbar {
+      background-color: #8c3c1a;
+      color: white;
+      width: 100%;
+      padding: 1rem;
+      box-shadow: 0 4px 0 #4a1f0f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dashboard-title {
+      color: #fff4d9;
+      font-size: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem 1rem;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 0.6rem;
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="file"] {
+      font-family: 'Press Start 2P', monospace;
+      padding: 0.5rem;
+      font-size: 0.6rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      background-color: #fffaf0;
+      color: #3c2415;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 #c19761;
+      align-self: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+  </header>
+
+  <div class="form-container">
+    <h1>📂 Lägg till användare</h1>
+    <form id="userForm">
+      <label for="username">Användarnamn (valfritt)</label>
+      <input type="text" id="username" name="username" />
+
+      <label for="password">Lösenord (valfritt)</label>
+      <input type="password" id="password" name="password" />
+
+      <label for="firstName">Förnamn</label>
+      <input type="text" id="firstName" name="firstName" required />
+
+      <label for="lastName">Efternamn</label>
+      <input type="text" id="lastName" name="lastName" required />
+
+      <label for="phone">Telefonnummer</label>
+      <input type="tel" id="phone" name="phone" required />
+
+      <label for="email">E-post (valfritt)</label>
+      <input type="email" id="email" name="email" />
+
+      <label for="idNumber">Personnummer (valfritt)</label>
+      <input type="text" id="idNumber" name="idNumber" />
+
+      <label for="idImage">ID-bild (valfritt)</label>
+      <input type="file" id="idImage" name="idImage" accept="image/*" />
+
+      <button type="submit">💾 Spara användare</button>
+    </form>
+  </div>
+</body>
+</html>
