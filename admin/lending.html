@@ -43,20 +43,8 @@
       box-sizing: border-box;
     }
 
-        .search-bar {
+    .search-bar {
       margin-bottom: 1.5rem;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.6rem;
-      font-size: 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      border: 2px solid #3c2415;
-      border-radius: 6px;
-      background-color: #fffaf0;
-      color: #3c2415;
-      box-sizing: border-box;
     }
 
     .search-bar input {
@@ -96,7 +84,7 @@
       padding: 1rem;
     }
 
-    .user-card {
+    .game-card {
       background-color: #fffaf0;
       border: 2px solid #3c2415;
       padding: 1rem;
@@ -104,23 +92,10 @@
       box-shadow: 2px 2px 0 #c19761;
     }
 
-    .user-header {
+    .buttons {
+      margin-top: 1rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-title {
-      font-size: 0.65rem;
-    }
-
-    .edit-button,
-    .delete-button {
-      font-size: 0.6rem;
-      margin-left: 0.5rem;
-      cursor: pointer;
-      background: none;
-      border: none;
+      gap: 0.5rem;
     }
 
     .modal {
@@ -159,26 +134,54 @@
     </div>
 
     <div class="collapsible-section">
-      <button class="collapsible-header" onclick="toggleSection('lentGames')">📦 Utlånade spel</button>
-      <div id="lentGames" class="collapsible-content"></div>
+      <button class="collapsible-header" onclick="toggleSection('lentOutGames')">📦 Utlånade spel</button>
+      <div id="lentOutGames" class="collapsible-content"></div>
     </div>
   </div>
 
-  <!-- Game Preview Modal -->
-  <div id="previewModal" class="modal">
-    <div class="modal-content" id="previewContent"></div>
+  <!-- Image Preview Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <img id="modalImage" style="max-width: 100%;" />
+      <div style="margin-top: 1rem;">
+        <button onclick="closeImageModal()">Stäng</button>
+      </div>
+    </div>
   </div>
 
   <!-- Game History Modal -->
   <div id="historyModal" class="modal">
-    <div class="modal-content" id="historyContent"></div>
+    <div class="modal-content">
+      <h3>Historik</h3>
+      <ul id="historyList"></ul>
+      <div style="margin-top: 1rem;">
+        <button onclick="closeHistoryModal()">Stäng</button>
+      </div>
+    </div>
   </div>
 
   <!-- Lend Out Modal -->
   <div id="lendModal" class="modal">
-    <div class="modal-content" id="lendContent"></div>
+    <div class="modal-content">
+      <h3>Låna ut spel</h3>
+      <input type="hidden" id="lendGameId" />
+      <label for="userSelect">Välj användare:</label>
+      <select id="userSelect"></select>
+      <label for="lendNote">Anteckning:</label>
+      <textarea id="lendNote" rows="3" style="width: 100%; font-family: monospace;"></textarea>
+      <div style="margin-top: 1rem;">
+        <button onclick="confirmLend()">Låna ut</button>
+        <button onclick="closeLendModal()">Avbryt</button>
+      </div>
+    </div>
   </div>
 
+  <script>
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      section.style.display = section.style.display === 'flex' ? 'none' : 'flex';
+    }
+  </script>
   <script src="lending.js" defer></script>
 </body>
 </html>
