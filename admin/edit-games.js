@@ -63,7 +63,7 @@ function deleteGame(index) {
   const confirmed = confirm(`Är du säker på att du vill radera spelet "${game.title_en || game.title || "(no title)"}"?`);
   if (!confirmed) return;
 
-  fetch(`https://bradspelsmeny-backend.onrender.com/games/${game.id}`, {
+  fetch(`https://bradspelsmeny-backend-production.up.railway.app/games/${game.id}`, {
     method: "DELETE"
   })
   .then(res => {
