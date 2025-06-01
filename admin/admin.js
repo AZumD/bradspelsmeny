@@ -63,7 +63,8 @@ function openModal(index = null) {
   const game = isNew ? {} : games[index];
 
   gameForm.reset();
-  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;  document.getElementById("title").value = game.title || "";
+  document.getElementById("titleEn").value = game.title_en || "";
+  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;
   document.getElementById("descSv").value = game.description_sv || "";
   document.getElementById("descEn").value = game.description_en || "";
   document.getElementById("players").value = game.players || "";
@@ -87,7 +88,8 @@ gameForm.onsubmit = async (e) => {
 
   const formData = new FormData();
 
-  formData.append("title", document.getElementById("title").value);
+  formData.append("title_en", document.getElementById("titleEn").value);
+  formData.append("title_sv", document.getElementById("titleEn").value); // 👈 fallback to same title for Swedish
   formData.append("description_sv", document.getElementById("descSv").value);
   formData.append("description_en", document.getElementById("descEn").value);
   formData.append("players", document.getElementById("players").value);
