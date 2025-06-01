@@ -84,6 +84,7 @@ gameForm.onsubmit = async (e) => {
 
   const formData = new FormData();
 
+  formData.append("title_sv", document.getElementById("titleEn").value); // 👈 add this line
   formData.append("title_en", document.getElementById("titleEn").value);
   formData.append("description_sv", document.getElementById("descSv").value);
   formData.append("description_en", document.getElementById("descEn").value);
