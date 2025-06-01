@@ -14,7 +14,7 @@ const closeModalButton = document.getElementById("closeModal");
 
 async function fetchGames() {
   loadingSpinner.style.display = "block";
-  const res = await fetch("const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/games");");
+  const res = await fetch(`${API_BASE}/games`);
   games = await res.json();
   loadingSpinner.style.display = "none";
   renderGames();
