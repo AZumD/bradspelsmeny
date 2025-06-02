@@ -9,28 +9,27 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
       overflow-x: hidden;
-      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;  
     }
 
     .bg {
-      background-image: url('https://raw.githubusercontent.com/AZumD/bradspelsmeny/refs/heads/main/img/xxVintage%20Lounge%20with%20Tropical%20D%C3%A9cor.png');
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
+      background-image: url('img/xxVintage Lounge with Tropical Décor.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       z-index: -1;
-      will-change: transform;
       transform: translateZ(0);
       backface-visibility: hidden;
+      will-change: transform;
     }
 
-    * { box-sizing: border-box; }  
+    * { box-sizing: border-box; }
 
     .wrapper {
       display: flex;
@@ -47,7 +46,7 @@
       padding: 30px;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
-      color: #f1c376;
+      color: #8b0000;
       animation: pulse 1.5s infinite ease-in-out;
     }
 
@@ -81,20 +80,20 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 0.55rem;
       padding: 8px 10px;
-      border: 2px solid #af6e3f;
-      background: rgba(255, 240, 220, 0.85);
-      color: #af6e3f;
+      border: 2px solid #8b0000;
+      background: #fffaf0;
+      color: #8b0000;
       border-radius: 8px;
       cursor: pointer;
       user-select: none;
-      box-shadow: 2px 2px 0 #3c1c10;
+      box-shadow: 2px 2px 0 #8b0000;
       transition: all 0.2s ease-in-out;
     }
 
     .category-badge.active {
-      background: #af6e3f;
-      color: #fff8e6;
-      box-shadow: 2px 2px 0 #1a0e07;
+      background: #8b0000;
+      color: gold;
+      box-shadow: 2px 2px 0 #444;
     }
 
     #searchBar {
@@ -103,17 +102,13 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
       border-radius: 4px;
-      border: 3px solid #af6e3f;
-      background: rgba(255, 248, 240, 0.8);
-      color: #af6e3f;
+      border: 3px solid #8b0000;
+      background: #fffaf0;
+      color: #8b0000;
       width: 100%;
-      box-shadow: 3px 3px 0 #3c1c10;
+      box-shadow: 3px 3px 0 #8b0000;
       outline: none;
       transition: box-shadow 0.2s ease;
-    }
-
-    #searchBar:focus {
-      box-shadow: 3px 3px 0 #af6e3f;
     }
 
     #gameList {
@@ -128,19 +123,19 @@
       margin-bottom: 20px;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
-      color: #f1c376;
+      color: #8b0000;
     }
 
     #tableSelect {
       margin-top: 10px;
       padding: 10px;
-      border: 2px solid #af6e3f;
+      border: 2px solid #8b0000;
       border-radius: 5px;
       background: #fffaf0;
-      color: #af6e3f;
+      color: #8b0000;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.55rem;
-      box-shadow: 2px 2px 0 #3c1c10;
+      box-shadow: 2px 2px 0 #8b0000;
     }
 
     main {
@@ -165,20 +160,20 @@
     }
 
     .game-card {
-      background: rgba(255, 248, 240, 0.9);
-      border-radius: 8px;  
-      padding: 15px;  
-      margin-bottom: 20px;  
-      display: flex;  
-      flex-wrap: wrap; 
-      border: 2px dashed #d9a55c;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      background: rgba(255, 253, 248, 0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      border: 2px dashed gold;
       opacity: 0;
       transform: translateY(10px);
       animation: fadeInUp 0.4s ease forwards;
       flex-direction: column;
       align-items: center;
       text-align: center;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
 
     @keyframes fadeInUp {
@@ -188,29 +183,54 @@
       }
     }
 
-    .game-card img {  
-      width: 320px;  
-      height: auto;  
-      margin: 0 0 10px 0;  
-      border-radius: 5px;  
-      flex-shrink: 0;  
-    }  
+    .game-card img {
+      width: 320px;
+      height: auto;
+      margin: 0 0 10px 0;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
 
-    .game-info { flex: 1 1 200px; min-width: 0; padding: 0 5px; }  
-    .game-info h3 { margin: 0 0 10px; word-wrap: break-word; }  
-    .game-info p { word-wrap: break-word; }
-    .game-info a { color: #af6e3f; text-decoration: underline; font-weight: bold; }
-    .tags { font-size: 0.9em; color: #5c3b2c; }  
+    .game-info {
+      flex: 1 1 200px;
+      min-width: 0;
+      padding: 0 5px;
+    }
+
+    .game-info h3 {
+      margin: 0 0 10px;
+      word-wrap: break-word;
+    }
+
+    .game-info p {
+      word-wrap: break-word;
+    }
+
+    .game-info a {
+      color: #8b0000;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    .tags {
+      font-size: 0.9em;
+      color: #555;
+    }
 
     #intro {
       margin-bottom: 30px;
-      font-size: 1.2em;
+      font-size: 0.6rem;
+      font-family: 'Press Start 2P', monospace;
       text-align: center;
-      background: rgba(255, 248, 240, 0.9);
+      background: rgba(255, 253, 248, 0.9);
       padding: 15px 20px;
       border-radius: 8px;
-      border: 2px dashed #d9a55c;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border: 2px dashed gold;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+
+    #searchBar:focus {
+      box-shadow: 3px 3px 0 #d2691e;
     }
 
     .language-toggle {
@@ -223,25 +243,25 @@
     .language-toggle button {
       padding: 6px 10px;
       border-radius: 4px;
-      border: 2px solid #af6e3f;
+      border: 2px solid #8b0000;
       background-color: #fffaf0;
-      color: #af6e3f;
+      color: #8b0000;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.5rem;
       cursor: pointer;
-      box-shadow: 2px 2px 0 #3c1c10;
+      box-shadow: 2px 2px 0 #8b0000;
     }
-  </style>  
-</head>  
-<body>  
+  </style>
+</head>
+<body>
   <div class="bg"></div>
 
-  <div class="wrapper">  
-    <div id="banner">  
-      <img src="banner3.png" alt="Banner" />  
-    </div>  
+  <div class="wrapper">
+    <div id="banner">
+      <img src="banner3.png" alt="Banner" />
+    </div>
 
-    <p id="selectedTablesDisplay" style="margin-top: 10px; color: #f1c376; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
+    <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
 
     <div class="filters">
       <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
@@ -249,10 +269,10 @@
     </div>
 
     <main>
-      <div class="language-toggle">  
-        <button onclick="setLanguage('sv')">🇸🇪</button>  
-        <button onclick="setLanguage('en')">🇬🇧</button>  
-      </div>  
+      <div class="language-toggle">
+        <button onclick="setLanguage('sv')">🇸🇪</button>
+        <button onclick="setLanguage('en')">🇬🇧</button>
+      </div>
       <div id="intro"></div>
       <h2 id="categoryHeading"></h2>
 
@@ -260,10 +280,12 @@
         <span>Laddar spel...</span>
       </div>
 
-      <div id="gameList"></div>  
-    </main>  
-  </div>  
+      <div id="gameList"></div>
+    </main>
+  </div>
 
   <script src="main.js"></script>
-</body>  
+</body>
 </html>
+
+
