@@ -6,10 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
-    html, body {
+    html {
+      height: 100%;
+      background-color: black; /* fallback */
+    }
+
+    body {
+      height: 100%;
       margin: 0;
       padding: 0;
-      background-color: black;
+      background: transparent;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
       overflow-x: hidden;
     }
@@ -33,6 +39,8 @@
     * { box-sizing: border-box; }
 
     .wrapper {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       max-width: 1000px;
@@ -207,85 +215,4 @@
       word-wrap: break-word;
     }
 
-    .game-info a {
-      color: #8b0000;
-      text-decoration: underline;
-      font-weight: bold;
-    }
-
-    .tags {
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    #intro {
-  margin-bottom: 30px;
-  font-size: 0.7rem;
-  font-family: 'Press Start 2P', monospace;
-  text-align: center;
-  background: rgba(255, 253, 248, 0.9);
-  padding: 15px 20px;
-  border-radius: 8px;
-  border: 2px dashed gold;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-}
-
-
-    #searchBar:focus {
-      box-shadow: 3px 3px 0 #d2691e;
-    }
-
-    .language-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .language-toggle button {
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: 2px solid #8b0000;
-      background-color: #fffaf0;
-      color: #8b0000;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #8b0000;
-    }
-  </style>
-</head>
-<body>
-  <div class="bg"></div>
-
-  <div class="wrapper">
-    <div id="banner">
-      <img src="banner3.png" alt="Banner" />
-    </div>
-
-    <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
-
-    <div class="filters">
-      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
-      <div id="categoryBadges" class="category-badges"></div>
-    </div>
-
-    <main>
-      <div class="language-toggle">
-        <button onclick="setLanguage('sv')">🇸🇪</button>
-        <button onclick="setLanguage('en')">🇬🇧</button>
-      </div>
-      <div id="intro"></div>
-      <h2 id="categoryHeading"></h2>
-
-      <div id="loadingSpinner" class="loading-spinner">
-        <span>Laddar spel...</span>
-      </div>
-
-      <div id="gameList"></div>
-    </main>
-  </div>
-
-  <script src="main.js"></script>
-</body>
-</html>
+    .game-info a
