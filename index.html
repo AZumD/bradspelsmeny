@@ -76,15 +76,14 @@
       margin-top: 10px;
     }
 
-.filters {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(255, 253, 248, 0.95); /* light background for readability */
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* subtle shadow when floating */
-}
+    .filters {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 253, 248, 0.95);
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
 
     .category-badge {
       font-family: 'Press Start 2P', monospace;
@@ -108,7 +107,7 @@
 
     #searchBar {
       padding: 12px;
-      margin: 10px 0 20px;
+      margin: 10px 0 0;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
       border-radius: 4px;
@@ -119,6 +118,10 @@
       box-shadow: 3px 3px 0 #8b0000;
       outline: none;
       transition: box-shadow 0.2s ease;
+    }
+
+    #searchBar:focus {
+      box-shadow: 3px 3px 0 #d2691e;
     }
 
     #gameList {
@@ -239,10 +242,6 @@
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
 
-    #searchBar:focus {
-      box-shadow: 3px 3px 0 #d2691e;
-    }
-
     .language-toggle {
       display: flex;
       justify-content: center;
@@ -265,10 +264,12 @@
 </head>
 <body>
   <div class="bg"></div>
- <div class="language-toggle">
-        <button onclick="setLanguage('sv')">🇸🇪</button>
-        <button onclick="setLanguage('en')">🇬🇧</button>
-      </div>
+
+  <div class="language-toggle">
+    <button onclick="setLanguage('sv')">🇸🇪</button>
+    <button onclick="setLanguage('en')">🇬🇧</button>
+  </div>
+
   <div class="wrapper">
     <div id="banner">
       <img src="banner3.png" alt="Banner" />
@@ -276,12 +277,14 @@
 
     <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
 
-    <main>
-      <div id="intro"></div>
-  <div class="filters">
+    <!-- Sticky filters go here -->
+    <div class="filters">
       <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
       <div id="categoryBadges" class="category-badges"></div>
     </div>
+
+    <main>
+      <div id="intro"></div>
       <h2 id="categoryHeading"></h2>
 
       <div id="loadingSpinner" class="loading-spinner">
@@ -295,5 +298,3 @@
   <script src="main.js"></script>
 </body>
 </html>
-
-
