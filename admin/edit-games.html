@@ -135,10 +135,24 @@
     .modal-content label {
       font-size: 0.5rem;
       display: flex;
-      justify-content: flex-start;
       align-items: center;
       gap: 0.4rem;
       margin-bottom: 0.5rem;
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 0.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .star-rating .star {
+      color: #ccc;
+    }
+
+    .star-rating .star.filled {
+      color: gold;
     }
 
     .modal-content button {
@@ -218,14 +232,14 @@
         </select>
 
         <label for="conditionRating">Skick (1–5):</label>
-        <select id="conditionRating">
-          <option value="">Välj skick</option>
-          <option value="1">1 - Slitet</option>
-          <option value="2">2</option>
-          <option value="3">3 - Okej</option>
-          <option value="4">4</option>
-          <option value="5">5 - Som nytt</option>
-        </select>
+        <div id="conditionRating" class="star-rating">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" id="conditionRatingValue" name="conditionRating" />
 
         <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
 
