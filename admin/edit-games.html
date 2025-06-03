@@ -75,9 +75,16 @@
     .game-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       font-size: 0.6rem;
       margin-bottom: 0.3rem;
+      gap: 0.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      flex-shrink: 0;
+      gap: 0.5rem;
     }
 
     .game-title {
@@ -87,13 +94,14 @@
     .edit-button, .delete-button {
       font-family: 'Press Start 2P', monospace;
       font-size: 0.5rem;
-      margin-left: 0.5rem;
       padding: 0.2rem 0.4rem;
       background: #e6b35c;
       color: #3c2415;
       border: 2px solid #3c2415;
       border-radius: 4px;
       cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .lent-info {
