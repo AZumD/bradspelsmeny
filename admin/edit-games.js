@@ -1,7 +1,11 @@
-
 let games = [];
 let editingIndex = null;
 
+const slowDayOnly = document.getElementById("slowDayOnly");
+const trustedOnly = document.getElementById("trustedOnly");
+const maxTableSize = document.getElementById("maxTableSize");
+const conditionRating = document.getElementById("conditionRatingValue");
+const staffPicks = document.getElementById("staffPicks");
 const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
 const gameList = document.getElementById("gameList");
 const searchBar = document.getElementById("searchBar");
@@ -73,13 +77,28 @@ function deleteGame(index) {
     return res.json();
   })
   .then(() => {
-    fetchGames(); // refresh list
+    fetchGames();
   })
   .catch(err => {
     alert("Något gick fel vid radering.");
     console.error(err);
   });
 }
+
+function updateStars(rating) {
+  document.querySelectorAll(".star-rating .star").forEach(star => {
+    const val = parseInt(star.dataset.value);
+    star.classList.toggle("filled", val <= rating);
+  });
+}
+
+document.querySelectorAll(".star-rating .star").forEach(star => {
+  star.addEventListener("click", () => {
+    const rating = parseInt(star.dataset.value);
+    conditionRating.value = rating;
+    updateStars(rating);
+  });
+});
 
 function openModal(index = null) {
   editingIndex = index;
@@ -101,6 +120,13 @@ function openModal(index = null) {
   document.getElementById("rules").value = game.rules || "";
   document.getElementById("imgFile").value = "";
   document.getElementById("rulesFile").value = "";
+
+  slowDayOnly.checked = !!game.slow_day_only;
+  trustedOnly.checked = !!game.trusted_only;
+  maxTableSize.value = game.max_table_size || "";
+  conditionRating.value = game.condition_rating || "";
+  updateStars(game.condition_rating || 0);
+  staffPicks.value = (game.staff_picks || []).join(", ");
 
   gameModal.style.display = "flex";
 }
@@ -129,12 +155,18 @@ gameForm.onsubmit = async (e) => {
   if (imgFile) formData.append("imgFile", imgFile);
   if (rulesFile) formData.append("rulesFile", rulesFile);
 
+  formData.append("slow_day_only", slowDayOnly.checked ? 1 : 0);
+  formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
+  formData.append("max_table_size", maxTableSize.value);
+  formData.append("condition_rating", conditionRating.value);
+  formData.append("staff_picks", staffPicks.value);
+
   const gameId = document.getElementById("editingIndex").value;
   const isNew = gameId === "";
   const method = isNew ? "POST" : "PUT";
   const url = isNew
-  ? "https://bradspelsmeny-backend-production.up.railway.app/games"
-  : `https://bradspelsmeny-backend-production.up.railway.app/games/${gameId}`;
+    ? "https://bradspelsmeny-backend-production.up.railway.app/games"
+    : `https://bradspelsmeny-backend-production.up.railway.app/games/${gameId}`;
   const res = await fetch(url, {
     method,
     body: formData
