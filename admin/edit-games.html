@@ -122,13 +122,20 @@
     }
 
     .modal-content input,
-    .modal-content textarea {
+    .modal-content textarea,
+    .modal-content select {
       width: 100%;
       margin-bottom: 0.5rem;
       font-size: 0.5rem;
       font-family: 'Press Start 2P', monospace;
       padding: 0.4rem;
       box-sizing: border-box;
+    }
+
+    .modal-content label {
+      font-size: 0.5rem;
+      display: block;
+      margin-bottom: 0.3rem;
     }
 
     .modal-content button {
@@ -151,23 +158,21 @@
 
   <div class="edit-container">
     <div style="text-align: center; margin-bottom: 1rem;">
-  <button id="addGameButton" style="
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    background: #e6b35c;
-    color: #3c2415;
-    border: 2px solid #3c2415;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 #c19761;
-  ">
-    ➕ Lägg till spel
-  </button>
-</div>
+      <button id="addGameButton" style="
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        background: #e6b35c;
+        color: #3c2415;
+        border: 2px solid #3c2415;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 #c19761;
+      ">
+        ➕ Lägg till spel
+      </button>
+    </div>
     <input id="searchBar" type="text" placeholder="Sök efter spel..." />
-
-<!-- NEW BUTTON -->
 
     <div id="loadingSpinner">🔄 Laddar spel...</div>
     <div id="gameList"></div>
@@ -177,31 +182,48 @@
     <div class="modal-content">
       <h2 id="formTitle">Redigera spel</h2>
       <form id="gameForm" enctype="multipart/form-data">
-  <input type="hidden" id="editingIndex">
+        <input type="hidden" id="editingIndex">
 
-  <input id="title" placeholder="Title" required />
-        
-  <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
-  <textarea id="descEn" placeholder="Description (en)"></textarea>
+        <input id="title" placeholder="Title" required />
+        <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
+        <textarea id="descEn" placeholder="Description (en)"></textarea>
 
-  <input id="players" placeholder="Antal spelare" />
-  <input id="time" placeholder="Tid" />
-  <input id="age" placeholder="Ålder" />
-  <input id="tags" placeholder="Taggar (kommaseparerade)" />
+        <input id="players" placeholder="Antal spelare" />
+        <input id="time" placeholder="Tid" />
+        <input id="age" placeholder="Ålder" />
+        <input id="tags" placeholder="Taggar (kommaseparerade)" />
 
-  <!-- Image link and file upload -->
-  <input id="img" placeholder="Bild-URL" />
-  <label for="imgFile" style="font-size: 0.5rem; display: block; margin: 0.3rem 0;">Eller ladda upp en bild:</label>
-  <input type="file" id="imgFile" accept="image/*" />
+        <input id="img" placeholder="Bild-URL" />
+        <label for="imgFile">Eller ladda upp en bild:</label>
+        <input type="file" id="imgFile" accept="image/*" />
 
-  <!-- Rules link and file upload -->
-  <input id="rules" placeholder="Regellänk (valfritt)" />
-  <label for="rulesFile" style="font-size: 0.5rem; display: block; margin: 0.3rem 0;">Eller ladda upp regler (PDF):</label>
-  <input type="file" id="rulesFile" accept=".pdf" />
+        <input id="rules" placeholder="Regellänk (valfritt)" />
+        <label for="rulesFile">Eller ladda upp regler (PDF):</label>
+        <input type="file" id="rulesFile" accept=".pdf" />
 
-  <button type="submit">💾 Spara</button>
-  <button type="button" id="closeModal">❌ Avbryt</button>
-</form>
+        <!-- New metadata fields -->
+        <label>
+          <input type="checkbox" id="slowDayOnly"> Endast för lugna dagar
+        </label>
+
+        <label>
+          <input type="checkbox" id="trustedOnly"> Endast för betrodda gäster
+        </label>
+
+        <label for="maxTableSize">Max bordstorlek:</label>
+        <select id="maxTableSize">
+          <option value="">Valfri</option>
+          <option value="1-2">1–2</option>
+          <option value="3-4">3–4</option>
+          <option value="5-6">5–6</option>
+          <option value="7+">7+</option>
+        </select>
+
+        <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
+
+        <button type="submit">💾 Spara</button>
+        <button type="button" id="closeModal">❌ Avbryt</button>
+      </form>
     </div>
   </div>
 </body>
