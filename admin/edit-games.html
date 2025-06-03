@@ -135,6 +135,7 @@
     .modal-content label {
       font-size: 0.5rem;
       display: flex;
+      justify-content: flex-start;
       align-items: center;
       gap: 0.4rem;
       margin-bottom: 0.5rem;
@@ -204,8 +205,8 @@
         <input type="file" id="rulesFile" accept=".pdf" />
 
         <!-- New metadata fields -->
-        <label><input type="checkbox" id="slowDayOnly"> Endast för lugna dagar</label>
-        <label><input type="checkbox" id="trustedOnly"> Endast för betrodda gäster</label>
+        <label><input type="checkbox" id="slowDayOnly">Endast för lugna dagar</label>
+        <label><input type="checkbox" id="trustedOnly">Endast för betrodda gäster</label>
 
         <label for="maxTableSize">Max bordstorlek:</label>
         <select id="maxTableSize">
@@ -214,6 +215,16 @@
           <option value="3-4">3–4</option>
           <option value="5-6">5–6</option>
           <option value="7+">7+</option>
+        </select>
+
+        <label for="conditionRating">Skick (1–5):</label>
+        <select id="conditionRating">
+          <option value="">Välj skick</option>
+          <option value="1">1 - Slitet</option>
+          <option value="2">2</option>
+          <option value="3">3 - Okej</option>
+          <option value="4">4</option>
+          <option value="5">5 - Som nytt</option>
         </select>
 
         <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
