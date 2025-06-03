@@ -138,12 +138,13 @@
       align-items: center;
       gap: 0.4rem;
       margin-bottom: 0.5rem;
+      justify-content: flex-start;
     }
 
     .star-rating {
       display: flex;
-      gap: 0.25rem;
-      font-size: 1rem;
+      gap: 0.5rem;
+      font-size: 1.5rem;
       cursor: pointer;
     }
 
@@ -211,16 +212,16 @@
         <input id="tags" placeholder="Taggar (kommaseparerade)" />
 
         <input id="img" placeholder="Bild-URL" />
-        <label for="imgFile">Eller ladda upp en bild:</label>
+        <label for="imgFile">📷 Eller ladda upp en bild:</label>
         <input type="file" id="imgFile" accept="image/*" />
 
         <input id="rules" placeholder="Regellänk (valfritt)" />
-        <label for="rulesFile">Eller ladda upp regler (PDF):</label>
+        <label for="rulesFile">📄 Eller ladda upp regler (PDF):</label>
         <input type="file" id="rulesFile" accept=".pdf" />
 
         <!-- New metadata fields -->
-        <label><input type="checkbox" id="slowDayOnly">Endast för lugna dagar</label>
-        <label><input type="checkbox" id="trustedOnly">Endast för betrodda gäster</label>
+        <label><input type="checkbox" id="slowDayOnly"> Endast för lugna dagar</label>
+        <label><input type="checkbox" id="trustedOnly"> Endast för betrodda gäster</label>
 
         <label for="maxTableSize">Max bordstorlek:</label>
         <select id="maxTableSize">
