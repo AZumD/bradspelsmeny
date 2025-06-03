@@ -1,4 +1,3 @@
-// edit-games.js
 
 let games = [];
 let editingIndex = null;
@@ -38,6 +37,8 @@ function renderGames() {
       title.textContent = game.title_en || game.title || "(No Title)";
 
       const buttons = document.createElement("div");
+      buttons.className = "button-group";
+      
       const editBtn = document.createElement("button");
       editBtn.className = "edit-button";
       editBtn.textContent = "✏️";
