@@ -41,6 +41,85 @@ document.addEventListener('DOMContentLoaded', function() {
 
 const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
 
+  // Essential functions for loading and displaying games
+  async function fetchGames() {
+    const loadingSpinner = document.getElementById("loadingSpinner");
+    const gameList = document.getElementById("gameList");
+    
+    try {
+      if (loadingSpinner) loadingSpinner.style.display = "block";
+      if (gameList) gameList.innerHTML = "";
+      
+      const response = await fetch(`${API_BASE}/games`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      games = await response.json();
+      displayGames(games);
+      
+    } catch (error) {
+      console.error("Error fetching games:", error);
+      if (gameList) {
+        gameList.innerHTML = `<div style="text-align: center; color: red; font-size: 0.5rem;">
+          Fel vid laddning av spel: ${error.message}
+        </div>`;
+      }
+    } finally {
+      if (loadingSpinner) loadingSpinner.style.display = "none";
+    }
+  }
+
+  function displayGames(gamesToShow) {
+    const gameList = document.getElementById("gameList");
+    if (!gameList) return;
+    
+    if (!gamesToShow || gamesToShow.length === 0) {
+      gameList.innerHTML = '<div style="text-align: center; font-size: 0.5rem;">Inga spel hittades.</div>';
+      return;
+    }
+    
+    gameList.innerHTML = gamesToShow.map((game, index) => `
+      <div class="game-card">
+        <div class="game-header">
+          <div class="game-title">${game.title || 'Untitled'}</div>
+          <div class="button-group">
+            <button class="edit-button" onclick="openModal(${games.indexOf(game)})">✏️ Redigera</button>
+            <button class="delete-button" onclick="deleteGame(${games.indexOf(game)})">🗑️ Ta bort</button>
+          </div>
+        </div>
+        <div class="lent-info">
+          ${game.players ? `👥 ${game.players}` : ''} 
+          ${game.time ? `⏱️ ${game.time}` : ''} 
+          ${game.age ? `🎂 ${game.age}+` : ''}
+        </div>
+        ${game.desc_sv ? `<div style="font-size: 0.4rem; margin-top: 0.5rem;">${game.desc_sv}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // Search functionality
+  function setupSearch() {
+    if (searchBar) {
+      searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredGames = games.filter(game => 
+          (game.title || '').toLowerCase().includes(searchTerm) ||
+          (game.desc_sv || '').toLowerCase().includes(searchTerm) ||
+          (game.desc_en || '').toLowerCase().includes(searchTerm) ||
+          (game.tags || []).some(tag => tag.toLowerCase().includes(searchTerm))
+        );
+        displayGames(filteredGames);
+      });
+    }
+  }
+
+  // Initialize the app
+  function init() {
+    setupSearch();
+    fetchGames();
+  }
+
   function deleteGame(index) {
     const gameId = games[index].id;
     fetch(`${API_BASE}/games/${gameId}`, {
@@ -208,7 +287,7 @@ const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
         
         if (res.ok) {
           if (gameModal) gameModal.style.display = "none";
-          if (typeof fetchGames === 'function') fetchGames(); // refresh list
+          fetchGames(); // refresh list
         } else {
           alert("Något gick fel vid sparande.");
         }
@@ -223,4 +302,8 @@ const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
   window.openModal = openModal;
   window.deleteGame = deleteGame;
   window.updateStars = updateStars;
+  window.fetchGames = fetchGames;
+  
+  // Start the application
+  init();
 });
