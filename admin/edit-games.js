@@ -117,7 +117,16 @@ document.addEventListener("DOMContentLoaded", () => {
     trustedOnly.checked = !!game.trusted_only;
     maxTableSize.value = game.max_table_size || "";
     conditionRatingValue.value = game.condition_rating || 0;
-    staffPicks.value = (game.staff_picks || []).join(", ");
+
+    let picks = game.staff_picks;
+    if (typeof picks === "string") {
+      try {
+        picks = JSON.parse(picks);
+      } catch {
+        picks = [];
+      }
+    }
+    staffPicks.value = (picks || []).join(", ");
 
     updateStars(parseInt(conditionRatingValue.value));
     document.getElementById("imgFile").value = "";
