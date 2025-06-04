@@ -4,6 +4,9 @@ const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const searchInput = document.getElementById('searchInput');
 const availableContainer = document.getElementById('availableGames');
 const lentOutContainer = document.getElementById('lentOutGames');
+const addUserButton = document.getElementById('addUserButton');
+const newUserModal = document.getElementById('newUserModal');
+const newUserForm = document.getElementById('newUserForm');
 
 let allGames = [];
 
@@ -108,6 +111,34 @@ async function openHistoryModal(gameId) {
 
 function closeHistoryModal() {
   document.getElementById('historyModal').style.display = 'none';
+}
+
+if (addUserButton) {
+  addUserButton.addEventListener('click', () => {
+    newUserModal.style.display = 'block';
+  });
+}
+
+if (newUserForm) {
+  newUserForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const firstName = document.getElementById('newFirstName').value;
+    const lastName = document.getElementById('newLastName').value;
+    const phone = document.getElementById('newPhone').value;
+
+    await fetch(`${API_BASE}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
+    });
+
+    newUserModal.style.display = 'none';
+    fetchGames();
+  });
+}
+
+function closeNewUserModal() {
+  newUserModal.style.display = 'none';
 }
 
 searchInput.addEventListener('input', renderGameLists);
