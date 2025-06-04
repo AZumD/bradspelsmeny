@@ -39,22 +39,9 @@ const translations = {
   }
 };
 
-
 let games = [];
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
-let lentStatus = {};
-
-async function loadLentStatus() {
-  try {
-    const res = await fetch('lent-status.json');
-    if (!res.ok) throw new Error("Could not fetch lent-status.json");
-    lentStatus = await res.json();
-  } catch (err) {
-    console.warn("Falling back to empty lent status", err);
-    lentStatus = {};
-  }
-}
 
 const tableSelect = document.getElementById("tableSelect");
 const selectedDisplay = document.getElementById("selectedTablesDisplay");
@@ -111,8 +98,6 @@ async function setLanguage(lang) {
 }
 
 async function renderGames() {
-  await loadLentStatus();
-
   const container = document.getElementById('gameList');
   const search = document.getElementById('searchBar').value.toLowerCase();
   const heading = document.getElementById('categoryHeading');
@@ -140,7 +125,7 @@ async function renderGames() {
   filtered.forEach(game => {
     const title = game.title_en;
     const description = currentLang === 'sv' ? game.description_sv : game.description_en;
-    const isLent = lentStatus[title];
+    const isLent = game.lent_out;
 
     const card = document.createElement('div');
     card.className = 'game-card';
