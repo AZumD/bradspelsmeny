@@ -1,5 +1,3 @@
-// lending.js
-
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const searchInput = document.getElementById('searchInput');
 const availableContainer = document.getElementById('availableGames');
@@ -50,12 +48,23 @@ async function openLendModal(gameId) {
   const users = await fetch(`${API_BASE}/users`).then(res => res.json());
   const modal = document.getElementById('lendModal');
   const userSelect = document.getElementById('userSelect');
+  const tableStep = document.getElementById('tableStep');
 
   userSelect.innerHTML = '<option value="">-- Select User --</option>' +
     users.map(u => `<option value="${u.id}">${u.last_name}, ${u.first_name}, ${u.phone || 'No phone'}</option>`).join('');
 
   document.getElementById('lendGameId').value = gameId;
+  document.getElementById('tableNumber').value = '';
+  tableStep.style.display = 'none';
   modal.style.display = 'block';
+
+  userSelect.addEventListener('change', () => {
+    if (userSelect.value) {
+      tableStep.style.display = 'block';
+    } else {
+      tableStep.style.display = 'none';
+    }
+  });
 }
 
 function closeLendModal() {
@@ -65,11 +74,17 @@ function closeLendModal() {
 async function confirmLend() {
   const gameId = document.getElementById('lendGameId').value;
   const userId = document.getElementById('userSelect').value;
+  const tableNumber = document.getElementById('tableNumber').value.trim();
+
+  if (!userId || !tableNumber) {
+    alert("Please select a user and enter a table number.");
+    return;
+  }
 
   await fetch(`${API_BASE}/lend/${gameId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId })
+    body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
   });
 
   closeLendModal();
@@ -77,7 +92,7 @@ async function confirmLend() {
 }
 
 async function returnGame(gameId) {
-  await fetch(`${API_BASE}/return/${gameId}`, { // ✅ correct path
+  await fetch(`${API_BASE}/return/${gameId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({})
@@ -126,14 +141,26 @@ if (newUserForm) {
     const lastName = document.getElementById('newLastName').value;
     const phone = document.getElementById('newPhone').value;
 
-    await fetch(`${API_BASE}/users`, {
+    const res = await fetch(`${API_BASE}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
     });
 
+    const data = await res.json();
+    const newUserId = data.user?.id;
     newUserModal.style.display = 'none';
-    fetchGames();
+
+    if (newUserId) {
+      const userSelect = document.getElementById('userSelect');
+      const tableStep = document.getElementById('tableStep');
+
+      userSelect.innerHTML += `<option value="${newUserId}" selected>${lastName}, ${firstName}, ${phone || 'No phone'}</option>`;
+      userSelect.value = newUserId;
+      tableStep.style.display = 'block';
+    } else {
+      alert('❌ Failed to create user.');
+    }
   });
 }
 
