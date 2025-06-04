@@ -32,7 +32,14 @@ function createGameCard(game) {
   const card = document.createElement('div');
   card.className = 'game-card';
   card.innerHTML = `
-    <h3>${game.title_sv}</h3>
+    <h3>
+      ${game.title_sv}
+      ${game.lent_out && game.last_lend ? `<br><small style="font-size: 0.5rem;">
+        Lånad ut till ${game.last_lend.first_name} ${game.last_lend.last_name}
+        (${game.last_lend.note || 'okänt bord'})
+        – ${new Date(game.last_lend.timestamp).toLocaleString('sv-SE')}
+      </small>` : ''}
+    </h3>
     <div class="buttons">
       <button class="btn-action" onclick="${game.lent_out ? `returnGame(${game.id})` : `openLendModal(${game.id})`}">
         ${game.lent_out ? 'Return' : 'Lend Out'}
