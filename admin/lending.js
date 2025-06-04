@@ -17,8 +17,8 @@ async function fetchGames() {
 function renderGameLists() {
   const searchTerm = searchInput.value.toLowerCase();
 
-  const available = allGames.filter(g => !g.lent_out && g.title_sv.toLowerCase().includes(searchTerm));
-  const lentOut = allGames.filter(g => g.lent_out && g.title_sv.toLowerCase().includes(searchTerm));
+  const available = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
+  const lentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
 
   availableContainer.innerHTML = '';
   lentOutContainer.innerHTML = '';
@@ -49,10 +49,9 @@ async function openLendModal(gameId) {
   const userSelect = document.getElementById('userSelect');
 
   userSelect.innerHTML = '<option value="">-- Select User --</option>' +
-    users.map(u => `<option value="${u.id}">${u.first_name} ${u.last_name}</option>`).join('');
+    users.map(u => `<option value="${u.id}">${u.last_name}, ${u.first_name}, ${u.phone || 'No phone'}</option>`).join('');
 
   document.getElementById('lendGameId').value = gameId;
-  document.getElementById('lendNote').value = '';
   modal.style.display = 'block';
 }
 
@@ -63,12 +62,11 @@ function closeLendModal() {
 async function confirmLend() {
   const gameId = document.getElementById('lendGameId').value;
   const userId = document.getElementById('userSelect').value;
-  const note = document.getElementById('lendNote').value;
 
   await fetch(`${API_BASE}/lend/${gameId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, note })
+    body: JSON.stringify({ userId })
   });
 
   closeLendModal();
@@ -79,7 +77,7 @@ async function returnGame(gameId) {
   await fetch(`${API_BASE}/return/${gameId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ note: 'Returned manually' }) // Optional note
+    body: JSON.stringify({})
   });
 
   fetchGames();
