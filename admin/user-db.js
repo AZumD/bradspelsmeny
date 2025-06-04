@@ -62,7 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (res.ok) {
       loadUsers();
     } else {
-      alert("Kunde inte radera användaren.");
+      const data = await res.json();
+alert(data.error || "Kunde inte radera användaren.");
     }
   }
 
