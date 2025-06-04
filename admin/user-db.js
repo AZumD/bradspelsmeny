@@ -173,7 +173,7 @@ app.put('/games/:id', upload.fields([{ name: 'imgFile' }, { name: 'rulesFile' }]
   }
 });
 
-app.post('/users', async (req, res) => {
+app.post('/users', express.json(), async (req, res) => {
   const { username, password, first_name, last_name, phone, email, id_number } = req.body;
 
   if (!first_name || !last_name || !email) {
@@ -191,8 +191,4 @@ app.post('/users', async (req, res) => {
     console.error('❌ Failed to create user:', err);
     res.status(500).json({ error: 'Failed to create user' });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
