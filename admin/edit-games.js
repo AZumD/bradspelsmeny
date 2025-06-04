@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchGames() {
     try {
-      gameList.innerHTML = "Laddar...";
+      gameList.innerHTML = "<div id='loadingSpinner'>Laddar spel...</div>";
       const res = await fetch(`${API_BASE}/games`);
       if (!res.ok) throw new Error("Failed to fetch games");
       games = await res.json();
@@ -89,10 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = games[index].id;
     if (!confirm("Vill du verkligen ta bort spelet?")) return;
     try {
-      await fetch(`${API_BASE}/games/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/games/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
       fetchGames();
     } catch (err) {
       alert("Kunde inte ta bort spel.");
+      console.error(err);
     }
   }
 
@@ -110,23 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("players").value = game.players || "";
     document.getElementById("time").value = game.time || "";
     document.getElementById("age").value = game.age || "";
-    document.getElementById("tags").value = game.tags || "";
+    document.getElementById("tags").value = typeof game.tags === "string" ? game.tags : (game.tags || []).join(", ");
     document.getElementById("img").value = game.img || "";
     document.getElementById("rules").value = game.rules || "";
     slowDayOnly.checked = !!game.slow_day_only;
     trustedOnly.checked = !!game.trusted_only;
     maxTableSize.value = game.max_table_size || "";
     conditionRatingValue.value = game.condition_rating || 0;
-
-    let picks = game.staff_picks;
-    if (typeof picks === "string") {
-      try {
-        picks = JSON.parse(picks);
-      } catch {
-        picks = [];
-      }
+    try {
+      const picks = typeof game.staff_picks === "string" ? JSON.parse(game.staff_picks) : game.staff_picks;
+      staffPicks.value = Array.isArray(picks) ? picks.join(", ") : "";
+    } catch {
+      staffPicks.value = "";
     }
-    staffPicks.value = (picks || []).join(", ");
 
     updateStars(parseInt(conditionRatingValue.value));
     document.getElementById("imgFile").value = "";
