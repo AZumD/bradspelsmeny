@@ -144,6 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
 
       formData.append("title_sv", document.getElementById("title").value);
+      formData.append("title_en", document.getElementById("title").value); // <- Add this!
       formData.append("description_sv", document.getElementById("descSv").value);
       formData.append("description_en", document.getElementById("descEn").value);
       formData.append("players", document.getElementById("players").value);
