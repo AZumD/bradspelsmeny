@@ -1,9 +1,12 @@
-// edit-games.js
-
 let games = [];
 let editingIndex = null;
 
 const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
+const TOKEN = localStorage.getItem("adminToken");
+
+if (!TOKEN) {
+  window.location.href = "login.html";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const gameModal = document.getElementById("gameModal");
@@ -94,7 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Vill du verkligen ta bort spelet?")) return;
     try {
       const res = await fetch(`${API_BASE}/games/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${TOKEN}`
+        }
       });
       if (!res.ok) throw new Error("Delete failed");
       await fetchGames();
@@ -144,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
 
       formData.append("title_sv", document.getElementById("title").value);
-      formData.append("title_en", document.getElementById("title").value); // <- Add this!
+      formData.append("title_en", document.getElementById("title").value);
       formData.append("description_sv", document.getElementById("descSv").value);
       formData.append("description_en", document.getElementById("descEn").value);
       formData.append("players", document.getElementById("players").value);
@@ -173,6 +179,9 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const res = await fetch(url, {
           method,
+          headers: {
+            Authorization: `Bearer ${TOKEN}`
+          },
           body: formData
         });
         if (!res.ok) throw new Error("Failed to save game");
