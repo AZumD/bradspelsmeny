@@ -1,5 +1,3 @@
-// user-db.js
-
 document.addEventListener("DOMContentLoaded", () => {
   const addUserButton = document.getElementById("addUserButton");
   const userModal = document.getElementById("userModal");
@@ -7,6 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const userList = document.getElementById("userList");
 
   const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
+  const TOKEN = localStorage.getItem("adminToken");
+
+  if (!TOKEN) {
+    window.location.href = "login.html";
+    return;
+  }
 
   addUserButton.onclick = () => {
     userForm.reset();
@@ -38,7 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${TOKEN}`
         },
         body: formData.toString()
       });
@@ -59,14 +64,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${TOKEN}`
+        }
+      });
 
       if (res.ok) {
         loadUsers();
       } else {
         const data = await res.json();
         if (confirm(`${data.error || "Kunde inte radera användaren."} Vill du arkivera istället?`)) {
-          const archiveRes = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          const archiveRes = await fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${TOKEN}`
+            }
+          });
           if (archiveRes.ok) {
             alert("✅ Användare arkiverad.");
             loadUsers();
