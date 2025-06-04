@@ -77,7 +77,7 @@ async function confirmLend() {
 }
 
 async function returnGame(gameId) {
-  await fetch(`${API_BASE}/return/${gameId}`, {
+  await fetch(`${API_BASE}/games/${gameId}/return`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({})
