@@ -79,23 +79,32 @@ const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
       return;
     }
     
-    gameList.innerHTML = gamesToShow.map((game, index) => `
-      <div class="game-card">
-        <div class="game-header">
-          <div class="game-title">${game.title || 'Untitled'}</div>
-          <div class="button-group">
-            <button class="edit-button" onclick="openModal(${games.indexOf(game)})">✏️ Redigera</button>
-            <button class="delete-button" onclick="deleteGame(${games.indexOf(game)})">🗑️ Ta bort</button>
+    gameList.innerHTML = gamesToShow.map((game, index) => {
+      // Try different possible field names for title
+      const title = game.title || game.name || game.game_name || 'Untitled';
+      const description = game.desc_sv || game.description || game.desc || '';
+      const players = game.players || game.player_count || game.num_players || '';
+      const time = game.time || game.duration || game.play_time || '';
+      const age = game.age || game.min_age || '';
+      
+      return `
+        <div class="game-card">
+          <div class="game-header">
+            <div class="game-title">${title}</div>
+            <div class="button-group">
+              <button class="edit-button" onclick="window.openModal(${games.indexOf(game)})">✏️ Redigera</button>
+              <button class="delete-button" onclick="window.deleteGame(${games.indexOf(game)})">🗑️ Ta bort</button>
+            </div>
           </div>
+          <div class="lent-info">
+            ${players ? `👥 ${players}` : ''} 
+            ${time ? `⏱️ ${time}` : ''} 
+            ${age ? `🎂 ${age}+` : ''}
+          </div>
+          ${description ? `<div style="font-size: 0.4rem; margin-top: 0.5rem;">${description}</div>` : ''}
         </div>
-        <div class="lent-info">
-          ${game.players ? `👥 ${game.players}` : ''} 
-          ${game.time ? `⏱️ ${game.time}` : ''} 
-          ${game.age ? `🎂 ${game.age}+` : ''}
-        </div>
-        ${game.desc_sv ? `<div style="font-size: 0.4rem; margin-top: 0.5rem;">${game.desc_sv}</div>` : ''}
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   // Search functionality
