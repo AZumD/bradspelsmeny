@@ -6,14 +6,35 @@
   if (!token) {
     alert("Du måste vara inloggad för att se denna sida.");
     window.location.href = "login.html";
+  } else {
+    fetchStats(token);
   }
 })();
 
 // ✅ Admin dashboard loaded
 console.log("✅ Admin dashboard loaded.");
 
-// This script is now minimal and only responsible for initializing dashboard stats or lightweight UI
-// logic on the admin landing page. All edit functionality has been moved to edit-games.js.
+async function fetchStats(token) {
+  try {
+    const [totalGamesRes, lentOutRes] = await Promise.all([
+      fetch("https://bradspelsmeny-backend-production.up.railway.app/stats/total-games", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      fetch("https://bradspelsmeny-backend-production.up.railway.app/stats/lent-out", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
 
-// If you need to add dashboard functionality like usage stats, chart rendering, or tile updates,
-// this is the place to do it.
+    if (!totalGamesRes.ok || !lentOutRes.ok) {
+      throw new Error("Failed to fetch stats");
+    }
+
+    const totalGamesData = await totalGamesRes.json();
+    const lentOutData = await lentOutRes.json();
+
+    document.getElementById("totalGamesCount").textContent = totalGamesData.total;
+    document.getElementById("lentOutCount").textContent = lentOutData.lentOut;
+  } catch (err) {
+    console.error("❌ Failed to fetch stats:", err);
+  }
+}
