@@ -93,9 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = games[index].id;
     if (!confirm("Vill du verkligen ta bort spelet?")) return;
     try {
-      const res = await fetch(`${API_BASE}/games/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/games/${id}`, {
+        method: "DELETE"
+      });
       if (!res.ok) throw new Error("Delete failed");
-      fetchGames();
+      await fetchGames();
     } catch (err) {
       alert("Kunde inte ta bort spel.");
       console.error(err);
@@ -139,18 +141,39 @@ document.addEventListener("DOMContentLoaded", () => {
   if (gameForm) {
     gameForm.onsubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData(gameForm);
-      formData.set("slow_day_only", slowDayOnly.checked ? 1 : 0);
-      formData.set("trusted_only", trustedOnly.checked ? 1 : 0);
-      formData.set("condition_rating", conditionRatingValue.value);
-      formData.set("staff_picks", staffPicks.value);
+      const formData = new FormData();
+
+      formData.append("title_sv", document.getElementById("title").value);
+      formData.append("description_sv", document.getElementById("descSv").value);
+      formData.append("description_en", document.getElementById("descEn").value);
+      formData.append("players", document.getElementById("players").value);
+      formData.append("time", document.getElementById("time").value);
+      formData.append("age", document.getElementById("age").value);
+      formData.append("tags", document.getElementById("tags").value);
+      formData.append("img", document.getElementById("img").value);
+      formData.append("rules", document.getElementById("rules").value);
+
+      const imgFile = document.getElementById("imgFile").files[0];
+      if (imgFile) formData.append("imgFile", imgFile);
+
+      const rulesFile = document.getElementById("rulesFile").files[0];
+      if (rulesFile) formData.append("rulesFile", rulesFile);
+
+      formData.append("slow_day_only", slowDayOnly.checked ? 1 : 0);
+      formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
+      formData.append("condition_rating", conditionRatingValue.value);
+      formData.append("staff_picks", staffPicks.value);
+      formData.append("max_table_size", maxTableSize.value);
 
       const id = document.getElementById("editingIndex").value;
       const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
       const method = id ? "PUT" : "POST";
 
       try {
-        const res = await fetch(url, { method, body: formData });
+        const res = await fetch(url, {
+          method,
+          body: formData
+        });
         if (!res.ok) throw new Error("Failed to save game");
         gameModal.style.display = "none";
         fetchGames();
