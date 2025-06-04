@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const addGameButton = document.getElementById("addGameButton");
   const searchBar = document.getElementById("searchBar");
   const gameList = document.getElementById("gameList");
+  const loadingSpinner = document.getElementById("loadingSpinner");
 
   const slowDayOnly = document.getElementById("slowDayOnly");
   const trustedOnly = document.getElementById("trustedOnly");
@@ -39,7 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchGames() {
     try {
-      gameList.innerHTML = "<div id='loadingSpinner'>Laddar spel...</div>";
+      gameList.innerHTML = "";
+      if (loadingSpinner) loadingSpinner.style.display = "block";
       const res = await fetch(`${API_BASE}/games`);
       if (!res.ok) throw new Error("Failed to fetch games");
       games = await res.json();
@@ -47,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       gameList.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
       console.error(err);
+    } finally {
+      if (loadingSpinner) loadingSpinner.style.display = "none";
     }
   }
 
@@ -136,10 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
     gameForm.onsubmit = async (e) => {
       e.preventDefault();
       const formData = new FormData(gameForm);
-      formData.append("slow_day_only", slowDayOnly.checked ? 1 : 0);
-      formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
-      formData.append("condition_rating", conditionRatingValue.value);
-      formData.append("staff_picks", staffPicks.value);
+      formData.set("slow_day_only", slowDayOnly.checked ? 1 : 0);
+      formData.set("trusted_only", trustedOnly.checked ? 1 : 0);
+      formData.set("condition_rating", conditionRatingValue.value);
+      formData.set("staff_picks", staffPicks.value);
 
       const id = document.getElementById("editingIndex").value;
       const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
