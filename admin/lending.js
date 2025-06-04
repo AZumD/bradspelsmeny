@@ -1,4 +1,10 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const TOKEN = localStorage.getItem("adminToken");
+
+if (!TOKEN) {
+  window.location.href = "login.html";
+}
+
 const searchInput = document.getElementById('searchInput');
 const availableContainer = document.getElementById('availableGames');
 const lentOutContainer = document.getElementById('lentOutGames');
@@ -17,7 +23,6 @@ async function fetchGames() {
 
 function renderGameLists() {
   const searchTerm = searchInput.value.toLowerCase();
-
   const available = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
   const lentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
 
@@ -66,11 +71,7 @@ async function openLendModal(gameId) {
   modal.style.display = 'block';
 
   userSelect.addEventListener('change', () => {
-    if (userSelect.value) {
-      tableStep.style.display = 'block';
-    } else {
-      tableStep.style.display = 'none';
-    }
+    tableStep.style.display = userSelect.value ? 'block' : 'none';
   });
 }
 
@@ -90,7 +91,10 @@ async function confirmLend() {
 
   await fetch(`${API_BASE}/lend/${gameId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${TOKEN}`
+    },
     body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
   });
 
@@ -101,7 +105,10 @@ async function confirmLend() {
 async function returnGame(gameId) {
   await fetch(`${API_BASE}/return/${gameId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${TOKEN}`
+    },
     body: JSON.stringify({})
   });
 
@@ -150,7 +157,10 @@ if (newUserForm) {
 
     const res = await fetch(`${API_BASE}/users`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TOKEN}`
+      },
       body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
     });
 
