@@ -1,185 +1,124 @@
-let games = [];
-let editingIndex = null;
+// user-db.js
 
-const slowDayOnly = document.getElementById("slowDayOnly");
-const trustedOnly = document.getElementById("trustedOnly");
-const maxTableSize = document.getElementById("maxTableSize");
-const conditionRating = document.getElementById("conditionRatingValue");
-const staffPicks = document.getElementById("staffPicks");
-const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
-const gameList = document.getElementById("gameList");
-const searchBar = document.getElementById("searchBar");
-const gameModal = document.getElementById("gameModal");
-const gameForm = document.getElementById("gameForm");
-const loadingSpinner = document.getElementById("loadingSpinner");
-const addGameButton = document.getElementById("addGameButton");
-const closeModalButton = document.getElementById("closeModal");
+document.addEventListener("DOMContentLoaded", () => {
+  const addUserButton = document.getElementById("addUserButton");
+  const userModal = document.getElementById("userModal");
+  const userForm = document.getElementById("userForm");
+  const userList = document.getElementById("userList");
 
-async function fetchGames() {
-  loadingSpinner.style.display = "block";
-  const res = await fetch(`${API_BASE}/games`);
-  games = await res.json();
-  loadingSpinner.style.display = "none";
-  renderGames();
-}
+  const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
 
-function renderGames() {
-  const search = searchBar.value.toLowerCase();
-  gameList.innerHTML = "";
+  addUserButton.onclick = () => {
+    userForm.reset();
+    userForm.dataset.editingId = "";
+    userModal.style.display = "flex";
+  };
 
-  games
-    .filter(game => (game.title_en || game.title || "").toLowerCase().includes(search))
-    .forEach((game, index) => {
-      const card = document.createElement("div");
-      card.className = "game-card";
-
-      const header = document.createElement("div");
-      header.className = "game-header";
-
-      const title = document.createElement("div");
-      title.className = "game-title";
-      title.textContent = game.title_en || game.title || "(No Title)";
-
-      const buttons = document.createElement("div");
-      buttons.className = "button-group";
-      
-      const editBtn = document.createElement("button");
-      editBtn.className = "edit-button";
-      editBtn.textContent = "✏️";
-      editBtn.onclick = () => openModal(index);
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-button";
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.onclick = () => deleteGame(index);
-
-      buttons.appendChild(editBtn);
-      buttons.appendChild(deleteBtn);
-      header.appendChild(title);
-      header.appendChild(buttons);
-      card.appendChild(header);
-      gameList.appendChild(card);
-    });
-}
-
-function deleteGame(index) {
-  const game = games[index];
-  if (!game || !game.id) return;
-
-  const confirmed = confirm(`Är du säker på att du vill radera spelet "${game.title_en || game.title || "(no title)"}"?`);
-  if (!confirmed) return;
-
-  fetch(`https://bradspelsmeny-backend-production.up.railway.app/games/${game.id}`, {
-    method: "DELETE"
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Delete failed");
-    return res.json();
-  })
-  .then(() => {
-    fetchGames();
-  })
-  .catch(err => {
-    alert("Något gick fel vid radering.");
-    console.error(err);
-  });
-}
-
-function updateStars(rating) {
-  document.querySelectorAll(".star-rating .star").forEach(star => {
-    const val = parseInt(star.dataset.value);
-    star.classList.toggle("filled", val <= rating);
-  });
-}
-
-document.querySelectorAll(".star-rating .star").forEach(star => {
-  star.addEventListener("click", () => {
-    const rating = parseInt(star.dataset.value);
-    conditionRating.value = rating;
-    updateStars(rating);
-  });
-});
-
-function openModal(index = null) {
-  editingIndex = index;
-  const isNew = index === null;
-  document.getElementById("formTitle").textContent = isNew ? "Lägg till spel" : "Redigera spel";
-
-  const game = isNew ? {} : games[index];
-
-  gameForm.reset();
-  document.getElementById("title").value = game.title_en || game.title || "";
-  document.getElementById("editingIndex").value = isNew ? "" : games[index].id;
-  document.getElementById("descSv").value = game.description_sv || "";
-  document.getElementById("descEn").value = game.description_en || "";
-  document.getElementById("players").value = game.players || "";
-  document.getElementById("time").value = game.time || "";
-  document.getElementById("age").value = game.age || "";
-  document.getElementById("tags").value = game.tags || "";
-  document.getElementById("img").value = game.img || "";
-  document.getElementById("rules").value = game.rules || "";
-  document.getElementById("imgFile").value = "";
-  document.getElementById("rulesFile").value = "";
-
-  slowDayOnly.checked = !!game.slow_day_only;
-  trustedOnly.checked = !!game.trusted_only;
-  maxTableSize.value = game.max_table_size || "";
-  conditionRating.value = game.condition_rating || "";
-  updateStars(game.condition_rating || 0);
-  staffPicks.value = (game.staff_picks || []).join(", ");
-
-  gameModal.style.display = "flex";
-}
-
-closeModalButton.onclick = () => {
-  gameModal.style.display = "none";
-};
-
-gameForm.onsubmit = async (e) => {
-  e.preventDefault();
-  const formData = new FormData();
-
-  formData.append("title_en", document.getElementById("title").value);
-  formData.append("description_sv", document.getElementById("descSv").value);
-  formData.append("description_en", document.getElementById("descEn").value);
-  formData.append("players", document.getElementById("players").value);
-  formData.append("time", document.getElementById("time").value);
-  formData.append("age", document.getElementById("age").value);
-  formData.append("tags", document.getElementById("tags").value);
-  formData.append("img", document.getElementById("img").value);
-  formData.append("rules", document.getElementById("rules").value);
-
-  const imgFile = document.getElementById("imgFile").files[0];
-  const rulesFile = document.getElementById("rulesFile").files[0];
-
-  if (imgFile) formData.append("imgFile", imgFile);
-  if (rulesFile) formData.append("rulesFile", rulesFile);
-
-  formData.append("slow_day_only", slowDayOnly.checked ? 1 : 0);
-  formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
-  formData.append("max_table_size", maxTableSize.value);
-  formData.append("condition_rating", conditionRating.value);
-  formData.append("staff_picks", staffPicks.value);
-
-  const gameId = document.getElementById("editingIndex").value;
-  const isNew = gameId === "";
-  const method = isNew ? "POST" : "PUT";
-  const url = isNew
-    ? "https://bradspelsmeny-backend-production.up.railway.app/games"
-    : `https://bradspelsmeny-backend-production.up.railway.app/games/${gameId}`;
-  const res = await fetch(url, {
-    method,
-    body: formData
+  userModal.addEventListener("click", (e) => {
+    if (e.target === userModal) userModal.style.display = "none";
   });
 
-  if (res.ok) {
-    await fetchGames();
-    gameModal.style.display = "none";
-  } else {
-    alert("Något gick fel vid sparandet.");
+  userForm.onsubmit = async (e) => {
+    e.preventDefault();
+
+    const editingId = userForm.dataset.editingId;
+    const url = editingId ? `${API_URL}/${editingId}` : API_URL;
+    const method = editingId ? "PUT" : "POST";
+
+    const formData = new URLSearchParams();
+    formData.append("username", userForm.username.value);
+    formData.append("password", userForm.password.value);
+    formData.append("first_name", userForm.firstName.value);
+    formData.append("last_name", userForm.lastName.value);
+    formData.append("phone", userForm.phone.value);
+    formData.append("email", userForm.email.value);
+    formData.append("id_number", userForm.idNumber.value);
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData.toString()
+      });
+
+      if (res.ok) {
+        loadUsers();
+        userModal.style.display = "none";
+      } else {
+        alert("Något gick fel vid sparandet av användare.");
+      }
+    } catch (err) {
+      console.error("Failed to save user:", err);
+      alert("Något gick fel vid sparandet av användare.");
+    }
+  };
+
+  async function deleteUser(id) {
+    if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
+
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      loadUsers();
+    } else {
+      alert("Kunde inte radera användaren.");
+    }
   }
-};
 
-addGameButton.onclick = () => openModal();
-searchBar.addEventListener("input", renderGames);
-document.addEventListener("DOMContentLoaded", fetchGames);
+  async function loadUsers() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const users = await res.json();
+      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+      userList.innerHTML = "";
+
+      users.forEach(user => {
+        const card = document.createElement("div");
+        card.className = "user-card";
+
+        const header = document.createElement("div");
+        header.className = "user-header";
+
+        const title = document.createElement("div");
+        title.className = "user-title";
+        title.textContent = `${user.first_name} ${user.last_name}`;
+
+        const buttons = document.createElement("div");
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-button";
+        editBtn.textContent = "✏️";
+        editBtn.onclick = () => {
+          userForm.reset();
+          userForm.dataset.editingId = user.id;
+          userForm.username.value = user.username || "";
+          userForm.password.value = "";
+          userForm.firstName.value = user.first_name;
+          userForm.lastName.value = user.last_name;
+          userForm.phone.value = user.phone;
+          userForm.email.value = user.email || "";
+          userForm.idNumber.value = user.id_number || "";
+          userModal.style.display = "flex";
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-button";
+        deleteBtn.textContent = "🗑️";
+        deleteBtn.onclick = () => deleteUser(user.id);
+
+        buttons.appendChild(editBtn);
+        buttons.appendChild(deleteBtn);
+        header.appendChild(title);
+        header.appendChild(buttons);
+        card.appendChild(header);
+        userList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to load users:", err);
+    }
+  }
+
+  loadUsers();
+});
