@@ -58,12 +58,26 @@ document.addEventListener("DOMContentLoaded", () => {
   async function deleteUser(id) {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
-    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      loadUsers();
-    } else {
-      const data = await res.json();
-alert(data.error || "Kunde inte radera användaren.");
+    try {
+      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+
+      if (res.ok) {
+        loadUsers();
+      } else {
+        const data = await res.json();
+        if (confirm(`${data.error || "Kunde inte radera användaren."} Vill du arkivera istället?`)) {
+          const archiveRes = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          if (archiveRes.ok) {
+            alert("✅ Användare arkiverad.");
+            loadUsers();
+          } else {
+            alert("❌ Misslyckades att arkivera användaren.");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("❌ Error deleting user:", err);
+      alert("❌ Misslyckades att ta bort användare.");
     }
   }
 
