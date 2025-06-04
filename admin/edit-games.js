@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slowDayOnly = document.getElementById("slowDayOnly");
   const trustedOnly = document.getElementById("trustedOnly");
-  const maxTableSize = document.getElementById("maxTableSize");
+  const minTableSize = document.getElementById("minTableSize");
   const conditionRatingValue = document.getElementById("conditionRatingValue");
   const staffPicks = document.getElementById("staffPicks");
 
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("rules").value = game.rules || "";
     slowDayOnly.checked = !!game.slow_day_only;
     trustedOnly.checked = !!game.trusted_only;
-    maxTableSize.value = game.max_table_size || "";
+    minTableSize.value = game.min_table_size || "";
     conditionRatingValue.value = game.condition_rating || 0;
     try {
       const picks = typeof game.staff_picks === "string" ? JSON.parse(game.staff_picks) : game.staff_picks;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
       formData.append("condition_rating", conditionRatingValue.value);
       formData.append("staff_picks", staffPicks.value);
-      formData.append("max_table_size", maxTableSize.value);
+      formData.append("min_table_size", minTableSize.value);
 
       const id = document.getElementById("editingIndex").value;
       const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
