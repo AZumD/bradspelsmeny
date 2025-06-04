@@ -1,210 +1,124 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Press Start 2P', monospace;
-      background-color: #f3e2c7;
-      color: #3c2415;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+// user-db.js
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addUserButton = document.getElementById("addUserButton");
+  const userModal = document.getElementById("userModal");
+  const userForm = document.getElementById("userForm");
+  const userList = document.getElementById("userList");
+
+  const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
+
+  addUserButton.onclick = () => {
+    userForm.reset();
+    userForm.dataset.editingId = "";
+    userModal.style.display = "flex";
+  };
+
+  userModal.addEventListener("click", (e) => {
+    if (e.target === userModal) userModal.style.display = "none";
+  });
+
+  userForm.onsubmit = async (e) => {
+    e.preventDefault();
+
+    const editingId = userForm.dataset.editingId;
+    const url = editingId ? `${API_URL}/${editingId}` : API_URL;
+    const method = editingId ? "PUT" : "POST";
+
+    const formData = new URLSearchParams();
+    formData.append("username", userForm.username.value);
+    formData.append("password", userForm.password.value);
+    formData.append("first_name", userForm.firstName.value);
+    formData.append("last_name", userForm.lastName.value);
+    formData.append("phone", userForm.phone.value);
+    formData.append("email", userForm.email.value);
+    formData.append("id_number", userForm.idNumber.value);
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData.toString()
+      });
+
+      if (res.ok) {
+        loadUsers();
+        userModal.style.display = "none";
+      } else {
+        alert("Något gick fel vid sparandet av användare.");
+      }
+    } catch (err) {
+      console.error("Failed to save user:", err);
+      alert("Något gick fel vid sparandet av användare.");
     }
+  };
 
-    .topbar {
-      background-color: #8c3c1a;
-      color: white;
-      width: 100%;
-      padding: 1rem;
-      box-shadow: 0 4px 0 #4a1f0f;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
+  async function deleteUser(id) {
+    if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
+
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      loadUsers();
+    } else {
+      alert("Kunde inte radera användaren.");
     }
+  }
 
-    .dashboard-title {
-      color: #fff4d9;
-      font-size: 1rem;
-      text-decoration: none;
-      font-weight: bold;
+  async function loadUsers() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const users = await res.json();
+      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+      userList.innerHTML = "";
+
+      users.forEach(user => {
+        const card = document.createElement("div");
+        card.className = "user-card";
+
+        const header = document.createElement("div");
+        header.className = "user-header";
+
+        const title = document.createElement("div");
+        title.className = "user-title";
+        title.textContent = `${user.first_name} ${user.last_name}`;
+
+        const buttons = document.createElement("div");
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-button";
+        editBtn.textContent = "✏️";
+        editBtn.onclick = () => {
+          userForm.reset();
+          userForm.dataset.editingId = user.id;
+          userForm.username.value = user.username || "";
+          userForm.password.value = "";
+          userForm.firstName.value = user.first_name;
+          userForm.lastName.value = user.last_name;
+          userForm.phone.value = user.phone;
+          userForm.email.value = user.email || "";
+          userForm.idNumber.value = user.id_number || "";
+          userModal.style.display = "flex";
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-button";
+        deleteBtn.textContent = "🗑️";
+        deleteBtn.onclick = () => deleteUser(user.id);
+
+        buttons.appendChild(editBtn);
+        buttons.appendChild(deleteBtn);
+        header.appendChild(title);
+        header.appendChild(buttons);
+        card.appendChild(header);
+        userList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to load users:", err);
     }
+  }
 
-    .add-button-wrapper {
-      margin: 1rem 0;
-    }
-
-    .add-button {
-      font-size: 0.6rem;
-      background-color: #e6b35c;
-      border: 2px solid #3c2415;
-      padding: 0.5rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 3px 3px 0 #c19761;
-      color: #3c2415;
-    }
-
-    .form-container,
-    .user-list {
-      width: 100%;
-      max-width: 700px;
-      padding: 2rem 1rem;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .user-card {
-      background-color: #fffaf0;
-      border: 2px solid #3c2415;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 6px;
-      box-shadow: 2px 2px 0 #c19761;
-    }
-
-    .user-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-title {
-      font-size: 0.65rem;
-    }
-
-    .edit-button,
-    .delete-button {
-      font-size: 0.6rem;
-      margin-left: 0.5rem;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    label {
-      font-size: 0.6rem;
-      margin-bottom: 0.3rem;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="password"],
-    input[type="file"] {
-      font-family: 'Press Start 2P', monospace;
-      padding: 0.5rem;
-      font-size: 0.6rem;
-      border: 2px solid #3c2415;
-      border-radius: 4px;
-      background-color: #fffaf0;
-      color: #3c2415;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    button {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      background: #e6b35c;
-      color: #3c2415;
-      border: 2px solid #3c2415;
-      padding: 0.6rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 3px 3px 0 #c19761;
-      align-self: center;
-    }
-
-    #userModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #fffaf0;
-      padding: 2rem;
-      border: 2px solid #3c2415;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      box-sizing: border-box;
-    }
-  </style>
-</head>
-<body>
-  <header class="topbar">
-    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
-  </header>
-
-  <!-- Add Member Button -->
-  <div class="add-button-wrapper">
-    <button id="addUserButton" class="add-button">➕ Add Member</button>
-  </div>
-
-  <!-- Modal Form -->
-  <div id="userModal">
-    <div class="modal-content">
-      <h1>📂 Lägg till användare</h1>
-      <form id="userForm">
-        <input type="hidden" id="editingId" name="editingId" />
-
-        <label for="username">Användarnamn (valfritt)</label>
-        <input type="text" id="username" name="username" />
-
-        <label for="password">Lösenord (valfritt)</label>
-        <input type="password" id="password" name="password" />
-
-        <label for="firstName">Förnamn</label>
-        <input type="text" id="firstName" name="firstName" required />
-
-        <label for="lastName">Efternamn</label>
-        <input type="text" id="lastName" name="lastName" required />
-
-        <label for="phone">Telefonnummer</label>
-        <input type="tel" id="phone" name="phone" required />
-
-        <label for="email">E-post (valfritt)</label>
-        <input type="email" id="email" name="email" />
-
-        <label for="idNumber">Personnummer (valfritt)</label>
-        <input type="text" id="idNumber" name="idNumber" />
-
-        <label for="idImage">ID-bild (valfritt)</label>
-        <input type="file" id="idImage" name="idImage" accept="image/*" />
-
-        <button type="submit">💾 Spara användare</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- User List -->
-  <div class="user-list" id="userList"></div>
-
-  <script defer src="user-db.js"></script>
-</body>
-</html>
+  loadUsers();
+});
