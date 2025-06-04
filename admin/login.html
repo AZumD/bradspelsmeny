@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f3e2c7;
+      font-family: 'Press Start 2P', monospace;
+      color: #3c2415;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 6px 6px 0 #c19761;
+      max-width: 400px;
+      width: 90%;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 1rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      background-color: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <form id="loginForm">
+      <div class="error" id="errorMsg"></div>
+      <input type="text" id="username" placeholder="Användarnamn" required />
+      <input type="password" id="password" placeholder="Lösenord" required />
+      <button type="submit">🔐 Logga in</button>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || "Något gick fel";
+          return;
+        }
+
+        localStorage.setItem("adminToken", data.token);
+        window.location.href = "edit-games.html";
+      } catch (err) {
+        errorMsg.textContent = "Något gick fel vid inloggning.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
