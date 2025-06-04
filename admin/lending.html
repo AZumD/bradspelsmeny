@@ -116,6 +116,10 @@
       width: 90%;
       max-width: 600px;
     }
+
+    #tableStep {
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -160,41 +164,50 @@
     </div>
   </div>
 
-<!-- Lend Out Modal -->
-<div id="lendModal" class="modal">
-  <div class="modal-content">
-    <h3>Låna ut spel</h3>
-    <input type="hidden" id="lendGameId" />
-    <label for="userSelect">Välj användare:</label>
-    <select id="userSelect"></select>
-    <div style="margin-top: 0.5rem;">
-      <button id="addUserButton">➕ Ny användare</button>
-    </div>
-    <div style="margin-top: 1rem;">
-      <button onclick="confirmLend()">Låna ut</button>
-      <button onclick="closeLendModal()">Avbryt</button>
-    </div>
-  </div>
-</div>
-
-<!-- New User Modal -->
-<div id="newUserModal" class="modal">
-  <div class="modal-content">
-    <h3>Ny användare</h3>
-    <form id="newUserForm">
-      <label for="newFirstName">Förnamn:</label>
-      <input type="text" id="newFirstName" required style="width: 100%; font-family: monospace;" />
-      <label for="newLastName">Efternamn:</label>
-      <input type="text" id="newLastName" required style="width: 100%; font-family: monospace;" />
-      <label for="newPhone">Telefonnummer:</label>
-      <input type="text" id="newPhone" style="width: 100%; font-family: monospace;" />
-      <div style="margin-top: 1rem;">
-        <button type="submit">Skapa användare</button>
-        <button type="button" onclick="closeNewUserModal()">Avbryt</button>
+  <!-- Lend Out Modal -->
+  <div id="lendModal" class="modal">
+    <div class="modal-content">
+      <h3>Låna ut spel</h3>
+      <input type="hidden" id="lendGameId" />
+      <label for="userSelect">Välj användare:</label>
+      <select id="userSelect"></select>
+      <div style="margin-top: 0.5rem;">
+        <button id="addUserButton">➕ Ny användare</button>
       </div>
-    </form>
+
+      <!-- Step 2: Show after user is selected or added -->
+      <div id="tableStep" style="display: none;">
+        <label for="tableNumber">Bordsnummer:</label>
+        <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" style="width: 100%; font-family: monospace;" />
+        <div style="margin-top: 1rem;">
+          <button onclick="confirmLend()">✅ Bekräfta utlåning</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <button onclick="closeLendModal()">❌ Avbryt</button>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- New User Modal -->
+  <div id="newUserModal" class="modal">
+    <div class="modal-content">
+      <h3>Ny användare</h3>
+      <form id="newUserForm">
+        <label for="newFirstName">Förnamn:</label>
+        <input type="text" id="newFirstName" required style="width: 100%; font-family: monospace;" />
+        <label for="newLastName">Efternamn:</label>
+        <input type="text" id="newLastName" required style="width: 100%; font-family: monospace;" />
+        <label for="newPhone">Telefonnummer:</label>
+        <input type="text" id="newPhone" style="width: 100%; font-family: monospace;" />
+        <div style="margin-top: 1rem;">
+          <button type="submit">Skapa användare</button>
+          <button type="button" onclick="closeNewUserModal()">Avbryt</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
     function toggleSection(id) {
