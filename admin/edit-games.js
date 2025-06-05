@@ -195,21 +195,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const formData = new URLSearchParams();
-      formData.append("title_sv", title_sv);
-      formData.append("title_en", title_en);
-      formData.append("description_sv", description_sv);
-      formData.append("description_en", description_en);
-      formData.append("min_players", min_players);
-      formData.append("max_players", max_players);
-      formData.append("play_time", play_time);
-      formData.append("age", age);
-      formData.append("tags", tags);
-      formData.append("img", img);
-      formData.append("slow_day_only", slow_day_only);
-      formData.append("trusted_only", trusted_only);
-      formData.append("condition_rating", condition_rating);
-      formData.append("min_table_size", min_table_size);
-      formData.append("staff_picks", JSON.stringify(staff_picks));
+formData.append("title_sv", title_sv);
+formData.append("title_en", title_en);
+formData.append("description_sv", description_sv);
+formData.append("description_en", description_en);
+formData.append("min_players", min_players);
+formData.append("max_players", max_players);
+formData.append("play_time", play_time);
+formData.append("age", age);
+formData.append("tags", tags);
+formData.append("img", img);
+formData.append("slow_day_only", slow_day_only);
+formData.append("trusted_only", trusted_only);
+formData.append("staff_picks", JSON.stringify(staff_picks));
+
+// ✅ Handle optional integers correctly
+const condition_rating_val = document.getElementById("conditionRatingValue").value;
+if (condition_rating_val !== "" && !isNaN(condition_rating_val)) {
+  formData.append("condition_rating", parseInt(condition_rating_val));
+}
+
+const min_table_size_val = document.getElementById("minTableSize").value;
+if (min_table_size_val !== "") {
+  formData.append("min_table_size", parseInt(min_table_size_val));
+}
 
       const id = document.getElementById("editingIndex").value;
       const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
