@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slowDayOnly = document.getElementById("slowDayOnly");
   const trustedOnly = document.getElementById("trustedOnly");
-  const minTableSize = document.getElementById("minTableSize");
-  const conditionRatingValue = document.getElementById("conditionRatingValue");
+  const min_table_size = minTableSize.value ? parseInt(minTableSize.value) : null;   
+  const condition_rating = conditionRatingValue.value ? parseInt(conditionRatingValue.value) : null; 
   const staffPicks = document.getElementById("staffPicks");
 
   addGameButton?.addEventListener("click", () => openModal());
