@@ -127,9 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("title").value = game.title_sv || "";
     document.getElementById("descSv").value = game.description_sv || "";
     document.getElementById("descEn").value = game.description_en || "";
-    document.getElementById("players").value = game.min_players
-      ? `${game.min_players}-${game.max_players}`
-      : "";
+    document.getElementById("minPlayers").value = game.min_players || "";
+    document.getElementById("maxPlayers").value = game.max_players || "";
     document.getElementById("time").value = game.play_time || "";
     document.getElementById("age").value = game.age || "";
     document.getElementById("tags").value =
@@ -166,10 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const title_en = title_sv;
       const description_sv = document.getElementById("descSv").value.trim();
       const description_en = document.getElementById("descEn").value.trim();
-      const players = document.getElementById("players").value.trim();
-      const [min_players, max_players] = players.includes("-")
-        ? players.split("-").map((p) => parseInt(p.trim()))
-        : [parseInt(players), parseInt(players)];
+      const min_players = parseInt(document.getElementById("minPlayers").value.trim());
+      const max_players = parseInt(document.getElementById("maxPlayers").value.trim());
       const play_time = parseInt(document.getElementById("time").value.trim());
       const age = parseInt(document.getElementById("age").value.trim());
       const tags = document.getElementById("tags").value.trim();
