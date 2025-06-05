@@ -223,61 +223,66 @@
   <div id="gameModal">
     <div class="modal-content">
       <h2 id="formTitle">Redigera spel</h2>
-      <form id="gameForm" enctype="multipart/form-data">
-        <input type="hidden" id="editingIndex">
+     <form id="gameForm" enctype="multipart/form-data">
+  <input type="hidden" id="editingIndex" />
 
-        <input id="title" placeholder="Title" required />
-        <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
-        <textarea id="descEn" placeholder="Description (en)"></textarea>
+  <input id="title" placeholder="Title" required />
+  <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
+  <textarea id="descEn" placeholder="Description (en)"></textarea>
 
-        <input id="players" placeholder="Antal spelare" />
-        <input id="time" placeholder="Tid" />
-        <input id="age" placeholder="Ålder" />
-        <input id="tags" placeholder="Taggar (kommaseparerade)" />
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+    <input id="minPlayers" placeholder="Min spelare" style="flex: 1;" />
+    <input id="maxPlayers" placeholder="Max spelare" style="flex: 1;" />
+  </div>
 
-        <input id="img" placeholder="Bild-URL" />
-        <label for="imgFile">📷 Eller ladda upp en bild:</label>
-        <input type="file" id="imgFile" accept="image/*" />
+  <input id="time" placeholder="Tid" />
+  <input id="age" placeholder="Ålder" />
+  <input id="tags" placeholder="Taggar (kommaseparerade)" />
 
-        <input id="rules" placeholder="Regellänk (valfritt)" />
-        <label for="rulesFile">📄 Eller ladda upp regler (PDF):</label>
-        <input type="file" id="rulesFile" accept=".pdf" />
+  <input id="img" placeholder="Bild-URL" />
+  <label for="imgFile">📷 Eller ladda upp en bild:</label>
+  <input type="file" id="imgFile" accept="image/*" />
 
-        <label>
-          <span>Endast för lugna dagar</span>
-          <input type="checkbox" id="slowDayOnly">
-        </label>
-        <label>
-          <span>Endast för betrodda gäster</span>
-          <input type="checkbox" id="trustedOnly">
-        </label>
+  <input id="rules" placeholder="Regellänk (valfritt)" />
+  <label for="rulesFile">📄 Eller ladda upp regler (PDF):</label>
+  <input type="file" id="rulesFile" accept=".pdf" />
 
-        <label for="minTableSize">Minsta bordstorlek:</label>
-        <select id="minTableSize">
-          <option value="">Valfri</option>
-          <option value="1-2">1–2</option>
-          <option value="3-4">3–4</option>
-          <option value="5-6">5–6</option>
-          <option value="7+">7+</option>
-        </select>
+  <label>
+    <span>Endast för lugna dagar</span>
+    <input type="checkbox" id="slowDayOnly">
+  </label>
+  <label>
+    <span>Endast för betrodda gäster</span>
+    <input type="checkbox" id="trustedOnly">
+  </label>
 
-        <div class="condition-label">
-          <span>Skick (1–5):</span>
-          <div id="conditionRating" class="star-rating">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
-          </div>
-        </div>
-        <input type="hidden" id="conditionRatingValue" name="conditionRating" />
+  <label for="minTableSize">Minsta bordstorlek:</label>
+  <select id="minTableSize">
+    <option value="">Valfri</option>
+    <option value="1-2">1–2</option>
+    <option value="3-4">3–4</option>
+    <option value="5-6">5–6</option>
+    <option value="7+">7+</option>
+  </select>
 
-        <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
+  <div class="condition-label">
+    <span>Skick (1–5):</span>
+    <div id="conditionRating" class="star-rating">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+  </div>
+  <input type="hidden" id="conditionRatingValue" name="conditionRating" />
 
-        <button type="submit">💾 Spara</button>
-        <button type="button" id="closeModal">❌ Avbryt</button>
-      </form>
+  <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
+
+  <button type="submit">💾 Spara</button>
+  <button type="button" id="closeModal">❌ Avbryt</button>
+</form>
+
     </div>
   </div>
 </body>
