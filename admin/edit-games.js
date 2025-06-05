@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("time").value = game.time || "";
     document.getElementById("age").value = game.age || "";
     document.getElementById("tags").value = typeof game.tags === "string" ? game.tags : (game.tags || []).join(", ");
-    document.getElementById("img").value = game.img || "";
+    document.getElementById("img").value = game.image || "";
     document.getElementById("rules").value = game.rules || "";
     slowDayOnly.checked = !!game.slow_day_only;
     trustedOnly.checked = !!game.trusted_only;
