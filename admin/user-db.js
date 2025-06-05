@@ -97,58 +97,65 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadUsers() {
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const users = await res.json();
-      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
-      userList.innerHTML = "";
+  try {
+    const res = await fetch(API_URL, {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    });
 
-      users.forEach(user => {
-        const card = document.createElement("div");
-        card.className = "user-card";
+    if (!res.ok) throw new Error("Failed to fetch");
 
-        const header = document.createElement("div");
-        header.className = "user-header";
+    const users = await res.json();
+    users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+    userList.innerHTML = "";
 
-        const title = document.createElement("div");
-        title.className = "user-title";
-        title.textContent = `${user.first_name} ${user.last_name}`;
+    users.forEach(user => {
+      const card = document.createElement("div");
+      card.className = "user-card";
 
-        const buttons = document.createElement("div");
+      const header = document.createElement("div");
+      header.className = "user-header";
 
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit-button";
-        editBtn.textContent = "✏️";
-        editBtn.onclick = () => {
-          userForm.reset();
-          userForm.dataset.editingId = user.id;
-          userForm.username.value = user.username || "";
-          userForm.password.value = "";
-          userForm.firstName.value = user.first_name;
-          userForm.lastName.value = user.last_name;
-          userForm.phone.value = user.phone;
-          userForm.email.value = user.email || "";
-          userForm.idNumber.value = user.id_number || "";
-          userModal.style.display = "flex";
-        };
+      const title = document.createElement("div");
+      title.className = "user-title";
+      title.textContent = `${user.first_name} ${user.last_name}`;
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "delete-button";
-        deleteBtn.textContent = "🗑️";
-        deleteBtn.onclick = () => deleteUser(user.id);
+      const buttons = document.createElement("div");
 
-        buttons.appendChild(editBtn);
-        buttons.appendChild(deleteBtn);
-        header.appendChild(title);
-        header.appendChild(buttons);
-        card.appendChild(header);
-        userList.appendChild(card);
-      });
-    } catch (err) {
-      console.error("Failed to load users:", err);
-    }
+      const editBtn = document.createElement("button");
+      editBtn.className = "edit-button";
+      editBtn.textContent = "✏️";
+      editBtn.onclick = () => {
+        userForm.reset();
+        userForm.dataset.editingId = user.id;
+        userForm.username.value = user.username || "";
+        userForm.password.value = "";
+        userForm.firstName.value = user.first_name;
+        userForm.lastName.value = user.last_name;
+        userForm.phone.value = user.phone;
+        userForm.email.value = user.email || "";
+        userForm.idNumber.value = user.id_number || "";
+        userModal.style.display = "flex";
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-button";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.onclick = () => deleteUser(user.id);
+
+      buttons.appendChild(editBtn);
+      buttons.appendChild(deleteBtn);
+      header.appendChild(title);
+      header.appendChild(buttons);
+      card.appendChild(header);
+      userList.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Failed to load users:", err);
   }
+}
+
 
   loadUsers();
 });
