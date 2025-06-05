@@ -127,6 +127,12 @@ async function renderGames() {
     const description = currentLang === 'sv' ? game.description_sv : game.description_en;
     const isLent = game.lent_out;
 
+    const playerText = game.min_players
+      ? game.max_players && game.max_players !== game.min_players
+        ? `${game.min_players}–${game.max_players}`
+        : `${game.min_players}`
+      : '–';
+
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
@@ -136,7 +142,7 @@ async function renderGames() {
         <p>${description}</p>
         ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
         <div class="tags">
-          👥 ${translations[currentLang].ui.players}: ${game.players} ・
+          👥 ${translations[currentLang].ui.players}: ${playerText} ・
           ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
           👶 ${translations[currentLang].ui.age}: ${game.age}
         </div>
