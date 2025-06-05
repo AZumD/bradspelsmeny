@@ -4,7 +4,7 @@ const translations = {
       "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan (eller vi aspirerar i alla fall att ha det). Om du ser något du gillar, prata med vår personal så tar vi fram det åt dig! (Det är 16+ som gäller för alla spelutlåningar då vi är väldigt rädda om dem, och vi behöver ett ID i pant)",
     ui: {
       players: "Spelare",
-      time: "Tid",
+      play_time: "Tid",
       age: "Ålder"
     },
     categories: {
@@ -23,7 +23,7 @@ const translations = {
       "We have a wide range of board games here at Pinchos Linnégatan (or at least we aspire to). If you see something you like, talk to our staff and we'll bring it to you! (A 16+ age limit applies to all board games and we require an ID as a deposit during the play time)",
     ui: {
       players: "Players",
-      time: "Time",
+      play_time: "Time",
       age: "Age"
     },
     categories: {
@@ -137,7 +137,7 @@ async function renderGames() {
         ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
         <div class="tags">
           👥 ${translations[currentLang].ui.players}: ${game.players} ・
-          ⏱ ${translations[currentLang].ui.time}: ${game.time} ・
+          ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
           👶 ${translations[currentLang].ui.age}: ${game.age}
         </div>
       </div>
