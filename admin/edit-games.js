@@ -212,11 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("tags", tags);
       formData.append("image", image);
       formData.append("category", category);
-      formData.append("slow_day_only", slow_day_only);
-      formData.append("trusted_only", trusted_only);
-      formData.append("min_table_size", min_table_size);
-      formData.append("condition_rating", condition_rating);
-      formData.append("staff_picks", JSON.stringify(staff_picks));
+      formData.append("slow_day_only", slow_day_only ? "true" : "false");
+      formData.append("trusted_only", trusted_only ? "true" : "false");  
+      formData.append("min_table_size", min_table_size || null);
+      formData.append("condition_rating", condition_rating ? parseInt(condition_rating) : null);
+      formData.append("staff_picks", JSON.stringify(staff_picks.length ? staff_picks : []));
+
 
       const id = document.getElementById("editingIndex").value;
       const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
