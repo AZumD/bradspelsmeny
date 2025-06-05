@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       typeof game.tags === "string"
         ? game.tags
         : (game.tags || []).join(", ");
-    document.getElementById("img").value = game.image || "";
+    document.getElementById("img").value = game.img || "";
     document.getElementById("rules").value = game.rules || "";
     slowDayOnly.checked = !!game.slow_day_only;
     trustedOnly.checked = !!game.trusted_only;
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const play_time = parseInt(document.getElementById("time").value.trim());
       const age = parseInt(document.getElementById("age").value.trim());
       const tags = document.getElementById("tags").value.trim();
-      const image = document.getElementById("img").value.trim();
+      const img = document.getElementById("img").value.trim();
       const slow_day_only = slowDayOnly.checked;
       const trusted_only = trustedOnly.checked;
       const min_table_size = minTableSize.value || null;
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         !play_time ||
         !age ||
         !tags ||
-        !image
+        !img
       ) {
         alert("Vänligen fyll i alla obligatoriska fält.");
         return;
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("play_time", play_time);
       formData.append("age", age);
       formData.append("tags", tags);
-      formData.append("image", image);
+      formData.append("img", img);
       formData.append("slow_day_only", slow_day_only);
       formData.append("trusted_only", trusted_only);
       formData.append("condition_rating", condition_rating);
