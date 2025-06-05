@@ -146,53 +146,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (gameForm) {
     gameForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const formData = new FormData();
+  e.preventDefault();
 
-      formData.append("title_sv", document.getElementById("title").value);
-      formData.append("title_en", document.getElementById("title").value);
-      formData.append("description_sv", document.getElementById("descSv").value);
-      formData.append("description_en", document.getElementById("descEn").value);
-      formData.append("players", document.getElementById("players").value);
-      formData.append("time", document.getElementById("time").value);
-      formData.append("age", document.getElementById("age").value);
-      formData.append("tags", document.getElementById("tags").value);
-      formData.append("img", document.getElementById("img").value);
-      formData.append("rules", document.getElementById("rules").value);
+  const title_sv = document.getElementById("title").value.trim();
+  const title_en = title_sv;
+  const description_sv = document.getElementById("descSv").value.trim();
+  const description_en = document.getElementById("descEn").value.trim();
+  const players = document.getElementById("players").value.trim();
+  const [min_players, max_players] = players.includes("-") ? players.split("-").map(p => parseInt(p.trim())) : [parseInt(players), parseInt(players)];
+  const play_time = parseInt(document.getElementById("time").value.trim());
+  const age = parseInt(document.getElementById("age").value.trim());
+  const tags = document.getElementById("tags").value.trim();
+  const image = document.getElementById("img").value.trim();
+  const category = ""; // optional
 
-      const imgFile = document.getElementById("imgFile").files[0];
-      if (imgFile) formData.append("imgFile", imgFile);
-
-      const rulesFile = document.getElementById("rulesFile").files[0];
-      if (rulesFile) formData.append("rulesFile", rulesFile);
-
-      formData.append("slow_day_only", slowDayOnly.checked ? 1 : 0);
-      formData.append("trusted_only", trustedOnly.checked ? 1 : 0);
-      formData.append("condition_rating", conditionRatingValue.value);
-      formData.append("staff_picks", staffPicks.value);
-      formData.append("min_table_size", minTableSize.value);
-
-      const id = document.getElementById("editingIndex").value;
-      const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
-      const method = id ? "PUT" : "POST";
-
-      try {
-        const res = await fetch(url, {
-          method,
-          headers: {
-            Authorization: `Bearer ${TOKEN}`
-          },
-          body: formData
-        });
-        if (!res.ok) throw new Error("Failed to save game");
-        gameModal.style.display = "none";
-        fetchGames();
-      } catch (err) {
-        alert("Kunde inte spara spel.");
-        console.error(err);
-      }
-    };
+  // ✅ Required field validation
+  if (!title_sv || !description_sv || !description_en || !min_players || !play_time || !age || !tags || !image) {
+    alert("Vänligen fyll i alla obligatoriska fält.");
+    return;
   }
+
+  const formData = new URLSearchParams();
+  formData.append("title_sv", title_sv);
+  formData.append("title_en", title_en);
+  formData.append("description_sv", description_sv);
+  formData.append("description_en", description_en);
+  formData.append("min_players", min_players);
+  formData.append("max_players", max_players);
+  formData.append("play_time", play_time);
+  formData.append("age", age);
+  formData.append("tags", tags);
+  formData.append("image", image);
+  formData.append("category", category);
+
+  const id = document.getElementById("editingIndex").value;
+  const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
+  const method = id ? "PUT" : "POST";
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${TOKEN}`
+      },
+      body: formData.toString()
+    });
+
+    if (!res.ok) throw new Error("Failed to save game");
+
+    gameModal.style.display = "none";
+    fetchGames();
+  } catch (err) {
+    console.error("❌ Save game error:", err);
+    alert("Kunde inte spara spel.");
+  }
+};
+
 
   if (searchBar) {
     searchBar.addEventListener("input", (e) => {
