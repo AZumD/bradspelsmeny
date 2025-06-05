@@ -110,10 +110,21 @@
   <script defer src="admin.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <a href="index.html" class="dashboard-title">Admin Dashboard</a><br>
-<button onclick="logout()" style="font-size: 0.6rem;">🚪 Logga ut</button>
-  </header>
+  <header class="topbar" style="display: flex; justify-content: space-between; align-items: center;">
+  <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+  <button onclick="logout()" style="
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    background: #e6b35c;
+    color: #3c2415;
+    border: 2px solid #3c2415;
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    margin-left: 1rem;
+    box-shadow: 2px 2px 0 #c19761;
+    cursor: pointer;
+  ">🚪 Logga ut</button>
+</header>
   <div class="dashboard">
     <div class="tile">
       <h2>Utlånade spel</h2>
