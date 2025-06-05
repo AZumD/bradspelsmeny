@@ -38,3 +38,8 @@ async function fetchStats(token) {
     console.error("❌ Failed to fetch stats:", err);
   }
 }
+
+function logout() {
+  localStorage.removeItem("adminToken");
+  window.location.href = "login.html";
+}
