@@ -206,7 +206,7 @@ document.addEventListener("click", (event) => {
   if (button) {
     const card = button.closest(".game-card");
     const gameId = card?.dataset?.gameId;
-    if (gameId) startGameOrderFlow(gameId);
+    if (gameId) openOrderModal(gameId);
   }
 });
 
