@@ -235,19 +235,20 @@ function startGameOrderFlow(gameId) {
       const last_name = prompt("Last name:");
       if (!last_name) return;
 
-      const country = prompt(`Country?\n\n${Object.keys(countryCodes).join('\n')}`);
-      if (!country || !countryCodes[country]) {
-        alert("❌ Invalid country selected.");
+      const country = prompt(`Select your country code:\n\n${Object.entries(countryCodes).map(([name, code]) => `${name}: ${code}`).join("\n")}`);
+      const code = Object.values(countryCodes).includes(country) ? country : countryCodes[country];
+      if (!code) {
+        alert("❌ Invalid country code.");
         return;
       }
 
-      let localNumber = prompt("Phone number (without leading 0 or +):");
+      const localNumber = prompt("Phone number (without leading 0 or +):");
       if (!localNumber || /[^0-9]/.test(localNumber)) {
         alert("❌ Please enter a valid number.");
         return;
       }
 
-      const phone = `${countryCodes[country]}${localNumber}`;
+      const phone = `${code}${localNumber}`;
 
       const table_id = prompt("Table number:");
       if (!table_id) return;
