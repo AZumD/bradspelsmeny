@@ -18,10 +18,11 @@ async function fetchGames() {
   const res = await fetch(`${API_BASE}/games`);
   const games = await res.json();
   allGames = games;
-  renderGameLists();
+  await renderGameLists();
+
 }
 
-function renderGameLists() {
+async function renderGameLists() {
   const searchTerm = searchInput.value.toLowerCase();
   const available = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
   const lentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
@@ -29,9 +30,17 @@ function renderGameLists() {
   availableContainer.innerHTML = '';
   lentOutContainer.innerHTML = '';
 
-  for (const g of available) availableContainer.appendChild(createGameCard(g));
-  for (const g of lentOut) lentOutContainer.appendChild(createGameCard(g));
+  for (const g of available) {
+    const card = await createGameCard(g);
+    availableContainer.appendChild(card);
+  }
+
+  for (const g of lentOut) {
+    const card = await createGameCard(g);
+    lentOutContainer.appendChild(card);
+  }
 }
+
 
 async function createGameCard(game) {
   const card = document.createElement('div');
