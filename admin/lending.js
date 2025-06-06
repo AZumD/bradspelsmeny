@@ -33,18 +33,27 @@ function renderGameLists() {
   for (const g of lentOut) lentOutContainer.appendChild(createGameCard(g));
 }
 
-function createGameCard(game) {
+async function createGameCard(game) {
   const card = document.createElement('div');
+  let extra = '';
+
+  if (game.lent_out) {
+    try {
+      const res = await fetch(`${API_BASE}/games/${game.id}/current-lend`, {
+        headers: { Authorization: `Bearer ${TOKEN}` }
+      });
+      const data = await res.json();
+      extra = `<br><small style="font-size: 0.5rem;">
+        Lånad ut till ${data.first_name || 'Okänd'} ${data.last_name || ''} (${data.note || 'okänt bord'}) – ${new Date(data.timestamp).toLocaleString('sv-SE')}
+      </small>`;
+    } catch (err) {
+      console.warn('⚠️ Could not fetch current lending info:', err);
+    }
+  }
+
   card.className = 'game-card';
   card.innerHTML = `
-    <h3>
-      ${game.title_sv}
-      ${game.lent_out && game.last_lend ? `<br><small style="font-size: 0.5rem;">
-        Lånad ut till ${game.last_lend.first_name} ${game.last_lend.last_name}
-        (${game.last_lend.note || 'okänt bord'})
-        – ${new Date(game.last_lend.timestamp).toLocaleString('sv-SE')}
-      </small>` : ''}
-    </h3>
+    <h3>${game.title_sv}${extra}</h3>
     <div class="buttons">
       <button class="btn-action" onclick="${game.lent_out ? `returnGame(${game.id})` : `openLendModal(${game.id})`}">
         ${game.lent_out ? 'Return' : 'Lend Out'}
