@@ -59,16 +59,28 @@ async function fetchOrders() {
     const orders = await res.json();
 
     const container = document.getElementById("orderFeed");
+    if (!orders.length) {
+      container.innerHTML = "<h3>📦 Latest Game Orders:</h3><p style='opacity:0.5'>No orders yet</p>";
+      return;
+    }
+
     container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => `
-      <div style="margin:10px 0; border-bottom:1px dashed #999;">
-        <strong>${order.game_title}</strong> ➜ Table <strong>${order.table_id}</strong><br>
-        <small>${new Date(order.created_at).toLocaleString()}</small>
+      <div style="margin:10px 0; border-bottom:1px dashed #999; padding-bottom:8px;">
+        <strong>${order.game_title}</strong> ➜ Table <strong>${order.table_id}</strong>
+        <span style="opacity:0.6;">by ${order.first_name}</span><br>
+        <small>${new Date(order.created_at).toLocaleString()}</small><br>
+        <button onclick="completeOrder(${order.id}, ${order.game_id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">
+          ✅ Complete Order
+        </button>
       </div>
-    `).join("");
+    `).join("") + `
+      <button onclick="clearAllOrders()" style="margin-top:15px;">🧹 Clear All Orders</button>
+    `;
   } catch (err) {
     console.error("Failed to fetch game orders:", err);
   }
 }
+
 
 setInterval(fetchOrders, 5000); // refresh every 5 seconds
 document.addEventListener("DOMContentLoaded", fetchOrders);
