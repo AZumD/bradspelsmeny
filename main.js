@@ -1,3 +1,8 @@
+// 🌍 Location settings
+const RESTAURANT_LAT = 57.6980;
+const RESTAURANT_LNG = 11.9591;
+const ALLOWED_RADIUS_METERS = 100;
+
 const translations = {
   sv: {
     intro:
@@ -139,6 +144,7 @@ async function renderGames() {
     card.innerHTML = `
       <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
       <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
+      <button class="order-button">🎲 Order to Table</button> 
       <div class="game-info">
         <p>${description}</p>
         ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
@@ -147,7 +153,6 @@ async function renderGames() {
           ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
           👶 ${translations[currentLang].ui.age}: ${game.age}
         </div>
-        <button class="order-button">🎲 Order to Table</button>
       </div>
     `;
     container.appendChild(card);
@@ -174,6 +179,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// 🧲 Distance checker
+function getDistanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 // 🎯 Click handler for order buttons
 document.addEventListener("click", (event) => {
   const button = event.target.closest(".order-button");
@@ -184,7 +202,32 @@ document.addEventListener("click", (event) => {
   }
 });
 
+// 🚀 Main logic for handling geolocation order
 function startGameOrderFlow(gameId) {
-  // 🌐 Placeholder — will include geolocation in Step 2
-  alert(`🎲 You’re trying to order game ID: ${gameId}`);
+  const game = games.find(g => g.id === gameId);
+  const title = game?.title_en || "this game";
+
+  if (!navigator.geolocation) {
+    alert(`Your device doesn't support location. Please ask staff to help you get "${title}".`);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
+
+      if (distance <= ALLOWED_RADIUS_METERS) {
+        alert(`✅ You are within range (${Math.round(distance)}m). Proceeding to order "${title}".`);
+        // TODO: Send request to backend
+      } else {
+        alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get "${title}".`);
+      }
+    },
+    (error) => {
+      console.warn("Geolocation error:", error);
+      alert(`📍 To order "${title}" to the table, you need to enable location permissions. Otherwise, just ask our staff and they’ll help you.`);
+    },
+    { enableHighAccuracy: true, timeout: 5000 }
+  );
 }
