@@ -20,15 +20,16 @@
       align-items: center;
     }
     .topbar {
-      background-color: #8c3c1a;
-      color: white;
-      width: 100%;
-      padding: 1rem;
-      box-shadow: 0 4px 0 #4a1f0f;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+  background-color: #8c3c1a;
+  color: white;
+  width: 100%;
+  padding: 1rem 1.5rem; /* ← Add horizontal padding here */
+  box-shadow: 0 4px 0 #4a1f0f;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box; /* ensures padding doesn't break layout */
+}
     .dashboard-title {
       color: #fff4d9;
       font-size: 1rem;
