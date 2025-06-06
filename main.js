@@ -213,41 +213,56 @@ function startGameOrderFlow(gameId) {
   }
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const { latitude, longitude } = position.coords;
       const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
 
-      if (distance <= ALLOWED_RADIUS_METERS) {
-        alert(`✅ You are within range (${Math.round(distance)}m). Ordering "${title}" to your table.`);
+      if (distance > ALLOWED_RADIUS_METERS) {
+        alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get "${title}".`);
+        return;
+      }
 
-        const tableIds = JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
-        const table_id = tableIds[0] || "unknown";
+      // 🌟 Prompt for guest details
+      const first_name = prompt("First name:");
+      if (!first_name) return;
 
-        fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
+      const last_name = prompt("Last name:");
+      if (!last_name) return;
+
+      const phone = prompt("Phone number:");
+      if (!phone) return;
+
+      const table_id = prompt("Table number:");
+      if (!table_id) return;
+
+      if (/^\d{4}$/.test(table_id)) {
+        alert("❌ Invalid table number — you probably entered your table *code*. Please enter your actual table number.");
+        return;
+      }
+
+      // 🚀 Send order
+      try {
+        const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            game_id: gameId,
+            game_id: game.id,
             game_title: title,
+            first_name,
+            last_name,
+            phone,
             table_id
           })
-        })
-        .then(res => {
-          if (res.ok) {
-            console.log("📦 Game order sent!");
-          } else {
-            return res.json().then(err => alert("❌ Error: " + err.error));
-          }
-        })
-        .catch(err => {
-          console.error("Failed to send order:", err);
-          alert("❌ Failed to place order. Please try again or talk to staff.");
         });
 
-      } else {
-        alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get "${title}".`);
+        if (res.ok) {
+          alert(`✅ "${title}" has been ordered to your table!`);
+        } else {
+          alert("❌ Failed to place order. Please ask staff.");
+        }
+      } catch (err) {
+        console.error("Order error:", err);
+        alert("❌ Something went wrong. Please ask staff.");
       }
     },
     (error) => {
@@ -257,3 +272,4 @@ function startGameOrderFlow(gameId) {
     { enableHighAccuracy: true, timeout: 5000 }
   );
 }
+
