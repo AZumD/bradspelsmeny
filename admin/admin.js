@@ -81,6 +81,60 @@ async function fetchOrders() {
   }
 }
 
+async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
+  const token = localStorage.getItem("adminToken");
+
+  try {
+    // 1. Create user
+    const userRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
+    });
+
+    const user = await userRes.json();
+    const userId = user.id;
+
+    // 2. Lend game
+    await fetch(`https://bradspelsmeny-backend-production.up.railway.app/lend/${gameId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId, note: `Table ${tableId}` })
+    });
+
+    // 3. Remove order from queue
+    await fetch(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    fetchOrders(); // Refresh view
+  } catch (err) {
+    console.error("❌ Failed to complete order:", err);
+    alert("Something went wrong when completing the order.");
+  }
+}
+async function clearAllOrders() {
+  const token = localStorage.getItem("adminToken");
+
+  try {
+    await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchOrders();
+  } catch (err) {
+    console.error("❌ Failed to clear orders:", err);
+  }
+}
+
+
 
 setInterval(fetchOrders, 5000); // refresh every 5 seconds
 document.addEventListener("DOMContentLoaded", fetchOrders);
