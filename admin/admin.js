@@ -48,6 +48,7 @@ async function fetchStats(token) {
     console.error("❌ Failed to fetch stats:", err);
   }
 }
+
 async function fetchOrders() {
   try {
     const token = localStorage.getItem("adminToken");
@@ -66,18 +67,17 @@ async function fetchOrders() {
 
     container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => `
       <div style="margin:10px 0; border-bottom:1px dashed #999;">
-        <strong>${order.game_title}</strong> ➜ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
+        <strong>${order.game_title}</strong> ➔ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
         <small>${new Date(order.created_at).toLocaleString()}</small><br>
-        <button onclick="completeOrder(${order.id})">✅ Complete Order</button>
+        <button onclick="completeOrder(${order.id}, ${order.game_id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
       </div>
     `).join("");
 
-    // Show "Clear All Orders" button if orders exist
     const clearBtnId = "clearAllOrdersButton";
     if (!document.getElementById(clearBtnId)) {
       const btn = document.createElement("button");
       btn.id = clearBtnId;
-      btn.textContent = "🧹 Clear All Orders";
+      btn.textContent = "🪩 Clear All Orders";
       btn.onclick = clearAllOrders;
       container.appendChild(btn);
     }
@@ -86,91 +86,59 @@ async function fetchOrders() {
     console.error("Failed to fetch game orders:", err);
   }
 }
-async function completeOrder(orderId) {
-  const token = localStorage.getItem("adminToken");
-
-  if (!confirm("Are you sure you want to complete this order and lend out the game?")) return;
-
-  try {
-    const res = await fetch(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}/complete`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) throw new Error("Failed to complete order");
-
-    alert("✅ Order completed and game lent out.");
-    fetchOrders(); // refresh orders
-  } catch (err) {
-    console.error("❌ Failed to complete order:", err);
-    alert("⚠️ Something went wrong completing the order.");
-  }
-}
-
-async function clearAllOrders() {
-  const token = localStorage.getItem("adminToken");
-  if (!confirm("This will clear all pending orders. Are you sure?")) return;
-
-  try {
-    const res = await fetch(`https://bradspelsmeny-backend-production.up.railway.app/order-game`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) throw new Error("Failed to clear all orders");
-
-    alert("🧹 All orders cleared.");
-    fetchOrders();
-  } catch (err) {
-    console.error("❌ Failed to clear orders:", err);
-    alert("⚠️ Could not clear orders.");
-  }
-}
-
 
 async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
   const token = localStorage.getItem("adminToken");
 
   try {
-    // 1. Create user
-    const userRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
+    const usersRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    const users = await usersRes.json();
 
-    const user = await userRes.json();
-    const userId = user.id;
+    let user = users.find(u => u.phone === phone);
 
-    // 2. Lend game
+    if (!user) {
+      const userRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
+      });
+
+      if (!userRes.ok) {
+        alert("❌ Failed to create user.");
+        return;
+      }
+
+      user = await userRes.json();
+    }
+
     await fetch(`https://bradspelsmeny-backend-production.up.railway.app/lend/${gameId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ userId, note: `Table ${tableId}` })
+      body: JSON.stringify({ userId: user.id, note: `Table ${tableId}` })
     });
 
-    // 3. Remove order from queue
     await fetch(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    fetchOrders(); // Refresh view
+    alert("✅ Order completed and game lent out.");
+    fetchOrders();
+
   } catch (err) {
     console.error("❌ Failed to complete order:", err);
     alert("Something went wrong when completing the order.");
   }
 }
+
 async function clearAllOrders() {
   const token = localStorage.getItem("adminToken");
 
@@ -185,9 +153,7 @@ async function clearAllOrders() {
   }
 }
 
-
-
-setInterval(fetchOrders, 5000); // refresh every 5 seconds
+setInterval(fetchOrders, 5000);
 document.addEventListener("DOMContentLoaded", fetchOrders);
 
 function logout() {
