@@ -204,7 +204,7 @@ document.addEventListener("click", (event) => {
 
 // 🚀 Main logic for handling geolocation order
 function startGameOrderFlow(gameId) {
-  const game = games.find(g => g.id === gameId);
+  const game = games.find(g => g.id === Number(gameId));
   const title = game?.title_en || "this game";
 
   if (!navigator.geolocation) {
