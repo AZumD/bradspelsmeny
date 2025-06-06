@@ -135,6 +135,7 @@ async function renderGames() {
 
     const card = document.createElement('div');
     card.className = 'game-card';
+    card.dataset.gameId = game.id;
     card.innerHTML = `
       <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
       <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
@@ -146,6 +147,7 @@ async function renderGames() {
           ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
           👶 ${translations[currentLang].ui.age}: ${game.age}
         </div>
+        <button class="order-button">🎲 Order to Table</button>
       </div>
     `;
     container.appendChild(card);
@@ -171,3 +173,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     gameList.style.display = "grid";
   }
 });
+
+// 🎯 Click handler for order buttons
+document.addEventListener("click", (event) => {
+  const button = event.target.closest(".order-button");
+  if (button) {
+    const card = button.closest(".game-card");
+    const gameId = card?.dataset?.gameId;
+    if (gameId) startGameOrderFlow(gameId);
+  }
+});
+
+function startGameOrderFlow(gameId) {
+  // 🌐 Placeholder — will include geolocation in Step 2
+  alert(`🎲 You’re trying to order game ID: ${gameId}`);
+}
