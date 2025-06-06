@@ -48,6 +48,30 @@ async function fetchStats(token) {
     console.error("❌ Failed to fetch stats:", err);
   }
 }
+async function fetchOrders() {
+  try {
+    const token = localStorage.getItem("adminToken");
+    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game/latest", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    const orders = await res.json();
+
+    const container = document.getElementById("orderFeed");
+    container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => `
+      <div style="margin:10px 0; border-bottom:1px dashed #999;">
+        <strong>${order.game_title}</strong> ➜ Table <strong>${order.table_id}</strong><br>
+        <small>${new Date(order.created_at).toLocaleString()}</small>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("Failed to fetch game orders:", err);
+  }
+}
+
+setInterval(fetchOrders, 5000); // refresh every 5 seconds
+document.addEventListener("DOMContentLoaded", fetchOrders);
 
 function logout() {
   localStorage.removeItem("adminToken");
