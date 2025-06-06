@@ -210,82 +210,99 @@ document.addEventListener("click", (event) => {
   }
 });
 
-function startGameOrderFlow(gameId) {
-  const game = games.find(g => g.id === Number(gameId));
-  const title = game?.title_en || "this game";
+const orderModal = document.getElementById('orderModal');
+const orderForm = document.getElementById('orderForm');
+const orderGameTitle = document.getElementById('orderGameTitle');
+const closeModalBtn = document.getElementById('closeModal');
+
+let currentOrderingGame = null;
+
+document.addEventListener('click', (event) => {
+  const button = event.target.closest(".order-button");
+  if (button) {
+    const card = button.closest(".game-card");
+    const gameId = card?.dataset?.gameId;
+    if (gameId) openOrderModal(gameId);
+  }
+});
+
+function openOrderModal(gameId) {
+  currentOrderingGame = games.find(g => g.id === Number(gameId));
+  if (!currentOrderingGame) {
+    alert("Game not found.");
+    return;
+  }
+  orderGameTitle.textContent = `Order "${currentOrderingGame.title_en}" to Table`;
+  orderModal.classList.add('show');
+  orderForm.reset();
+}
+
+closeModalBtn.addEventListener('click', () => {
+  orderModal.classList.remove('show');
+});
+
+orderForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
   if (!navigator.geolocation) {
-    alert(`Your device doesn't support location. Please ask staff to help you get "${title}".`);
+    alert("Your device doesn't support location. Please ask staff to help you get the game.");
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const { latitude, longitude } = position.coords;
-      const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude } = position.coords;
+    const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
 
-      if (distance > ALLOWED_RADIUS_METERS) {
-        alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get "${title}".`);
-        return;
+    if (distance > ALLOWED_RADIUS_METERS) {
+      alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get the game.`);
+      return;
+    }
+
+    const formData = new FormData(orderForm);
+    const first_name = formData.get('first_name').trim();
+    const last_name = formData.get('last_name').trim();
+    const country_code = formData.get('country_code');
+    const local_phone = formData.get('phone').trim();
+    const table_id = formData.get('table_id').trim();
+
+    if (/^\d{4}$/.test(table_id)) {
+      alert("❌ Invalid table number — you probably entered your table *code*. Please enter your actual table number.");
+      return;
+    }
+
+    if (!first_name || !last_name || !local_phone || !table_id) {
+      alert("❌ Please fill out all fields correctly.");
+      return;
+    }
+
+    const phone = `${country_code}${local_phone}`;
+
+    try {
+      const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          game_id: currentOrderingGame.id,
+          game_title: currentOrderingGame.title_en,
+          first_name,
+          last_name,
+          phone,
+          table_id
+        })
+      });
+
+      if (res.ok) {
+        alert(`✅ "${currentOrderingGame.title_en}" has been ordered to your table!`);
+        orderModal.classList.remove('show');
+      } else {
+        alert("❌ Failed to place order. Please ask staff.");
       }
-
-      const first_name = prompt("First name:");
-      if (!first_name) return;
-
-      const last_name = prompt("Last name:");
-      if (!last_name) return;
-
-      const country = prompt(`Select your country code:\n\n${Object.entries(countryCodes).map(([name, code]) => `${name}: ${code}`).join("\n")}`);
-      const code = Object.values(countryCodes).includes(country) ? country : countryCodes[country];
-      if (!code) {
-        alert("❌ Invalid country code.");
-        return;
-      }
-
-      const localNumber = prompt("Phone number (without leading 0 or +):");
-      if (!localNumber || /[^0-9]/.test(localNumber)) {
-        alert("❌ Please enter a valid number.");
-        return;
-      }
-
-      const phone = `${code}${localNumber}`;
-
-      const table_id = prompt("Table number:");
-      if (!table_id) return;
-
-      if (/^\d{4}$/.test(table_id)) {
-        alert("❌ Invalid table number — you probably entered your table *code*. Please enter your actual table number.");
-        return;
-      }
-
-      try {
-        const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            game_id: game.id,
-            game_title: title,
-            first_name,
-            last_name,
-            phone,
-            table_id
-          })
-        });
-
-        if (res.ok) {
-          alert(`✅ "${title}" has been ordered to your table!`);
-        } else {
-          alert("❌ Failed to place order. Please ask staff.");
-        }
-      } catch (err) {
-        console.error("Order error:", err);
-        alert("❌ Something went wrong. Please ask staff.");
-      }
-    },
-    (error) => {
-      console.warn("Geolocation error:", error);
-      alert(`📍 To order "${title}" to the table, you need to enable location permissions. Otherwise, just ask our staff and they’ll help you.`);
-    },
-    { enableHighAccuracy: true, timeout: 5000 }
-  );
-}
+    } catch (err) {
+      console.error("Order error:", err);
+      alert("❌ Something went wrong. Please ask staff.");
+    }
+  }, (error) => {
+    console.warn("Geolocation error:", error);
+    alert("📍 To order to the table, you need to enable location permissions. Otherwise, just ask our staff and they’ll help you.");
+  }, { enableHighAccuracy: true, timeout: 5000 });
+});
