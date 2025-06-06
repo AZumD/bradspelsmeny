@@ -23,15 +23,16 @@
     }
 
     .topbar {
-      background-color: #8c3c1a;
-      color: white;
-      width: 100%;
-      padding: 1rem;
-      box-shadow: 0 4px 0 #4a1f0f;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+  background-color: #8c3c1a;
+  color: white;
+  width: 100%;
+  padding: 1rem 1.5rem; /* ← Add horizontal padding here */
+  box-shadow: 0 4px 0 #4a1f0f;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box; /* ensures padding doesn't break layout */
+}
 
     .dashboard-title {
       color: #fff4d9;
@@ -195,8 +196,21 @@
 </head>
 <body>
   <header class="topbar">
-    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
-  </header>
+  <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+  <button onclick="logout()" style="
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    background: #e6b35c;
+    color: #3c2415;
+    border: 2px solid #3c2415;
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    margin-left: 1rem;
+    box-shadow: 2px 2px 0 #c19761;
+    cursor: pointer;
+  ">🚪 Logga ut</button>
+</header>
+
 
   <div class="edit-container">
     <div style="text-align: center; margin-bottom: 1rem;">
