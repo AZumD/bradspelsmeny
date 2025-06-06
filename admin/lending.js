@@ -27,23 +27,22 @@ async function renderGameLists() {
   const available = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
   const lentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
 
-  availableContainer.innerHTML = '';
-  lentOutContainer.innerHTML = '';
-
+  // Show temporary loading message
   availableContainer.innerHTML = '<p>Laddar spel...</p>';
   lentOutContainer.innerHTML = '<p>Laddar spel...</p>';
 
-  
-  for (const g of available) {
-    const card = await createGameCard(g);
-    availableContainer.appendChild(card);
-  }
+  // Build cards first
+  const availableCards = await Promise.all(available.map(createGameCard));
+  const lentOutCards = await Promise.all(lentOut.map(createGameCard));
 
-  for (const g of lentOut) {
-    const card = await createGameCard(g);
-    lentOutContainer.appendChild(card);
-  }
+  // Then replace loading with real content
+  availableContainer.innerHTML = '';
+  lentOutContainer.innerHTML = '';
+
+  for (const card of availableCards) availableContainer.appendChild(card);
+  for (const card of lentOutCards) lentOutContainer.appendChild(card);
 }
+
 
 
 async function createGameCard(game) {
