@@ -188,6 +188,20 @@
       text-align: center;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
+    .modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal.show {
+  display: flex;
+}
+
 
     @keyframes fadeInUp {
       to {
@@ -263,6 +277,46 @@
   </style>
 </head>
 <body>
+
+  <div id="orderModal" class="modal" style="display:none; position:fixed; top:0; left:0; 
+  width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:1.5rem; border-radius:8px; max-width:400px; width:90%;">
+    <h2 id="orderGameTitle">Order Game</h2>
+    <form id="orderForm">
+      <label>
+        First Name:<br />
+        <input type="text" name="first_name" required />
+      </label><br /><br />
+      <label>
+        Last Name:<br />
+        <input type="text" name="last_name" required />
+      </label><br /><br />
+      <label>
+        Country Code:<br />
+        <select name="country_code" required>
+          <option value="+46">🇸🇪 +46 Sweden</option>
+          <option value="+47">🇳🇴 +47 Norway</option>
+          <option value="+358">🇫🇮 +358 Finland</option>
+          <option value="+45">🇩🇰 +45 Denmark</option>
+          <option value="+49">🇩🇪 +49 Germany</option>
+          <option value="+44">🇬🇧 +44 UK</option>
+          <option value="+1">🇺🇸 +1 USA</option>
+        </select>
+      </label><br /><br />
+      <label>
+        Phone Number:<br />
+        <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
+      </label><br /><br />
+      <label>
+        Table Number:<br />
+        <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
+      </label><br /><br />
+      <button type="submit">Order</button>
+      <button type="button" id="closeModal" style="margin-left:1rem;">Cancel</button>
+    </form>
+  </div>
+</div>
+
   <div class="bg"></div>
 
   <div class="language-toggle">
