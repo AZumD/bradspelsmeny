@@ -57,7 +57,20 @@ function createGameCard(game) {
 }
 
 async function openLendModal(gameId) {
-  const users = await fetch(`${API_BASE}/users`).then(res => res.json());
+  const res = await fetch(`${API_BASE}/users`, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`
+    }
+  });
+
+  const users = await res.json();
+
+  if (!Array.isArray(users)) {
+    alert('❌ Failed to load users. You might be logged out.');
+    window.location.href = 'login.html';
+    return;
+  }
+
   const modal = document.getElementById('lendModal');
   const userSelect = document.getElementById('userSelect');
   const tableStep = document.getElementById('tableStep');
@@ -74,6 +87,7 @@ async function openLendModal(gameId) {
     tableStep.style.display = userSelect.value ? 'block' : 'none';
   });
 }
+
 
 function closeLendModal() {
   document.getElementById('lendModal').style.display = 'none';
