@@ -218,8 +218,34 @@ function startGameOrderFlow(gameId) {
       const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
 
       if (distance <= ALLOWED_RADIUS_METERS) {
-        alert(`✅ You are within range (${Math.round(distance)}m). Proceeding to order "${title}".`);
-        // TODO: Send request to backend
+        alert(`✅ You are within range (${Math.round(distance)}m). Ordering "${title}" to your table.`);
+
+        const tableIds = JSON.parse(sessionStorage.getItem("selectedTables") || "[]");
+        const table_id = tableIds[0] || "unknown";
+
+        fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            game_id: gameId,
+            game_title: title,
+            table_id
+          })
+        })
+        .then(res => {
+          if (res.ok) {
+            console.log("📦 Game order sent!");
+          } else {
+            return res.json().then(err => alert("❌ Error: " + err.error));
+          }
+        })
+        .catch(err => {
+          console.error("Failed to send order:", err);
+          alert("❌ Failed to place order. Please try again or talk to staff.");
+        });
+
       } else {
         alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get "${title}".`);
       }
