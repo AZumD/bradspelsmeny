@@ -222,15 +222,19 @@ function startGameOrderFlow(gameId) {
         return;
       }
 
-      // 🌟 Prompt for guest details
       const first_name = prompt("First name:");
       if (!first_name) return;
 
       const last_name = prompt("Last name:");
       if (!last_name) return;
 
-      const phone = prompt("Phone number:");
-      if (!phone) return;
+      const country_code = prompt("Country code (+46 for Sweden):", "+46");
+      if (!country_code || !/^\+\d{1,4}$/.test(country_code)) return alert("❌ Invalid country code.");
+
+      const phone = prompt("Phone number (without country code):");
+      if (!phone || !/^\d{4,}$/.test(phone)) return alert("❌ Invalid phone number format.");
+
+      const fullPhone = `${country_code}${phone}`;
 
       const table_id = prompt("Table number:");
       if (!table_id) return;
@@ -240,7 +244,6 @@ function startGameOrderFlow(gameId) {
         return;
       }
 
-      // 🚀 Send order
       try {
         const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
           method: "POST",
@@ -250,7 +253,7 @@ function startGameOrderFlow(gameId) {
             game_title: title,
             first_name,
             last_name,
-            phone,
+            phone: fullPhone,
             table_id
           })
         });
@@ -272,4 +275,3 @@ function startGameOrderFlow(gameId) {
     { enableHighAccuracy: true, timeout: 5000 }
   );
 }
-
