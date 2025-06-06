@@ -1,7 +1,7 @@
 // 🌍 Location settings
-const RESTAURANT_LAT = 57.6980;
-const RESTAURANT_LNG = 11.9591;
-const ALLOWED_RADIUS_METERS = 100;
+const RESTAURANT_LAT = 57.6936;
+const RESTAURANT_LNG = 11.9513;
+const ALLOWED_RADIUS_METERS = 200;
 
 const translations = {
   sv: {
