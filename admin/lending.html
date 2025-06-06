@@ -123,6 +123,11 @@
       width: 90%;
       max-width: 600px;
     }
+    .caret {
+      float: right;
+      font-size: 0.75rem;
+    }
+
 
     #tableStep {
       margin-top: 1rem;
@@ -140,14 +145,14 @@
     </div>
 
     <div class="collapsible-section">
-      <button class="collapsible-header" onclick="toggleSection('availableGames')">🎲 Tillgängliga spel</button>
-      <div id="availableGames" class="collapsible-content"></div>
-    </div>
+  <button class="collapsible-header" onclick="toggleSection('lentOutGames', this)">📦 Utlånade spel <span class="caret">▼</span></button>
+  <div id="lentOutGames" class="collapsible-content"></div>
+</div>
 
-    <div class="collapsible-section">
-      <button class="collapsible-header" onclick="toggleSection('lentOutGames')">📦 Utlånade spel</button>
-      <div id="lentOutGames" class="collapsible-content"></div>
-    </div>
+<div class="collapsible-section">
+  <button class="collapsible-header" onclick="toggleSection('availableGames', this)">🎲 Tillgängliga spel <span class="caret">▼</span></button>
+  <div id="availableGames" class="collapsible-content"></div>
+</div>
   </div>
 
   <!-- Image Preview Modal -->
@@ -216,12 +221,25 @@
     </div>
   </div>
 
-  <script>
-    function toggleSection(id) {
-      const section = document.getElementById(id);
-      section.style.display = section.style.display === 'flex' ? 'none' : 'flex';
-    }
-  </script>
+ <script>
+  function toggleSection(id, button) {
+    const section = document.getElementById(id);
+    const caret = button.querySelector('.caret');
+    const isOpen = section.style.display === 'flex';
+
+    section.style.display = isOpen ? 'none' : 'flex';
+    caret.textContent = isOpen ? '▼' : '▲';
+  }
+
+  // Expand both sections by default on load
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('availableGames').style.display = 'flex';
+    document.getElementById('lentOutGames').style.display = 'flex';
+
+    // Set caret to open (▲) on load
+    document.querySelectorAll('.collapsible-header .caret').forEach(c => c.textContent = '▲');
+  });
+</script>
   <script src="lending.js" defer></script>
 </body>
 </html>
