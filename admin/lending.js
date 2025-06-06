@@ -30,6 +30,10 @@ async function renderGameLists() {
   availableContainer.innerHTML = '';
   lentOutContainer.innerHTML = '';
 
+  availableContainer.innerHTML = '<p>Laddar spel...</p>';
+  lentOutContainer.innerHTML = '<p>Laddar spel...</p>';
+
+  
   for (const g of available) {
     const card = await createGameCard(g);
     availableContainer.appendChild(card);
@@ -101,9 +105,10 @@ async function openLendModal(gameId) {
   tableStep.style.display = 'none';
   modal.style.display = 'block';
 
-  userSelect.addEventListener('change', () => {
-    tableStep.style.display = userSelect.value ? 'block' : 'none';
-  });
+  userSelect.onchange = () => {
+  tableStep.style.display = userSelect.value ? 'block' : 'none';
+};
+
 }
 
 
