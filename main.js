@@ -179,7 +179,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// 🧲 Distance checker
 function getDistanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371000;
   const toRad = deg => deg * Math.PI / 180;
@@ -192,7 +191,16 @@ function getDistanceMeters(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-// 🎯 Click handler for order buttons
+const countryCodes = {
+  "🇸🇪 Sweden": "+46",
+  "🇳🇴 Norway": "+47",
+  "🇫🇮 Finland": "+358",
+  "🇩🇰 Denmark": "+45",
+  "🇩🇪 Germany": "+49",
+  "🇬🇧 UK": "+44",
+  "🇺🇸 USA": "+1"
+};
+
 document.addEventListener("click", (event) => {
   const button = event.target.closest(".order-button");
   if (button) {
@@ -202,7 +210,6 @@ document.addEventListener("click", (event) => {
   }
 });
 
-// 🚀 Main logic for handling geolocation order
 function startGameOrderFlow(gameId) {
   const game = games.find(g => g.id === Number(gameId));
   const title = game?.title_en || "this game";
@@ -228,13 +235,19 @@ function startGameOrderFlow(gameId) {
       const last_name = prompt("Last name:");
       if (!last_name) return;
 
-      const country_code = prompt("Country code (+46 for Sweden):", "+46");
-      if (!country_code || !/^\+\d{1,4}$/.test(country_code)) return alert("❌ Invalid country code.");
+      const country = prompt(`Country?\n\n${Object.keys(countryCodes).join('\n')}`);
+      if (!country || !countryCodes[country]) {
+        alert("❌ Invalid country selected.");
+        return;
+      }
 
-      const phone = prompt("Phone number (without country code):");
-      if (!phone || !/^\d{4,}$/.test(phone)) return alert("❌ Invalid phone number format.");
+      let localNumber = prompt("Phone number (without leading 0 or +):");
+      if (!localNumber || /[^0-9]/.test(localNumber)) {
+        alert("❌ Please enter a valid number.");
+        return;
+      }
 
-      const fullPhone = `${country_code}${phone}`;
+      const phone = `${countryCodes[country]}${localNumber}`;
 
       const table_id = prompt("Table number:");
       if (!table_id) return;
@@ -253,7 +266,7 @@ function startGameOrderFlow(gameId) {
             game_title: title,
             first_name,
             last_name,
-            phone: fullPhone,
+            phone,
             table_id
           })
         });
