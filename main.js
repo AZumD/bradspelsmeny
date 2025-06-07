@@ -108,6 +108,14 @@ function bindOrderButtons() {
   });
 }
 
+function continueAsGuest() {
+  localStorage.setItem("guestUser", "true");
+  const welcomeModal = document.getElementById("welcomeModal");
+  welcomeModal?.classList.remove("show");
+  updateTopBar();
+}
+window.continueAsGuest = continueAsGuest;
+
 function renderIntro() {
   document.getElementById('intro').textContent = translations[currentLang].intro;
 }
@@ -119,6 +127,8 @@ async function setLanguage(lang) {
   renderIntro();
   await renderGames();
 }
+
+window.setLanguage = setLanguage;
 
 async function renderGames() {
   const container = document.getElementById('gameList');
