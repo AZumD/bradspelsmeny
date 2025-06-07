@@ -31,6 +31,22 @@
 
     * { box-sizing: border-box; }
 
+    #welcomeModal button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  background-color: #8b0000;
+  color: gold;
+  border: 2px solid #8b0000;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #444;
+  width: 100%;
+}
+#welcomeModal button:hover {
+  background-color: #a52a2a;
+}
+
     .wrapper {
       display: flex;
       flex-direction: column;
@@ -348,6 +364,16 @@
     </main>
   </div>
 
-  <script src="main.js"></script>
+  
+  <div id="welcomeModal" class="modal show">
+  <div style="background:#fff; padding:2rem; border-radius:10px; text-align:center; max-width:400px; width:90%;">
+    <h2>🎲 Welcome to the Board Game Menu!</h2>
+    <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
+    <button onclick="window.location.href='login.html'" style="margin: 8px;">🔐 Log In</button><br />
+    <button onclick="window.location.href='register.html'" style="margin: 8px;">📝 Register</button><br />
+    <button onclick="continueAsGuest()" style="margin: 8px;">👤 Continue as Guest</button>
+  </div>
+</div>
+<script src="main.js"></script>
 </body>
 </html>
