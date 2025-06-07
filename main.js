@@ -217,15 +217,6 @@ const closeModalBtn = document.getElementById('closeModal');
 
 let currentOrderingGame = null;
 
-document.addEventListener('click', (event) => {
-  const button = event.target.closest(".order-button");
-  if (button) {
-    const card = button.closest(".game-card");
-    const gameId = card?.dataset?.gameId;
-    if (gameId) openOrderModal(gameId);
-  }
-});
-
 function openOrderModal(gameId) {
   currentOrderingGame = games.find(g => g.id === Number(gameId));
   if (!currentOrderingGame) {
@@ -305,4 +296,21 @@ orderForm.addEventListener('submit', async (e) => {
     console.warn("Geolocation error:", error);
     alert("📍 To order to the table, you need to enable location permissions. Otherwise, just ask our staff and they’ll help you.");
   }, { enableHighAccuracy: true, timeout: 5000 });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("userToken");
+  const guestBtn = document.getElementById("guestButton");
+  const welcomeModal = document.getElementById("welcomeModal");
+
+  if (token) {
+    welcomeModal.classList.remove("show");
+  }
+
+  if (guestBtn) {
+    guestBtn.addEventListener("click", () => {
+      localStorage.setItem("guestUser", "true");
+      welcomeModal.classList.remove("show");
+    });
+  }
 });
