@@ -4,17 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const country_code = document.getElementById("country_code").value;
-    const rawPhone = document.getElementById("phone").value.replace(/\D/g, "");
+    const phoneInput = document.getElementById("phone").value;
+    const countryCode = document.getElementById("country_code").value;
     const password = document.getElementById("password").value;
 
-    const phone = `${country_code}${rawPhone}`;
+    const fullPhone = `${countryCode}${phoneInput.replace(/\D/g, "")}`; // Clean digits
 
     try {
       const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password })
+        body: JSON.stringify({ phone: fullPhone, password })
       });
 
       const data = await res.json();
@@ -25,10 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
+      localStorage.setItem("userData", JSON.stringify(data.user));
 
-      alert(`👋 Welcome back, ${data.user.first_name}!`);
-      window.location.href = "index.html"; // or wherever your app lands
+      // 🚪 Redirect to table selection or main app
+      window.location.href = "index.html"; // Change this if needed
     } catch (err) {
       console.error("❌ Login error:", err);
       alert("Something went wrong. Please try again.");
