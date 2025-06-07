@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("userToken", data.token);
       localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
 
-      alert(`👋 Welcome, ${data.user.first_name}!`);
+      alert(`🎉 Welcome, ${data.user.first_name}! Your account is ready.`);
       window.location.href = "index.html"; // Or guest homepage
     } catch (err) {
       console.error("❌ Registration error:", err);
