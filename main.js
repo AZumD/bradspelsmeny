@@ -162,11 +162,24 @@ async function renderGames() {
 document.addEventListener("DOMContentLoaded", async () => {
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
+  const welcomeModal = document.getElementById("welcomeModal");
+  const guestBtn = document.getElementById("guestButton");
+  const token = localStorage.getItem("userToken") || localStorage.getItem("guestUser");
+
+  if (token) {
+    welcomeModal?.classList.remove("show");
+  }
+
+  if (guestBtn) {
+    guestBtn.addEventListener("click", () => {
+      localStorage.setItem("guestUser", "true");
+      welcomeModal?.classList.remove("show");
+    });
+  }
 
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
-
     await setLanguage(currentLang);
   } catch (err) {
     console.error("Unexpected loading error:", err);
@@ -176,141 +189,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   } finally {
     spinner.style.display = "none";
     gameList.style.display = "grid";
-  }
-});
-
-function getDistanceMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const toRad = deg => deg * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-const countryCodes = {
-  "🇸🇪 Sweden": "+46",
-  "🇳🇴 Norway": "+47",
-  "🇫🇮 Finland": "+358",
-  "🇩🇰 Denmark": "+45",
-  "🇩🇪 Germany": "+49",
-  "🇬🇧 UK": "+44",
-  "🇺🇸 USA": "+1"
-};
-
-document.addEventListener("click", (event) => {
-  const button = event.target.closest(".order-button");
-  if (button) {
-    const card = button.closest(".game-card");
-    const gameId = card?.dataset?.gameId;
-    if (gameId) openOrderModal(gameId);
-  }
-});
-
-const orderModal = document.getElementById('orderModal');
-const orderForm = document.getElementById('orderForm');
-const orderGameTitle = document.getElementById('orderGameTitle');
-const closeModalBtn = document.getElementById('closeModal');
-
-let currentOrderingGame = null;
-
-function openOrderModal(gameId) {
-  currentOrderingGame = games.find(g => g.id === Number(gameId));
-  if (!currentOrderingGame) {
-    alert("Game not found.");
-    return;
-  }
-  orderGameTitle.textContent = `Order "${currentOrderingGame.title_en}" to Table`;
-  orderModal.classList.add('show');
-  orderForm.reset();
-}
-
-closeModalBtn.addEventListener('click', () => {
-  orderModal.classList.remove('show');
-});
-
-orderForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  if (!navigator.geolocation) {
-    alert("Your device doesn't support location. Please ask staff to help you get the game.");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const { latitude, longitude } = position.coords;
-    const distance = getDistanceMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
-
-    if (distance > ALLOWED_RADIUS_METERS) {
-      alert(`🚫 You're too far away (${Math.round(distance)}m). Please ask our staff to help you get the game.`);
-      return;
-    }
-
-    const formData = new FormData(orderForm);
-    const first_name = formData.get('first_name').trim();
-    const last_name = formData.get('last_name').trim();
-    const country_code = formData.get('country_code');
-    const local_phone = formData.get('phone').trim();
-    const table_id = formData.get('table_id').trim();
-
-    if (/^\d{4}$/.test(table_id)) {
-      alert("❌ Invalid table number — you probably entered your table *code*. Please enter your actual table number.");
-      return;
-    }
-
-    if (!first_name || !last_name || !local_phone || !table_id) {
-      alert("❌ Please fill out all fields correctly.");
-      return;
-    }
-
-    const phone = `${country_code}${local_phone}`;
-
-    try {
-      const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          game_id: currentOrderingGame.id,
-          game_title: currentOrderingGame.title_en,
-          first_name,
-          last_name,
-          phone,
-          table_id
-        })
-      });
-
-      if (res.ok) {
-        alert(`✅ "${currentOrderingGame.title_en}" has been ordered to your table!`);
-        orderModal.classList.remove('show');
-      } else {
-        alert("❌ Failed to place order. Please ask staff.");
-      }
-    } catch (err) {
-      console.error("Order error:", err);
-      alert("❌ Something went wrong. Please ask staff.");
-    }
-  }, (error) => {
-    console.warn("Geolocation error:", error);
-    alert("📍 To order to the table, you need to enable location permissions. Otherwise, just ask our staff and they’ll help you.");
-  }, { enableHighAccuracy: true, timeout: 5000 });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("userToken");
-  const guestBtn = document.getElementById("guestButton");
-  const welcomeModal = document.getElementById("welcomeModal");
-
-  if (token) {
-    welcomeModal.classList.remove("show");
-  }
-
-  if (guestBtn) {
-    guestBtn.addEventListener("click", () => {
-      localStorage.setItem("guestUser", "true");
-      welcomeModal.classList.remove("show");
-    });
   }
 });
