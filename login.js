@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const phoneInput = document.getElementById("phone").value;
+    const phoneInput = document.getElementById("phone").value.trim();
     const countryCode = document.getElementById("country_code").value;
     const password = document.getElementById("password").value;
 
@@ -20,18 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Login failed.");
+        alert(data.error || "Login failed. Check your phone and password.");
         return;
       }
 
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("userData", JSON.stringify(data.user));
+      localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
 
-      // 🚪 Redirect to table selection or main app
-      window.location.href = "index.html"; // Change this if needed
+      alert(`👋 Welcome back, ${data.user.first_name}!`);
+      window.location.href = "index.html"; // Or guest homepage
     } catch (err) {
       console.error("❌ Login error:", err);
       alert("Something went wrong. Please try again.");
     }
   });
 });
+
