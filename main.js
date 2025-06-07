@@ -91,6 +91,23 @@ function renderCategories() {
   }
 }
 
+function bindOrderButtons() {
+  const buttons = document.querySelectorAll(".order-button");
+  buttons.forEach(button => {
+    button.addEventListener("click", (e) => {
+      const gameCard = e.target.closest(".game-card");
+      const gameId = gameCard.dataset.gameId;
+
+      // Set game ID on modal or hidden input if needed
+      const modal = document.getElementById("orderModal");
+      modal.dataset.gameId = gameId;
+
+      // Show the modal
+      modal.style.display = "flex";
+    });
+  });
+}
+
 function renderIntro() {
   document.getElementById('intro').textContent = translations[currentLang].intro;
 }
@@ -158,6 +175,7 @@ async function renderGames() {
     `;
     container.appendChild(card);
   });
+bindOrderButtons();
 }
 
 function updateTopBar() {
