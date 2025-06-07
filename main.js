@@ -1,5 +1,3 @@
-No, I meant if you could insert the script to go with the topbar that we talked about
-
 // 🌍 Location settings
 const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
