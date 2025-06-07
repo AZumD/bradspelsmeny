@@ -224,14 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     welcomeModal?.classList.remove("show");
   }
 
-  if (guestBtn) {
-    guestBtn.addEventListener("click", () => {
-      localStorage.setItem("guestUser", "true");
-      welcomeModal?.classList.remove("show");
-      updateTopBar(); // Make sure to update topbar after clicking "guest"
-    });
-  }
-
+  
   updateTopBar(); // ← Add this
 
   try {
