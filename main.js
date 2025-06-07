@@ -3,6 +3,35 @@ const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
 const ALLOWED_RADIUS_METERS = 300;
 
+document.addEventListener("DOMContentLoaded", () => {
+  const userStatus = document.getElementById("userStatus");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  function updateTopBar() {
+    const userData = localStorage.getItem("userData");
+    const guestUser = localStorage.getItem("guestUser");
+
+    if (userData) {
+      const user = JSON.parse(userData);
+      const name = user.first_name || user.last_name ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : user.phone;
+      userStatus.textContent = `👤 Logged in as ${name}`;
+    } else if (guestUser) {
+      userStatus.textContent = `👤 Logged in as guest`;
+    } else {
+      userStatus.textContent = "";
+    }
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userData");
+    localStorage.removeItem("guestUser");
+    location.reload();
+  });
+
+  updateTopBar();
+});
+
 const translations = {
   sv: {
     intro:
@@ -43,6 +72,7 @@ const translations = {
     }
   }
 };
+
 
 let games = [];
 let currentCategory = 'all';
