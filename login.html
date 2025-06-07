@@ -51,11 +51,20 @@
 </head>
 <body>
   <h1>🎲 Log In</h1>
-  <form id="loginForm">
-    <input type="text" placeholder="Phone" name="phone" required>
-    <input type="password" placeholder="Password" name="password" required>
-    <button type="submit">Log In</button>
-  </form>
+  <div style="display: flex; gap: 10px;">
+  <select id="country_code" required>
+    <option value="+46">🇸🇪 +46</option>
+    <option value="+45">🇩🇰 +45</option>
+    <option value="+47">🇳🇴 +47</option>
+    <option value="+358">🇫🇮 +358</option>
+    <option value="+44">🇬🇧 +44</option>
+    <option value="+1">🇺🇸 +1</option>
+    <!-- Add more if needed -->
+  </select>
+  <input type="tel" id="phone" placeholder="Phone Number" required />
+</div>
+<input type="password" id="password" placeholder="Password" required />
+
 
   <script src="login.js"></script>
 </body>
