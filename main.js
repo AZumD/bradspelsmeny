@@ -3,35 +3,6 @@ const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
 const ALLOWED_RADIUS_METERS = 300;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const userStatus = document.getElementById("userStatus");
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  function updateTopBar() {
-    const userData = localStorage.getItem("userData");
-    const guestUser = localStorage.getItem("guestUser");
-
-    if (userData) {
-      const user = JSON.parse(userData);
-      const name = user.first_name || user.last_name ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : user.phone;
-      userStatus.textContent = `👤 Logged in as ${name}`;
-    } else if (guestUser) {
-      userStatus.textContent = `👤 Logged in as guest`;
-    } else {
-      userStatus.textContent = "";
-    }
-  }
-
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userData");
-    localStorage.removeItem("guestUser");
-    location.reload();
-  });
-
-  updateTopBar();
-});
-
 const translations = {
   sv: {
     intro:
@@ -190,32 +161,30 @@ async function renderGames() {
 }
 
 function updateTopBar() {
-  const topBar = document.getElementById("topBar");
+  const userStatus = document.getElementById("userStatus");
+  const logoutBtn = document.getElementById("logoutBtn");
   const userData = localStorage.getItem("userData");
   const guestUser = localStorage.getItem("guestUser");
 
-  let displayName = "";
   if (userData) {
     const user = JSON.parse(userData);
-    displayName = user.first_name || user.last_name ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : user.phone;
-    topBar.innerHTML = `👤 Logged in as ${displayName} <button id="logoutButton">Logout</button>`;
+    const name = (user.first_name || user.last_name)
+  ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+  : user.phone;
+    userStatus.textContent = `👤 Logged in as ${name}`;
   } else if (guestUser) {
-    topBar.innerHTML = `👤 Logged in as guest <button id="logoutButton">Logout</button>`;
+    userStatus.textContent = `👤 Logged in as guest`;
   } else {
-    topBar.innerHTML = "";
+    userStatus.textContent = "";
   }
 
-  const logoutBtn = document.getElementById("logoutButton");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("userData");
-      localStorage.removeItem("guestUser");
-      location.reload();
-    });
-  }
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userData");
+    localStorage.removeItem("guestUser");
+    location.reload();
+  });
 }
-
 document.addEventListener("DOMContentLoaded", async () => {
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
@@ -231,8 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     guestBtn.addEventListener("click", () => {
       localStorage.setItem("guestUser", "true");
       welcomeModal?.classList.remove("show");
+      updateTopBar(); // Make sure to update topbar after clicking "guest"
     });
   }
+
+  updateTopBar(); // ← Add this
 
   try {
     spinner.style.display = "flex";
