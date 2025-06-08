@@ -105,19 +105,27 @@ async function fetchProfile() {
 
     const data = await res.json();
 
-    document.getElementById('fullName').textContent = `${data.first_name} ${data.last_name}`;
-    document.getElementById('email').textContent = data.email || '';
+    // Show username instead of full name and email
+    document.getElementById('username').textContent = data.username || 'Unknown user';
+
+    // Hide fullName and email elements if they exist
+    const fullNameElem = document.getElementById('fullName');
+    if(fullNameElem) fullNameElem.style.display = 'none';
+
+    const emailElem = document.getElementById('email');
+    if(emailElem) emailElem.style.display = 'none';
+
     document.getElementById('bio').textContent = data.bio || '';
 
     // If avatar_url is relative path, prepend API_BASE
     let avatarUrl = data.avatar_url || `${FRONTEND_BASE}/img/anthon-avatar.png`;
     if (avatarUrl && !avatarUrl.startsWith('http')) {
-    avatarUrl = API_BASE + avatarUrl;
-  }
+      avatarUrl = API_BASE + avatarUrl;
+    }
     
     const avatarElem = document.getElementById('avatar');
     avatarElem.src = avatarUrl;
-    avatarElem.alt = `Avatar of ${data.first_name}`;
+    avatarElem.alt = `Avatar of ${data.username || 'user'}`;
 
     // Show "Edit Profile" button only if viewing own profile
     const editBtn = document.getElementById('editProfileBtn');
@@ -127,21 +135,21 @@ async function fetchProfile() {
       editBtn.style.display = 'none';
     }
 
-    // Fetch borrow log (backend will handle permission)
-    fetchBorrowLog(userIdToFetch);
+    // Fetch game log (backend will handle permission)
+    fetchGameLog(userIdToFetch);
 
   } catch (err) {
     alert('Error loading profile: ' + err.message);
   }
 }
 
-async function fetchBorrowLog(userId) {
+async function fetchGameLog(userId) {
   try {
     const res = await fetchWithAuth(`${API_BASE}/users/${userId}/borrow-log`);
     if (!res.ok) {
       document.querySelector('#borrowLogTable tbody').innerHTML =
-        `<tr><td colspan="4" style="text-align:center; padding:1rem; color:#999;">
-          Borrow log is private or unavailable.
+        `<tr><td colspan="2" style="text-align:center; padding:1rem; color:#999;">
+          Game log is private or unavailable.
          </td></tr>`;
       return;
     }
@@ -149,29 +157,25 @@ async function fetchBorrowLog(userId) {
 
     if (logs.length === 0) {
       document.querySelector('#borrowLogTable tbody').innerHTML =
-        `<tr><td colspan="4" style="text-align:center; padding:1rem;">No borrow history yet.</td></tr>`;
+        `<tr><td colspan="2" style="text-align:center; padding:1rem;">No game history yet.</td></tr>`;
       return;
     }
 
     const rowsHtml = logs.map(log => {
       const date = new Date(log.timestamp).toLocaleDateString();
-      const action = log.action.charAt(0).toUpperCase() + log.action.slice(1);
-      const note = log.note || '';
       return `<tr>
                 <td>${date}</td>
                 <td>${log.game_title}</td>
-                <td>${action}</td>
-                <td>${note}</td>
               </tr>`;
     }).join('');
 
     document.querySelector('#borrowLogTable tbody').innerHTML = rowsHtml;
 
   } catch (err) {
-    console.error('Failed to fetch borrow log:', err);
+    console.error('Failed to fetch game log:', err);
     document.querySelector('#borrowLogTable tbody').innerHTML =
-      `<tr><td colspan="4" style="text-align:center; padding:1rem; color:red;">
-         Failed to load borrow log.
+      `<tr><td colspan="2" style="text-align:center; padding:1rem; color:red;">
+         Failed to load game log.
        </td></tr>`;
   }
 }
