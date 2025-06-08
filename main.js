@@ -109,6 +109,20 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
+const profileBtn = document.getElementById('profileBtn');
+const userStatus = document.getElementById('userStatus');
+
+function updateUserStatus(user) {
+  userStatus.textContent = `Hi, ${user.first_name}!`;
+  profileBtn.style.display = 'inline-block';
+}
+
+profileBtn.onclick = () => {
+  window.location.href = '/pages/profile.html';
+};
+
+// On successful login or token validation, call updateUserStatus with user info
+// e.g. fetch user data and then updateUserStatus(user);
 
 let games = [];
 let currentCategory = 'all';
