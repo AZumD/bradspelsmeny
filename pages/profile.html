@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Profile</title>
+  <title>User Profile</title>
   <style>
-    /* Base styles */
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
         Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      max-width: 400px;
-      margin: 3rem auto;
+      max-width: 480px;
+      margin: 2.5rem auto;
       background-color: #fafafa;
       color: #333;
       padding: 0 1rem;
@@ -23,73 +22,74 @@
       color: #8c3c1a;
     }
 
-    form {
+    .profile-container {
       background: #fff;
       padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      text-align: center;
     }
 
-    label {
-      display: block;
-      margin-top: 1.3rem;
-      font-weight: 500;
-      color: #444;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    textarea {
-      width: 100%;
-      padding: 0.6rem 0.8rem;
-      margin-top: 0.3rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-      transition: border-color 0.2s ease;
-    }
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #8c3c1a;
-      box-shadow: 0 0 4px #8c3c1aaa;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    input[type="file"] {
-      margin-top: 0.5rem;
-    }
-
-    .avatar-preview {
-      display: block;
-      margin-top: 0.7rem;
-      width: 100px;
-      height: 100px;
+    .avatar {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-    }
-    .avatar-preview.visible {
-      opacity: 1;
-    }
-    .avatar-preview:hover {
-      border-color: #8c3c1a;
-      box-shadow: 0 0 8px #8c3c1a88;
+      margin: 0 auto 1rem;
+      border: 3px solid #8c3c1a;
     }
 
-    button[type="submit"] {
+    .full-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .email {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 1.2rem;
+    }
+
+    .bio {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      white-space: pre-wrap;
+      padding: 0 0.8rem;
+      color: #444;
+      border-left: 3px solid #8c3c1a;
+      background-color: #f6f0e8;
+      border-radius: 8px;
+    }
+
+    table {
       width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    thead th {
+      background-color: #8c3c1a;
+      color: white;
+      font-weight: 600;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    #editProfileBtn {
+      display: none;
       margin-top: 2rem;
-      padding: 0.8rem;
+      padding: 0.8rem 0;
+      width: 100%;
       font-size: 1.1rem;
       font-weight: 600;
       color: white;
@@ -97,56 +97,59 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 3px 7px rgb(140 60 26 / 0.5);
       transition: background-color 0.3s ease;
     }
-    button[type="submit"]:hover:not(:disabled) {
-      background-color: #a14b21;
-    }
-    button[type="submit"]:disabled {
-      background-color: #c5a38a;
-      cursor: not-allowed;
+    #editProfileBtn:hover {
+      background-color: #a04d1e;
     }
 
-    .message {
-      margin-top: 1.5rem;
-      font-size: 1rem;
-      padding: 1rem;
-      border-radius: 8px;
-      min-height: 2rem;
-    }
-    .message.success {
-      background-color: #daf6db;
-      color: #24692c;
-    }
-    .message.error {
-      background-color: #f6dada;
-      color: #8b2121;
+    /* Responsive smaller font on mobile */
+    @media (max-width: 400px) {
+      .full-name {
+        font-size: 1.5rem;
+      }
+      .email {
+        font-size: 1rem;
+      }
+      .bio {
+        font-size: 0.9rem;
+      }
+      table {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Your Profile</h1>
-  <form id="profileForm" novalidate>
-    <label for="firstNameInput">First Name</label>
-    <input type="text" id="firstNameInput" name="first_name" required autocomplete="given-name" />
 
-    <label for="lastNameInput">Last Name</label>
-    <input type="text" id="lastNameInput" name="last_name" required autocomplete="family-name" />
+  <h1>User Profile</h1>
+  <div class="profile-container" role="region" aria-label="User profile details">
+    <img id="avatar" class="avatar" src="/bradspelsmeny/img/anthon-avatar.png" alt="User Avatar" />
+    <div class="full-name" id="fullName">Loading...</div>
+    <div class="email" id="email"></div>
+    <div class="bio" id="bio"></div>
 
-    <label for="emailInput">Email</label>
-    <input type="email" id="emailInput" name="email" autocomplete="email" />
+    <h2>Borrow Log</h2>
+    <table id="borrowLogTable" aria-describedby="borrowLogDescription" role="table">
+      <caption id="borrowLogDescription" class="sr-only">List of borrowed games and actions</caption>
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Game</th>
+          <th scope="col">Action</th>
+          <th scope="col">Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
+      </tbody>
+    </table>
 
-    <label for="bioInput">Bio</label>
-    <textarea id="bioInput" name="bio" rows="4"></textarea>
-
-    <label for="avatarInput">Avatar</label>
-    <input type="file" id="avatarInput" accept="image/*" />
-    <img id="avatarPreview" class="avatar-preview" alt="Avatar preview" />
-
-    <button type="submit">Save Profile</button>
-  </form>
-
-  <div id="message" class="message" aria-live="polite"></div>
+    <a href="edit-profile.html" id="editProfileBtn" role="button" aria-label="Edit your profile">Edit Profile</a>
+  </div>
 
   <script src="profile.js"></script>
 </body>
