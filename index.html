@@ -63,6 +63,7 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 20px;
+  align-items: center;
 
   /* Add these lines: */
   align-items: center; /* center children horizontally */
@@ -85,13 +86,13 @@
       100% { opacity: 1; }
     }
 
-    @media (max-width: 768px) {
-      #gameList {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-    }
+@media (max-width: 768px) {
+  #gameList {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
 
     .category-badges {
       display: flex;
@@ -150,15 +151,19 @@
     }
 
    
+
 #gameList {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
 
-  /* Add these lines: */
-  justify-content: center; /* center grid items horizontally */
-  width: 100%; /* ensure full width inside wrapper */
-  max-width: 1000px; /* optional, to prevent too wide grid */
+  /* Constrain width and center horizontally */
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+
+  /* Remove justify-content for grid */
+  /* justify-content: center; */
 }
 
     .table-select-wrapper {
