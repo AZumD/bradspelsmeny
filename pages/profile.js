@@ -114,7 +114,7 @@ async function fetchProfile() {
     if (avatarUrl && !avatarUrl.startsWith('http')) {
     avatarUrl = API_BASE + avatarUrl;
   }
-    }
+    
     const avatarElem = document.getElementById('avatar');
     avatarElem.src = avatarUrl;
     avatarElem.alt = `Avatar of ${data.first_name}`;
