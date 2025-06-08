@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Profile</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 2rem auto; }
+    label { display: block; margin-top: 1rem; }
+    input, textarea, button { width: 100%; padding: 0.5rem; margin-top: 0.3rem; }
+    img.avatar-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-top: 0.5rem; }
+    .message { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Your Profile</h1>
+  <form id="profileForm">
+    <label>
+      First Name
+      <input type="text" name="first_name" required />
+    </label>
+    <label>
+      Last Name
+      <input type="text" name="last_name" required />
+    </label>
+    <label>
+      Email
+      <input type="email" name="email" />
+    </label>
+    <label>
+      Bio
+      <textarea name="bio" rows="4"></textarea>
+    </label>
+    <label>
+      Avatar
+      <input type="file" id="avatarInput" accept="image/*" />
+      <img id="avatarPreview" class="avatar-preview" src="" alt="Avatar preview" />
+    </label>
+    <button type="submit">Save Profile</button>
+  </form>
+  <div id="message" class="message"></div>
+
+  <script src="profile.js"></script>
+</body>
+</html>
 
