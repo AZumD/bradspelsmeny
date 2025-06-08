@@ -117,7 +117,7 @@ function bindOrderButtons() {
       modal.style.display = "flex";
     });
   });
-} 
+}
 
 function continueAsGuest() {
   localStorage.setItem("guestUser", "true");
@@ -196,7 +196,7 @@ async function renderGames() {
     `;
     container.appendChild(card);
   });
-bindOrderButtons();
+  bindOrderButtons();
 }
 
 function updateTopBar() {
@@ -208,8 +208,8 @@ function updateTopBar() {
   if (userData) {
     const user = JSON.parse(userData);
     const name = (user.first_name || user.last_name)
-  ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-  : user.phone;
+      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      : user.phone;
     userStatus.textContent = `👤 Logged in as ${name}`;
   } else if (guestUser) {
     userStatus.textContent = `👤 Logged in as guest`;
@@ -224,6 +224,7 @@ function updateTopBar() {
     location.reload();
   });
 }
+
 document.addEventListener("DOMContentLoaded", async () => {
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
@@ -234,8 +235,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (token) {
     welcomeModal?.classList.remove("show");
   }
-
-  
 
   try {
     spinner.style.display = "flex";
@@ -273,26 +272,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let firstName, lastName, phone;
 
-if (userData) {
-  const user = JSON.parse(userData);
-  firstName = user.first_name;
-  lastName = user.last_name;
-  phone = user.phone;
-} else {
-  firstName = formData.get("first_name");
-  lastName = formData.get("last_name");
-  phone = `${formData.get("country_code")}${formData.get("phone")}`;
-}
+    if (userData) {
+      const user = JSON.parse(userData);
+      firstName = user.first_name;
+      lastName = user.last_name;
+      phone = user.phone;
+    } else {
+      firstName = formData.get("first_name");
+      lastName = formData.get("last_name");
+      phone = `${formData.get("country_code")}${formData.get("phone")}`;
+    }
 
-const payload = {
-  game_id: gameId,
-  game_title: game?.title_en || "Unknown",
-  first_name: firstName,
-  last_name: lastName,
-  phone: phone,
-  table_id: formData.get("table_id")
-};
-
+    const payload = {
+      game_id: gameId,
+      game_title: game?.title_en || "Unknown",
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone,
+      table_id: formData.get("table_id")
+    };
 
     try {
       const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/order-game', {
@@ -318,4 +316,3 @@ const payload = {
     }
   });
 });
-
