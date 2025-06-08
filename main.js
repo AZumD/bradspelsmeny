@@ -299,10 +299,12 @@ function updateTopBar() {
       ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
       : user.phone;
     userStatus.textContent = `👤 Logged in as ${name}`;
-  } else if (guestUser) {
-    userStatus.textContent = `👤 Logged in as guest`;
+    // Show profile button
+    profileBtn.style.display = 'inline-block';
   } else {
-    userStatus.textContent = "";
+    userStatus.textContent = guestUser ? `👤 Logged in as guest` : '';
+    // Hide profile button if not logged in user
+    profileBtn.style.display = 'none';
   }
 
   logoutBtn.addEventListener("click", () => {
@@ -312,6 +314,7 @@ function updateTopBar() {
     location.reload();
   });
 }
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const spinner = document.getElementById("loadingSpinner");
