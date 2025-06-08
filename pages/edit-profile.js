@@ -1,5 +1,67 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Your backend URL
-const token = localStorage.getItem('userToken');
+
+function getAccessToken() {
+  return localStorage.getItem('userToken');
+}
+
+function setAccessToken(token) {
+  localStorage.setItem('userToken', token);
+}
+
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
+}
+
+function setRefreshToken(token) {
+  localStorage.setItem('refreshToken', token);
+}
+
+function clearTokens() {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('refreshToken');
+}
+
+async function fetchWithAuth(url, options = {}) {
+  let accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+
+  if (!accessToken || !refreshToken) {
+    throw new Error('User not authenticated');
+  }
+
+  options.headers = options.headers || {};
+  options.headers['Authorization'] = `Bearer ${accessToken}`;
+
+  let response = await fetch(url, options);
+
+  if (response.status === 401 || response.status === 403) {
+    // Try refreshing access token
+    const refreshResponse = await fetch(`${API_BASE}/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: refreshToken }),
+    });
+
+    if (!refreshResponse.ok) {
+      // Refresh token invalid or expired → force logout
+      clearTokens();
+      window.location.href = '/login.html';
+      throw new Error('Session expired. Please log in again.');
+    }
+
+    const data = await refreshResponse.json();
+    const newAccessToken = data.accessToken;
+    setAccessToken(newAccessToken);
+
+    // Retry original request with new access token
+    options.headers['Authorization'] = `Bearer ${newAccessToken}`;
+    response = await fetch(url, options);
+  }
+
+  return response;
+}
+
+const token = getAccessToken();
 const form = document.getElementById('profileForm');
 const messageDiv = document.getElementById('message');
 const avatarInput = document.getElementById('avatarInput');
@@ -15,7 +77,7 @@ let currentAvatarUrl = null;
 // Decode user ID from JWT token
 function getUserIdFromToken() {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(getAccessToken().split('.')[1]));
     return payload.id;
   } catch {
     return null;
@@ -26,15 +88,13 @@ async function fetchProfile() {
   const userId = getUserIdFromToken();
   if (!userId) {
     alert('Invalid token, please log in again.');
-    localStorage.removeItem('userToken');
+    clearTokens();
     window.location.href = '/login.html'; // Use absolute path here too
     return;
   }
 
   try {
-    const res = await fetch(`${API_BASE}/users/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}`);
     if (!res.ok) throw new Error('Failed to load profile');
 
     const data = await res.json();
@@ -80,9 +140,8 @@ form.addEventListener('submit', async e => {
     if (avatarInput.files.length > 0) {
       const formData = new FormData();
       formData.append('avatar', avatarInput.files[0]);
-      const res = await fetch(`${API_BASE}/users/${userId}/avatar`, {
+      const res = await fetchWithAuth(`${API_BASE}/users/${userId}/avatar`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
         body: formData
       });
       if (!res.ok) throw new Error('Failed to upload avatar');
@@ -97,11 +156,10 @@ form.addEventListener('submit', async e => {
       bio: form.bio.value.trim()
     };
 
-    const res = await fetch(`${API_BASE}/users/${userId}`, {
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
     });
