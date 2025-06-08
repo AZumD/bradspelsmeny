@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      max-width: 480px;
-      margin: 2.5rem auto;
-      background-color: #fafafa;
-      color: #333;
-      padding: 0 1rem;
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fffaf0;
+      color: #8b0000;
+      overflow-x: hidden;
+    }
+
+    .wrapper {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 20px;
     }
 
     h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.5rem;
       text-align: center;
-      margin-bottom: 2rem;
-      font-weight: 600;
-      color: #8c3c1a;
+      margin-bottom: 1.5rem;
+      color: #8b0000;
+      text-shadow: 2px 2px 0 #d2691e;
     }
 
     .profile-container {
-      background: #fff;
+      background: rgba(255, 253, 248, 0.9);
+      border: 2px dashed gold;
+      border-radius: 8px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      max-width: 480px;
+      margin: 0 auto 3rem auto;
       text-align: center;
     }
 
@@ -35,50 +46,76 @@
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      margin: 0 auto 1rem;
-      border: 3px solid #8c3c1a;
+      border: 4px solid #8b0000;
+      margin: 0 auto 1rem auto;
+      box-shadow: 2px 2px 0 #d2691e;
     }
 
     .full-name {
-      font-size: 1.8rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.5rem;
+      color: #8b0000;
+      text-shadow: 1px 1px 0 #d2691e;
     }
 
     .email {
-      font-size: 1.1rem;
-      color: #555;
-      margin-bottom: 1.2rem;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #8b0000;
+      text-shadow: 1px 1px 0 #d2691e;
     }
 
     .bio {
-      font-size: 1rem;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.9rem;
+      background: #fff4e6;
+      border: 2px solid #8b0000;
+      border-radius: 6px;
+      padding: 1rem;
       margin-bottom: 2rem;
       white-space: pre-wrap;
-      padding: 0 0.8rem;
-      color: #444;
-      border-left: 3px solid #8c3c1a;
-      background-color: #f6f0e8;
-      border-radius: 8px;
+      box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.7);
+    }
+
+    h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1rem;
+      color: #8b0000;
+      text-shadow: 1px 1px 0 #d2691e;
+      margin-bottom: 0.5rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    th, td {
-      padding: 0.6rem 0.8rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.8rem;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      background: #fffaf0;
+      border: 2px dashed gold;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto;
+      max-width: 480px;
     }
 
     thead th {
-      background-color: #8c3c1a;
-      color: white;
-      font-weight: 600;
+      background-color: #8b0000;
+      color: gold;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.75rem;
+      user-select: none;
+    }
+
+    tbody td {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid #d2691e;
+      color: #8b0000;
     }
 
     tbody tr:last-child td {
@@ -87,68 +124,74 @@
 
     #editProfileBtn {
       display: none;
-      margin-top: 2rem;
+      margin: 2rem auto 0 auto;
       padding: 0.8rem 0;
       width: 100%;
-      font-size: 1.1rem;
+      max-width: 480px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1rem;
       font-weight: 600;
-      color: white;
-      background-color: #8c3c1a;
-      border: none;
+      background-color: #8b0000;
+      color: gold;
+      border: 2px solid #8b0000;
       border-radius: 8px;
       cursor: pointer;
-      text-decoration: none;
       text-align: center;
-      box-shadow: 0 3px 7px rgb(140 60 26 / 0.5);
+      text-decoration: none;
+      box-shadow: 2px 2px 0 #d2691e;
       transition: background-color 0.3s ease;
+      user-select: none;
     }
     #editProfileBtn:hover {
-      background-color: #a04d1e;
+      background-color: #a52a2a;
     }
 
-    /* Responsive smaller font on mobile */
-    @media (max-width: 400px) {
-      .full-name {
-        font-size: 1.5rem;
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .profile-container, table, #editProfileBtn {
+        max-width: 100%;
+        border-radius: 6px;
       }
-      .email {
-        font-size: 1rem;
-      }
-      .bio {
-        font-size: 0.9rem;
-      }
-      table {
-        font-size: 0.9rem;
+      .avatar {
+        width: 100px;
+        height: 100px;
       }
     }
   </style>
 </head>
 <body>
+  <div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+    <div id="userStatus"></div>
+    <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
+  </div>
 
-  <h1>User Profile</h1>
-  <div class="profile-container" role="region" aria-label="User profile details">
-    <img id="avatar" class="avatar" src="/bradspelsmeny/img/anthon-avatar.png" alt="User Avatar" />
-    <div class="full-name" id="fullName">Loading...</div>
-    <div class="email" id="email"></div>
-    <div class="bio" id="bio"></div>
+  <div class="wrapper" role="main">
+    <h1>User Profile</h1>
 
-    <h2>Borrow Log</h2>
-    <table id="borrowLogTable" aria-describedby="borrowLogDescription" role="table">
-      <caption id="borrowLogDescription" class="sr-only">List of borrowed games and actions</caption>
-      <thead>
-        <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Game</th>
-          <th scope="col">Action</th>
-          <th scope="col">Note</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
-      </tbody>
-    </table>
+    <div class="profile-container" aria-label="User profile details">
+      <img id="avatar" class="avatar" src="/bradspelsmeny/img/anthon-avatar.png" alt="User Avatar" />
+      <div class="full-name" id="fullName">Loading...</div>
+      <div class="email" id="email"></div>
+      <div class="bio" id="bio"></div>
 
-    <a href="edit-profile.html" id="editProfileBtn" role="button" aria-label="Edit your profile">Edit Profile</a>
+      <h2>Borrow Log</h2>
+      <table id="borrowLogTable" aria-describedby="borrowLogDescription" role="table">
+        <caption id="borrowLogDescription" class="sr-only">List of borrowed games and actions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Game</th>
+            <th scope="col">Action</th>
+            <th scope="col">Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
+        </tbody>
+      </table>
+
+      <a href="edit-profile.html" id="editProfileBtn" role="button" aria-label="Edit your profile">Edit Profile</a>
+    </div>
   </div>
 
   <script src="profile.js"></script>
