@@ -5,143 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Your Profile</title>
   <style>
-    /* Mobile-first styling consistent with your app */
+    /* Base styles */
     body {
-      font-family: Arial, sans-serif;
-      margin: 1rem;
-      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 400px;
+      margin: 3rem auto;
       background-color: #fafafa;
-      color: #222;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
+      color: #333;
+      padding: 0 1rem;
     }
+
     h1 {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      color: #8c3c1a;
     }
-    .profile-container {
-      background: white;
+
+    form {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1.3rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    }
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto 1rem auto;
-      background-color: #ddd;
-    }
-    .full-name {
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-bottom: 0.3rem;
-    }
-    .email {
-      text-align: center;
       font-size: 1rem;
-      color: #555;
-      margin-bottom: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
     }
-    .bio {
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      white-space: pre-wrap;
-      padding: 0 0.5rem;
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #8c3c1a;
+      box-shadow: 0 0 4px #8c3c1aaa;
     }
-    .section-title {
-      font-weight: bold;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 0.2rem;
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
     }
-    .placeholder-box {
-      background-color: #eee;
-      border: 1px dashed #ccc;
-      border-radius: 6px;
-      padding: 1rem;
-      text-align: center;
-      color: #999;
-      font-style: italic;
-      margin-bottom: 1rem;
-    }
-    .edit-button {
-      display: block;
-      width: 100%;
-      background-color: #8c3c1a;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 0.8rem;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      text-align: center;
-      text-decoration: none;
-    }
-    .edit-button:hover {
-      background-color: #a54d22;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+
+    input[type="file"] {
       margin-top: 0.5rem;
     }
-    th, td {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ccc;
-      text-align: left;
-      font-size: 0.9rem;
+
+    .avatar-preview {
+      display: block;
+      margin-top: 0.7rem;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
     }
-    tbody tr:last-child td {
-      border-bottom: none;
+    .avatar-preview.visible {
+      opacity: 1;
+    }
+    .avatar-preview:hover {
+      border-color: #8c3c1a;
+      box-shadow: 0 0 8px #8c3c1a88;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+      background-color: #8c3c1a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover:not(:disabled) {
+      background-color: #a14b21;
+    }
+    button[type="submit"]:disabled {
+      background-color: #c5a38a;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      min-height: 2rem;
+    }
+    .message.success {
+      background-color: #daf6db;
+      color: #24692c;
+    }
+    .message.error {
+      background-color: #f6dada;
+      color: #8b2121;
     }
   </style>
 </head>
 <body>
-
   <h1>Your Profile</h1>
-  <div class="profile-container" id="profileContainer">
-    <img id="avatar" class="avatar" src="/bradspelsmeny/img/anthon-avatar.png" alt="User Avatar" />
-    <div class="full-name" id="fullName">Loading...</div>
-    <div class="email" id="email"></div>
-    <div class="bio" id="bio"></div>
+  <form id="profileForm" novalidate>
+    <label for="firstNameInput">First Name</label>
+    <input type="text" id="firstNameInput" name="first_name" required autocomplete="given-name" />
 
-    <div>
-      <div class="section-title">Badges</div>
-      <div class="placeholder-box">Badges will be displayed here soon.</div>
-    </div>
+    <label for="lastNameInput">Last Name</label>
+    <input type="text" id="lastNameInput" name="last_name" required autocomplete="family-name" />
 
-    <div>
-      <div class="section-title">Parties</div>
-      <div class="placeholder-box">Your parties and groups will show up here.</div>
-    </div>
+    <label for="emailInput">Email</label>
+    <input type="email" id="emailInput" name="email" autocomplete="email" />
 
-    <div>
-      <div class="section-title">Borrow Log</div>
-      <table id="borrowLogTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Game</th>
-            <th>Action</th>
-            <th>Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <label for="bioInput">Bio</label>
+    <textarea id="bioInput" name="bio" rows="4"></textarea>
 
-    <a href="edit-profile.html" class="edit-button" id="editProfileBtn">Edit Profile</a>
-  </div>
+    <label for="avatarInput">Avatar</label>
+    <input type="file" id="avatarInput" accept="image/*" />
+    <img id="avatarPreview" class="avatar-preview" alt="Avatar preview" />
 
-<script src="profile.js"></script>
+    <button type="submit">Save Profile</button>
+  </form>
+
+  <div id="message" class="message" aria-live="polite"></div>
+
+  <script src="profile.js"></script>
 </body>
 </html>
