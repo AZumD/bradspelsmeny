@@ -100,3 +100,6 @@ async function fetchBorrowLog() {
 }
 
 fetchProfile();
+// Initialize page
+
+fetchBorrowLog();
