@@ -315,30 +315,33 @@
 </div>
 
     <form id="orderForm">
-      <label>
-        First Name:<br />
-        <input type="text" name="first_name" required />
-      </label><br /><br />
-      <label>
-        Last Name:<br />
-        <input type="text" name="last_name" required />
-      </label><br /><br />
-      <label>
-        Country Code:<br />
-        <select name="country_code" required>
-          <option value="+46">🇸🇪 +46 Sweden</option>
-          <option value="+47">🇳🇴 +47 Norway</option>
-          <option value="+358">🇫🇮 +358 Finland</option>
-          <option value="+45">🇩🇰 +45 Denmark</option>
-          <option value="+49">🇩🇪 +49 Germany</option>
-          <option value="+44">🇬🇧 +44 UK</option>
-          <option value="+1">🇺🇸 +1 USA</option>
-        </select>
-      </label><br /><br />
-      <label>
-        Phone Number:<br />
-        <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
-      </label><br /><br />
+      <div id="userFields">
+  <label>
+    First Name:<br />
+    <input type="text" name="first_name" required />
+  </label><br /><br />
+  <label>
+    Last Name:<br />
+    <input type="text" name="last_name" required />
+  </label><br /><br />
+  <label>
+    Country Code:<br />
+    <select name="country_code" required>
+      <option value="+46">🇸🇪 +46 Sweden</option>
+      <option value="+47">🇳🇴 +47 Norway</option>
+      <option value="+358">🇫🇮 +358 Finland</option>
+      <option value="+45">🇩🇰 +45 Denmark</option>
+      <option value="+49">🇩🇪 +49 Germany</option>
+      <option value="+44">🇬🇧 +44 UK</option>
+      <option value="+1">🇺🇸 +1 USA</option>
+    </select>
+  </label><br /><br />
+  <label>
+    Phone Number:<br />
+    <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
+  </label><br /><br />
+</div>
+<br /><br />
       <label>
         Table Number:<br />
         <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
