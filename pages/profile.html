@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Profile</title>
+  <style>
+    /* Mobile-first styling consistent with your app */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 1rem;
+      padding: 0;
+      background-color: #fafafa;
+      color: #222;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .profile-container {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 1rem auto;
+      background-color: #ddd;
+    }
+    .full-name {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+    .email {
+      text-align: center;
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .bio {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+      padding: 0 0.5rem;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 0.2rem;
+    }
+    .placeholder-box {
+      background-color: #eee;
+      border: 1px dashed #ccc;
+      border-radius: 6px;
+      padding: 1rem;
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+    .edit-button {
+      display: block;
+      width: 100%;
+      background-color: #8c3c1a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      text-align: center;
+      text-decoration: none;
+    }
+    .edit-button:hover {
+      background-color: #a54d22;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Your Profile</h1>
+  <div class="profile-container" id="profileContainer">
+    <img id="avatar" class="avatar" src="" alt="User Avatar" />
+    <div class="full-name" id="fullName">Loading...</div>
+    <div class="email" id="email"></div>
+    <div class="bio" id="bio"></div>
+
+    <div>
+      <div class="section-title">Badges</div>
+      <div class="placeholder-box">Badges will be displayed here soon.</div>
+    </div>
+
+    <div>
+      <div class="section-title">Parties</div>
+      <div class="placeholder-box">Your parties and groups will show up here.</div>
+    </div>
+
+    <a href="edit-profile.html" class="edit-button" id="editProfileBtn">Edit Profile</a>
+  </div>
+
+  <script>
+    const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Your backend URL
+    const token = localStorage.getItem('userToken');
+
+    if (!token) {
+      alert('You must be logged in to view your profile.');
+      window.location.href = '/login.html';
+    }
+
+    function getUserIdFromToken() {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id;
+      } catch {
+        return null;
+      }
+    }
+
+    async function fetchProfile() {
+      const userId = getUserIdFromToken();
+      if (!userId) {
+        alert('Invalid token, please log in again.');
+        localStorage.removeItem('userToken');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Failed to load profile');
+
+        const data = await res.json();
+
+        document.getElementById('fullName').textContent = `${data.first_name} ${data.last_name}`;
+        document.getElementById('email').textContent = data.email || '';
+        document.getElementById('bio').textContent = data.bio || '';
+        document.getElementById('avatar').src = data.avatar_url ? `${API_BASE}${data.avatar_url}` : 'placeholder-avatar.png';
+        document.getElementById('avatar').alt = `Avatar of ${data.first_name}`;
+
+      } catch (err) {
+        alert('Error loading profile: ' + err.message);
+      }
+    }
+
+    fetchProfile();
+  </script>
+</body>
+</html>
