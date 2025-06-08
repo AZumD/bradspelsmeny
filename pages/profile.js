@@ -4,16 +4,12 @@ function getAccessToken() {
   return localStorage.getItem('userToken');
 }
 
-function setAccessToken(token) {
-  localStorage.setItem('userToken', token);
-}
-
 function getRefreshToken() {
   return localStorage.getItem('refreshToken');
 }
 
-function setRefreshToken(token) {
-  localStorage.setItem('refreshToken', token);
+function setAccessToken(token) {
+  localStorage.setItem('userToken', token);
 }
 
 function clearTokens() {
@@ -36,10 +32,10 @@ async function fetchWithAuth(url, options = {}) {
 
   if (response.status === 401 || response.status === 403) {
     // Try refreshing access token
-    const refreshResponse = await fetch(`${API_BASE}/token`, {
+    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: refreshToken }),
+      body: JSON.stringify({ refreshToken }),
     });
 
     if (!refreshResponse.ok) {
@@ -50,7 +46,7 @@ async function fetchWithAuth(url, options = {}) {
     }
 
     const data = await refreshResponse.json();
-    const newAccessToken = data.accessToken;
+    const newAccessToken = data.token || data.accessToken; // Support either naming
     setAccessToken(newAccessToken);
 
     // Retry original request with new access token
@@ -61,9 +57,10 @@ async function fetchWithAuth(url, options = {}) {
   return response;
 }
 
-const token = getAccessToken();
-
+// Extract user ID from JWT token payload
 function getUserIdFromToken() {
+  const token = getAccessToken();
+  if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.id;
@@ -72,12 +69,15 @@ function getUserIdFromToken() {
   }
 }
 
+// Get "id" param from URL query string
 function getUserIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('user');
+  return params.get('id');
 }
 
 async function fetchProfile() {
+  const token = getAccessToken();
+
   if (!token) {
     alert('You must be logged in to view profiles.');
     window.location.href = '/login.html';
@@ -85,17 +85,21 @@ async function fetchProfile() {
   }
 
   const urlUserId = getUserIdFromUrl();
-  const userId = urlUserId || getUserIdFromToken();
+  const loggedInUserId = getUserIdFromToken();
 
-  if (!userId) {
+  // Determine which user ID to fetch: URL param or logged-in user
+  const userIdToFetch = urlUserId && urlUserId !== String(loggedInUserId)
+    ? urlUserId
+    : loggedInUserId;
+
+  if (!userIdToFetch) {
     alert('No user specified and you are not logged in.');
     window.location.href = '/login.html';
     return;
   }
 
   try {
-    // Use fetchWithAuth instead of fetch
-    const res = await fetchWithAuth(`${API_BASE}/users/${userId}`);
+    const res = await fetchWithAuth(`${API_BASE}/users/${userIdToFetch}`);
     if (!res.ok) throw new Error('Failed to load profile');
 
     const data = await res.json();
@@ -103,20 +107,26 @@ async function fetchProfile() {
     document.getElementById('fullName').textContent = `${data.first_name} ${data.last_name}`;
     document.getElementById('email').textContent = data.email || '';
     document.getElementById('bio').textContent = data.bio || '';
-    document.getElementById('avatar').src = data.avatar_url ? `${API_BASE}${data.avatar_url}` : '/bradspelsmeny/img/anthon-avatar.png';
-    document.getElementById('avatar').alt = `Avatar of ${data.first_name}`;
 
-    // Show/hide Edit Profile button
-    const loggedInUserId = String(getUserIdFromToken());
+    // If avatar_url is relative path, prepend API_BASE
+    let avatarUrl = data.avatar_url || '/bradspelsmeny/img/anthon-avatar.png';
+    if (avatarUrl && !avatarUrl.startsWith('http')) {
+      avatarUrl = API_BASE + avatarUrl;
+    }
+    const avatarElem = document.getElementById('avatar');
+    avatarElem.src = avatarUrl;
+    avatarElem.alt = `Avatar of ${data.first_name}`;
+
+    // Show "Edit Profile" button only if viewing own profile
     const editBtn = document.getElementById('editProfileBtn');
-    if (String(userId) === loggedInUserId) {
+    if (String(userIdToFetch) === String(loggedInUserId)) {
       editBtn.style.display = 'block';
     } else {
       editBtn.style.display = 'none';
     }
 
-    // Fetch borrow log if owner/admin or friend (backend enforced)
-    fetchBorrowLog(userId);
+    // Fetch borrow log (backend will handle permission)
+    fetchBorrowLog(userIdToFetch);
 
   } catch (err) {
     alert('Error loading profile: ' + err.message);
@@ -125,13 +135,11 @@ async function fetchProfile() {
 
 async function fetchBorrowLog(userId) {
   try {
-    // Use fetchWithAuth here as well
     const res = await fetchWithAuth(`${API_BASE}/users/${userId}/borrow-log`);
     if (!res.ok) {
-      // Borrow log might be private, show message
       document.querySelector('#borrowLogTable tbody').innerHTML =
         `<tr><td colspan="4" style="text-align:center; padding:1rem; color:#999;">
-           Borrow log is private or unavailable.
+          Borrow log is private or unavailable.
          </td></tr>`;
       return;
     }
@@ -166,5 +174,4 @@ async function fetchBorrowLog(userId) {
   }
 }
 
-// Initialize page
-fetchProfile();
+document.addEventListener('DOMContentLoaded', fetchProfile);
