@@ -7,298 +7,118 @@
   <title>Board Game Menu</title>  
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  background-color: #fffdf7; /* Softer pale background */
+  color: #5a2a0c; /* Warm dark brown for main text */
+}
 
-    #topBar {
-      background-color: #333;
-      color: white;
-      padding: 4px 12px;
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+#topBar {
+  background-color: #5a2a0c; /* Dark warm brown */
+  color: #f3e6c9; /* Soft cream text */
+  padding: 6px 14px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('img/bar-bg-pxl.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      z-index: -1;
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      will-change: transform;
-    }
+.category-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  padding: 8px 10px;
+  border: 2px solid #d9b370; /* Muted warm gold */
+  background: #f9f6f2; /* Slightly warmer off-white */
+  color: #5a2a0c;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 2px 2px 0 #c9a04e;
+  transition: all 0.2s ease-in-out;
+}
 
-    * { box-sizing: border-box; }
+.category-badge.active {
+  background: #c9a04e; /* Muted gold background */
+  color: #3f1f00; /* Darker brown text */
+  box-shadow: 2px 2px 0 #6b3e0a;
+}
 
-    #welcomeModal button {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem;
-      background-color: #8b0000;
-      color: gold;
-      border: 2px solid #8b0000;
-      border-radius: 6px;
-      padding: 10px 16px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #444;
-      width: 100%;
-    }
-    #welcomeModal button:hover {
-      background-color: #a52a2a;
-    }
+.language-toggle button {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 2px solid #d9b370;
+  background-color: #f9f6f2;
+  color: #5a2a0c;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #c9a04e;
+}
 
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+.language-toggle button:hover {
+  background-color: #c9a04e;
+  color: #3f1f00;
+  border-color: #6b3e0a;
+}
 
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      color: #8b0000;
-      animation: pulse 1.5s infinite ease-in-out;
-    }
+#searchBar {
+  padding: 12px;
+  margin: 10px 0 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  border-radius: 4px;
+  border: 3px solid #d9b370;
+  background: #f9f6f2;
+  color: #5a2a0c;
+  width: 100%;
+  box-shadow: 3px 3px 0 #c9a04e;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+}
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
+#searchBar:focus {
+  box-shadow: 3px 3px 0 #b07f26;
+}
 
-    @media (max-width: 768px) {
-      #gameList {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
+.game-card {
+  background: rgba(249, 246, 242, 0.9);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  border: 2px dashed #d9b370;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s ease forwards;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.1);
+  color: #5a2a0c;
+}
 
-      .game-card img {
-        width: 100%;
-      }
-    }
+.game-info a {
+  color: #6b3e0a;
+  text-decoration: underline;
+  font-weight: bold;
+}
 
-    .category-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 10px;
-    }
+#intro {
+  margin-bottom: 30px;
+  font-size: 0.6rem;
+  font-family: 'Press Start 2P', monospace;
+  text-align: center;
+  background: rgba(249, 246, 242, 0.9);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 2px dashed #d9b370;
+  box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.1);
+  color: #5a2a0c;
+}
 
-    .filters {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      padding: 10px 0;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .category-badge {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.55rem;
-      padding: 8px 10px;
-      border: 2px solid #8b0000;
-      background: #fffaf0;
-      color: #8b0000;
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 2px 2px 0 #8b0000;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .category-badge.active {
-      background: #8b0000;
-      color: gold;
-      box-shadow: 2px 2px 0 #444;
-    }
-
-    #searchBar {
-      padding: 12px;
-      margin: 10px 0 0;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      border-radius: 4px;
-      border: 3px solid #8b0000;
-      background: #fffaf0;
-      color: #8b0000;
-      width: 100%;
-      box-shadow: 3px 3px 0 #8b0000;
-      outline: none;
-      transition: box-shadow 0.2s ease;
-    }
-
-    #searchBar:focus {
-      box-shadow: 3px 3px 0 #d2691e;
-    }
-
-    #gameList {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .table-select-wrapper {
-      text-align: center;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      color: #8b0000;
-    }
-
-    #tableSelect {
-      margin-top: 10px;
-      padding: 10px;
-      border: 2px solid #8b0000;
-      border-radius: 5px;
-      background: #fffaf0;
-      color: #8b0000;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.55rem;
-      box-shadow: 2px 2px 0 #8b0000;
-    }
-
-    main {
-      width: 100%;
-      padding: 20px 0;
-    }
-
-    #banner {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #banner img {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-    }
-
-    .game-card {
-      background: rgba(255, 253, 248, 0.9);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      border: 2px dashed gold;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.4s ease forwards;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal.show {
-      display: flex;
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .game-card img {
-      width: 320px;
-      height: auto;
-      margin: 0 0 10px 0;
-      border-radius: 5px;
-      flex-shrink: 0;
-    }
-
-    .game-info {
-      flex: 1 1 200px;
-      min-width: 0;
-      padding: 0 5px;
-    }
-
-    .game-info h3 {
-      margin: 0 0 10px;
-      word-wrap: break-word;
-    }
-
-    .game-info p {
-      word-wrap: break-word;
-    }
-
-    .game-info a {
-      color: #8b0000;
-      text-decoration: underline;
-      font-weight: bold;
-    }
-
-    .tags {
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    #intro {
-      margin-bottom: 30px;
-      font-size: 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      text-align: center;
-      background: rgba(255, 253, 248, 0.9);
-      padding: 15px 20px;
-      border-radius: 8px;
-      border: 2px dashed gold;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .language-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .language-toggle button {
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: 2px solid #8b0000;
-      background-color: #fffaf0;
-      color: #8b0000;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #8b0000;
-    }
   </style>
 </head>
 <body>
