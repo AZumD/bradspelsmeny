@@ -214,8 +214,16 @@ async function renderGames() {
   heading.textContent = translations[currentLang].categories[currentCategory];
 
   const res = await fetchWithAuth(`${API_BASE}/games`);
-  games = await res.json();
-
+  const dataText = await res.text();
+  let dataJson;
+  try {
+    dataJson = JSON.parse(dataText);
+  } catch (e) {
+    console.error('Failed to parse /games response as JSON:', dataText);
+    throw new Error('Invalid JSON from server');
+  }
+  games = dataJson;
+  
   let filtered = currentCategory === 'all'
     ? games
     : games.filter(g => g.tags.split(',').includes(currentCategory));
