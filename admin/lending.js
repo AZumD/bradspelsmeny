@@ -15,12 +15,26 @@ const newUserForm = document.getElementById('newUserForm');
 let allGames = [];
 
 async function fetchGames() {
-  const res = await fetch(`${API_BASE}/games`);
-  const games = await res.json();
-  allGames = games;
-  await renderGameLists();
+  try {
+    const res = await fetch(`${API_BASE}/games`, {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`
+      }
+    });
 
+    if (!res.ok) {
+      throw new Error(`Failed to fetch games: ${res.status} ${res.statusText}`);
+    }
+
+    const games = await res.json();
+    allGames = games;
+    await renderGameLists();
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to fetch games. Please check your login or network.");
+  }
 }
+
 
 async function renderGameLists() {
   const searchTerm = searchInput.value.toLowerCase();
