@@ -11,6 +11,8 @@
       padding: 0;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
       overflow-x: hidden;
+      background-color: #fffdf7; /* Softer pale background */
+      color: #5a2a0c; /* Warm dark brown for main text */
     }
 
     #topBar {
@@ -21,6 +23,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    #topBar button#profileBtn {
+      background:none;
+      border:none;
+      color:#f3e6c9;
+      cursor:pointer;
+      font-weight:bold;
+      font-family:'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size:14px;
+      display:none;
+    }
+    #topBar button#profileBtn:hover {
+      text-decoration: underline;
     }
 
     .bg {
@@ -63,6 +79,7 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 0 20px;
+      padding-bottom: 60px; /* Extra space at bottom for comfortable scrolling */
     }
 
     .loading-spinner {
@@ -94,6 +111,23 @@
       }
     }
 
+    @media (max-width: 400px) {
+      #gameList {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .category-badge {
+        font-size: 0.7rem;
+        padding: 10px 12px;
+      }
+
+      #searchBar {
+        font-size: 0.7rem;
+        padding: 14px;
+      }
+    }
+
     .category-badges {
       display: flex;
       flex-wrap: wrap;
@@ -105,10 +139,11 @@
     .filters {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 25;
       padding: 10px 0;
-      background: transparent;
+      background: #fffaf0cc; /* Slightly translucent */
       box-shadow: none;
+      border-bottom: 2px solid #d9b370;
     }
 
     .category-badge {
@@ -129,6 +164,13 @@
       background: #c9a04e; /* Muted gold background */
       color: #3f1f00; /* Darker brown text */
       box-shadow: 2px 2px 0 #444;
+    }
+
+    .category-badge:hover, .category-badge:focus {
+      background: #d9b370;
+      color: #3f1f00;
+      box-shadow: 2px 2px 4px #6b3e0a;
+      outline: none;
     }
 
     #searchBar {
@@ -213,6 +255,7 @@
       align-items: center;
       text-align: center;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      color: #5a2a0c;
     }
     .modal {
       display: none;
@@ -259,7 +302,7 @@
     }
 
     .game-info a {
-      color: #8b0000;
+      color: #6b3e0a;
       text-decoration: underline;
       font-weight: bold;
     }
@@ -279,6 +322,7 @@
       border-radius: 8px;
       border: 2px dashed gold;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      color: #5a2a0c;
     }
 
     .language-toggle {
@@ -304,8 +348,14 @@
 <body>
 <div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
   <div id="userStatus"></div>
-  <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button id="profileBtn" style="background:none; border:none; color:#f3e6c9; cursor:pointer; font-weight:bold; font-family:'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif; font-size:14px; display:none;">
+      Profile
+    </button>
+    <button id="logoutBtn" style="background:none; border:none; color:#f3e6c9; cursor:pointer;">Log out</button>
+  </div>
 </div>
+
   <div id="orderModal" class="modal" style="position:fixed; top:0; left:0; 
   width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
   <div style="background:#fff; padding:1.5rem; border-radius:8px; max-width:400px; width:90%;">
