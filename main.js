@@ -224,12 +224,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     welcomeModal?.classList.remove("show");
   }
 
-  updateTopBar();
+  
 
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
     await setLanguage(currentLang);
+    updateTopBar();
   } catch (err) {
     console.error("Unexpected loading error:", err);
     const errorBox = document.createElement('div');
