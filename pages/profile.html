@@ -87,13 +87,27 @@
     .edit-button:hover {
       background-color: #a54d22;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    th, td {
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
 
   <h1>Your Profile</h1>
   <div class="profile-container" id="profileContainer">
-    <img id="avatar" class="avatar" src="" alt="User Avatar" />
+    <img id="avatar" class="avatar" src="placeholder-avatar.png" alt="User Avatar" />
     <div class="full-name" id="fullName">Loading...</div>
     <div class="email" id="email"></div>
     <div class="bio" id="bio"></div>
@@ -107,22 +121,23 @@
       <div class="section-title">Parties</div>
       <div class="placeholder-box">Your parties and groups will show up here.</div>
     </div>
+
     <div>
-  <div class="section-title">Borrow Log</div>
-  <table id="borrowLogTable" style="width:100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ccc;">Date</th>
-        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ccc;">Game</th>
-        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ccc;">Action</th>
-        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ccc;">Note</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
-    </tbody>
-  </table>
-</div>
+      <div class="section-title">Borrow Log</div>
+      <table id="borrowLogTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Game</th>
+            <th>Action</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <a href="edit-profile.html" class="edit-button" id="editProfileBtn">Edit Profile</a>
   </div>
