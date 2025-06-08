@@ -304,10 +304,6 @@
 <body>
 <div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
   <div id="userStatus"></div>
-    <div class="language-toggle">
-    <button onclick="setLanguage('sv')">🇸🇪</button>
-    <button onclick="setLanguage('en')">🇬🇧</button>
-  </div>
   <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
 </div>
   <div id="orderModal" class="modal" style="position:fixed; top:0; left:0; 
@@ -355,8 +351,10 @@
     <div id="banner">
       <img src="banner3.png" alt="Banner" />
     </div>
-    <p id="selectedTablesDisplay" style="margin-top: 10px; color: #8b0000; font-family: 'Press Start 2P', monospace; font-size: 0.5rem;"></p>
-
+    <div class="language-toggle">
+    <button onclick="setLanguage('sv')">🇸🇪</button>
+    <button onclick="setLanguage('en')">🇬🇧</button>
+  </div>
     <!-- Sticky filters go here -->
     <div class="filters">
       <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
