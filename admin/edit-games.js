@@ -43,21 +43,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  async function fetchGames() {
-    try {
-      gameList.innerHTML = "";
-      if (loadingSpinner) loadingSpinner.style.display = "block";
-      const res = await fetch(`${API_BASE}/games`);
-      if (!res.ok) throw new Error("Failed to fetch games");
-      games = await res.json();
-      displayGames(games);
-    } catch (err) {
-      gameList.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
-      console.error(err);
-    } finally {
-      if (loadingSpinner) loadingSpinner.style.display = "none";
-    }
+ async function fetchGames() {
+  try {
+    gameList.innerHTML = "";
+    if (loadingSpinner) loadingSpinner.style.display = "block";
+
+    const res = await fetch(`${API_BASE}/games`, {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch games");
+
+    games = await res.json();
+    displayGames(games);
+  } catch (err) {
+    gameList.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
+    console.error(err);
+  } finally {
+    if (loadingSpinner) loadingSpinner.style.display = "none";
   }
+}
+
 
   function displayGames(gamesToShow) {
     gameList.innerHTML = "";
