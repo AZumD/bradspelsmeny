@@ -24,7 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Store access token and refresh token
       localStorage.setItem("userToken", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken); // <- new line
       localStorage.setItem("userData", JSON.stringify(data.user));
 
       alert(`👋 Welcome back, ${data.user.first_name}!`);
@@ -35,4 +37,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
