@@ -1,5 +1,5 @@
-const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; 
-const token = localStorage.getItem('userToken'); // ensure you use 'userToken'
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const token = localStorage.getItem('userToken');
 
 function getUserIdFromToken() {
   try {
@@ -16,17 +16,23 @@ function getUserIdFromUrl() {
 }
 
 async function fetchProfile() {
+  if (!token) {
+    alert('You must be logged in to view profiles.');
+    window.location.href = '/login.html';
+    return;
+  }
+
   const urlUserId = getUserIdFromUrl();
   const userId = urlUserId || getUserIdFromToken();
 
   if (!userId) {
-    alert('Invalid token or no user specified, please log in.');
-    localStorage.removeItem('userToken');
+    alert('No user specified and you are not logged in.');
     window.location.href = '/login.html';
     return;
   }
 
   try {
+    // Fetch profile data
     const res = await fetch(`${API_BASE}/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -41,19 +47,69 @@ async function fetchProfile() {
     document.getElementById('avatar').alt = `Avatar of ${data.first_name}`;
 
     // Show/hide Edit Profile button
+    const loggedInUserId = getUserIdFromToken();
     const editBtn = document.getElementById('editProfileBtn');
-    if (urlUserId && urlUserId !== getUserIdFromToken()) {
-      editBtn.style.display = 'none';
-    } else {
+    if (userId === loggedInUserId) {
       editBtn.style.display = 'block';
+    } else {
+      editBtn.style.display = 'none';
     }
+
+    // Fetch borrow log if owner/admin or friend (backend enforced)
+    fetchBorrowLog(userId);
+
   } catch (err) {
     alert('Error loading profile: ' + err.message);
   }
 }
 
-// On page load
+async function fetchBorrowLog(userId) {
+  try {
+    const res = await fetch(`${API_BASE}/users/${userId}/borrow-log`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      // Borrow log might be private, show message
+      document.querySelector('#borrowLogTable tbody').innerHTML = 
+        `<tr><td colspan="4" style="text-align:center; padding:1rem; color:#999;">
+           Borrow log is private or unavailable.
+         </td></tr>`;
+      return;
+    }
+    const logs = await res.json();
+
+    if (logs.length === 0) {
+      document.querySelector('#borrowLogTable tbody').innerHTML = 
+        `<tr><td colspan="4" style="text-align:center; padding:1rem;">No borrow history yet.</td></tr>`;
+      return;
+    }
+
+    const rowsHtml = logs.map(log => {
+      const date = new Date(log.timestamp).toLocaleDateString();
+      const action = log.action.charAt(0).toUpperCase() + log.action.slice(1);
+      const note = log.note || '';
+      return `<tr>
+                <td>${date}</td>
+                <td>${log.game_title}</td>
+                <td>${action}</td>
+                <td>${note}</td>
+              </tr>`;
+    }).join('');
+
+    document.querySelector('#borrowLogTable tbody').innerHTML = rowsHtml;
+
+  } catch (err) {
+    console.error('Failed to fetch borrow log:', err);
+    document.querySelector('#borrowLogTable tbody').innerHTML = 
+      `<tr><td colspan="4" style="text-align:center; padding:1rem; color:red;">
+         Failed to load borrow log.
+       </td></tr>`;
+  }
+}
+
+// Initialize
 fetchProfile();
+
 // Initialize page
 
 fetchBorrowLog();
