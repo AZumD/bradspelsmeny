@@ -44,6 +44,72 @@ const translations = {
   }
 };
 
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+
+function getUserToken() {
+  return localStorage.getItem('userToken');
+}
+function setUserToken(token) {
+  localStorage.setItem('userToken', token);
+}
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
+}
+function removeTokens() {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('userData');
+}
+
+function logoutUser() {
+  removeTokens();
+  alert('Session expired. Please log in again.');
+  window.location.href = '/login.html';
+}
+
+async function refreshToken() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch(`${API_BASE}/refresh-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    if (data.token) {
+      setUserToken(data.token);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchWithAuth(url, options = {}, retry = true) {
+  if (!options.headers) options.headers = {};
+  options.headers['Authorization'] = `Bearer ${getUserToken()}`;
+
+  let res = await fetch(url, options);
+  if (res.status === 401 && retry) {
+    // Token expired? Try refresh
+    const refreshed = await refreshToken();
+    if (refreshed) {
+      // Retry original request once
+      options.headers['Authorization'] = `Bearer ${getUserToken()}`;
+      res = await fetch(url, options);
+    } else {
+      logoutUser();
+      throw new Error('Unauthorized, please login again.');
+    }
+  }
+  return res;
+}
+
 let games = [];
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
@@ -147,7 +213,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/games');
+  const res = await fetchWithAuth(`${API_BASE}/games`);
   games = await res.json();
 
   let filtered = currentCategory === 'all'
@@ -293,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
-      const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/order-game', {
+      const res = await fetchWithAuth(`${API_BASE}/order-game`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
