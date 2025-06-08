@@ -109,6 +109,7 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
+
 const profileBtn = document.getElementById('profileBtn');
 const userStatus = document.getElementById('userStatus');
 
@@ -120,9 +121,6 @@ function updateUserStatus(user) {
 profileBtn.onclick = () => {
   window.location.href = './pages/profile.html';
 };
-
-// On successful login or token validation, call updateUserStatus with user info
-// e.g. fetch user data and then updateUserStatus(user);
 
 let games = [];
 let currentCategory = 'all';
@@ -187,10 +185,20 @@ function bindOrderButtons() {
       modal.dataset.gameId = gameId;
 
       if (userData) {
-        if (userFields) userFields.style.display = "none";
+        if (userFields) {
+          userFields.style.display = "none";
+          // disable all inputs and selects inside userFields
+          const inputs = userFields.querySelectorAll("input, select");
+          inputs.forEach(input => input.disabled = true);
+        }
         if (notice) notice.style.display = "block";
       } else {
-        if (userFields) userFields.style.display = "block";
+        if (userFields) {
+          userFields.style.display = "block";
+          // enable all inputs and selects inside userFields
+          const inputs = userFields.querySelectorAll("input, select");
+          inputs.forEach(input => input.disabled = false);
+        }
         if (notice) notice.style.display = "none";
       }
 
@@ -314,7 +322,6 @@ function updateTopBar() {
     location.reload();
   });
 }
-
 
 document.addEventListener("DOMContentLoaded", async () => {
   const spinner = document.getElementById("loadingSpinner");
