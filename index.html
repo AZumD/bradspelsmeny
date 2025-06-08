@@ -304,6 +304,10 @@
 <body>
 <div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
   <div id="userStatus"></div>
+    <div class="language-toggle">
+    <button onclick="setLanguage('sv')">🇸🇪</button>
+    <button onclick="setLanguage('en')">🇬🇧</button>
+  </div>
   <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
 </div>
   <div id="orderModal" class="modal" style="position:fixed; top:0; left:0; 
@@ -346,11 +350,6 @@
 </div>
 
   <div class="bg"></div>
-
-  <div class="language-toggle">
-    <button onclick="setLanguage('sv')">🇸🇪</button>
-    <button onclick="setLanguage('en')">🇬🇧</button>
-  </div>
 
   <div class="wrapper">
     <div id="banner">
