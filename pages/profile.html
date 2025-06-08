@@ -156,13 +156,10 @@
   </style>
 </head>
 <body>
-
-  <h1>Your Profile</h1>
-
   <div class="profile-container">
     <img id="avatar" class="avatar" src="../img/anthon-avatar.png" alt="User Avatar" />
 
-    <div class="full-name" id="fullName">Loading...</div>
+    <div class="full-name" id="username">Loading...</div>
     <div class="email" id="email"></div>
     <div class="bio" id="bio"></div>
 
@@ -176,22 +173,21 @@
       <div class="placeholder-box">Your parties and groups will show up here.</div>
     </div>
 
-    <div>
-      <div class="section-title">Borrow Log</div>
-      <table id="borrowLogTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Game</th>
-            <th>Action</th>
-            <th>Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading borrow log…</td></tr>
-        </tbody>
-      </table>
-    </div>
+   <div>
+  <div class="section-title">Game Log</div>
+  <table id="borrowLogTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Game</th>
+        <!-- Removed Action and Note columns -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="2" style="text-align:center; padding:1rem;">Loading game log…</td></tr>
+    </tbody>
+  </table>
+</div>
 
     <a href="edit-profile.html" id="editProfileBtn">Edit Profile</a>
   </div>
