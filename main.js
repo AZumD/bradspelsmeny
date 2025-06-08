@@ -118,7 +118,7 @@ function updateUserStatus(user) {
 }
 
 profileBtn.onclick = () => {
-  window.location.href = '/pages/profile.html';
+  window.location.href = './pages/profile.html';
 };
 
 // On successful login or token validation, call updateUserStatus with user info
