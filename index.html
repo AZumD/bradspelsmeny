@@ -1,3 +1,8 @@
+Thanks! 
+
+Any suggestions on how to make the index.html better? I'm thinking mostly in terms of visuals and flow, browsing the games on the phone. 
+Also, when logged in, I'd like a button or something that takes me to my profile.
+
 <!DOCTYPE html>
 <html lang="sv">  
 <head>  
@@ -11,8 +16,6 @@
       padding: 0;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
       overflow-x: hidden;
-      background-color: #fffdf7; /* Softer pale background */
-      color: #5a2a0c; /* Warm dark brown for main text */
     }
 
     #topBar {
@@ -23,20 +26,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    #topBar button#profileBtn {
-      background:none;
-      border:none;
-      color:#f3e6c9;
-      cursor:pointer;
-      font-weight:bold;
-      font-family:'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:14px;
-      display:none;
-    }
-    #topBar button#profileBtn:hover {
-      text-decoration: underline;
     }
 
     .bg {
@@ -79,7 +68,6 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 0 20px;
-      padding-bottom: 60px; /* Extra space at bottom for comfortable scrolling */
     }
 
     .loading-spinner {
@@ -111,23 +99,6 @@
       }
     }
 
-    @media (max-width: 400px) {
-      #gameList {
-        grid-template-columns: 1fr;
-        gap: 15px;
-      }
-
-      .category-badge {
-        font-size: 0.7rem;
-        padding: 10px 12px;
-      }
-
-      #searchBar {
-        font-size: 0.7rem;
-        padding: 14px;
-      }
-    }
-
     .category-badges {
       display: flex;
       flex-wrap: wrap;
@@ -139,11 +110,10 @@
     .filters {
       position: sticky;
       top: 0;
-      z-index: 25;
+      z-index: 20;
       padding: 10px 0;
-      background: #fffaf0cc; /* Slightly translucent */
+      background: transparent;
       box-shadow: none;
-      border-bottom: 2px solid #d9b370;
     }
 
     .category-badge {
@@ -164,13 +134,6 @@
       background: #c9a04e; /* Muted gold background */
       color: #3f1f00; /* Darker brown text */
       box-shadow: 2px 2px 0 #444;
-    }
-
-    .category-badge:hover, .category-badge:focus {
-      background: #d9b370;
-      color: #3f1f00;
-      box-shadow: 2px 2px 4px #6b3e0a;
-      outline: none;
     }
 
     #searchBar {
@@ -255,7 +218,6 @@
       align-items: center;
       text-align: center;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-      color: #5a2a0c;
     }
     .modal {
       display: none;
@@ -302,7 +264,7 @@
     }
 
     .game-info a {
-      color: #6b3e0a;
+      color: #8b0000;
       text-decoration: underline;
       font-weight: bold;
     }
@@ -322,7 +284,6 @@
       border-radius: 8px;
       border: 2px dashed gold;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-      color: #5a2a0c;
     }
 
     .language-toggle {
@@ -346,70 +307,66 @@
   </style>
 </head>
 <body>
+<div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+  <div id="userStatus"></div>
+  <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
+</div>
+  <div id="orderModal" class="modal" style="position:fixed; top:0; left:0; 
+  width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:1.5rem; border-radius:8px; max-width:400px; width:90%;">
+    <h2 id="orderGameTitle">Order Game</h2>
+    <div id="loggedInNotice" style="display:none;">
+  👤 You're logged in. We only need your table number.
+</div>
+
+    <form id="orderForm">
+      <div id="userFields">
+  <label>
+    First Name:<br />
+    <input type="text" name="first_name" required />
+  </label><br /><br />
+  <label>
+    Last Name:<br />
+    <input type="text" name="last_name" required />
+  </label><br /><br />
+  <label>
+    Country Code:<br />
+    <select name="country_code" required>
+      <option value="+46">🇸🇪 +46 Sweden</option>
+      <option value="+47">🇳🇴 +47 Norway</option>
+      <option value="+358">🇫🇮 +358 Finland</option>
+      <option value="+45">🇩🇰 +45 Denmark</option>
+      <option value="+49">🇩🇪 +49 Germany</option>
+      <option value="+44">🇬🇧 +44 UK</option>
+      <option value="+1">🇺🇸 +1 USA</option>
+    </select>
+  </label><br /><br />
+  <label>
+    Phone Number:<br />
+    <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
+  </label><br /><br />
+</div>
+<br /><br />
+      <label>
+        Table Number:<br />
+        <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
+      </label><br /><br />
+      <button type="submit">Order</button>
+      <button type="button" id="closeModal" style="margin-left:1rem;">Cancel</button>
+    </form>
+  </div>
+</div>
+
   <div class="bg"></div>
-  <div id="topBar" style="background-color: #5a2a0c; color: #f3e6c9; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
-    <div id="userStatus"></div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <button id="profileBtn" style="background:none; border:none; color:#f3e6c9; cursor:pointer; font-weight:bold; font-family:'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif; font-size:14px; display:none;">
-        Profile
-      </button>
-      <button id="logoutBtn" style="background:none; border:none; color:#f3e6c9; cursor:pointer;">Log out</button>
-    </div>
-  </div>
-
-  <div id="orderModal" class="modal">
-    <div style="background:#fff; padding:1.5rem; border-radius:8px; max-width:400px; width:90%;">
-      <h2 id="orderGameTitle">Order Game</h2>
-      <div id="loggedInNotice" style="display:none;">
-        👤 You're logged in. We only need your table number.
-      </div>
-
-      <form id="orderForm">
-        <div id="userFields">
-          <label>
-            First Name:<br />
-            <input type="text" name="first_name" required />
-          </label><br /><br />
-          <label>
-            Last Name:<br />
-            <input type="text" name="last_name" required />
-          </label><br /><br />
-          <label>
-            Country Code:<br />
-            <select name="country_code" required>
-              <option value="+46">🇸🇪 +46 Sweden</option>
-              <option value="+47">🇳🇴 +47 Norway</option>
-              <option value="+358">🇫🇮 +358 Finland</option>
-              <option value="+45">🇩🇰 +45 Denmark</option>
-              <option value="+49">🇩🇪 +49 Germany</option>
-              <option value="+44">🇬🇧 +44 UK</option>
-              <option value="+1">🇺🇸 +1 USA</option>
-            </select>
-          </label><br /><br />
-          <label>
-            Phone Number:<br />
-            <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
-          </label><br /><br />
-        </div>
-
-        <label>
-          Table Number:<br />
-          <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
-        </label><br /><br />
-        <button type="submit">Order</button>
-        <button type="button" id="closeModal" style="margin-left:1rem;">Cancel</button>
-      </form>
-    </div>
-  </div>
 
   <div class="wrapper">
     <div id="banner">
       <img src="banner3.png" alt="Banner" />
     </div>
     <div class="language-toggle">
-      <button onclick="setLanguage('sv')">🇸🇪</button>
-      <button onclick="setLanguage('en')">🇬🇧</button>
-    </div>
+    <button onclick="setLanguage('sv')">🇸🇪</button>
+    <button onclick="setLanguage('en')">🇬🇧</button>
+  </div>
     <!-- Sticky filters go here -->
     <div class="filters">
       <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
@@ -427,15 +384,16 @@
     </main>
   </div>
 
+  
   <div id="welcomeModal" class="modal show">
-    <div style="background:#fff; padding:2rem; border-radius:10px; text-align:center; max-width:400px; width:90%;">
-      <div id="intro"></div>
-      <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
-      <button onclick="window.location.href='login.html'" style="margin: 8px;">🔐 Log In</button><br />
-      <button onclick="window.location.href='register.html'" style="margin: 8px;">📝 Register</button><br />
-      <button onclick="continueAsGuest()" style="margin: 8px;">👤 Continue as Guest</button>
-    </div>
+  <div style="background:#fff; padding:2rem; border-radius:10px; text-align:center; max-width:400px; width:90%;">
+    <div id="intro"></div>
+    <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
+    <button onclick="window.location.href='login.html'" style="margin: 8px;">🔐 Log In</button><br />
+    <button onclick="window.location.href='register.html'" style="margin: 8px;">📝 Register</button><br />
+    <button onclick="continueAsGuest()" style="margin: 8px;">👤 Continue as Guest</button>
   </div>
-  <script src="main.js"></script>
+</div>
+<script src="main.js"></script>
 </body>
 </html>
