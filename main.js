@@ -224,8 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     welcomeModal?.classList.remove("show");
   }
 
-  
-  updateTopBar(); // ← Add this
+  updateTopBar();
 
   try {
     spinner.style.display = "flex";
@@ -240,9 +239,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     spinner.style.display = "none";
     gameList.style.display = "grid";
   }
-});
 
-document.addEventListener("DOMContentLoaded", () => {
+  // Order modal logic
   const orderForm = document.getElementById("orderForm");
   const orderModal = document.getElementById("orderModal");
   const closeModal = document.getElementById("closeModal");
@@ -252,45 +250,46 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   orderForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const submitButton = orderForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
+    const submitButton = orderForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
 
-  const gameId = orderModal.dataset.gameId;
-  const game = games.find(g => g.id == gameId);
-  const formData = new FormData(orderForm);
+    const gameId = orderModal.dataset.gameId;
+    const game = games.find(g => g.id == gameId);
+    const formData = new FormData(orderForm);
 
-  const payload = {
-    game_id: gameId,
-    game_title: game?.title_en || "Unknown",
-    first_name: formData.get("first_name"),
-    last_name: formData.get("last_name"),
-    phone: `${formData.get("country_code")}${formData.get("phone")}`,
-    table_id: formData.get("table_id")
-  };
+    const payload = {
+      game_id: gameId,
+      game_title: game?.title_en || "Unknown",
+      first_name: formData.get("first_name"),
+      last_name: formData.get("last_name"),
+      phone: `${formData.get("country_code")}${formData.get("phone")}`,
+      table_id: formData.get("table_id")
+    };
 
-  try {
-    const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/order-game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/order-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (!res.ok) throw new Error("Failed to order game");
+      if (!res.ok) throw new Error("Failed to order game");
 
-    const confirmation = document.createElement("div");
-    confirmation.innerHTML = "<p style='text-align:center; color:green;'>🎉 Game order placed!</p>";
-    orderModal.querySelector("form").appendChild(confirmation);
-    setTimeout(() => confirmation.remove(), 3000);
+      const confirmation = document.createElement("div");
+      confirmation.innerHTML = "<p style='text-align:center; color:green;'>🎉 Game order placed!</p>";
+      orderModal.querySelector("form").appendChild(confirmation);
+      setTimeout(() => confirmation.remove(), 3000);
 
-    orderModal.style.display = "none";
-    orderForm.reset();
-  } catch (err) {
-    console.error("❌ Order submission failed:", err);
-    alert("❌ Something went wrong placing your order. Try again!");
-  } finally {
-    submitButton.disabled = false;
-  }
+      orderModal.style.display = "none";
+      orderForm.reset();
+    } catch (err) {
+      console.error("❌ Order submission failed:", err);
+      alert("❌ Something went wrong placing your order. Try again!");
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
 });
 
