@@ -44,7 +44,6 @@ const translations = {
   }
 };
 
-
 let games = [];
 let currentCategory = 'all';
 let currentLang = navigator.language.startsWith('sv') ? 'sv' : 'en';
@@ -95,18 +94,30 @@ function bindOrderButtons() {
   const buttons = document.querySelectorAll(".order-button");
   buttons.forEach(button => {
     button.addEventListener("click", (e) => {
+      const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
       const gameId = gameCard.dataset.gameId;
 
-      // Set game ID on modal or hidden input if needed
       const modal = document.getElementById("orderModal");
+      const userFields = document.getElementById("userFields");
+      const notice = document.getElementById("loggedInNotice");
+      const orderForm = document.getElementById("orderForm");
+
+      orderForm.reset();
       modal.dataset.gameId = gameId;
 
-      // Show the modal
+      if (userData) {
+        if (userFields) userFields.style.display = "none";
+        if (notice) notice.style.display = "block";
+      } else {
+        if (userFields) userFields.style.display = "block";
+        if (notice) notice.style.display = "none";
+      }
+
       modal.style.display = "flex";
     });
   });
-}
+} 
 
 function continueAsGuest() {
   localStorage.setItem("guestUser", "true");
@@ -252,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   orderForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    const userData = localStorage.getItem("userData");
     const submitButton = orderForm.querySelector('button[type="submit"]');
     submitButton.disabled = true;
 
@@ -260,14 +271,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const game = games.find(g => g.id == gameId);
     const formData = new FormData(orderForm);
 
-    const payload = {
-      game_id: gameId,
-      game_title: game?.title_en || "Unknown",
-      first_name: formData.get("first_name"),
-      last_name: formData.get("last_name"),
-      phone: `${formData.get("country_code")}${formData.get("phone")}`,
-      table_id: formData.get("table_id")
-    };
+    let firstName, lastName, phone;
+
+if (userData) {
+  const user = JSON.parse(userData);
+  firstName = user.first_name;
+  lastName = user.last_name;
+  phone = user.phone;
+} else {
+  firstName = formData.get("first_name");
+  lastName = formData.get("last_name");
+  phone = `${formData.get("country_code")}${formData.get("phone")}`;
+}
+
+const payload = {
+  game_id: gameId,
+  game_title: game?.title_en || "Unknown",
+  first_name: firstName,
+  last_name: lastName,
+  phone: phone,
+  table_id: formData.get("table_id")
+};
+
 
     try {
       const res = await fetch('https://bradspelsmeny-backend-production.up.railway.app/order-game', {
