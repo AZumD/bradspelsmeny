@@ -1,4 +1,4 @@
-const API_BASE = 'https://your-backend-url.com'; // Change to your backend URL
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Change to your backend URL
 const token = localStorage.getItem('token');
 const form = document.getElementById('profileForm');
 const messageDiv = document.getElementById('message');
