@@ -1,5 +1,67 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
-const token = localStorage.getItem('userToken');
+
+function getAccessToken() {
+  return localStorage.getItem('userToken');
+}
+
+function setAccessToken(token) {
+  localStorage.setItem('userToken', token);
+}
+
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
+}
+
+function setRefreshToken(token) {
+  localStorage.setItem('refreshToken', token);
+}
+
+function clearTokens() {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('refreshToken');
+}
+
+async function fetchWithAuth(url, options = {}) {
+  let accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+
+  if (!accessToken || !refreshToken) {
+    throw new Error('User not authenticated');
+  }
+
+  options.headers = options.headers || {};
+  options.headers['Authorization'] = `Bearer ${accessToken}`;
+
+  let response = await fetch(url, options);
+
+  if (response.status === 401 || response.status === 403) {
+    // Try refreshing access token
+    const refreshResponse = await fetch(`${API_BASE}/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: refreshToken }),
+    });
+
+    if (!refreshResponse.ok) {
+      // Refresh token invalid or expired → force logout
+      clearTokens();
+      window.location.href = '/login.html';
+      throw new Error('Session expired. Please log in again.');
+    }
+
+    const data = await refreshResponse.json();
+    const newAccessToken = data.accessToken;
+    setAccessToken(newAccessToken);
+
+    // Retry original request with new access token
+    options.headers['Authorization'] = `Bearer ${newAccessToken}`;
+    response = await fetch(url, options);
+  }
+
+  return response;
+}
+
+const token = getAccessToken();
 
 function getUserIdFromToken() {
   try {
@@ -32,10 +94,8 @@ async function fetchProfile() {
   }
 
   try {
-    // Fetch profile data
-    const res = await fetch(`${API_BASE}/users/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    // Use fetchWithAuth instead of fetch
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}`);
     if (!res.ok) throw new Error('Failed to load profile');
 
     const data = await res.json();
@@ -65,12 +125,11 @@ async function fetchProfile() {
 
 async function fetchBorrowLog(userId) {
   try {
-    const res = await fetch(`${API_BASE}/users/${userId}/borrow-log`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    // Use fetchWithAuth here as well
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/borrow-log`);
     if (!res.ok) {
       // Borrow log might be private, show message
-      document.querySelector('#borrowLogTable tbody').innerHTML = 
+      document.querySelector('#borrowLogTable tbody').innerHTML =
         `<tr><td colspan="4" style="text-align:center; padding:1rem; color:#999;">
            Borrow log is private or unavailable.
          </td></tr>`;
@@ -79,7 +138,7 @@ async function fetchBorrowLog(userId) {
     const logs = await res.json();
 
     if (logs.length === 0) {
-      document.querySelector('#borrowLogTable tbody').innerHTML = 
+      document.querySelector('#borrowLogTable tbody').innerHTML =
         `<tr><td colspan="4" style="text-align:center; padding:1rem;">No borrow history yet.</td></tr>`;
       return;
     }
@@ -100,7 +159,7 @@ async function fetchBorrowLog(userId) {
 
   } catch (err) {
     console.error('Failed to fetch borrow log:', err);
-    document.querySelector('#borrowLogTable tbody').innerHTML = 
+    document.querySelector('#borrowLogTable tbody').innerHTML =
       `<tr><td colspan="4" style="text-align:center; padding:1rem; color:red;">
          Failed to load borrow log.
        </td></tr>`;
@@ -109,4 +168,3 @@ async function fetchBorrowLog(userId) {
 
 // Initialize page
 fetchProfile();
-
