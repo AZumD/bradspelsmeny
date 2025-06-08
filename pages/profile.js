@@ -1,5 +1,5 @@
-const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Change to your backend URL
-const token = localStorage.getItem('token');
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Your backend URL
+const token = localStorage.getItem('userToken');
 const form = document.getElementById('profileForm');
 const messageDiv = document.getElementById('message');
 const avatarInput = document.getElementById('avatarInput');
@@ -26,8 +26,8 @@ async function fetchProfile() {
   const userId = getUserIdFromToken();
   if (!userId) {
     alert('Invalid token, please log in again.');
-    localStorage.removeItem('token');
-    window.location.href = 'login.html';
+    localStorage.removeItem('userToken');
+    window.location.href = '/login.html'; // Use absolute path here too
     return;
   }
 
