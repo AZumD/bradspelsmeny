@@ -47,9 +47,9 @@ async function fetchProfile() {
     document.getElementById('avatar').alt = `Avatar of ${data.first_name}`;
 
     // Show/hide Edit Profile button
-    const loggedInUserId = getUserIdFromToken();
+    const loggedInUserId = String(getUserIdFromToken());
     const editBtn = document.getElementById('editProfileBtn');
-    if (userId === loggedInUserId) {
+    if (String(userId) === loggedInUserId) {
       editBtn.style.display = 'block';
     } else {
       editBtn.style.display = 'none';
@@ -107,9 +107,6 @@ async function fetchBorrowLog(userId) {
   }
 }
 
-// Initialize
+// Initialize page
 fetchProfile();
 
-// Initialize page
-
-fetchBorrowLog();
