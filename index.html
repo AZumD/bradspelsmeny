@@ -89,14 +89,16 @@
 
     #gameList {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: 1fr; /* Default: 1 column on mobile */
       gap: 20px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    @media (max-width: 768px) {
+    @media (min-width: 769px) {
       #gameList {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Multiple columns on wider screens */
       }
     }
 
@@ -217,8 +219,8 @@
       align-items: center;
       text-align: center;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-      margin-left: auto;    /* center card in grid cell */
-      margin-right: auto;   /* center card in grid cell */
+      margin-left: auto;
+      margin-right: auto;
     }
     .modal {
       display: none;
