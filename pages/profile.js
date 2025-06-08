@@ -103,7 +103,7 @@ async function fetchProfile() {
     document.getElementById('fullName').textContent = `${data.first_name} ${data.last_name}`;
     document.getElementById('email').textContent = data.email || '';
     document.getElementById('bio').textContent = data.bio || '';
-    document.getElementById('avatar').src = data.avatar_url ? `${API_BASE}${data.avatar_url}` : 'placeholder-avatar.png';
+    document.getElementById('avatar').src = data.avatar_url ? `${API_BASE}${data.avatar_url}` : '/bradspelsmeny/img/anthon-avatar.png';
     document.getElementById('avatar').alt = `Avatar of ${data.first_name}`;
 
     // Show/hide Edit Profile button
