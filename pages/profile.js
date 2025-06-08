@@ -1,4 +1,5 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
 function getAccessToken() {
   return localStorage.getItem('userToken');
@@ -109,9 +110,10 @@ async function fetchProfile() {
     document.getElementById('bio').textContent = data.bio || '';
 
     // If avatar_url is relative path, prepend API_BASE
-    let avatarUrl = data.avatar_url || '../img/anthon-avatar.png';
+    let avatarUrl = data.avatar_url || `${FRONTEND_BASE}/img/anthon-avatar.png`;
     if (avatarUrl && !avatarUrl.startsWith('http')) {
-      avatarUrl = API_BASE + avatarUrl;
+    avatarUrl = API_BASE + avatarUrl;
+  }
     }
     const avatarElem = document.getElementById('avatar');
     avatarElem.src = avatarUrl;
