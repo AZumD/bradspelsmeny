@@ -7,7 +7,7 @@ const avatarPreview = document.getElementById('avatarPreview');
 
 if (!token) {
   alert('You must be logged in to view your profile.');
-  window.location.href = 'login.html'; // Redirect to login if no token
+  window.location.href = '/login.html'; // Redirect to login if no token
 }
 
 let currentAvatarUrl = null;
