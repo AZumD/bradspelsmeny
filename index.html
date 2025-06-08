@@ -23,6 +23,13 @@
       align-items: center;
     }
 
+#categoryHeading {
+  width: 100%;
+  max-width: 1000px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
     .bg {
       position: fixed;
       top: 0;
@@ -180,11 +187,12 @@
     }
 
     main {
-      width: 100%;
-      padding: 20px 0;
-      display: flex;
-      justify-content: center; /* center content horizontally */
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center children horizontally */
+  width: 100%;
+  padding: 20px 0;
+}
 
     #banner {
       display: flex;
