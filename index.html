@@ -58,12 +58,15 @@
     }
 
     .wrapper {
-      display: flex;
-      flex-direction: column;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  /* Add these lines: */
+  align-items: center; /* center children horizontally */
+}
 
     .loading-spinner {
       display: flex;
@@ -146,11 +149,17 @@
       box-shadow: 3px 3px 0 #d2691e;
     }
 
-    #gameList {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
+   
+#gameList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+
+  /* Add these lines: */
+  justify-content: center; /* center grid items horizontally */
+  width: 100%; /* ensure full width inside wrapper */
+  max-width: 1000px; /* optional, to prevent too wide grid */
+}
 
     .table-select-wrapper {
       text-align: center;
