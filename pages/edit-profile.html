@@ -5,42 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Your Profile</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 400px; margin: 2rem auto; }
-    label { display: block; margin-top: 1rem; }
-    input, textarea, button { width: 100%; padding: 0.5rem; margin-top: 0.3rem; }
-    img.avatar-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-top: 0.5rem; }
-    .message { margin-top: 1rem; }
+    /* Base styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 400px;
+      margin: 3rem auto;
+      background-color: #fafafa;
+      color: #333;
+      padding: 0 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      color: #8c3c1a;
+    }
+
+    form {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1.3rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #8c3c1a;
+      box-shadow: 0 0 4px #8c3c1aaa;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    input[type="file"] {
+      margin-top: 0.5rem;
+    }
+
+    .avatar-preview {
+      display: block;
+      margin-top: 0.7rem;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+    }
+    .avatar-preview.visible {
+      opacity: 1;
+    }
+    .avatar-preview:hover {
+      border-color: #8c3c1a;
+      box-shadow: 0 0 8px #8c3c1a88;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+      background-color: #8c3c1a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover:not(:disabled) {
+      background-color: #a14b21;
+    }
+    button[type="submit"]:disabled {
+      background-color: #c5a38a;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      min-height: 2rem;
+    }
+    .message.success {
+      background-color: #daf6db;
+      color: #24692c;
+    }
+    .message.error {
+      background-color: #f6dada;
+      color: #8b2121;
+    }
   </style>
 </head>
 <body>
   <h1>Your Profile</h1>
-  <form id="profileForm">
-    <label>
-      First Name
-      <input type="text" name="first_name" required />
-    </label>
-    <label>
-      Last Name
-      <input type="text" name="last_name" required />
-    </label>
-    <label>
-      Email
-      <input type="email" name="email" />
-    </label>
-    <label>
-      Bio
-      <textarea name="bio" rows="4"></textarea>
-    </label>
-    <label>
-      Avatar
-      <input type="file" id="avatarInput" accept="image/*" />
-      <img id="avatarPreview" class="avatar-preview" src="" alt="Avatar preview" />
-    </label>
+  <form id="profileForm" novalidate>
+    <label for="firstNameInput">First Name</label>
+    <input type="text" id="firstNameInput" name="first_name" required autocomplete="given-name" />
+
+    <label for="lastNameInput">Last Name</label>
+    <input type="text" id="lastNameInput" name="last_name" required autocomplete="family-name" />
+
+    <label for="emailInput">Email</label>
+    <input type="email" id="emailInput" name="email" autocomplete="email" />
+
+    <label for="bioInput">Bio</label>
+    <textarea id="bioInput" name="bio" rows="4"></textarea>
+
+    <label for="avatarInput">Avatar</label>
+    <input type="file" id="avatarInput" accept="image/*" />
+    <img id="avatarPreview" class="avatar-preview" alt="Avatar preview" />
+
     <button type="submit">Save Profile</button>
   </form>
-  <div id="message" class="message"></div>
+
+  <div id="message" class="message" aria-live="polite"></div>
 
   <script src="profile.js"></script>
 </body>
 </html>
-
