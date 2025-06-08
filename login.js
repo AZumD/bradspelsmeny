@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
+      localStorage.setItem("userData", JSON.stringify(data.user));
 
       alert(`👋 Welcome back, ${data.user.first_name}!`);
       window.location.href = "index.html"; // Or guest homepage
