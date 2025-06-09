@@ -133,6 +133,7 @@ async function fetchProfile() {
 
 async function loadFriends(viewUserId = null) {
   const targetUserId = viewUserId || getUserIdFromToken();
+  const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
 
   try {
     const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
@@ -141,7 +142,7 @@ async function loadFriends(viewUserId = null) {
     const friendsList = document.getElementById("friendsList");
     friendsList.innerHTML = "";
 
-    if (!friends.length) {
+    if (!friends.length && !isOwnProfile) {
       friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
       return;
     }
@@ -157,12 +158,24 @@ async function loadFriends(viewUserId = null) {
       friendsList.appendChild(img);
     }
 
+    // 👇 Add the "+" button if you're viewing your own profile
+    if (isOwnProfile) {
+      const plusBtn = document.createElement("div");
+      plusBtn.className = "add-friend-circle";
+      plusBtn.innerHTML = "+";
+      plusBtn.title = "Add Friend";
+      plusBtn.onclick = () => {
+        document.getElementById("addFriendModal").style.display = "flex";
+      };
+      friendsList.appendChild(plusBtn);
+    }
+
   } catch (err) {
     console.error("❌ Failed to load friends:", err);
-    const fallback = document.getElementById("friendsList");
-    fallback.innerHTML = `<div class="placeholder-box">Could not load friends.</div>`;
+    document.getElementById("friendsList").innerHTML = `<div class="placeholder-box">Could not load friends.</div>`;
   }
 }
+
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
   if (!currentUserId || !profileId || currentUserId === profileId) return;
