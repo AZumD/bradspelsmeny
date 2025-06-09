@@ -69,6 +69,64 @@ function getUserIdFromToken() {
     return null;
   }
 }
+const userId = localStorage.getItem("userId"); // current logged in user
+const profileId = new URLSearchParams(window.location.search).get("id"); // viewing someone else's profile
+
+const addFriendBtn = document.getElementById("addFriendBtn");
+
+if (userId && profileId && userId !== profileId) {
+  addFriendBtn.style.display = "inline-block";
+
+  addFriendBtn.addEventListener("click", async () => {
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await fetch(`${API_BASE}/friends`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ friendId: profileId }),
+      });
+
+      if (res.ok) {
+        alert("Friend request sent!");
+        addFriendBtn.disabled = true;
+        addFriendBtn.textContent = "Request Sent";
+      } else {
+        alert("Failed to add friend.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+}
+
+// Load friend avatars (fake data for now)
+function loadFriends(friends) {
+  const friendsList = document.getElementById("friendsList");
+  friendsList.innerHTML = ""; // clear
+
+  if (!friends.length) {
+    friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
+    return;
+  }
+
+  for (const friend of friends) {
+    const img = document.createElement("img");
+    img.src = friend.avatarUrl || "../img/avatar-placeholder.webp";
+    img.classList.add("friend-avatar");
+    img.title = friend.name;
+    img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
+    friendsList.appendChild(img);
+  }
+}
+
+// Example dummy usage:
+loadFriends([
+  { id: 2, name: "Klara", avatarUrl: "../img/klara-avatar.png" },
+  { id: 3, name: "Jonathan", avatarUrl: "../img/jonathan-avatar.png" },
+]);
 
 // Get "id" param from URL query string
 function getUserIdFromUrl() {
