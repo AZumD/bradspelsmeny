@@ -54,6 +54,46 @@
       margin-bottom: 6px;
       color: #6b3e0a;
     }
+.friends-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.friend-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #d9b370;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.friend-avatar:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.add-friend-btn {
+  background-color: #d9b370;
+  color: #5a2a0c;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #6b3e0a;
+  transition: background-color 0.3s ease;
+}
+
+.add-friend-btn:hover {
+  background-color: #c9a04e;
+  box-shadow: 2px 2px 0 #3f1f00;
+  color: #3f1f00;
+}
 
     .email {
       text-align: center;
@@ -172,6 +212,14 @@
       <div class="section-title">Parties</div>
       <div class="placeholder-box">Your parties and groups will show up here.</div>
     </div>
+<div>
+  <div class="section-title">Friends</div>
+  <div id="friendsList" class="friends-grid">
+    <!-- Friends will be injected here -->
+  </div>
+  <button id="addFriendBtn" class="add-friend-btn" style="display:none;">➕ Add Friend</button>
+</div>
+
 
    <div>
   <div class="section-title">Game Log</div>
