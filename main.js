@@ -321,6 +321,7 @@ function updateTopBar() {
   }
 
  logoutBtn.innerHTML = ""; // clear previous content
+
 if (userData) {
   logoutBtn.textContent = "Log out";
   logoutBtn.onclick = () => {
@@ -334,7 +335,11 @@ if (userData) {
     <button onclick="window.location.href='login.html'">Log in</button>
     <button onclick="window.location.href='register.html'">Register</button>
   `;
+} else {
+  // Neither logged in nor guest
+  logoutBtn.style.display = 'none'; // or keep it empty if you prefer
 }
+
 
 
 }
