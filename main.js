@@ -1,5 +1,3 @@
-How did we handle categories? Is it with tags? 
-
 // 🌍 Location settings
 const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
