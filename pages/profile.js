@@ -32,7 +32,6 @@ async function fetchWithAuth(url, options = {}) {
   let response = await fetch(url, options);
 
   if (response.status === 401 || response.status === 403) {
-    // Try refreshing access token
     const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,17 +39,15 @@ async function fetchWithAuth(url, options = {}) {
     });
 
     if (!refreshResponse.ok) {
-      // Refresh token invalid or expired → force logout
       clearTokens();
       window.location.href = '/login.html';
       throw new Error('Session expired. Please log in again.');
     }
 
     const data = await refreshResponse.json();
-    const newAccessToken = data.token || data.accessToken; // Support either naming
+    const newAccessToken = data.token || data.accessToken;
     setAccessToken(newAccessToken);
 
-    // Retry original request with new access token
     options.headers['Authorization'] = `Bearer ${newAccessToken}`;
     response = await fetch(url, options);
   }
@@ -58,7 +55,6 @@ async function fetchWithAuth(url, options = {}) {
   return response;
 }
 
-// Extract user ID from JWT token payload
 function getUserIdFromToken() {
   const token = getAccessToken();
   if (!token) return null;
@@ -69,66 +65,7 @@ function getUserIdFromToken() {
     return null;
   }
 }
-const userId = localStorage.getItem("userId"); // current logged in user
-const profileId = new URLSearchParams(window.location.search).get("id"); // viewing someone else's profile
 
-const addFriendBtn = document.getElementById("addFriendBtn");
-
-if (userId && profileId && userId !== profileId) {
-  addFriendBtn.style.display = "inline-block";
-
-  addFriendBtn.addEventListener("click", async () => {
-    try {
-      const token = localStorage.getItem("userToken");
-      const res = await fetch(`${API_BASE}/friends`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ friendId: profileId }),
-      });
-
-      if (res.ok) {
-        alert("Friend request sent!");
-        addFriendBtn.disabled = true;
-        addFriendBtn.textContent = "Request Sent";
-      } else {
-        alert("Failed to add friend.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  });
-}
-
-// Load friend avatars (fake data for now)
-function loadFriends(friends) {
-  const friendsList = document.getElementById("friendsList");
-  friendsList.innerHTML = ""; // clear
-
-  if (!friends.length) {
-    friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
-    return;
-  }
-
-  for (const friend of friends) {
-    const img = document.createElement("img");
-    img.src = friend.avatarUrl || "../img/avatar-placeholder.webp";
-    img.classList.add("friend-avatar");
-    img.title = friend.name;
-    img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
-    friendsList.appendChild(img);
-  }
-}
-
-// Example dummy usage:
-loadFriends([
-  { id: 2, name: "Klara", avatarUrl: "../img/klara-avatar.png" },
-  { id: 3, name: "Jonathan", avatarUrl: "../img/jonathan-avatar.png" },
-]);
-
-// Get "id" param from URL query string
 function getUserIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
@@ -145,8 +82,6 @@ async function fetchProfile() {
 
   const urlUserId = getUserIdFromUrl();
   const loggedInUserId = getUserIdFromToken();
-
-  // Determine which user ID to fetch: URL param or logged-in user
   const userIdToFetch = urlUserId && urlUserId !== String(loggedInUserId)
     ? urlUserId
     : loggedInUserId;
@@ -163,41 +98,107 @@ async function fetchProfile() {
 
     const data = await res.json();
 
-    // Show username instead of full name and email
     document.getElementById('username').textContent = data.username || 'Unknown user';
 
-    // Hide fullName and email elements if they exist
-    const fullNameElem = document.getElementById('fullName');
-    if(fullNameElem) fullNameElem.style.display = 'none';
-
     const emailElem = document.getElementById('email');
-    if(emailElem) emailElem.style.display = 'none';
+    if (emailElem) emailElem.style.display = 'none';
 
     document.getElementById('bio').textContent = data.bio || '';
 
-    // If avatar_url is relative path, prepend API_BASE
     let avatarUrl = data.avatar_url || `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
     if (avatarUrl && !avatarUrl.startsWith('http')) {
       avatarUrl = API_BASE + avatarUrl;
     }
-    
+
     const avatarElem = document.getElementById('avatar');
     avatarElem.src = avatarUrl;
     avatarElem.alt = `Avatar of ${data.username || 'user'}`;
 
-    // Show "Edit Profile" button only if viewing own profile
     const editBtn = document.getElementById('editProfileBtn');
     if (String(userIdToFetch) === String(loggedInUserId)) {
       editBtn.style.display = 'block';
+      loadFriends(); // own profile → load your own friends
     } else {
       editBtn.style.display = 'none';
+      loadFriends(userIdToFetch); // not your own → load target user's friends
+      maybeShowAddFriendButton(loggedInUserId, userIdToFetch);
     }
 
-    // Fetch game log (backend will handle permission)
     fetchGameLog(userIdToFetch);
 
   } catch (err) {
     alert('Error loading profile: ' + err.message);
+  }
+}
+
+async function loadFriends(viewUserId = null) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
+    const currentUserFriends = await res.json();
+
+    const targetId = viewUserId || getUserIdFromToken();
+
+    const friendData = (targetId === getUserIdFromToken())
+      ? currentUserFriends
+      : currentUserFriends.filter(f => f.id == targetId);
+
+    const friendsList = document.getElementById("friendsList");
+    friendsList.innerHTML = "";
+
+    if (!friendData.length) {
+      friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
+      return;
+    }
+
+    for (const friend of friendData) {
+      const img = document.createElement("img");
+      img.src = friend.avatar_url
+        ? (friend.avatar_url.startsWith('http') ? friend.avatar_url : API_BASE + friend.avatar_url)
+        : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
+      img.classList.add("friend-avatar");
+      img.title = `${friend.first_name} ${friend.last_name}`;
+      img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
+      friendsList.appendChild(img);
+    }
+
+  } catch (err) {
+    console.error("❌ Failed to load friends:", err);
+  }
+}
+
+async function maybeShowAddFriendButton(currentUserId, profileId) {
+  if (!currentUserId || !profileId || currentUserId === profileId) return;
+
+  const addFriendBtn = document.getElementById("addFriendBtn");
+  if (!addFriendBtn) return;
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
+    const friends = await res.json();
+
+    const alreadyFriend = friends.some(f => f.id == profileId);
+    if (!alreadyFriend) {
+      addFriendBtn.style.display = "inline-block";
+      addFriendBtn.addEventListener("click", async () => {
+        try {
+          const res = await fetchWithAuth(`${API_BASE}/friends/${profileId}`, {
+            method: 'POST'
+          });
+
+          if (res.ok) {
+            addFriendBtn.disabled = true;
+            addFriendBtn.textContent = "✅ Friend Added";
+          } else {
+            const err = await res.json();
+            alert("Failed to add friend: " + err.error);
+          }
+        } catch (err) {
+          console.error('❌ Friend add failed:', err);
+        }
+      });
+    }
+  } catch (err) {
+    console.error('❌ Error checking friends:', err);
   }
 }
 
