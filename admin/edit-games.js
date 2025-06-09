@@ -38,7 +38,6 @@ async function fetchWithAdminAuth(url, options = {}, retry = true) {
 
   let res = await fetch(url, options);
   if (res.status === 401 && retry) {
-    // Try refreshing the token
     const refreshed = await refreshAdminToken();
     if (refreshed) {
       options.headers['Authorization'] = `Bearer ${localStorage.getItem("adminToken")}`;
@@ -53,7 +52,6 @@ async function fetchWithAdminAuth(url, options = {}, retry = true) {
   return res;
 }
 
-// Redirect to login if no token found
 if (!localStorage.getItem("adminToken")) {
   window.location.href = "login.html";
 }
@@ -68,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slowDayOnly = document.getElementById("slowDayOnly");
   const trustedOnly = document.getElementById("trustedOnly");
+  const membersOnly = document.getElementById("membersOnly");
   const staffPicks = document.getElementById("staffPicks");
   const minTableSize = document.getElementById("minTableSize");
   const conditionRatingValue = document.getElementById("conditionRatingValue");
@@ -101,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (loadingSpinner) loadingSpinner.style.display = "block";
 
       const res = await fetchWithAdminAuth(`${API_BASE}/games`);
-
       if (!res.ok) throw new Error("Failed to fetch games");
 
       games = await res.json();
@@ -170,9 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const game = isNew ? {} : games[index];
 
     gameForm.reset();
-    document.getElementById("formTitle").textContent = isNew
-      ? "Lägg till spel"
-      : "Redigera spel";
+    document.getElementById("formTitle").textContent = isNew ? "Lägg till spel" : "Redigera spel";
     document.getElementById("editingIndex").value = isNew ? "" : game.id;
     document.getElementById("title").value = game.title_sv || "";
     document.getElementById("descSv").value = game.description_sv || "";
@@ -181,21 +177,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("maxPlayers").value = game.max_players || "";
     document.getElementById("time").value = game.play_time || "";
     document.getElementById("age").value = game.age || "";
-    document.getElementById("tags").value =
-      typeof game.tags === "string"
-        ? game.tags
-        : (game.tags || []).join(", ");
+    document.getElementById("tags").value = typeof game.tags === "string" ? game.tags : (game.tags || []).join(", ");
     document.getElementById("img").value = game.img || "";
     document.getElementById("rules").value = game.rules || "";
     slowDayOnly.checked = !!game.slow_day_only;
     trustedOnly.checked = !!game.trusted_only;
+    membersOnly.checked = !!game.members_only;
     minTableSize.value = game.min_table_size || "";
     conditionRatingValue.value = game.condition_rating || 0;
+
     try {
-      const picks =
-        typeof game.staff_picks === "string"
-          ? JSON.parse(game.staff_picks)
-          : game.staff_picks;
+      const picks = typeof game.staff_picks === "string" ? JSON.parse(game.staff_picks) : game.staff_picks;
       staffPicks.value = Array.isArray(picks) ? picks.join(", ") : "";
     } catch {
       staffPicks.value = "";
@@ -223,21 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = document.getElementById("img").value.trim();
       const slow_day_only = slowDayOnly.checked;
       const trusted_only = trustedOnly.checked;
-      const staff_picks = staffPicks.value
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const members_only = membersOnly.checked;
+      const staff_picks = staffPicks.value.split(",").map((s) => s.trim()).filter(Boolean);
 
-      if (
-        !title_sv ||
-        !description_sv ||
-        !description_en ||
-        !min_players ||
-        !play_time ||
-        !age ||
-        !tags ||
-        !img
-      ) {
+      if (!title_sv || !description_sv || !description_en || !min_players || !play_time || !age || !tags || !img) {
         alert("Vänligen fyll i alla obligatoriska fält.");
         return;
       }
@@ -255,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("img", img);
       formData.append("slow_day_only", slow_day_only);
       formData.append("trusted_only", trusted_only);
+      formData.append("members_only", members_only);
       formData.append("staff_picks", JSON.stringify(staff_picks));
 
       const condition_rating_val = conditionRatingValue.value;
