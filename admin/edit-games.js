@@ -2,9 +2,59 @@ let games = [];
 let editingIndex = null;
 
 const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
-const TOKEN = localStorage.getItem("adminToken");
 
-if (!TOKEN) {
+async function refreshAdminToken() {
+  const refreshToken = localStorage.getItem("adminRefreshToken");
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch(`${API_BASE}/admin/refresh-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem("adminToken", data.token);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchWithAdminAuth(url, options = {}, retry = true) {
+  if (!options.headers) options.headers = {};
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+  options.headers['Authorization'] = `Bearer ${token}`;
+
+  let res = await fetch(url, options);
+  if (res.status === 401 && retry) {
+    // Try refreshing the token
+    const refreshed = await refreshAdminToken();
+    if (refreshed) {
+      options.headers['Authorization'] = `Bearer ${localStorage.getItem("adminToken")}`;
+      res = await fetch(url, options);
+    } else {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken");
+      window.location.href = "login.html";
+      return;
+    }
+  }
+  return res;
+}
+
+// Redirect to login if no token found
+if (!localStorage.getItem("adminToken")) {
   window.location.href = "login.html";
 }
 
@@ -19,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const slowDayOnly = document.getElementById("slowDayOnly");
   const trustedOnly = document.getElementById("trustedOnly");
   const staffPicks = document.getElementById("staffPicks");
+  const minTableSize = document.getElementById("minTableSize");
+  const conditionRatingValue = document.getElementById("conditionRatingValue");
 
   addGameButton?.addEventListener("click", () => openModal());
   gameModal?.addEventListener("click", (e) => {
@@ -43,29 +95,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
- async function fetchGames() {
-  try {
-    gameList.innerHTML = "";
-    if (loadingSpinner) loadingSpinner.style.display = "block";
+  async function fetchGames() {
+    try {
+      gameList.innerHTML = "";
+      if (loadingSpinner) loadingSpinner.style.display = "block";
 
-    const res = await fetch(`${API_BASE}/games`, {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`
-      }
-    });
+      const res = await fetchWithAdminAuth(`${API_BASE}/games`);
 
-    if (!res.ok) throw new Error("Failed to fetch games");
+      if (!res.ok) throw new Error("Failed to fetch games");
 
-    games = await res.json();
-    displayGames(games);
-  } catch (err) {
-    gameList.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
-    console.error(err);
-  } finally {
-    if (loadingSpinner) loadingSpinner.style.display = "none";
+      games = await res.json();
+      displayGames(games);
+    } catch (err) {
+      gameList.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
+      console.error(err);
+    } finally {
+      if (loadingSpinner) loadingSpinner.style.display = "none";
+    }
   }
-}
-
 
   function displayGames(gamesToShow) {
     gameList.innerHTML = "";
@@ -106,11 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = games[index].id;
     if (!confirm("Vill du verkligen ta bort spelet?")) return;
     try {
-      const res = await fetch(`${API_BASE}/games/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
+      const res = await fetchWithAdminAuth(`${API_BASE}/games/${id}`, {
+        method: "DELETE"
       });
       if (!res.ok) throw new Error("Delete failed");
       await fetchGames();
@@ -213,12 +257,12 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("trusted_only", trusted_only);
       formData.append("staff_picks", JSON.stringify(staff_picks));
 
-      const condition_rating_val = document.getElementById("conditionRatingValue").value;
+      const condition_rating_val = conditionRatingValue.value;
       if (condition_rating_val !== "" && !isNaN(condition_rating_val)) {
         formData.append("condition_rating", parseInt(condition_rating_val));
       }
 
-      const min_table_size_val = document.getElementById("minTableSize").value;
+      const min_table_size_val = minTableSize.value;
       if (min_table_size_val !== "") {
         formData.append("min_table_size", parseInt(min_table_size_val));
       }
@@ -228,11 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const method = id ? "PUT" : "POST";
 
       try {
-        const res = await fetch(url, {
+        const res = await fetchWithAdminAuth(url, {
           method,
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${TOKEN}`,
+            "Content-Type": "application/x-www-form-urlencoded"
           },
           body: formData.toString(),
         });
