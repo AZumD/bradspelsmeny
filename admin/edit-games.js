@@ -209,8 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("age", age);
       formData.append("tags", tags);
       formData.append("img", img);
-      formData.append("slow_day_only", slow_day_only);
-      formData.append("trusted_only", trusted_only);
+      formData.append("slow_day_only", slow_day_only ? 1 : 0);
+      formData.append("trusted_only", trusted_only ? 1 : 0);
       formData.append("staff_picks", JSON.stringify(staff_picks));
 
       const condition_rating_val = document.getElementById("conditionRatingValue").value;
