@@ -49,6 +49,7 @@ const translations = {
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 let currentLang = 'en';
 let currentCategory = 'all';
+let games = [];
 
 function isTokenExpired(token) {
   try {
@@ -119,9 +120,6 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
-
-const profileBtn = document.getElementById('profileBtn');
-const userStatus = document.getElementById('userStatus');
 
 function updateUserStatus(user) {
   userStatus.textContent = `Hi, ${user.first_name}!`;
