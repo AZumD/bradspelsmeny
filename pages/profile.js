@@ -164,7 +164,6 @@ async function loadFriends(viewUserId = null) {
   }
 }
 
-
 async function maybeShowAddFriendButton(currentUserId, profileId) {
   if (!currentUserId || !profileId || currentUserId === profileId) return;
 
