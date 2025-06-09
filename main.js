@@ -75,7 +75,6 @@ function removeTokens() {
 
 function logoutUser() {
   removeTokens();
-  alert('Session expired. Please log in again.');
   window.location.href = 'login.html';
 }
 
@@ -132,7 +131,8 @@ function updateUserStatus(user) {
 
 profileBtn.onclick = () => {
   window.location.href = './pages/profile.html';
-};
+}
+
 
 let games = [];
 let currentCategory = 'all';
@@ -328,9 +328,35 @@ function updateTopBar() {
   }
 
   logoutBtn.addEventListener("click", () => {
-    removeTokens();
-    location.reload();
-  });
+  removeTokens();
+  localStorage.removeItem("userData");
+  localStorage.removeItem("guestUser");
+
+  // Show welcome modal again
+  const welcomeModal = document.getElementById("welcomeModal");
+  if (welcomeModal) {
+    welcomeModal.classList.add("show");
+  }
+
+  // Clear userStatus and hide profile button
+  document.getElementById("userStatus").textContent = "";
+  if (profileBtn) profileBtn.style.display = "none";
+
+  // Clear game list to prevent errors
+  document.getElementById("gameList").innerHTML = "";
+
+  // Reset search bar
+  const searchBar = document.getElementById('searchBar');
+  if (searchBar) searchBar.value = '';
+
+  // Reset category to 'all' and rerender categories to update badges
+  currentCategory = 'all';
+  renderCategories();
+
+  // Optionally, focus a button in the welcome modal here
+});
+
+
 }
 
 
@@ -351,7 +377,7 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const userToken = localStorage.getItem('userToken');
+const userToken = localStorage.getItem('userToken');
 const refreshToken = localStorage.getItem('refreshToken');
 
 if (userToken && isTokenExpired(userToken)) {
