@@ -1,29 +1,83 @@
-// 🔒 Check for valid admin token
-(function () {
+// 🔒 Check for valid admin token immediately
+(async function () {
   const token = localStorage.getItem("adminToken");
   if (!token) {
     alert("Du måste vara inloggad för att se denna sida.");
     window.location.href = "login.html";
   } else {
-    fetchStats(token);
+    try {
+      await fetchStats();
+      await fetchOrders();
+    } catch {
+      // If fetching fails due to auth, handled in fetchWithAdminAuth
+    }
   }
 })();
 
 // ✅ Admin dashboard loaded
 console.log("✅ Admin dashboard loaded.");
 
-async function fetchStats(token) {
+// Refresh admin token using stored refresh token
+async function refreshAdminToken() {
+  const refreshToken = localStorage.getItem("adminRefreshToken");
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/admin/refresh-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken");
+      return false;
+    }
+
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem("adminToken", data.token);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// Wrapper fetch that automatically refreshes token if expired
+async function fetchWithAdminAuth(url, options = {}, retry = true) {
+  if (!options.headers) options.headers = {};
+  const token = localStorage.getItem("adminToken");
+  if (token) {
+    options.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let res = await fetch(url, options);
+
+  if (res.status === 401 && retry) {
+    const refreshed = await refreshAdminToken();
+    if (refreshed) {
+      options.headers["Authorization"] = `Bearer ${localStorage.getItem("adminToken")}`;
+      res = await fetch(url, options);
+    } else {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken");
+      alert("Din session har gått ut. Vänligen logga in igen.");
+      window.location.href = "login.html";
+      throw new Error("Unauthorized, please login again.");
+    }
+  }
+  return res;
+}
+
+async function fetchStats() {
   try {
     const [totalGamesRes, lentOutRes, mostLentRes] = await Promise.all([
-      fetch("https://bradspelsmeny-backend-production.up.railway.app/stats/total-games", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      fetch("https://bradspelsmeny-backend-production.up.railway.app/stats/lent-out", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      fetch("https://bradspelsmeny-backend-production.up.railway.app/stats/most-lent-this-month", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/stats/total-games"),
+      fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/stats/lent-out"),
+      fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/stats/most-lent-this-month"),
     ]);
 
     if (!totalGamesRes.ok || !lentOutRes.ok || !mostLentRes.ok) {
@@ -51,12 +105,9 @@ async function fetchStats(token) {
 
 async function fetchOrders() {
   try {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game/latest", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/order-game/latest");
+    if (!res.ok) throw new Error("Failed to fetch orders");
+
     const orders = await res.json();
 
     const container = document.getElementById("orderFeed");
@@ -88,23 +139,20 @@ async function fetchOrders() {
 }
 
 async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
-  const token = localStorage.getItem("adminToken");
-
   try {
-    const usersRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const usersRes = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/users");
+    if (!usersRes.ok) {
+      alert("❌ Failed to fetch users.");
+      return;
+    }
     const users = await usersRes.json();
 
     let user = users.find(u => u.phone === phone);
 
     if (!user) {
-      const userRes = await fetch("https://bradspelsmeny-backend-production.up.railway.app/users", {
+      const userRes = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/users", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
       });
 
@@ -116,19 +164,25 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
       user = await userRes.json();
     }
 
-    await fetch(`https://bradspelsmeny-backend-production.up.railway.app/lend/${gameId}`, {
+    const lendRes = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/lend/${gameId}`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id, note: `Table ${tableId}` })
     });
 
-    await fetch(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+    if (!lendRes.ok) {
+      alert("❌ Failed to lend out game.");
+      return;
+    }
+
+    const deleteOrderRes = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}`, {
+      method: "DELETE"
     });
+
+    if (!deleteOrderRes.ok) {
+      alert("❌ Failed to delete order.");
+      return;
+    }
 
     alert("✅ Order completed and game lent out.");
     fetchOrders();
@@ -140,13 +194,16 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
 }
 
 async function clearAllOrders() {
-  const token = localStorage.getItem("adminToken");
-
   try {
-    await fetch("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+    const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
+      method: "DELETE"
     });
+
+    if (!res.ok) {
+      alert("❌ Failed to clear orders.");
+      return;
+    }
+
     fetchOrders();
   } catch (err) {
     console.error("❌ Failed to clear orders:", err);
@@ -154,9 +211,9 @@ async function clearAllOrders() {
 }
 
 setInterval(fetchOrders, 5000);
-document.addEventListener("DOMContentLoaded", fetchOrders);
 
 function logout() {
   localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminRefreshToken");
   window.location.href = "login.html";
 }
