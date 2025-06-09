@@ -320,7 +320,11 @@ function updateTopBar() {
     profileBtn.style.display = 'none';
   }
 
- logoutBtn.innerHTML = ""; // clear previous content
+ logoutBtn.innerHTML = `
+  <button class="nice-button" onclick="window.location.href='login.html'">Log In</button>
+  <button class="nice-button" onclick="window.location.href='register.html'">Register</button>
+`;
+
 
 if (userData) {
   logoutBtn.textContent = "Log out";
