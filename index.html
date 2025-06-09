@@ -29,14 +29,21 @@
       background-color: #8c3c1a;
       color: white;
       width: 100%;
-      padding: 1rem 1.5rem;
+      padding: 6px 12px;
       font-size: 0.8rem;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 4px 0 #4a1f0f;
       box-sizing: border-box;
     }
+    #authContainer {
+  margin-left: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
     #topBar div {
       display: flex;
       align-items: center;
@@ -45,6 +52,18 @@
     #userStatus {
       font-weight: bold;
     }
+    #burgerBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: none; /* visible on mobile */
+}
+#authButtons {
+  display: flex;
+  gap: 6px;
+}
 
   
 
@@ -271,10 +290,28 @@
       width: 100%;
       margin: 0 auto;
     }
-    @media (min-width: 769px) {
-      #gameList {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      }
+    @media (max-width: 600px) {
+  #burgerBtn {
+    display: block;
+  }
+
+  #authButtons {
+    position: absolute;
+    right: 0;
+    top: 38px;
+    background-color: #444;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 6px;
+    border-radius: 4px;
+    display: none;
+  }
+
+  #authButtons.show {
+    display: flex;
+  }
+}
+
     }
     .game-card {
       background: #fff4d9;
@@ -456,6 +493,8 @@
 <body>
   <div id="topBar">
   <div id="userStatus"></div>
+  <div id="authContainer">
+  <button id="burgerBtn">☰</button>
   <div id="authButtons">
     <button id="profileBtn" class="nice-button" style="display: none;">Profile</button>
     <button id="logoutBtn" class="nice-button" style="display: none;">Log out</button>
