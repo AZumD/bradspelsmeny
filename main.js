@@ -139,7 +139,87 @@ function isMemberUser() {
   }
 }
 
-// [... unchanged code ...]
+function renderCategories() {
+  const badgeContainer = document.getElementById('categoryBadges');
+  badgeContainer.innerHTML = '';
+
+  for (const tag in translations[currentLang].categories) {
+    const badge = document.createElement('div');
+    badge.className = 'category-badge';
+    if (tag === currentCategory) badge.classList.add('active');
+    badge.textContent = translations[currentLang].categories[tag];
+    badge.onclick = async () => {
+      currentCategory = tag;
+      renderCategories();
+      await renderGames();
+    };
+    badgeContainer.appendChild(badge);
+  }
+}
+
+function bindOrderButtons() {
+  const buttons = document.querySelectorAll(".order-button");
+  buttons.forEach(button => {
+    button.addEventListener("click", (e) => {
+      const userData = localStorage.getItem("userData");
+      const gameCard = e.target.closest(".game-card");
+      const gameId = gameCard.dataset.gameId;
+
+      const modal = document.getElementById("orderModal");
+      const userFields = document.getElementById("userFields");
+      const notice = document.getElementById("loggedInNotice");
+      const orderForm = document.getElementById("orderForm");
+
+      orderForm.reset();
+      modal.dataset.gameId = gameId;
+
+      if (userData) {
+        if (userFields) {
+          userFields.style.display = "none";
+          // disable all inputs and selects inside userFields
+          const inputs = userFields.querySelectorAll("input, select");
+          inputs.forEach(input => input.disabled = true);
+        }
+        if (notice) notice.style.display = "block";
+      } else {
+        if (userFields) {
+          userFields.style.display = "block";
+          // enable all inputs and selects inside userFields
+          const inputs = userFields.querySelectorAll("input, select");
+          inputs.forEach(input => input.disabled = false);
+        }
+        if (notice) notice.style.display = "none";
+      }
+
+      modal.style.display = "flex";
+    });
+  });
+}
+
+function continueAsGuest() {
+  localStorage.setItem("guestUser", "true");
+  const welcomeModal = document.getElementById("welcomeModal");
+  welcomeModal?.classList.remove("show");
+  updateTopBar();
+}
+window.continueAsGuest = continueAsGuest;
+
+
+async function setLanguage(lang) {
+  currentLang = lang;
+  currentCategory = 'all';
+  renderCategories();
+  renderIntro();
+  await renderGames();
+}
+
+function renderIntro() {
+  document.getElementById('intro').textContent = translations[currentLang].intro;
+}
+
+
+window.setLanguage = setLanguage;
+
 
 async function renderGames() {
   const container = document.getElementById('gameList');
