@@ -304,6 +304,7 @@ async function renderGames() {
 function updateTopBar() {
   const userStatus = document.getElementById("userStatus");
   const logoutBtn = document.getElementById("logoutBtn");
+  const profileBtn = document.getElementById("profileBtn");
   const userData = localStorage.getItem("userData");
   const guestUser = localStorage.getItem("guestUser");
 
@@ -315,30 +316,38 @@ function updateTopBar() {
 
     userStatus.textContent = `${name}`;
     profileBtn.style.display = 'inline-block';
-  } else {
-    userStatus.textContent = guestUser ? `Logged in as guest` : '';
+    profileBtn.classList.add("nice-button");
+
+    logoutBtn.style.display = 'inline-block';
+    logoutBtn.className = 'nice-button';
+    logoutBtn.textContent = "Log out";
+    logoutBtn.onclick = () => {
+      removeTokens();
+      localStorage.removeItem("userData");
+      localStorage.removeItem("guestUser");
+      location.reload();
+    };
+
+  } else if (guestUser) {
+    userStatus.textContent = `Logged in as guest`;
     profileBtn.style.display = 'none';
-  }
+    profileBtn.classList.remove("nice-button");
 
- logoutBtn.style.display = 'inline-block';
-logoutBtn.className = 'nice-button';
+    logoutBtn.style.display = 'inline-block';
+    logoutBtn.className = 'nice-button';
+    logoutBtn.textContent = "Log in";
+    logoutBtn.onclick = () => {
+      window.location.href = 'login.html';
+    };
 
-if (userData) {
-  logoutBtn.textContent = "Log out";
-  logoutBtn.onclick = () => {
-    removeTokens();
-    localStorage.removeItem("userData");
-    localStorage.removeItem("guestUser");
-    location.reload();
-  };
-} else if (guestUser) {
-  logoutBtn.textContent = "Log in";
-  logoutBtn.onclick = () => {
-    window.location.href = 'login.html';
-  };
-} else {
-  logoutBtn.style.display = 'none';
-}
+  } else {
+    userStatus.textContent = '';
+    profileBtn.style.display = 'none';
+    profileBtn.classList.remove("nice-button");
+
+    logoutBtn.style.display = 'none';
+    logoutBtn.classList.remove("nice-button");
+
 
 
 
