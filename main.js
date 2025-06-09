@@ -478,7 +478,7 @@ if (userToken && isTokenExpired(userToken)) {
       if (!res.ok) throw new Error("Failed to order game");
 
       // Show confirmation message
-      alert("🎉 Your game order was placed successfully!");
+      alert("🎉 Your game order was placed successfully! Have patience and we'll come out to you with it as soon as we can!");
 
       orderModal.style.display = "none";
       orderForm.reset();
