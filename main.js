@@ -284,7 +284,7 @@ async function renderGames() {
     card.innerHTML = `
   <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
   <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
-  <div class="order-button">🎲 Order to Table</div>
+  <div class="order-button">Order to Table</div>
   <div class="game-info">
     <p>${description}</p>
     ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
