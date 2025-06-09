@@ -258,14 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (String(myId) === String(viewedId)) {
     // Show manual add-friend section
-    document.getElementById("manualAddFriendWrapper").style.display = "block";
 
     const modal = document.getElementById("addFriendModal");
-    const openBtn = document.getElementById("manualAddFriendBtn");
     const closeBtn = document.getElementById("closeModalBtn");
     const submitBtn = document.getElementById("submitFriendRequest");
-
-    openBtn.onclick = () => modal.style.display = "flex";
     closeBtn.onclick = () => modal.style.display = "none";
     window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
