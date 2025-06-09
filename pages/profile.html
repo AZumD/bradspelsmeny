@@ -116,24 +116,26 @@
   cursor: pointer;
 }
 
-.add-friend-btn {
-  background-color: #d9b370;
-  color: #5a2a0c;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.75rem;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 6px;
+.add-friend-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px dashed #d9b370;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d9b370;
+  font-size: 1.5rem;
+  background-color: transparent;
   cursor: pointer;
-  box-shadow: 2px 2px 0 #6b3e0a;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.add-friend-btn:hover {
-  background-color: #c9a04e;
-  box-shadow: 2px 2px 0 #3f1f00;
-  color: #3f1f00;
+.add-friend-circle:hover {
+  background-color: #fff3d6;
+  transform: scale(1.1);
 }
+
 
     .email {
       text-align: center;
