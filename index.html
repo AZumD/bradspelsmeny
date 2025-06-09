@@ -14,7 +14,6 @@
       overflow-x: hidden;
       position: relative;
       background: transparent;
-    
       height: auto;
       display: flex;
       flex-direction: column;
@@ -60,20 +59,26 @@
       display: none;
       font-weight: bold;
     }
-    #logoutBtn button {
-  background: #444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  margin-left: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-#logoutBtn button:hover {
-  background: #666;
-}
+    
+    /* Fixed: Styled auth buttons to match other buttons */
+    .auth-button {
+      background: #e6b35c !important;
+      color: #3c2415 !important;
+      border: 2px solid #3c2415 !important;
+      border-radius: 4px !important;
+      padding: 0.3rem 0.6rem !important;
+      font-family: 'Press Start 2P', monospace !important;
+      font-size: 0.6rem !important;
+      cursor: pointer !important;
+      box-shadow: 2px 2px 0 #c19761 !important;
+      margin-left: 8px !important;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    
+    .auth-button:hover {
+      background-color: #d3a34a !important;
+      box-shadow: 1px 1px 0 #8b5e09 !important;
+    }
     
     #profileBtn:hover, #logoutBtn:hover {
       background-color: #d3a34a;
@@ -121,7 +126,6 @@
       width: 100%;
       height: auto;
       border-radius: 6px;
-      /* Removed box-shadow as requested */
     }
 
     /* Language toggle */
@@ -190,26 +194,26 @@
       width: 100%;
     }
     .order-button {
-  background: #e6b35c;
-  color: #3c2415;
-  border: 2px solid #3c2415;
-  border-radius: 4px;
-  padding: 0.3rem 0.6rem;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  cursor: pointer;
-  box-shadow: 2px 2px 0 #c19761;
-  user-select: none;
-  max-width: max-content;
-  margin: 0.6rem auto 0 auto;
-  text-align: center;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #c19761;
+      user-select: none;
+      max-width: max-content;
+      margin: 0.6rem auto 0 auto;
+      text-align: center;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
 
-.order-button:hover {
-  background-color: #d3a34a;
-  box-shadow: 1px 1px 0 #8b5e09;
-}
+    .order-button:hover {
+      background-color: #d3a34a;
+      box-shadow: 1px 1px 0 #8b5e09;
+    }
 
     .category-badge {
       font-family: 'Press Start 2P', monospace;
@@ -261,21 +265,20 @@
       padding-bottom: 3rem;
     }
    #categoryHeading {
-  width: 100%;
-  max-width: 1000px;
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #3c2415;
-  user-select: none;
-
-  background: #fff4d9;
-  border: 2px solid #3c2415;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-  box-shadow: 4px 4px 0 #c19761;
-}
+      width: 100%;
+      max-width: 1000px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #3c2415;
+      user-select: none;
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      box-shadow: 4px 4px 0 #c19761;
+    }
 
     /* Loading spinner */
     .loading-spinner {
@@ -322,7 +325,7 @@
       max-width: 320px;
       margin-left: auto;
       margin-right: auto;
-      font-family: Verdana, Geneva, Tahoma, sans-serif; /* more readable font */
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
       font-size: 0.8rem;
       color: #3c2415;
     }
@@ -344,237 +347,535 @@
       font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
     .game-info h3 {
-      margin: 0 0 10px;
-      font-weight: bold;
-      word-wrap: break-word;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      margin-bottom: 10px;
     }
     .game-info p {
-      word-wrap: break-word;
-    }
-    .game-info a {
-      color: #8b0000;
-      text-decoration: underline;
-      font-weight: bold;
-      cursor: pointer;
+      margin: 10px 0;
+      line-height: 1.4;
     }
     .tags {
       font-size: 0.7rem;
-      color: #555;
-      margin-top: 6px;
-      user-select: none;
+      color: #666;
+      margin-top: 10px;
     }
-
-    /* Intro text */
-    #intro {
-      margin-bottom: 30px;
-      font-size: 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      text-align: center;
-      background: #fff4d9;
-      padding: 15px 20px;
-      border-radius: 6px;
-      border: 2px solid #3c2415;
-      box-shadow: 4px 4px 0 #c19761;
-      color: #3c2415;
-      max-width: 600px;
-      user-select: none;
-    }
-    .nice-button {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.7rem;
-  padding: 0.6rem 1rem;
-  background-color: #8c3c1a;
-  color: #fff4d9;
-  border: 2px solid #3c2415;
-  border-radius: 6px;
-  box-shadow: 4px 4px 0 #4a1f0f;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  max-width: 250px;
-  margin: 0 auto 12px auto;
-  display: block;
-  text-align: center;
-}
-
-.nice-button:hover {
-  background-color: #732f13;
-  box-shadow: 2px 2px 0 #2e1608;
-}
 
     /* Modal styles */
     .modal {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
-      z-index: 1000;
     }
-    .modal.show {
-      display: flex;
-    }
-    .modal > div {
-      background: #fffaf0;
+    .modal-content {
+      background: #fff4d9;
       border: 2px solid #3c2415;
       border-radius: 6px;
-      padding: 1.5rem;
-      max-width: 400px;
+      padding: 2rem;
+      max-width: 500px;
       width: 90%;
+      box-shadow: 4px 4px 0 #c19761;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
       color: #3c2415;
-      box-shadow: 4px 4px 0 #c19761;
     }
     .modal h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
     }
-    .modal form label {
-      display: block;
-      margin-bottom: 0.5rem;
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
-    .modal form input, .modal form select {
-      width: 100%;
-      padding: 0.4rem 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.55rem;
+    .modal input, .modal select {
+      padding: 0.5rem;
       border: 2px solid #3c2415;
       border-radius: 4px;
-      margin-top: 0.2rem;
-      box-sizing: border-box;
-      color: #3c2415;
       background: #fffaf0;
-      box-shadow: inset 2px 2px 5px #d7c9aa;
-      outline: none;
-      transition: border-color 0.2s ease;
+      color: #3c2415;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
     }
-    .modal form input:focus, .modal form select:focus {
-      border-color: #8b0000;
-    }
-    .modal form button {
-      margin-top: 1rem;
+    .modal button {
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
       padding: 0.5rem 1rem;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
-      border: 2px solid #3c2415;
-      border-radius: 4px;
-      background: #e6b35c;
-      color: #3c2415;
       cursor: pointer;
       box-shadow: 2px 2px 0 #c19761;
       transition: background-color 0.2s ease;
+    }
+    .modal button:hover {
+      background-color: #d3a34a;
+    }
+    .close {
+      float: right;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .close:hover {
+      color: #8b0000;
+    }
+
+    /* Welcome modal */
+    .welcome-modal {
+      display: flex;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
       width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
     }
-    .modal form button:hover {
-      background-color: #d4a243;
+    .welcome-modal:not(.show) {
+      display: none;
     }
-    .modal form button#closeModal {
-      margin-left: 0;
-      background: #8b0000;
-      color: gold;
-      border-color: #8b0000;
-      box-shadow: 2px 2px 0 #4a1f0f;
-      margin-top: 0.5rem;
+    .welcome-content {
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 4px 4px 0 #c19761;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      color: #3c2415;
+      text-align: center;
     }
-    .modal form button#closeModal:hover {
-      background-color: #a52a2a;
+    .welcome-content h2 {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .welcome-content p {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .welcome-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .welcome-buttons button {
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #c19761;
+      transition: background-color 0.2s ease;
+    }
+    .welcome-buttons button:hover {
+      background-color: #d3a34a;
+    }
+
+    /* Intro text */
+    #intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+      padding: 1rem;
+      font-size: 0.6rem;
+      line-height: 1.6;
+      color: #3c2415;
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      box-shadow: 4px 4px 0 #c19761;
+    }
+
+    /* Form styling */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-group label {
+      font-size: 0.5rem;
+    }
+    .phone-input {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .phone-input select {
+      flex: 0 0 80px;
+    }
+    .phone-input input {
+      flex: 1;
+    }
+    #loggedInNotice {
+      background: #e8f5e8;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.5rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
+  
+  <!-- Top Bar -->
   <div id="topBar">
-    <div id="userStatus"></div>
     <div>
+      <span id="userStatus">Welcome!</span>
       <button id="profileBtn">Profile</button>
-      <button id="logoutBtn">Log out</button>
+    </div>
+    <div id="logoutBtn"></div>
+  </div>
+
+  <!-- Welcome Modal -->
+  <div id="welcomeModal" class="welcome-modal show">
+    <div class="welcome-content">
+      <h2>🎲 Welcome to Our Board Game Menu!</h2>
+      <p>To get started, please log in or continue as a guest. You can browse our games and place orders to your table.</p>
+      <div class="welcome-buttons">
+        <button onclick="window.location.href='login.html'">Log In</button>
+        <button onclick="window.location.href='register.html'">Register</button>
+        <button id="guestButton" onclick="continueAsGuest()">Continue as Guest</button>
+      </div>
     </div>
   </div>
 
+  <!-- Order Modal -->
   <div id="orderModal" class="modal">
-    <div>
-      <h2 id="orderGameTitle">Order Game</h2>
-      <div id="loggedInNotice" style="display:none; margin-bottom: 1rem;">
-        👤 You're logged in. We only need your table number.
-      </div>
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>🎲 Order Game to Table</h2>
       <form id="orderForm">
-        <div id="userFields">
-          <label>
-            First Name:<br />
-            <input type="text" name="first_name" required />
-          </label><br />
-          <label>
-            Last Name:<br />
-            <input type="text" name="last_name" required />
-          </label><br />
-          <label>
-            Country Code:<br />
-            <select name="country_code" required>
-              <option value="+46">🇸🇪 +46 Sweden</option>
-              <option value="+47">🇳🇴 +47 Norway</option>
-              <option value="+358">🇫🇮 +358 Finland</option>
-              <option value="+45">🇩🇰 +45 Denmark</option>
-              <option value="+49">🇩🇪 +49 Germany</option>
-              <option value="+44">🇬🇧 +44 UK</option>
-              <option value="+1">🇺🇸 +1 USA</option>
-            </select>
-          </label><br />
-          <label>
-            Phone Number:<br />
-            <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
-          </label><br />
+        <div id="loggedInNotice" style="display: none;">
+          <p>You are logged in! Your contact information will be used automatically.</p>
         </div>
-        <br />
-        <label>
-          Table Number:<br />
-          <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
-        </label><br />
-        <button type="submit">Order</button>
-        <button type="button" id="closeModal">Cancel</button>
+        
+        <div id="userFields">
+          <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <div class="phone-input">
+              <select name="country_code" required>
+                <option value="+46">🇸🇪 +46</option>
+                <option value="+47">🇳🇴 +47</option>
+                <option value="+45">🇩🇰 +45</option>
+                <option value="+358">🇫🇮 +358</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+49">🇩🇪 +49</option>
+              </select>
+              <input type="tel" name="phone" placeholder="701234567" required>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="table_id">Table Number:</label>
+          <input type="text" name="table_id" placeholder="Enter your table number" required>
+          <small style="font-size: 0.4rem; color: #666;">Note: Enter your table NUMBER, not the 4-digit table code</small>
+        </div>
+        
+        <button type="submit">📱 Place Order</button>
       </form>
     </div>
   </div>
 
-  <div class="bg"></div>
-
   <div class="wrapper">
+    <!-- Banner -->
     <div id="banner">
-      <img src="banner3.png" alt="Banner" />
+      <img src="img/banner.png" alt="Board Game Menu Banner">
     </div>
+
+    <!-- Language Toggle -->
     <div class="language-toggle">
-      <button onclick="setLanguage('sv')">🇸🇪</button>
-      <button onclick="setLanguage('en')">🇬🇧</button>
+      <button onclick="setLanguage('sv')">🇸🇪 Svenska</button>
+      <button onclick="setLanguage('en')">🇬🇧 English</button>
     </div>
-    <!-- Sticky filters go here -->
+
+    <!-- Intro Text -->
+    <div id="intro">
+      We have a wide range of board games here at Pinchos Linnégatan (or at least we aspire to). If you see something you like, order it to the table in the app or talk to our staff and we'll bring it to you!
+    </div>
+
+    <!-- Filters -->
     <div class="filters">
-      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
-      <div id="categoryBadges" class="category-badges"></div>
+      <input type="text" id="searchBar" placeholder="Search games..." oninput="renderGames()">
+      <div class="category-badges" id="categoryBadges">
+        <!-- Categories will be populated by JavaScript -->
+      </div>
     </div>
 
+    <!-- Main Content -->
     <main>
-      <h2 id="categoryHeading"></h2>
-
+      <div id="categoryHeading">All Games</div>
+      
+      <!-- Loading Spinner -->
       <div id="loadingSpinner" class="loading-spinner">
-        <span>Laddar spel...</span>
+        🎲 Loading games...
       </div>
 
-      <div id="gameList"></div>
+      <!-- Game List -->
+      <div id="gameList">
+        <!-- Games will be populated by JavaScript -->
+      </div>
     </main>
   </div>
 
-  <div id="welcomeModal" class="modal show">
-  <div>
-    <div id="intro"></div>
-    <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
-    <button class="nice-button" onclick="window.location.href='login.html'">Log In</button>
-    <button class="nice-button" onclick="window.location.href='register.html'">Register for more games!</button>
-    <button class="nice-button" onclick="continueAsGuest()">Continue as Guest</button>
-  </div>
-</div>
+  <script>
+    // 🌍 Location settings
+    const RESTAURANT_LAT = 57.693624;
+    const RESTAURANT_LNG = 11.951328;
+    const ALLOWED_RADIUS_METERS = 300;
 
-  <script src="main.js"></script>
-</body>
-</html>
+    const translations = {
+      sv: {
+        intro:
+          "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan (eller vi aspirerar i alla fall att ha det). Om du ser något du gillar så beställ det till bordet i appen eller prata med vår personal så tar vi fram det åt dig!",
+        ui: {
+          players: "Spelare",
+          play_time: "Tid",
+          age: "Ålder"
+        },
+        categories: {
+          all: "Alla",
+          strategy: "Strategi",
+          family: "Familj",
+          party: "Party",
+          social: "Socialt",
+          humor: "Humor",
+          card: "Kortspel",
+          "2p": "2 spelare",
+          quick: "Medan du väntar på maten"
+        }
+      },
+      en: {
+        intro:
+          "We have a wide range of board games here at Pinchos Linnégatan (or at least we aspire to). If you see something you like, order it to the table in the app or talk to our staff and we'll bring it to you!",
+        ui: {
+          players: "Players",
+          play_time: "Time",
+          age: "Age"
+        },
+        categories: {
+          all: "All",
+          strategy: "Strategy",
+          family: "Family",
+          party: "Party",
+          social: "Social",
+          humor: "Humor",
+          card: "Card game",
+          "2p": "2 players",      
+          quick: "While you wait for your food"
+        }
+      }
+    };
+
+    const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+    let currentLang = 'en';
+    let currentCategory = 'all';
+    let games = [];
+
+    function isTokenExpired(token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return Date.now() >= payload.exp * 1000;
+      } catch {
+        return true;
+      }
+    }
+
+    function getUserToken() {
+      return localStorage.getItem('userToken');
+    }
+    function setUserToken(token) {
+      localStorage.setItem('userToken', token);
+    }
+    function getRefreshToken() {
+      return localStorage.getItem('refreshToken');
+    }
+    function removeTokens() {
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userData');
+    }
+
+    function logoutUser() {
+      removeTokens();
+      window.location.href = 'login.html';
+    }
+
+    async function refreshToken() {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) return false;
+
+      try {
+        const res = await fetch(`${API_BASE}/refresh-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken }),
+        });
+        if (!res.ok) return false;
+
+        const data = await res.json();
+        if (data.token) {
+          setUserToken(data.token);
+          return true;
+        }
+        return false;
+      } catch {
+        return false;
+      }
+    }
+
+    async function fetchWithAuth(url, options = {}, retry = true) {
+      if (!options.headers) options.headers = {};
+      options.headers['Authorization'] = `Bearer ${getUserToken()}`;
+
+      let res = await fetch(url, options);
+      if (res.status === 401 && retry) {
+        const refreshed = await refreshToken();
+        if (refreshed) {
+          options.headers['Authorization'] = `Bearer ${getUserToken()}`;
+          res = await fetch(url, options);
+        } else {
+          logoutUser();
+          throw new Error('Unauthorized, please login again.');
+        }
+      }
+      return res;
+    }
+
+    const profileBtn = document.getElementById('profileBtn');
+    const userStatus = document.getElementById('userStatus');
+
+    function updateUserStatus(user) {
+      userStatus.textContent = `Hi, ${user.first_name}!`;
+      profileBtn.style.display = 'inline-block';
+    }
+
+    profileBtn.onclick = () => {
+      window.location.href = './pages/profile.html';
+    }
+
+    function isMemberUser() {
+      try {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        return userData && userData.membership_status === "active";
+      } catch {
+        return false;
+      }
+    }
+
+    function getGameApiUrl() {
+      const token = localStorage.getItem("userToken");
+      return token ? `${API_BASE}/games` : `${API_BASE}/games/public`;
+    }
+
+    function renderCategories() {
+      const badgeContainer = document.getElementById('categoryBadges');
+      badgeContainer.innerHTML = '';
+
+      for (const tag in translations[currentLang].categories) {
+        const badge = document.createElement('div');
+        badge.className = 'category-badge';
+        if (tag === currentCategory) badge.classList.add('active');
+        badge.textContent = translations[currentLang].categories[tag];
+        badge.onclick = async () => {
+          currentCategory = tag;
+          renderCategories();
+          await renderGames();
+        };
+        badgeContainer.appendChild(badge);
+      }
+    }
+
+    function bindOrderButtons() {
+      const buttons = document.querySelectorAll(".order-button");
+      buttons.forEach(button => {
+        button.addEventListener("click", (e) => {
+          const userData = localStorage.getItem("userData");
+          const gameCard = e.target.closest(".game-card");
+          const gameId = gameCard.dataset.gameId;
+
+          const modal = document.getElementById("orderModal");
+          const userFields = document.getElementById("userFields");
+          const notice = document.getElementById("loggedInNotice");
+          const orderForm = document.getElementById("orderForm");
+
+          orderForm.reset();
+          modal.dataset.gameId = gameId;
+
+          if (userData) {
+            if (userFields) {
+              userFields.style.display = "none";
+              const inputs = userFields.querySelectorAll("input, select");
+              inputs.forEach(input => input.disabled = true);
+            }
+            if (notice) notice.style.display = "block";
+          } else {
+            if (userFields) {
+              userFields.style.display = "block";
+              const inputs = userFields.querySelectorAll("input, select");
+              inputs.forEach(input => input.disabled = false);
+            }
+            if (notice) notice.style.display = "none";
+          }
+
+          modal.style.display = "flex";
+        });
+      });
+    }
+
+    function continueAsGuest() {
+      localStorage.setItem("guestUser", "true");
+      const welcomeModal = document.getElementById("welcomeModal");
+      welcomeModal?.classList.remove("show");
+      updateTopBar();
+    }
+    window.continueAsGuest = continueAsGuest;
+
+    async function setLanguage(lang) {
+      currentLang = lang;
+      currentCategory = 'all';
+      renderCategories();
+      renderIntro();
+      await renderGames();
+    }
+
+    function renderIntro() {
+      document.getElementById('intro').textContent = translations[currentLang].intro;
+    }
+
+    window.setLanguage = setLanguage;
+
+    async function renderGames() {
+      const container = document.getElementById('gameList');
+      const search = document.getElementById('searchBar').value.toLowerCase();
+      const heading = document.getElementById('categoryHeading');
+      heading.textContent = translations[currentLang].categories[currentCategory];
