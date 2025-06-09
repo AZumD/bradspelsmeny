@@ -132,25 +132,21 @@ async function fetchProfile() {
 }
 
 async function loadFriends(viewUserId = null) {
+  const targetUserId = viewUserId || getUserIdFromToken();
+
   try {
-    const res = await fetchWithAuth(`${API_BASE}/friends`);
-    const currentUserFriends = await res.json();
-
-    const targetId = viewUserId || getUserIdFromToken();
-
-    const friendData = (targetId === getUserIdFromToken())
-      ? currentUserFriends
-      : currentUserFriends.filter(f => f.id == targetId);
+    const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
+    const friends = await res.json();
 
     const friendsList = document.getElementById("friendsList");
     friendsList.innerHTML = "";
 
-    if (!friendData.length) {
+    if (!friends.length) {
       friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
       return;
     }
 
-    for (const friend of friendData) {
+    for (const friend of friends) {
       const img = document.createElement("img");
       img.src = friend.avatar_url
         ? (friend.avatar_url.startsWith('http') ? friend.avatar_url : API_BASE + friend.avatar_url)
@@ -163,8 +159,11 @@ async function loadFriends(viewUserId = null) {
 
   } catch (err) {
     console.error("❌ Failed to load friends:", err);
+    const fallback = document.getElementById("friendsList");
+    fallback.innerHTML = `<div class="placeholder-box">Could not load friends.</div>`;
   }
 }
+
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
   if (!currentUserId || !profileId || currentUserId === profileId) return;
