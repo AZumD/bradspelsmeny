@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const username = document.getElementById("username").value.trim();
     const first_name = document.getElementById("first_name").value.trim();
     const last_name = document.getElementById("last_name").value.trim();
     const country_code = document.getElementById("country_code").value;
@@ -12,11 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const phone = `${country_code}${rawPhone}`;
 
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+
     try {
       const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ first_name, last_name, phone, password })
+        body: JSON.stringify({ username, first_name, last_name, phone, password })
       });
 
       const data = await res.json();
