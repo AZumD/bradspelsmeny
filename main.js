@@ -320,10 +320,26 @@ function updateTopBar() {
     profileBtn.style.display = 'none';
   }
 
- logoutBtn.innerHTML = `
-  <button class="nice-button" onclick="window.location.href='login.html'">Log In</button>
-  <button class="nice-button" onclick="window.location.href='register.html'">Register</button>
-`;
+ logoutBtn.style.display = 'inline-block';
+logoutBtn.className = 'nice-button';
+
+if (userData) {
+  logoutBtn.textContent = "Log out";
+  logoutBtn.onclick = () => {
+    removeTokens();
+    localStorage.removeItem("userData");
+    localStorage.removeItem("guestUser");
+    location.reload();
+  };
+} else if (guestUser) {
+  logoutBtn.textContent = "Log in";
+  logoutBtn.onclick = () => {
+    window.location.href = 'login.html';
+  };
+} else {
+  logoutBtn.style.display = 'none';
+}
+
 
 
 if (userData) {
