@@ -237,4 +237,49 @@ async function fetchGameLog(userId) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', fetchProfile);
+document.addEventListener('DOMContentLoaded', () => {
+  fetchProfile();
+
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+
+  if (String(myId) === String(viewedId)) {
+    // Show manual add-friend section
+    document.getElementById("manualAddFriendWrapper").style.display = "block";
+
+    const modal = document.getElementById("addFriendModal");
+    const openBtn = document.getElementById("manualAddFriendBtn");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const submitBtn = document.getElementById("submitFriendRequest");
+
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+
+    submitBtn.onclick = async () => {
+      const friendId = document.getElementById("manualFriendId").value.trim();
+      if (!friendId || isNaN(friendId) || friendId == myId) {
+        alert("Please enter a valid user ID.");
+        return;
+      }
+
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, {
+          method: 'POST'
+        });
+
+        if (res.ok) {
+          alert("✅ Friend added!");
+          modal.style.display = "none";
+          loadFriends();
+        } else {
+          const err = await res.json();
+          alert("❌ Failed: " + err.error);
+        }
+      } catch (err) {
+        console.error('❌ Failed to send manual friend request:', err);
+        alert("Something went wrong.");
+      }
+    };
+  }
+});
