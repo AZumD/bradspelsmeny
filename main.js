@@ -315,14 +315,14 @@ function updateTopBar() {
 
   if (userData) {
     const user = JSON.parse(userData);
-    const name = (user.first_name || user.last_name)
-      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+    const name = (user.username)
+      ? `${user.username || ''} ${user.username || ''}`.trim()
       : user.phone;
-    userStatus.textContent = `👤 Logged in as ${name}`;
+    userStatus.textContent = `Logged in as ${name}`;
     // Show profile button
     profileBtn.style.display = 'inline-block';
   } else {
-    userStatus.textContent = guestUser ? `👤 Logged in as guest` : '';
+    userStatus.textContent = guestUser ? `Logged in as guest` : '';
     // Hide profile button if not logged in user
     profileBtn.style.display = 'none';
   }
