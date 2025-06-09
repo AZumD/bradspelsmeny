@@ -316,7 +316,7 @@ function updateTopBar() {
   if (userData) {
   const user = JSON.parse(userData);
   const name = user.username || user.phone || 'User';
-  userStatus.textContent = `Logged in as ${name}`;
+  userStatus.textContent = `${name}`;
   profileBtn.style.display = 'inline-block';
 } else {
   userStatus.textContent = guestUser ? `Logged in as guest` : '';
