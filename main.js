@@ -76,7 +76,7 @@ function removeTokens() {
 function logoutUser() {
   removeTokens();
   alert('Session expired. Please log in again.');
-  window.location.href = '/login.html';
+  window.location.href = 'login.html';
 }
 
 async function refreshToken() {
