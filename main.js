@@ -357,6 +357,13 @@ function updateTopBar() {
   }
 }
 
+document.addEventListener("click", (e) => {
+  const burger = document.getElementById("burgerBtn");
+  const menu = document.getElementById("authButtons");
+  if (!burger.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.remove("show");
+  }
+});
 
 
 
@@ -377,9 +384,8 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-const userToken = localStorage.getItem('userToken');
-const refreshToken = localStorage.getItem('refreshToken');
-
+const userToken = getUserToken();         // ✅ This was missing
+  const refreshToken = getRefreshToken();  
 if (userToken && isTokenExpired(userToken)) {
   if (refreshToken) {
     const refreshed = await refreshToken();
@@ -392,6 +398,10 @@ if (userToken && isTokenExpired(userToken)) {
     return;
   }
 }
+
+  document.getElementById("burgerBtn").addEventListener("click", () => {
+  document.getElementById("authButtons").classList.toggle("show");
+});
 
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
