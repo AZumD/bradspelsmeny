@@ -1,3 +1,5 @@
+How did we handle categories? Is it with tags? 
+
 // 🌍 Location settings
 const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
@@ -5,7 +7,13 @@ const ALLOWED_RADIUS_METERS = 300;
 
 const translations = {
   sv: {
-    ...
+    intro:
+      "Vi har ett brett utbud av sällskapsspel här på Pinchos Linnégatan (eller vi aspirerar i alla fall att ha det). Om du ser något du gillar så beställ det till bordet i appen eller prata med vår personal så tar vi fram det åt dig!",
+    ui: {
+      players: "Spelare",
+      play_time: "Tid",
+      age: "Ålder"
+    },
     categories: {
       all: "Alla",
       strategy: "Strategi",
@@ -19,7 +27,13 @@ const translations = {
     }
   },
   en: {
-    ...
+    intro:
+      "We have a wide range of board games here at Pinchos Linnégatan (or at least we aspire to). If you see something you like, order it to the table in the app or talk to our staff and we'll bring it to you!",
+    ui: {
+      players: "Players",
+      play_time: "Time",
+      age: "Age"
+    },
     categories: {
       all: "All",
       strategy: "Strategy",
@@ -28,12 +42,11 @@ const translations = {
       social: "Social",
       humor: "Humor",
       card: "Card game",
-      "2p": "2 players",
+      "2p": "2 players",      
       quick: "While you wait for your food"  // <--- new category here
     }
   }
 };
-
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 
