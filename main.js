@@ -53,7 +53,7 @@ function isTokenExpired(token) {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return Date.now() >= payload.exp * 1000;
   } catch {
-    return true; // If something goes wrong, treat as expired
+    return true;
   }
 }
 
@@ -66,80 +66,48 @@ function isMemberUser() {
   }
 }
 
-// (rest of code remains unchanged until renderGames)
-
-async function renderGames() {
-  const container = document.getElementById('gameList');
-  const search = document.getElementById('searchBar').value.toLowerCase();
-  const heading = document.getElementById('categoryHeading');
-  heading.textContent = translations[currentLang].categories[currentCategory];
-
-  const res = await fetchWithAuth(`${API_BASE}/games`);
-  const dataText = await res.text();
-  let dataJson;
+async function refreshUserToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) return false;
   try {
-    dataJson = JSON.parse(dataText);
-  } catch (e) {
-    console.error('Failed to parse /games response as JSON:', dataText);
-    throw new Error('Invalid JSON from server');
+    const res = await fetch(`${API_BASE}/auth/refresh-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem("userToken", data.token);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
   }
-  games = dataJson;
+}
 
-  const isMember = isMemberUser();
+function logoutUser() {
+  localStorage.removeItem("userToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userData");
+  localStorage.removeItem("guestUser");
 
-  let filtered = currentCategory === 'all'
-    ? games
-    : games.filter(g => g.tags.split(',').includes(currentCategory));
+  const welcomeModal = document.getElementById("welcomeModal");
+  if (welcomeModal) welcomeModal.classList.add("show");
 
-  filtered = filtered.filter(game => {
-    const title = game.title_en;
-    return title?.toLowerCase().includes(search);
-  });
+  document.getElementById("userStatus").textContent = "";
+  if (window.profileBtn) window.profileBtn.style.display = "none";
 
-  filtered = filtered.filter(game => {
-    return !game.members_only || isMember;
-  });
+  const gameList = document.getElementById("gameList");
+  if (gameList) gameList.innerHTML = "";
+}
 
-  filtered.sort((a, b) => {
-    const aTitle = a.title_en;
-    const bTitle = b.title_en;
-    return aTitle?.toLowerCase().localeCompare(bTitle?.toLowerCase());
-  });
-
-  container.innerHTML = '';
-  filtered.forEach(game => {
-    const title = game.title_en;
-    const description = currentLang === 'sv' ? game.description_sv : game.description_en;
-    const isLent = game.lent_out;
-
-    const playerText = game.min_players
-      ? game.max_players && game.max_players !== game.min_players
-        ? `${game.min_players}–${game.max_players}`
-        : `${game.min_players}`
-      : '–';
-
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.dataset.gameId = game.id;
-    card.innerHTML = `
-  <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
-  <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
-  <div class="order-button">🎲 Order to Table</div>
-  <div class="game-info">
-    <p>${description}</p>
-    ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
-    <div class="tags">
-      👥 ${translations[currentLang].ui.players}: ${playerText} ・
-      ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
-      👶 ${translations[currentLang].ui.age}: ${game.age}
-    </div>
-  </div>
-`;
-
-    container.appendChild(card);
-  });
-  bindOrderButtons();
-} // end of renderGames
+function renderIntro() {
+  const introBox = document.getElementById("introBox");
+  if (!introBox) return;
+  introBox.innerHTML = `<p>${translations[currentLang].intro}</p>`;
+}
 
 function updateTopBar() {
   const userStatus = document.getElementById("userStatus");
@@ -161,85 +129,43 @@ function updateTopBar() {
   }
 
   logoutBtn.addEventListener("click", () => {
-  removeTokens();
-  localStorage.removeItem("userData");
-  localStorage.removeItem("guestUser");
-
-  // Show welcome modal again
-  const welcomeModal = document.getElementById("welcomeModal");
-  if (welcomeModal) {
-    welcomeModal.classList.add("show");
-  }
-
-  // Clear userStatus and hide profile button
-  document.getElementById("userStatus").textContent = "";
-  if (profileBtn) profileBtn.style.display = "none";
-
-  // Clear game list to prevent errors
-  document.getElementById("gameList").innerHTML = "";
-
-  // Reset search bar
-  const searchBar = document.getElementById('searchBar');
-  if (searchBar) searchBar.value = '';
-
-  // Reset category to 'all' and rerender categories to update badges
-  currentCategory = 'all';
-  renderCategories();
-
-  // Optionally, focus a button in the welcome modal here
-});
-
-
-}
-
-
-// Distance helper for geolocation
-function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
-  function deg2rad(deg) {
-    return deg * (Math.PI/180);
-  }
-  const R = 6371000; // Earth radius in meters
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+    logoutUser();
+    currentCategory = 'all';
+    renderCategories();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-const userToken = localStorage.getItem('userToken');
-const refreshToken = localStorage.getItem('refreshToken');
+  const userToken = localStorage.getItem('userToken');
+  const refreshToken = localStorage.getItem('refreshToken');
+  const isGuest = localStorage.getItem("guestUser");
 
-if (userToken && isTokenExpired(userToken)) {
-  if (refreshToken) {
-    const refreshed = await refreshToken();
-    if (!refreshed) {
+  if (userToken && isTokenExpired(userToken)) {
+    if (refreshToken) {
+      const refreshed = await refreshUserToken();
+      if (!refreshed) {
+        logoutUser();
+        return;
+      }
+    } else {
       logoutUser();
       return;
     }
-  } else {
-    logoutUser();
-    return;
   }
-}
+
+  const welcomeModal = document.getElementById("welcomeModal");
+  if (userToken || isGuest) {
+    welcomeModal?.classList.remove("show");
+  }
 
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
-  const welcomeModal = document.getElementById("welcomeModal");
-  const guestBtn = document.getElementById("guestButton");
-  const token = localStorage.getItem("userToken") || localStorage.getItem("guestUser");
-
-  if (token) {
-    welcomeModal?.classList.remove("show");
-  }
 
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
     await setLanguage(currentLang);
+    renderIntro();
     updateTopBar();
   } catch (err) {
     console.error("Unexpected loading error:", err);
@@ -250,102 +176,4 @@ if (userToken && isTokenExpired(userToken)) {
     spinner.style.display = "none";
     gameList.style.display = "grid";
   }
-
-  // Order modal logic
-  const orderForm = document.getElementById("orderForm");
-  const orderModal = document.getElementById("orderModal");
-  const closeModal = document.getElementById("closeModal");
-
-  closeModal.addEventListener("click", () => {
-    orderModal.style.display = "none";
-  });
-
-  orderForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const userData = localStorage.getItem("userData");
-  const submitButton = orderForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-
-  // Get trimmed table number value
-  const tableInput = orderForm.querySelector('input[name="table_id"]');
-  const tableValue = tableInput.value.trim();
-
-  // Strictly block exactly 4-digit numbers (only digits, length 4)
-  if (/^\d{4}$/.test(tableValue)) {
-    alert("🚫 Table number cannot be four digits. You've probably entered your table code instead of your table number.");
-    submitButton.disabled = false;
-    return;  // EARLY RETURN to prevent ordering
-  }
-    // Await geolocation with timeout
-    const getCurrentPosition = () =>
-      new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 10000});
-      });
-
-    try {
-      const position = await getCurrentPosition();
-      const distance = getDistanceFromLatLonInMeters(
-        RESTAURANT_LAT,
-        RESTAURANT_LNG,
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      if (distance > ALLOWED_RADIUS_METERS) {
-        alert("🚫 You are too far from the restaurant to place an order.");
-        submitButton.disabled = false;
-        return;
-      }
-    } catch (error) {
-      alert("🚫 Unable to verify your location. Please allow location access and try again.");
-      submitButton.disabled = false;
-      return;
-    }
-
-    const gameId = orderModal.dataset.gameId;
-    const game = games.find(g => g.id == gameId);
-    const formData = new FormData(orderForm);
-
-    let firstName, lastName, phone;
-
-    if (userData) {
-      const user = JSON.parse(userData);
-      firstName = user.first_name;
-      lastName = user.last_name;
-      phone = user.phone;
-    } else {
-      firstName = formData.get("first_name");
-      lastName = formData.get("last_name");
-      phone = `${formData.get("country_code")}${formData.get("phone")}`;
-    }
-
-    const payload = {
-      game_id: gameId,
-      game_title: game?.title_en || "Unknown",
-      first_name: firstName,
-      last_name: lastName,
-      phone: phone,
-      table_id: formData.get("table_id")
-    };
-
-    try {
-      const res = await fetchWithAuth(`${API_BASE}/order-game`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) throw new Error("Failed to order game");
-
-      // Show confirmation message
-      alert("🎉 Your game order was placed successfully! Have patience and we'll come out to you with it as soon as we can!");
-
-      orderModal.style.display = "none";
-      orderForm.reset();
-    } catch (err) {
-      console.error("❌ Order submission failed:", err);
-      alert("❌ Something went wrong placing your order. Try again!");
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
 });
