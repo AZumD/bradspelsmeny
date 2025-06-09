@@ -289,19 +289,20 @@ async function renderGames() {
     card.className = 'game-card';
     card.dataset.gameId = game.id;
     card.innerHTML = `
-      <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
-      <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
-      <button class="order-button">🎲 Order to Table</button> 
-      <div class="game-info">
-        <p>${description}</p>
-        ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
-        <div class="tags">
-          👥 ${translations[currentLang].ui.players}: ${playerText} ・
-          ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
-          👶 ${translations[currentLang].ui.age}: ${game.age}
-        </div>
-      </div>
-    `;
+  <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
+  <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
+  <div class="order-button">🎲 Order to Table</div>
+  <div class="game-info">
+    <p>${description}</p>
+    ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
+    <div class="tags">
+      👥 ${translations[currentLang].ui.players}: ${playerText} ・
+      ⏱ ${translations[currentLang].ui.play_time}: ${game.play_time} ・
+      👶 ${translations[currentLang].ui.age}: ${game.age}
+    </div>
+  </div>
+`;
+
     container.appendChild(card);
   });
   bindOrderButtons();
