@@ -314,18 +314,15 @@ function updateTopBar() {
   const guestUser = localStorage.getItem("guestUser");
 
   if (userData) {
-    const user = JSON.parse(userData);
-    const name = (user.username)
-      ? `${user.username || ''} ${user.username || ''}`.trim()
-      : user.phone;
-    userStatus.textContent = `Logged in as ${name}`;
-    // Show profile button
-    profileBtn.style.display = 'inline-block';
-  } else {
-    userStatus.textContent = guestUser ? `Logged in as guest` : '';
-    // Hide profile button if not logged in user
-    profileBtn.style.display = 'none';
-  }
+  const user = JSON.parse(userData);
+  const name = user.username || user.phone || 'User';
+  userStatus.textContent = `Logged in as ${name}`;
+  profileBtn.style.display = 'inline-block';
+} else {
+  userStatus.textContent = guestUser ? `Logged in as guest` : '';
+  profileBtn.style.display = 'none';
+}
+
 
  logoutBtn.addEventListener("click", () => {
   removeTokens();
