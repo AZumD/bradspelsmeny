@@ -334,11 +334,10 @@ function updateTopBar() {
     profileBtn.classList.remove("nice-button");
 
     logoutBtn.style.display = 'inline-block';
-    logoutBtn.className = 'nice-button';
-    logoutBtn.textContent = "Log in";
-    logoutBtn.onclick = () => {
-      window.location.href = 'login.html';
-    };
+    logoutBtn.innerHTML = `
+      <button class="nice-button" onclick="window.location.href='login.html'">Log in</button>
+      <button class="nice-button" onclick="window.location.href='register.html'">Register</button>
+    `;
 
   } else {
     userStatus.textContent = '';
@@ -347,31 +346,11 @@ function updateTopBar() {
 
     logoutBtn.style.display = 'none';
     logoutBtn.classList.remove("nice-button");
-
-
-
-
-if (userData) {
-  logoutBtn.textContent = "Log out";
-  logoutBtn.onclick = () => {
-    removeTokens();
-    localStorage.removeItem("userData");
-    localStorage.removeItem("guestUser");
-    location.reload();
-  };
-} else if (guestUser) {
-  logoutBtn.innerHTML = `
-    <button onclick="window.location.href='login.html'">Log in</button>
-    <button onclick="window.location.href='register.html'">Register</button>
-  `;
-} else {
-  // Neither logged in nor guest
-  logoutBtn.style.display = 'none'; // or keep it empty if you prefer
+    logoutBtn.innerHTML = '';
+    logoutBtn.onclick = null;
+  }
 }
 
-
-
-}
 
 
 // Distance helper for geolocation
