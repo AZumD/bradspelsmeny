@@ -61,6 +61,46 @@
   justify-content: center;
   margin-bottom: 1rem;
 }
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fffdf7;
+  border: 2px dashed #d9b370;
+  border-radius: 12px;
+  padding: 20px;
+  width: 80%;
+  max-width: 320px;
+  text-align: center;
+  color: #5a2a0c;
+  position: relative;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 10px;
+  border: 1px solid #d9b370;
+  border-radius: 6px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b3e0a;
+}
 
 .friend-avatar {
   width: 48px;
@@ -218,6 +258,21 @@
     <!-- Friends will be injected here -->
   </div>
   <button id="addFriendBtn" class="add-friend-btn" style="display:none;">➕ Add Friend</button>
+</div>
+<!-- Add Friend (manual) – only shown on own profile -->
+<div id="manualAddFriendWrapper" style="margin-top: 20px; display: none;">
+  <button id="manualAddFriendBtn" class="add-friend-btn">➕ Add Friend Manually</button>
+</div>
+
+<!-- Modal -->
+<div id="addFriendModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModalBtn">&times;</span>
+    <h3>Send Friend Request</h3>
+    <p>Enter the user ID of the person you'd like to add:</p>
+    <input type="number" id="manualFriendId" placeholder="User ID" />
+    <button id="submitFriendRequest" class="add-friend-btn" style="margin-top: 10px;">Send Request</button>
+  </div>
 </div>
 
 
