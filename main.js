@@ -48,6 +48,16 @@ const translations = {
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return Date.now() >= payload.exp * 1000;
+  } catch {
+    return true; // If something goes wrong, treat as expired
+  }
+}
+
+
 function getUserToken() {
   return localStorage.getItem('userToken');
 }
@@ -317,12 +327,11 @@ function updateTopBar() {
     profileBtn.style.display = 'none';
   }
 
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userData");
-    localStorage.removeItem("guestUser");
-    location.reload();
-  });
+ logoutBtn.addEventListener("click", () => {
+  removeTokens();
+  location.reload();
+});
+
 }
 
 // Distance helper for geolocation
@@ -342,6 +351,22 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const userToken = localStorage.getItem('userToken');
+const refreshToken = localStorage.getItem('refreshToken');
+
+if (userToken && isTokenExpired(userToken)) {
+  if (refreshToken) {
+    const refreshed = await refreshToken();
+    if (!refreshed) {
+      logoutUser();
+      return;
+    }
+  } else {
+    logoutUser();
+    return;
+  }
+}
+
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
   const welcomeModal = document.getElementById("welcomeModal");
