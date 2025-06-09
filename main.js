@@ -49,6 +49,7 @@ const translations = {
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 let currentLang = 'en';
 let currentCategory = 'all';
+let games = []; // Fixed: Declare games variable
 
 function isTokenExpired(token) {
   try {
@@ -207,10 +208,9 @@ function continueAsGuest() {
   localStorage.setItem("guestUser", "true");
   const welcomeModal = document.getElementById("welcomeModal");
   welcomeModal?.classList.remove("show");
-  updateTopBar();
+  updateTopBar(); // Fixed: Call updateTopBar immediately after setting guest status
 }
 window.continueAsGuest = continueAsGuest;
-
 
 async function setLanguage(lang) {
   currentLang = lang;
@@ -224,9 +224,7 @@ function renderIntro() {
   document.getElementById('intro').textContent = translations[currentLang].intro;
 }
 
-
 window.setLanguage = setLanguage;
-
 
 async function renderGames() {
   const container = document.getElementById('gameList');
@@ -320,30 +318,35 @@ function updateTopBar() {
     profileBtn.style.display = 'none';
   }
 
- logoutBtn.innerHTML = ""; // clear previous content
+  logoutBtn.innerHTML = ""; // clear previous content
 
-if (userData) {
-  logoutBtn.textContent = "Log out";
-  logoutBtn.onclick = () => {
-    removeTokens();
-    localStorage.removeItem("userData");
-    localStorage.removeItem("guestUser");
-    location.reload();
-  };
-} else if (guestUser) {
-  logoutBtn.innerHTML = `
-    <button onclick="window.location.href='login.html'">Log in</button>
-    <button onclick="window.location.href='register.html'">Register</button>
-  `;
-} else {
-  // Neither logged in nor guest
-  logoutBtn.style.display = 'none'; // or keep it empty if you prefer
+  if (userData) {
+    logoutBtn.textContent = "Log out";
+    logoutBtn.onclick = () => {
+      removeTokens();
+      localStorage.removeItem("userData");
+      localStorage.removeItem("guestUser");
+      location.reload();
+    };
+  } else if (guestUser) {
+    // Fixed: Create properly styled buttons for guest users
+    const loginBtn = document.createElement('button');
+    loginBtn.textContent = 'Log in';
+    loginBtn.className = 'auth-button'; // Add class for styling
+    loginBtn.onclick = () => window.location.href = 'login.html';
+    
+    const registerBtn = document.createElement('button');
+    registerBtn.textContent = 'Register';
+    registerBtn.className = 'auth-button'; // Add class for styling
+    registerBtn.onclick = () => window.location.href = 'register.html';
+    
+    logoutBtn.appendChild(loginBtn);
+    logoutBtn.appendChild(registerBtn);
+  } else {
+    // Neither logged in nor guest
+    logoutBtn.style.display = 'none'; // or keep it empty if you prefer
+  }
 }
-
-
-
-}
-
 
 // Distance helper for geolocation
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
@@ -392,7 +395,7 @@ if (userToken && isTokenExpired(userToken)) {
     spinner.style.display = "flex";
     gameList.style.display = "none";
     await setLanguage(currentLang);
-    updateTopBar();
+    updateTopBar(); // Fixed: Make sure updateTopBar is called during initialization
   } catch (err) {
     console.error("Unexpected loading error:", err);
     const errorBox = document.createElement('div');
