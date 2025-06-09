@@ -47,6 +47,8 @@ const translations = {
 };
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+let currentLang = 'en';
+let currentCategory = 'all';
 
 function isTokenExpired(token) {
   try {
