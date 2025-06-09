@@ -314,22 +314,24 @@ function updateTopBar() {
   const guestUser = localStorage.getItem("guestUser");
 
   if (userData) {
-  const user = JSON.parse(userData);
-  const name = user.username || user.phone || 'User';
-  userStatus.textContent = `${name}`;
-  profileBtn.style.display = 'inline-block';
-} else {
-  userStatus.textContent = guestUser ? `Logged in as guest` : '';
-  profileBtn.style.display = 'none';
+    const user = JSON.parse(userData);
+    const name = user.username && user.username.trim() !== ''
+      ? user.username
+      : `${user.first_name} ${user.last_name}`.trim() || user.phone;
+
+    userStatus.textContent = `Logged in as ${name}`;
+    profileBtn.style.display = 'inline-block';
+  } else {
+    userStatus.textContent = guestUser ? `Logged in as guest` : '';
+    profileBtn.style.display = 'none';
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    removeTokens();
+    location.reload();
+  });
 }
 
-
- logoutBtn.addEventListener("click", () => {
-  removeTokens();
-  location.reload();
-});
-
-}
 
 // Distance helper for geolocation
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
