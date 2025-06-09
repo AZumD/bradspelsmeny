@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Strictly block exactly 4-digit numbers (only digits, length 4)
   if (/^\d{4}$/.test(tableValue)) {
-    alert("🚫 Table number cannot be four digits.");
+    alert("🚫 Table number cannot be four digits. You've probably entered your table code instead of your table number.");
     submitButton.disabled = false;
     return;  // EARLY RETURN to prevent ordering
   }
