@@ -320,34 +320,21 @@ function updateTopBar() {
     profileBtn.style.display = 'none';
   }
 
-  logoutBtn.addEventListener("click", () => {
-  removeTokens();
-  localStorage.removeItem("userData");
-  localStorage.removeItem("guestUser");
-
-  // Show welcome modal again
-  const welcomeModal = document.getElementById("welcomeModal");
-  if (welcomeModal) {
-    welcomeModal.classList.add("show");
-  }
-
-  // Clear userStatus and hide profile button
-  document.getElementById("userStatus").textContent = "";
-  if (profileBtn) profileBtn.style.display = "none";
-
-  // Clear game list to prevent errors
-  document.getElementById("gameList").innerHTML = "";
-
-  // Reset search bar
-  const searchBar = document.getElementById('searchBar');
-  if (searchBar) searchBar.value = '';
-
-  // Reset category to 'all' and rerender categories to update badges
-  currentCategory = 'all';
-  renderCategories();
-
-  // Optionally, focus a button in the welcome modal here
-});
+ logoutBtn.innerHTML = ""; // clear previous content
+if (userData) {
+  logoutBtn.textContent = "Log out";
+  logoutBtn.onclick = () => {
+    removeTokens();
+    localStorage.removeItem("userData");
+    localStorage.removeItem("guestUser");
+    location.reload();
+  };
+} else if (guestUser) {
+  logoutBtn.innerHTML = `
+    <button onclick="window.location.href='login.html'">Log in</button>
+    <button onclick="window.location.href='register.html'">Register</button>
+  `;
+}
 
 
 }
