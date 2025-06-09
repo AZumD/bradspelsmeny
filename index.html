@@ -6,30 +6,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
   <style>
+    /* Reset and base */
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Press Start 2P', monospace;
       overflow-x: hidden;
+      background-color: #f3e2c7;
+      color: #3c2415;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    * {
+      box-sizing: border-box;
     }
 
+    /* Top Bar */
     #topBar {
-      background-color: #333;
+      background-color: #8c3c1a;
       color: white;
-      padding: 4px 12px;
-      font-size: 14px;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 0.8rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 0 #4a1f0f;
+      box-sizing: border-box;
+    }
+    #topBar div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #userStatus {
+      font-weight: bold;
+    }
+    #profileBtn, #logoutBtn {
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #c19761;
+    }
+    #profileBtn {
+      display: none;
+      font-weight: bold;
+    }
+    #profileBtn:hover, #logoutBtn:hover {
+      background-color: #d3a34a;
+      box-shadow: 1px 1px 0 #8b5e09;
     }
 
-    #categoryHeading {
-      width: 100%;
-      max-width: 1000px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
+    /* Background image */
     .bg {
       position: fixed;
       top: 0;
@@ -46,77 +81,57 @@
       will-change: transform;
     }
 
-    * { box-sizing: border-box; }
-
-    #welcomeModal button {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem;
-      background-color: #8b0000;
-      color: gold;
-      border: 2px solid #8b0000;
-      border-radius: 6px;
-      padding: 10px 16px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #444;
-      width: 100%;
-    }
-    #welcomeModal button:hover {
-      background-color: #a52a2a;
-    }
-
+    /* Wrapper for page content */
     .wrapper {
       display: flex;
       flex-direction: column;
-      align-items: center;  /* center children horizontally */
-      padding: 0 20px;
-    }
-
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 30px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      color: #8b0000;
-      animation: pulse 1.5s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-
-    .filters, #gameList {
-      max-width: 800px;  /* max width for search bar and grid */
+      padding: 0 20px 40px 20px;
       width: 100%;
-      margin: 0 auto;    /* center horizontally */
+      max-width: 1200px;
     }
 
-    #gameList {
-      display: grid;
-      grid-template-columns: 1fr; /* Default: 1 column on mobile */
-      gap: 20px;
-      max-width: 1000px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    @media (min-width: 769px) {
-      #gameList {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Multiple columns on wider screens */
-      }
-    }
-
-    .category-badges {
+    /* Banner */
+    #banner {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
       justify-content: center;
-      margin-top: 10px;
+      margin: 2rem 0;
+      width: 100%;
+      max-width: 600px;
+    }
+    #banner img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 3px 3px 0 #c19761;
     }
 
+    /* Language toggle */
+    .language-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .language-toggle button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 2px solid #8b0000;
+      background-color: #fffaf0;
+      color: #8b0000;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.5rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #8b0000;
+      transition: background-color 0.2s ease;
+    }
+    .language-toggle button:hover {
+      background-color: #8b0000;
+      color: gold;
+      box-shadow: 2px 2px 0 #444;
+    }
+
+    /* Filters and badges */
     .filters {
       position: sticky;
       top: 0;
@@ -124,8 +139,38 @@
       padding: 10px 0;
       background: transparent;
       box-shadow: none;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto 1rem auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
+    #searchBar {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      border-radius: 4px;
+      border: 3px solid #8b0000;
+      background: #fffaf0;
+      color: #8b0000;
+      box-shadow: 3px 3px 0 #8b0000;
+      outline: none;
+      transition: box-shadow 0.2s ease;
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+    }
+    #searchBar:focus {
+      box-shadow: 3px 3px 0 #d2691e;
+    }
+    .category-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      width: 100%;
+    }
     .category-badge {
       font-family: 'Press Start 2P', monospace;
       font-size: 0.55rem;
@@ -138,42 +183,22 @@
       user-select: none;
       box-shadow: 2px 2px 0 #8b0000;
       transition: all 0.2s ease-in-out;
+      white-space: nowrap;
     }
-
     .category-badge.active {
       background: #8b0000;
       color: gold;
       box-shadow: 2px 2px 0 #444;
     }
 
-    #searchBar {
-      padding: 12px;
-      margin: 10px 0 0;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      border-radius: 4px;
-      border: 3px solid #8b0000;
-      background: #fffaf0;
-      color: #8b0000;
-      width: 100%;
-      box-shadow: 3px 3px 0 #8b0000;
-      outline: none;
-      transition: box-shadow 0.2s ease;
-    }
-
-    #searchBar:focus {
-      box-shadow: 3px 3px 0 #d2691e;
-    }
-
+    /* Table select */
     .table-select-wrapper {
       text-align: center;
-      margin-top: 20px;
-      margin-bottom: 20px;
+      margin: 1.5rem 0 2rem 0;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
       color: #8b0000;
     }
-
     #tableSelect {
       margin-top: 10px;
       padding: 10px;
@@ -184,52 +209,128 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 0.55rem;
       box-shadow: 2px 2px 0 #8b0000;
+      cursor: pointer;
     }
 
+    /* Main content */
     main {
       display: flex;
       flex-direction: column;
-      align-items: center; /* center children horizontally */
+      align-items: center;
       width: 100%;
-      padding: 20px 0;
+      padding-bottom: 3rem;
+    }
+    #categoryHeading {
+      width: 100%;
+      max-width: 1000px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #3c2415;
+      user-select: none;
     }
 
-    #banner {
+    /* Loading spinner */
+    .loading-spinner {
       display: flex;
       justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      flex-direction: column;
       align-items: center;
+      padding: 30px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      color: #8b0000;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
 
-    #banner img {
+    /* Game cards */
+    #gameList {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 1000px;
       width: 100%;
-      max-width: 600px;
-      height: auto;
+      margin: 0 auto;
     }
-
+    @media (min-width: 769px) {
+      #gameList {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+    }
     .game-card {
-      background: rgba(255, 253, 248, 0.9);
-      max-width: 320px;
-      width: 100%;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 4px 4px 0 #c19761;
       display: flex;
-      flex-wrap: wrap;
-      border: 2px dashed gold;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.4s ease forwards;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 320px;
       margin-left: auto;
       margin-right: auto;
     }
+    .game-card img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      box-shadow: 2px 2px 0 #c19761;
+    }
+    .game-info {
+      flex: 1 1 200px;
+      min-width: 0;
+      padding: 0 5px;
+      font-size: 0.6rem;
+      color: #3c2415;
+    }
+    .game-info h3 {
+      margin: 0 0 10px;
+      font-weight: bold;
+      word-wrap: break-word;
+    }
+    .game-info p {
+      word-wrap: break-word;
+    }
+    .game-info a {
+      color: #8b0000;
+      text-decoration: underline;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tags {
+      font-size: 0.55rem;
+      color: #555;
+      margin-top: 6px;
+      user-select: none;
+    }
+
+    /* Intro text */
+    #intro {
+      margin-bottom: 30px;
+      font-size: 0.6rem;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+      background: #fff4d9;
+      padding: 15px 20px;
+      border-radius: 6px;
+      border: 2px solid #3c2415;
+      box-shadow: 4px 4px 0 #c19761;
+      color: #3c2415;
+      max-width: 600px;
+      user-select: none;
+    }
+
+    /* Modal styles */
     .modal {
       display: none;
       position: fixed;
@@ -243,110 +344,99 @@
     .modal.show {
       display: flex;
     }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .game-card img {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      margin: 0 0 10px 0;
-      border-radius: 5px;
-      flex-shrink: 0;
-    }
-
-    .game-info {
-      flex: 1 1 200px;
-      min-width: 0;
-      padding: 0 5px;
-    }
-
-    .game-info h3 {
-      margin: 0 0 10px;
-      word-wrap: break-word;
-    }
-
-    .game-info p {
-      word-wrap: break-word;
-    }
-
-    .game-info a {
-      color: #8b0000;
-      text-decoration: underline;
-      font-weight: bold;
-    }
-
-    .tags {
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    #intro {
-      margin-bottom: 30px;
+    .modal > div {
+      background: #fffaf0;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      padding: 1.5rem;
+      max-width: 400px;
+      width: 90%;
+      font-family: 'Press Start 2P', monospace;
       font-size: 0.6rem;
+      color: #3c2415;
+      box-shadow: 4px 4px 0 #c19761;
+    }
+    .modal h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    .modal form label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .modal form input, .modal form select {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
       font-family: 'Press Start 2P', monospace;
-      text-align: center;
-      background: rgba(255, 253, 248, 0.9);
-      padding: 15px 20px;
-      border-radius: 8px;
-      border: 2px dashed gold;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .language-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .language-toggle button {
-      padding: 6px 10px;
+      font-size: 0.55rem;
+      border: 2px solid #3c2415;
       border-radius: 4px;
-      border: 2px solid #8b0000;
-      background-color: #fffaf0;
-      color: #8b0000;
+      margin-top: 0.2rem;
+      box-sizing: border-box;
+      color: #3c2415;
+      background: #fffaf0;
+      box-shadow: inset 2px 2px 5px #d7c9aa;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .modal form input:focus, .modal form select:focus {
+      border-color: #8b0000;
+    }
+    .modal form button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
       font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem;
+      font-size: 0.6rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      background: #e6b35c;
+      color: #3c2415;
       cursor: pointer;
-      box-shadow: 2px 2px 0 #8b0000;
+      box-shadow: 2px 2px 0 #c19761;
+      transition: background-color 0.2s ease;
+      width: 100%;
+    }
+    .modal form button:hover {
+      background-color: #d4a243;
+    }
+    .modal form button#closeModal {
+      margin-left: 0;
+      background: #8b0000;
+      color: gold;
+      border-color: #8b0000;
+      box-shadow: 2px 2px 0 #4a1f0f;
+      margin-top: 0.5rem;
+    }
+    .modal form button#closeModal:hover {
+      background-color: #a52a2a;
     }
   </style>
 </head>
 <body>
-  <div id="topBar" style="background-color: #333; color: white; padding: 4px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+  <div id="topBar">
     <div id="userStatus"></div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <button id="profileBtn" style="background:none; border:none; color:#f3e6c9; cursor:pointer; font-weight:bold; display:none;">
-        Profile
-      </button>
-      <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">Log out</button>
+    <div>
+      <button id="profileBtn">Profile</button>
+      <button id="logoutBtn">Log out</button>
     </div>
   </div>
 
-  <div id="orderModal" class="modal" style="position:fixed; top:0; left:0; 
-  width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-    <div style="background:#fff; padding:1.5rem; border-radius:8px; max-width:400px; width:90%;">
+  <div id="orderModal" class="modal">
+    <div>
       <h2 id="orderGameTitle">Order Game</h2>
-      <div id="loggedInNotice" style="display:none;">
+      <div id="loggedInNotice" style="display:none; margin-bottom: 1rem;">
         👤 You're logged in. We only need your table number.
       </div>
-
       <form id="orderForm">
         <div id="userFields">
           <label>
             First Name:<br />
             <input type="text" name="first_name" required />
-          </label><br /><br />
+          </label><br />
           <label>
             Last Name:<br />
             <input type="text" name="last_name" required />
-          </label><br /><br />
+          </label><br />
           <label>
             Country Code:<br />
             <select name="country_code" required>
@@ -358,19 +448,19 @@
               <option value="+44">🇬🇧 +44 UK</option>
               <option value="+1">🇺🇸 +1 USA</option>
             </select>
-          </label><br /><br />
+          </label><br />
           <label>
             Phone Number:<br />
             <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
-          </label><br /><br />
+          </label><br />
         </div>
-        <br /><br />
+        <br />
         <label>
           Table Number:<br />
           <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
-        </label><br /><br />
+        </label><br />
         <button type="submit">Order</button>
-        <button type="button" id="closeModal" style="margin-left:1rem;">Cancel</button>
+        <button type="button" id="closeModal">Cancel</button>
       </form>
     </div>
   </div>
@@ -403,12 +493,12 @@
   </div>
 
   <div id="welcomeModal" class="modal show">
-    <div style="background:#fff; padding:2rem; border-radius:10px; text-align:center; max-width:400px; width:90%;">
+    <div>
       <div id="intro"></div>
       <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
-      <button onclick="window.location.href='login.html'" style="margin: 8px;">🔐 Log In</button><br />
-      <button onclick="window.location.href='register.html'" style="margin: 8px;">📝 Register</button><br />
-      <button onclick="continueAsGuest()" style="margin: 8px;">👤 Continue as Guest</button>
+      <button onclick="window.location.href='login.html'" style="margin-bottom: 8px;">🔐 Log In</button>
+      <button onclick="window.location.href='register.html'" style="margin-bottom: 8px;">📝 Register</button>
+      <button onclick="continueAsGuest()" style="margin-bottom: 8px;">👤 Continue as Guest</button>
     </div>
   </div>
   <script src="main.js"></script>
