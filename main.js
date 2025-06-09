@@ -141,6 +141,11 @@ function isMemberUser() {
   }
 }
 
+function getGameApiUrl() {
+  const token = localStorage.getItem("userToken");
+  return token ? `${API_BASE}/games` : `${API_BASE}/games/public`;
+}
+
 function renderCategories() {
   const badgeContainer = document.getElementById('categoryBadges');
   badgeContainer.innerHTML = '';
@@ -229,7 +234,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetchWithAuth(`${API_BASE}/games`);
+  const res = await fetchWithAuth(getGameApiUrl());
   const dataText = await res.text();
   let dataJson;
   try {
