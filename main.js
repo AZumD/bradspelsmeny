@@ -375,26 +375,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   orderForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const userData = localStorage.getItem("userData");
-    const submitButton = orderForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
+  e.preventDefault();
+  const userData = localStorage.getItem("userData");
+  const submitButton = orderForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
 
-    // Check 4-digit table number disallowed
-    const tableInput = orderForm.querySelector('input[name="table_id"]');
-    if (/^\d{4}$/.test(tableInput.value)) {
-      alert("🚫 Table number cannot be four digits.");
-      submitButton.disabled = false;
-      return;
-    }
+  // Get trimmed table number value
+  const tableInput = orderForm.querySelector('input[name="table_id"]');
+  const tableValue = tableInput.value.trim();
 
-    // Geolocation check before order
-    if (!navigator.geolocation) {
-      alert("🚫 Geolocation is not supported by your browser. Unable to place order.");
-      submitButton.disabled = false;
-      return;
-    }
-
+  // Strictly block exactly 4-digit numbers (only digits, length 4)
+  if (/^\d{4}$/.test(tableValue)) {
+    alert("🚫 Table number cannot be four digits.");
+    submitButton.disabled = false;
+    return;  // EARLY RETURN to prevent ordering
+  }
     // Await geolocation with timeout
     const getCurrentPosition = () =>
       new Promise((resolve, reject) => {
