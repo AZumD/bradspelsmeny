@@ -1,13 +1,60 @@
+const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
+
+async function refreshAdminToken() {
+  const refreshToken = localStorage.getItem("adminRefreshToken");
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/admin/refresh-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem("adminToken", data.token);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchWithAdminAuth(url, options = {}, retry = true) {
+  if (!options.headers) options.headers = {};
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+  options.headers['Authorization'] = `Bearer ${token}`;
+
+  let res = await fetch(url, options);
+  if (res.status === 401 && retry) {
+    const refreshed = await refreshAdminToken();
+    if (refreshed) {
+      options.headers['Authorization'] = `Bearer ${localStorage.getItem("adminToken")}`;
+      res = await fetch(url, options);
+    } else {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken");
+      window.location.href = "login.html";
+      return;
+    }
+  }
+  return res;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const addUserButton = document.getElementById("addUserButton");
   const userModal = document.getElementById("userModal");
   const userForm = document.getElementById("userForm");
   const userList = document.getElementById("userList");
 
-  const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
-  const TOKEN = localStorage.getItem("adminToken");
-
-  if (!TOKEN) {
+  if (!localStorage.getItem("adminToken")) {
     window.location.href = "login.html";
     return;
   }
@@ -39,12 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("id_number", userForm.idNumber.value);
 
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithAdminAuth(url, {
         method,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${TOKEN}`
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString()
       });
 
@@ -64,11 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${TOKEN}`
-        }
+      const res = await fetchWithAdminAuth(`${API_URL}/${id}`, {
+        method: "DELETE"
       });
 
       if (res.ok) {
@@ -76,11 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         const data = await res.json();
         if (confirm(`${data.error || "Kunde inte radera användaren."} Vill du arkivera istället?`)) {
-          const archiveRes = await fetch(`${API_URL}/${id}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${TOKEN}`
-            }
+          const archiveRes = await fetchWithAdminAuth(`${API_URL}/${id}`, {
+            method: "DELETE"
           });
           if (archiveRes.ok) {
             alert("✅ Användare arkiverad.");
@@ -97,65 +135,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadUsers() {
-  try {
-    const res = await fetch(API_URL, {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-      },
-    });
+    try {
+      const res = await fetchWithAdminAuth(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch");
 
-    if (!res.ok) throw new Error("Failed to fetch");
+      const users = await res.json();
+      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+      userList.innerHTML = "";
 
-    const users = await res.json();
-    users.sort((a, b) => a.last_name.localeCompare(b.last_name));
-    userList.innerHTML = "";
+      users.forEach(user => {
+        const card = document.createElement("div");
+        card.className = "user-card";
 
-    users.forEach(user => {
-      const card = document.createElement("div");
-      card.className = "user-card";
+        const header = document.createElement("div");
+        header.className = "user-header";
 
-      const header = document.createElement("div");
-      header.className = "user-header";
+        const title = document.createElement("div");
+        title.className = "user-title";
+        title.textContent = `${user.first_name} ${user.last_name}`;
 
-      const title = document.createElement("div");
-      title.className = "user-title";
-      title.textContent = `${user.first_name} ${user.last_name}`;
+        const buttons = document.createElement("div");
 
-      const buttons = document.createElement("div");
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-button";
+        editBtn.textContent = "✏️";
+        editBtn.onclick = () => {
+          userForm.reset();
+          userForm.dataset.editingId = user.id;
+          userForm.username.value = user.username || "";
+          userForm.password.value = "";
+          userForm.firstName.value = user.first_name;
+          userForm.lastName.value = user.last_name;
+          userForm.phone.value = user.phone;
+          userForm.email.value = user.email || "";
+          userForm.idNumber.value = user.id_number || "";
+          userModal.style.display = "flex";
+        };
 
-      const editBtn = document.createElement("button");
-      editBtn.className = "edit-button";
-      editBtn.textContent = "✏️";
-      editBtn.onclick = () => {
-        userForm.reset();
-        userForm.dataset.editingId = user.id;
-        userForm.username.value = user.username || "";
-        userForm.password.value = "";
-        userForm.firstName.value = user.first_name;
-        userForm.lastName.value = user.last_name;
-        userForm.phone.value = user.phone;
-        userForm.email.value = user.email || "";
-        userForm.idNumber.value = user.id_number || "";
-        userModal.style.display = "flex";
-      };
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-button";
+        deleteBtn.textContent = "🗑️";
+        deleteBtn.onclick = () => deleteUser(user.id);
 
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-button";
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.onclick = () => deleteUser(user.id);
-
-      buttons.appendChild(editBtn);
-      buttons.appendChild(deleteBtn);
-      header.appendChild(title);
-      header.appendChild(buttons);
-      card.appendChild(header);
-      userList.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Failed to load users:", err);
+        buttons.appendChild(editBtn);
+        buttons.appendChild(deleteBtn);
+        header.appendChild(title);
+        header.appendChild(buttons);
+        card.appendChild(header);
+        userList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to load users:", err);
+    }
   }
-}
-
 
   loadUsers();
 });
