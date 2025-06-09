@@ -103,7 +103,7 @@
       width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 3px 3px 0 #c19761;
+      /* Removed box-shadow as requested */
     }
 
     /* Language toggle */
@@ -276,6 +276,9 @@
       max-width: 320px;
       margin-left: auto;
       margin-right: auto;
+      font-family: Verdana, Geneva, Tahoma, sans-serif; /* more readable font */
+      font-size: 0.8rem;
+      color: #3c2415;
     }
     .game-card img {
       width: 100%;
@@ -290,8 +293,9 @@
       flex: 1 1 200px;
       min-width: 0;
       padding: 0 5px;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       color: #3c2415;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
     .game-info h3 {
       margin: 0 0 10px;
@@ -308,7 +312,7 @@
       cursor: pointer;
     }
     .tags {
-      font-size: 0.55rem;
+      font-size: 0.7rem;
       color: #555;
       margin-top: 6px;
       user-select: none;
