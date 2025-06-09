@@ -1,3 +1,5 @@
+Better?
+
 // 🌍 Location settings
 const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
@@ -49,7 +51,6 @@ const translations = {
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 let currentLang = 'en';
 let currentCategory = 'all';
-let games = [];
 
 function isTokenExpired(token) {
   try {
@@ -120,6 +121,9 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
+
+const profileBtn = document.getElementById('profileBtn');
+const userStatus = document.getElementById('userStatus');
 
 function updateUserStatus(user) {
   userStatus.textContent = `Hi, ${user.first_name}!`;
@@ -282,7 +286,7 @@ async function renderGames() {
     card.innerHTML = `
   <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
   <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
-  <div class="order-button">Order to Table</div>
+  <div class="order-button">🎲 Order to Table</div>
   <div class="game-info">
     <p>${description}</p>
     ${game.rules ? `<p><a href="${game.rules}" target="_blank">📄 Rules</a></p>` : ''}
@@ -301,11 +305,7 @@ async function renderGames() {
 
 function updateTopBar() {
   const userStatus = document.getElementById("userStatus");
-  const profileBtn = document.getElementById("profileBtn");
   const logoutBtn = document.getElementById("logoutBtn");
-  const loginBtn = document.getElementById("loginBtn");
-  const registerBtn = document.getElementById("registerBtn");
-
   const userData = localStorage.getItem("userData");
   const guestUser = localStorage.getItem("guestUser");
 
@@ -317,52 +317,34 @@ function updateTopBar() {
 
     userStatus.textContent = `${name}`;
     profileBtn.style.display = 'inline-block';
-    logoutBtn.style.display = 'inline-block';
-
-    loginBtn.style.display = 'none';
-    registerBtn.style.display = 'none';
-
-    logoutBtn.onclick = () => {
-      removeTokens();
-      localStorage.removeItem("userData");
-      localStorage.removeItem("guestUser");
-      location.reload();
-    };
-
-  } else if (guestUser) {
-    userStatus.textContent = `Logged in as guest`;
-
-    profileBtn.style.display = 'none';
-    logoutBtn.style.display = 'none';
-
-    loginBtn.style.display = 'inline-block';
-    registerBtn.style.display = 'inline-block';
-
-    loginBtn.onclick = () => {
-      window.location.href = 'login.html';
-    };
-    registerBtn.onclick = () => {
-      window.location.href = 'register.html';
-    };
-
   } else {
-    userStatus.textContent = '';
-
+    userStatus.textContent = guestUser ? `Logged in as guest` : '';
     profileBtn.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    loginBtn.style.display = 'none';
-    registerBtn.style.display = 'none';
   }
+
+ logoutBtn.innerHTML = ""; // clear previous content
+
+if (userData) {
+  logoutBtn.textContent = "Log out";
+  logoutBtn.onclick = () => {
+    removeTokens();
+    localStorage.removeItem("userData");
+    localStorage.removeItem("guestUser");
+    location.reload();
+  };
+} else if (guestUser) {
+  logoutBtn.innerHTML = `
+    <button onclick="window.location.href='login.html'">Log in</button>
+    <button onclick="window.location.href='register.html'">Register</button>
+  `;
+} else {
+  // Neither logged in nor guest
+  logoutBtn.style.display = 'none'; // or keep it empty if you prefer
 }
 
-document.addEventListener("click", (e) => {
-  const burger = document.getElementById("burgerBtn");
-  const menu = document.getElementById("authButtons");
-  if (!burger.contains(e.target) && !menu.contains(e.target)) {
-    menu.classList.remove("show");
-  }
-});
 
+
+}
 
 
 // Distance helper for geolocation
@@ -382,8 +364,9 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-const userToken = getUserToken();         // ✅ This was missing
-  const refreshToken = getRefreshToken();  
+const userToken = localStorage.getItem('userToken');
+const refreshToken = localStorage.getItem('refreshToken');
+
 if (userToken && isTokenExpired(userToken)) {
   if (refreshToken) {
     const refreshed = await refreshToken();
@@ -396,10 +379,6 @@ if (userToken && isTokenExpired(userToken)) {
     return;
   }
 }
-
-  document.getElementById("burgerBtn").addEventListener("click", () => {
-  document.getElementById("authButtons").classList.toggle("show");
-});
 
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
