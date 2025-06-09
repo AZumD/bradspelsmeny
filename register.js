@@ -22,7 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, first_name, last_name, phone, password })
+        body: JSON.stringify({
+          username,
+          first_name,
+          last_name,
+          phone,
+          password,
+          membership_status: "active"  // 👈 Make them active members
+        })
       });
 
       const data = await res.json();
@@ -34,9 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       localStorage.setItem("userToken", data.token);
       localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
+      localStorage.setItem("userData", JSON.stringify(data.user)); // 👈 Make sure to save full user data
 
       alert(`🎉 Welcome, ${data.user.first_name}! Your account is ready.`);
-      window.location.href = "index.html"; // Or guest homepage
+      window.location.href = "index.html";
     } catch (err) {
       console.error("❌ Registration error:", err);
       alert("Something went wrong. Please try again.");
