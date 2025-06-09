@@ -1,60 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login</title>
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0 20px;
       font-family: 'Press Start 2P', monospace;
       background-color: #f3e2c7;
       color: #3c2415;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+      align-items: center;
     }
+
+    h1 {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+
     form {
-      background: white;
+      background: #fff4d9;
       border: 2px solid #3c2415;
-      padding: 20px;
-      border-radius: 12px;
+      border-radius: 6px;
+      padding: 2rem;
       max-width: 400px;
       width: 100%;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-    }
-    input, select {
-      font-family: inherit;
-      font-size: 1rem;
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
       box-sizing: border-box;
+      box-shadow: 4px 4px 0 #c19761;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
+
     .phone-row {
       display: flex;
       gap: 10px;
     }
     .phone-row select {
-      width: 30%;
+      flex: 1 0 30%;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      background: #fffaf0;
+      color: #3c2415;
+      box-shadow: inset 2px 2px 5px #d7c9aa;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .phone-row select:focus {
+      border-color: #8b0000;
     }
     .phone-row input {
-      width: 70%;
+      flex: 1 0 70%;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      background: #fffaf0;
+      color: #3c2415;
+      box-shadow: inset 2px 2px 5px #d7c9aa;
+      outline: none;
+      transition: border-color 0.2s ease;
     }
+    .phone-row input:focus {
+      border-color: #8b0000;
+    }
+
+    input[type="password"] {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      background: #fffaf0;
+      color: #3c2415;
+      box-shadow: inset 2px 2px 5px #d7c9aa;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    input[type="password"]:focus {
+      border-color: #8b0000;
+    }
+
     button {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      padding: 0.6rem;
       background-color: #8c3c1a;
-      color: white;
-      padding: 10px;
-      border: none;
+      color: #fff4d9;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      box-shadow: 4px 4px 0 #4a1f0f;
       cursor: pointer;
-      width: 100%;
-      font-family: inherit;
+      user-select: none;
+      transition: background-color 0.2s ease;
     }
     button:hover {
-      background-color: #a04a23;
+      background-color: #732f13;
+      box-shadow: 2px 2px 0 #2e1608;
     }
   </style>
 </head>
@@ -63,7 +118,7 @@
 
   <form id="loginForm">
     <div class="phone-row">
-      <select id="country_code" required>
+      <select id="country_code" required aria-label="Country code">
         <option value="+46">🇸🇪 +46</option>
         <option value="+45">🇩🇰 +45</option>
         <option value="+47">🇳🇴 +47</option>
@@ -71,10 +126,10 @@
         <option value="+44">🇬🇧 +44</option>
         <option value="+1">🇺🇸 +1</option>
       </select>
-      <input type="tel" id="phone" placeholder="Phone Number" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required autocomplete="tel" pattern="[0-9]+" />
     </div>
     
-    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="password" placeholder="Password" required autocomplete="current-password" />
     <button type="submit">Log In</button>
   </form>
 
