@@ -42,7 +42,9 @@
 
     .phone-row {
       display: flex;
+      width: 100%;
       gap: 10px;
+      box-sizing: border-box;
     }
     .phone-row select {
       flex: 1 0 30%;
@@ -62,12 +64,13 @@
       border-color: #8b0000;
     }
     .phone-row input {
-      flex: 1 0 70%;
+      flex: 1 1 auto;
       font-family: 'Press Start 2P', monospace;
       font-size: 0.7rem;
       padding: 0.5rem;
       border: 2px solid #3c2415;
       border-radius: 4px;
+      min-width: 0; /* important to allow shrinking */
       background: #fffaf0;
       color: #3c2415;
       box-shadow: inset 2px 2px 5px #d7c9aa;
