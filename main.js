@@ -319,7 +319,7 @@ function updateTopBar() {
       ? user.username
       : `${user.first_name} ${user.last_name}`.trim() || user.phone;
 
-    userStatus.textContent = `Logged in as ${name}`;
+    userStatus.textContent = `${name}`;
     profileBtn.style.display = 'inline-block';
   } else {
     userStatus.textContent = guestUser ? `Logged in as guest` : '';
