@@ -286,10 +286,7 @@ async function fetchFavoritesAndWishlist(userId) {
     wishContainer.innerHTML = wishlist.length ? '' : '<div class="placeholder-box">No wishlist entries yet.</div>';
 
     for (const game of favorites) {
-      const gameDiv = document.createElement('div');
-      gameDiv.textContent = game.title;
-      gameDiv.className = 'game-entry';
-      favContainer.appendChild(gameDiv);
+      favContainer.appendChild(createGameCard(game));
     }
 
     for (const game of wishlist) {
@@ -304,6 +301,43 @@ async function fetchFavoritesAndWishlist(userId) {
     document.getElementById('wishlistList').innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
   }
 }
+
+function createGameCard(game) {
+  const card = document.createElement('div');
+  card.style.border = '1px solid #d9b370';
+  card.style.borderRadius = '8px';
+  card.style.padding = '10px';
+  card.style.marginBottom = '10px';
+  card.style.backgroundColor = '#f9f6f2';
+  card.style.boxShadow = '1px 1px 4px rgba(0,0,0,0.1)';
+  card.style.display = 'flex';
+  card.style.alignItems = 'center';
+  card.style.gap = '12px';
+  card.style.cursor = 'pointer';
+
+  const thumb = document.createElement('img');
+  thumb.src = game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
+  thumb.alt = game.title;
+  thumb.style.width = '48px';
+  thumb.style.height = '48px';
+  thumb.style.borderRadius = '6px';
+  thumb.style.objectFit = 'cover';
+
+  const title = document.createElement('div');
+  title.textContent = game.title;
+  title.style.fontWeight = 'bold';
+  title.style.color = '#5a2a0c';
+
+  card.appendChild(thumb);
+  card.appendChild(title);
+
+  card.onclick = () => {
+    window.location.href = `game.html?id=${game.id}`;
+  };
+
+  return card;
+}
+
 
 // Call this in fetchProfile() after loading basic user data:
 // fetchFavoritesAndWishlist(userIdToFetch);
