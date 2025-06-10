@@ -454,7 +454,14 @@ function createGameCard(game, minimal = false) {
       imageUrl = `../${imageUrl}`;
     }
     img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-    img.alt = game.title || 'Game';
+    const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+    img.alt = gameTitle;
+
     img.onerror = () => {
       img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
     };
@@ -485,7 +492,7 @@ function createGameCard(game, minimal = false) {
 
     const thumb = document.createElement('img');
     thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-    thumb.alt = game.title || 'Game';
+    thumb.alt = gameTitle;
     thumb.onerror = () => {
       thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
     };
