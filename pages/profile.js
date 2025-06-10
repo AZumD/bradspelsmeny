@@ -328,6 +328,19 @@ async function maybeShowAddFriendButton(currentUserId, profileId) {
   }
 }
 
+async function checkFriendStatus(viewedUserId) {
+  const res = await fetchWithAuth(`${API_BASE}/friends`);
+  if (!res.ok) return;
+
+  const friends = await res.json();
+  const isFriend = friends.some(f => f.id === viewedUserId);
+
+  if (isFriend && viewedUserId !== currentUser.id) {
+    document.getElementById('removeFriendBtn').style.display = 'block';
+  }
+}
+
+
 async function fetchGameLog(userId) {
   try {
     const res = await fetchWithAuth(`${API_BASE}/users/${userId}/borrow-log`);
@@ -441,6 +454,21 @@ document.addEventListener('DOMContentLoaded', () => {
         notifModal.style.display = 'none';
       }
     };
+  }
+});
+document.getElementById('removeFriendBtn').addEventListener('click', async () => {
+  const confirmed = confirm('Are you sure you want to remove this friend?');
+  if (!confirmed) return;
+
+  const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
+    method: 'DELETE'
+  });
+
+  if (res.ok) {
+    alert('Friend removed');
+    location.reload();
+  } else {
+    alert('Failed to remove friend');
   }
 });
 
