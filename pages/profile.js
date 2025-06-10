@@ -383,6 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId; // 🔧 define it globally so it's accessible in the remove handler
+
+  checkFriendStatus(viewedId); // ✅ Inserted bonus line to show the remove friend button if applicable
 
   // Manual Add Friend (only visible on your own profile)
   if (String(myId) === String(viewedId)) {
@@ -390,20 +393,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById("closeModalBtn");
     const submitBtn = document.getElementById("submitFriendRequest");
 
-    // Open modal via "+" button (handled in loadFriends)
-    // Close modal on 'X' click
     closeBtn.onclick = () => {
       modal.style.display = "none";
     };
 
-    // Close modal if clicking outside it
     window.onclick = (e) => {
       if (e.target === modal) {
         modal.style.display = "none";
       }
     };
 
-    // Handle manual friend request submit
     submitBtn.onclick = async () => {
       const input = document.getElementById("manualFriendId");
       const friendId = input.value.trim();
@@ -456,19 +455,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 });
-document.getElementById('removeFriendBtn').addEventListener('click', async () => {
-  const confirmed = confirm('Are you sure you want to remove this friend?');
-  if (!confirmed) return;
 
-  const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
-    method: 'DELETE'
-  });
-
-  if (res.ok) {
-    alert('Friend removed');
-    location.reload();
-  } else {
-    alert('Failed to remove friend');
-  }
-});
 
