@@ -155,13 +155,6 @@ async function fetchNotifications() {
   }
 }
 
-
-  } catch (err) {
-    console.error('❌ Failed to fetch notifications:', err);
-    document.getElementById('notificationList').innerHTML = `<div class="placeholder-box">Could not load notifications.</div>`;
-  }
-}
-
 function formatNotificationText(n) {
   const time = new Date(n.created_at).toLocaleString();
 
