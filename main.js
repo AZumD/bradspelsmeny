@@ -49,6 +49,9 @@ const translations = {
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 let currentLang = 'en';
 let currentCategory = 'all';
+let userFavorites = [];
+let userWishlist = [];
+
 
 function isTokenExpired(token) {
   try {
@@ -119,6 +122,58 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
+
+async function fetchUserLists() {
+  const userId = JSON.parse(localStorage.getItem("userData"))?.id;
+  if (!userId) return;
+
+  const headers = { Authorization: `Bearer ${getUserToken()}` };
+
+  const [favRes, wishRes] = await Promise.all([
+    fetch(`${API_BASE}/users/${userId}/favorites`, { headers }),
+    fetch(`${API_BASE}/users/${userId}/wishlist`, { headers })
+  ]);
+
+  const favData = await favRes.json();
+  const wishData = await wishRes.json();
+
+  userFavorites = favData.map(g => g.id);
+  userWishlist = wishData.map(g => g.id);
+}
+async function toggleFavorite(gameId) {
+  const btn = document.querySelector(`[data-game-id="${gameId}"] .favorite`);
+  const isActive = btn.classList.contains('active');
+  const method = isActive ? 'DELETE' : 'POST';
+
+  await fetchWithAuth(`${API_BASE}/favorite`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("userData")).id, game_id: gameId })
+  });
+
+  btn.classList.toggle('active');
+  btn.textContent = isActive ? '🤍' : '❤️';
+}
+
+async function toggleWishlist(gameId) {
+  const btn = document.querySelector(`[data-game-id="${gameId}"] .wishlist`);
+  const isActive = btn.classList.contains('active');
+  const method = isActive ? 'DELETE' : 'POST';
+
+  await fetchWithAuth(`${API_BASE}/wishlist`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("userData")).id, game_id: gameId })
+  });
+
+  btn.classList.toggle('active');
+  btn.textContent = isActive ? '🎯' : '✅';
+}
+
 
 const profileBtn = document.getElementById('profileBtn');
 const userStatus = document.getElementById('userStatus');
@@ -284,6 +339,14 @@ async function renderGames() {
     card.innerHTML = `
   <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
   <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
+  <div class="game-card-icons">
+    <button class="icon-btn favorite ${userFavorites.includes(game.id) ? 'active' : ''}" onclick="toggleFavorite(${game.id})">
+      ${userFavorites.includes(game.id) ? '❤️' : '🤍'}
+    </button>
+    <button class="icon-btn wishlist ${userWishlist.includes(game.id) ? 'active' : ''}" onclick="toggleWishlist(${game.id})">
+      ${userWishlist.includes(game.id) ? '✅' : '🎯'}
+    </button>
+  </div>
   <div class="order-button">🎲 Order to Table</div>
   <div class="game-info">
     <p>${description}</p>
@@ -295,6 +358,7 @@ async function renderGames() {
     </div>
   </div>
 `;
+
 
     container.appendChild(card);
   });
@@ -370,35 +434,42 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-const userToken = localStorage.getItem('userToken');
-const refreshToken = localStorage.getItem('refreshToken');
+  const userToken = localStorage.getItem('userToken');
+  const refreshToken = localStorage.getItem('refreshToken');
+  const isGuest = localStorage.getItem("guestUser");
 
-if (userToken && isTokenExpired(userToken)) {
-  if (refreshToken) {
-    const refreshed = await refreshToken();
-    if (!refreshed) {
+  // Refresh token if expired
+  if (userToken && isTokenExpired(userToken)) {
+    if (refreshToken) {
+      const refreshed = await refreshToken();
+      if (!refreshed) {
+        logoutUser();
+        return;
+      }
+    } else {
       logoutUser();
       return;
     }
-  } else {
-    logoutUser();
-    return;
   }
-}
 
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
   const welcomeModal = document.getElementById("welcomeModal");
-  const guestBtn = document.getElementById("guestButton");
-  const token = localStorage.getItem("userToken") || localStorage.getItem("guestUser");
 
-  if (token) {
+  // Hide welcome modal if logged in or guest
+  if (userToken || isGuest) {
     welcomeModal?.classList.remove("show");
   }
 
   try {
     spinner.style.display = "flex";
     gameList.style.display = "none";
+
+    // 🆕 Fetch favorites/wishlist if user is logged in
+    if (userToken && !isGuest) {
+      await fetchUserLists();
+    }
+
     await setLanguage(currentLang);
     updateTopBar();
   } catch (err) {
@@ -421,25 +492,23 @@ if (userToken && isTokenExpired(userToken)) {
   });
 
   orderForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const userData = localStorage.getItem("userData");
-  const submitButton = orderForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
+    e.preventDefault();
+    const userData = localStorage.getItem("userData");
+    const submitButton = orderForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
 
-  // Get trimmed table number value
-  const tableInput = orderForm.querySelector('input[name="table_id"]');
-  const tableValue = tableInput.value.trim();
+    const tableInput = orderForm.querySelector('input[name="table_id"]');
+    const tableValue = tableInput.value.trim();
 
-  // Strictly block exactly 4-digit numbers (only digits, length 4)
-  if (/^\d{4}$/.test(tableValue)) {
-    alert("🚫 Table number cannot be four digits. You've probably entered your table code instead of your table number.");
-    submitButton.disabled = false;
-    return;  // EARLY RETURN to prevent ordering
-  }
-    // Await geolocation with timeout
+    if (/^\d{4}$/.test(tableValue)) {
+      alert("🚫 Table number cannot be four digits. You've probably entered your table code instead of your table number.");
+      submitButton.disabled = false;
+      return;
+    }
+
     const getCurrentPosition = () =>
       new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 10000});
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
       });
 
     try {
@@ -496,7 +565,6 @@ if (userToken && isTokenExpired(userToken)) {
 
       if (!res.ok) throw new Error("Failed to order game");
 
-      // Show confirmation message
       alert("🎉 Your game order was placed successfully! Have patience and we'll come out to you with it as soon as we can!");
 
       orderModal.style.display = "none";
@@ -509,3 +577,4 @@ if (userToken && isTokenExpired(userToken)) {
     }
   });
 });
+
