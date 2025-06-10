@@ -148,6 +148,10 @@ async function fetchNotifications() {
 
       list.appendChild(div);
     }
+
+    if (notifications.some(n => !n.read)) {
+  document.getElementById("notificationIcon").appendChild(document.createElement("span")).id = "notificationDot";
+}
   } catch (err) {
     console.error('❌ Failed to fetch notifications:', err);
     document.getElementById('notificationList').innerHTML =
