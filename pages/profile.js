@@ -300,18 +300,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
 
+  // Manual Add Friend (only visible on your own profile)
   if (String(myId) === String(viewedId)) {
-    // Show manual add-friend section
-
     const modal = document.getElementById("addFriendModal");
     const closeBtn = document.getElementById("closeModalBtn");
     const submitBtn = document.getElementById("submitFriendRequest");
-    closeBtn.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
+    // Open modal via "+" button (handled in loadFriends)
+    // Close modal on 'X' click
+    closeBtn.onclick = () => {
+      modal.style.display = "none";
+    };
+
+    // Close modal if clicking outside it
+    window.onclick = (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    // Handle manual friend request submit
     submitBtn.onclick = async () => {
-      const friendId = document.getElementById("manualFriendId").value.trim();
-      if (!friendId || isNaN(friendId) || friendId == myId) {
+      const input = document.getElementById("manualFriendId");
+      const friendId = input.value.trim();
+
+      if (!friendId || isNaN(friendId) || friendId === String(myId)) {
         alert("Please enter a valid user ID.");
         return;
       }
@@ -324,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.ok) {
           alert("✅ Friend added!");
           modal.style.display = "none";
+          input.value = "";
           loadFriends();
         } else {
           const err = await res.json();
@@ -335,4 +349,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
   }
+
+  // 🔔 Notification Modal Logic (available to all logged-in users)
+  const notifBtn = document.getElementById("notificationIcon");
+  const notifModal = document.getElementById("notificationModal");
+  const closeNotifBtn = document.getElementById("closeNotificationBtn");
+
+  if (notifBtn && notifModal && closeNotifBtn) {
+    notifBtn.onclick = () => {
+      notifModal.style.display = 'flex';
+      fetchNotifications();
+    };
+
+    closeNotifBtn.onclick = () => {
+      notifModal.style.display = 'none';
+    };
+
+    window.onclick = (e) => {
+      if (e.target === notifModal) {
+        notifModal.style.display = 'none';
+      }
+    };
+  }
 });
+
