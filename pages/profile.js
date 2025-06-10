@@ -101,7 +101,7 @@ async function fetchNotifications() {
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
             } else {
-             let errorMsg = 'Failed to remove friend';
+             let errorMsg = 'Failed to accept friend request';
 try {
   const contentType = res.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
