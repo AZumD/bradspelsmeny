@@ -267,6 +267,47 @@ async function fetchProfile() {
   }
 }
 
+async function fetchFavoritesAndWishlist(userId) {
+  try {
+    const [favoritesRes, wishlistRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`)
+    ]);
+
+    const [favorites, wishlist] = await Promise.all([
+      favoritesRes.json(),
+      wishlistRes.json()
+    ]);
+
+    const favContainer = document.getElementById('favoritesList');
+    const wishContainer = document.getElementById('wishlistList');
+
+    favContainer.innerHTML = favorites.length ? '' : '<div class="placeholder-box">No favorites yet.</div>';
+    wishContainer.innerHTML = wishlist.length ? '' : '<div class="placeholder-box">No wishlist entries yet.</div>';
+
+    for (const game of favorites) {
+      const gameDiv = document.createElement('div');
+      gameDiv.textContent = game.title;
+      gameDiv.className = 'game-entry';
+      favContainer.appendChild(gameDiv);
+    }
+
+    for (const game of wishlist) {
+      const gameDiv = document.createElement('div');
+      gameDiv.textContent = game.title;
+      gameDiv.className = 'game-entry';
+      wishContainer.appendChild(gameDiv);
+    }
+  } catch (err) {
+    console.error('❌ Failed to fetch favorites/wishlist:', err);
+    document.getElementById('favoritesList').innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    document.getElementById('wishlistList').innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+  }
+}
+
+// Call this in fetchProfile() after loading basic user data:
+// fetchFavoritesAndWishlist(userIdToFetch);
+
 async function loadFriends(viewUserId = null) {
   const targetUserId = viewUserId || getUserIdFromToken();
   const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
