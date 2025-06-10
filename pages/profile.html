@@ -239,6 +239,22 @@
 </head>
 <body>
   <div class="profile-container">
+    <!-- 🔔 Notification Icon -->
+<div id="notificationIcon" style="position: fixed; top: 12px; right: 16px; cursor: pointer; z-index: 999;">
+  🔔
+</div>
+
+<!-- 📨 Notification Modal -->
+<div id="notificationModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn" id="closeNotificationBtn">&times;</span>
+    <h3>Notifications</h3>
+    <div id="notificationList" class="notification-list">
+      <div class="placeholder-box">Loading...</div>
+    </div>
+  </div>
+</div>
+
     <img id="avatar" class="avatar" src="../img/avatar-placeholder.webp" alt="User Avatar" />
 
     <div class="full-name" id="username">Loading...</div>
