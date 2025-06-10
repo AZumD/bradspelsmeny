@@ -462,8 +462,8 @@ function createGameCard(game) {
   console.log('🖼️ Original image URL:', imageUrl);
   
   // Fix the URL by removing /pages from the path
-  if (imageUrl && imageUrl.includes('/pages/img/')) {
-    imageUrl = imageUrl.replace('/pages/img/', '/img/');
+  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `../${imageUrl}`;  // Go up one directory from /pages/ to root
   }
   
   console.log('🖼️ Fixed image URL:', imageUrl);
