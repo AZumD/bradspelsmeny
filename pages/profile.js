@@ -260,7 +260,9 @@ async function fetchProfile() {
       maybeShowAddFriendButton(loggedInUserId, userIdToFetch);
     }
 
-    fetchGameLog(userIdToFetch);
+        fetchGameLog(userIdToFetch);
+        fetchFavoritesAndWishlist(userIdToFetch); // 👈 ADD THIS
+
 
   } catch (err) {
     alert('Error loading profile: ' + err.message);
