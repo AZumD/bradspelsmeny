@@ -310,6 +310,7 @@
     }
     .game-card {
       background: #fff4d9;
+      position: relative;
       border: 2px solid #3c2415;
       border-radius: 6px;
       padding: 1rem;
@@ -326,6 +327,35 @@
       font-size: 0.8rem;
       color: #3c2415;
     }
+    .game-card-icons {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.icon-btn {
+  background: rgba(255, 250, 240, 0.85); /* translucent parchment-like */
+  border: 2px solid #3c2415;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #c19761;
+  transition: transform 0.15s ease, background-color 0.2s;
+}
+    .icon-btn:hover {
+  transform: scale(1.2);
+  background-color: #fff4d9;
+}
+    .icon-btn.active {
+  background-color: gold;
+  color: #8b0000;
+  transform: scale(1.2);
+  font-weight: bold;
+  box-shadow: 2px 2px 0 #4a1f0f;
+}
     .game-card img {
       width: 100%;
       max-width: 100%;
