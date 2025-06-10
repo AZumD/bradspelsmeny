@@ -456,19 +456,11 @@ function createGameCard(game) {
   card.style.gap = '12px';
   card.style.cursor = 'pointer';
 
-  // Handle different possible image field names
+  // Handle image URL - prioritize 'img' field since that's where your thumbnails are stored
+  // Use the img field directly since it contains complete URLs
   let imageUrl = game.img || game.thumbnail_url;
   
-  console.log('🖼️ Original image URL:', imageUrl);
-  
-  // Only prepend API_BASE if it's a relative path (doesn't start with http/https)
-  if (imageUrl && !imageUrl.startsWith('http')) {
-    // Remove leading slash if present to avoid double slashes
-    imageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
-    imageUrl = `${API_BASE}/${imageUrl}`;
-  }
-  
-  console.log('🖼️ Final image URL:', imageUrl);
+  console.log('🖼️ Using image URL directly:', imageUrl);
   
   const thumb = document.createElement('img');
   
