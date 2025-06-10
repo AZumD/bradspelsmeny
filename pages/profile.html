@@ -322,6 +322,12 @@
     .game-list-container {
       margin-top: 1.5rem;
     }
+    .favorites-grid, .wishlist-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
     .game-entry {
       padding: 10px;
       border: 1px dashed #d9b370;
@@ -416,21 +422,20 @@
   </table>
 </div>
 
-    <!-- ⭐ Favorites Section -->
-    <div class="game-list-container">
-      <div class="section-title">Favorites</div>
-      <div id="favoritesContainer">
-        <div class="placeholder-box">Your favorite games will show up here.</div>
-      </div>
-    </div>
+   <div>
+  <div class="section-title">Favorites</div>
+  <div id="favoritesList" class="favorites-grid placeholder-box">
+    Loading favorites…
+  </div>
+</div>
 
-    <!-- 🎯 Wishlist Section -->
-    <div class="game-list-container">
-      <div class="section-title">Want to Play</div>
-      <div id="wishlistContainer">
-        <div class="placeholder-box">Games you want to play will show up here.</div>
-      </div>
-    </div>
+<div>
+  <div class="section-title">Want to Play</div>
+  <div id="wishlistList" class="wishlist-grid placeholder-box">
+    Loading wishlist…
+  </div>
+</div>
+
 
     <a href="edit-profile.html" id="editProfileBtn">Edit Profile</a>
   </div>
