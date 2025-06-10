@@ -269,41 +269,6 @@ async function fetchProfile() {
   }
 }
 
-async function fetchFavoritesAndWishlist(userId) {
-  try {
-    const [favoritesRes, wishlistRes] = await Promise.all([
-      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`),
-      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`)
-    ]);
-
-    const [favorites, wishlist] = await Promise.all([
-      favoritesRes.json(),
-      wishlistRes.json()
-    ]);
-
-    const favContainer = document.getElementById('favoritesList');
-    const wishContainer = document.getElementById('wishlistList');
-
-    favContainer.innerHTML = favorites.length ? '' : '<div class="placeholder-box">No favorites yet.</div>';
-    wishContainer.innerHTML = wishlist.length ? '' : '<div class="placeholder-box">No wishlist entries yet.</div>';
-
-    for (const game of favorites) {
-      favContainer.appendChild(createGameCard(game));
-    }
-
-    for (const game of wishlist) {
-      const gameDiv = document.createElement('div');
-      gameDiv.textContent = game.title;
-      gameDiv.className = 'game-entry';
-      wishContainer.appendChild(gameDiv);
-    }
-  } catch (err) {
-    console.error('❌ Failed to fetch favorites/wishlist:', err);
-    document.getElementById('favoritesList').innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    document.getElementById('wishlistList').innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
-  }
-}
-
 function createGameCard(game) {
   const card = document.createElement('div');
   card.className = 'game-entry';
@@ -358,7 +323,7 @@ async function loadFriends(viewUserId = null) {
     friendsList.innerHTML = "";
 
     if (!friends.length && !isOwnProfile) {
-      friendsList.innerHTML = <div class="placeholder-box">No friends to display… yet.</div>;
+      friendsList.innerHTML = '<div class="placeholder-box">No friends to display… yet.</div>';
       return;
     }
 
@@ -388,7 +353,7 @@ async function loadFriends(viewUserId = null) {
 
   } catch (err) {
     console.error("❌ Failed to load friends:", err);
-    document.getElementById("friendsList").innerHTML = <div class="placeholder-box">Could not load friends.</div>;
+    document.getElementById("friendsList").innerHTML = '<div class="placeholder-box">Could not load friends.</div>';
   }
 }
 
