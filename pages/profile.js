@@ -84,14 +84,77 @@ async function fetchNotifications() {
       const div = document.createElement('div');
       div.className = `notification-item ${n.read ? '' : 'unread'}`;
       div.innerHTML = formatNotificationText(n);
+
+      if (n.type === 'friend_request') {
+        const btnWrapper = document.createElement('div');
+        btnWrapper.style.marginTop = '0.5rem';
+
+        const acceptBtn = document.createElement('button');
+        acceptBtn.textContent = 'Accept';
+        acceptBtn.className = 'btn-accept';
+        acceptBtn.onclick = async (e) => {
+          e.stopPropagation();
+          try {
+            const res = await fetchWithAuth(`${API_BASE}/friend-requests/${n.id}/accept`, {
+              method: 'POST',
+            });
+            if (res.ok) {
+              div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
+            } else {
+              const err = await res.json();
+              alert(`Failed: ${err.error}`);
+            }
+          } catch (err) {
+            console.error('❌ Accept failed:', err);
+            alert('Error accepting request.');
+          }
+        };
+
+        const declineBtn = document.createElement('button');
+        declineBtn.textContent = 'Decline';
+        declineBtn.className = 'btn-decline';
+        declineBtn.onclick = async (e) => {
+          e.stopPropagation();
+          try {
+            const res = await fetchWithAuth(`${API_BASE}/friend-requests/${n.id}/decline`, {
+              method: 'POST',
+            });
+            if (res.ok) {
+              div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small>`;
+            } else {
+              const err = await res.json();
+              alert(`Failed: ${err.error}`);
+            }
+          } catch (err) {
+            console.error('❌ Decline failed:', err);
+            alert('Error declining request.');
+          }
+        };
+
+        btnWrapper.appendChild(acceptBtn);
+        btnWrapper.appendChild(declineBtn);
+        div.appendChild(btnWrapper);
+      }
+
       div.onclick = async () => {
         if (!n.read) {
           await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
           div.classList.remove('unread');
         }
+        if (n.type === 'friend_accept' && n.data.receiver_id) {
+          window.location.href = `profile.html?id=${n.data.receiver_id}`;
+        }
       };
+
       list.appendChild(div);
     }
+  } catch (err) {
+    console.error('❌ Failed to fetch notifications:', err);
+    document.getElementById('notificationList').innerHTML =
+      `<div class="placeholder-box">Could not load notifications.</div>`;
+  }
+}
+
 
   } catch (err) {
     console.error('❌ Failed to fetch notifications:', err);
@@ -101,9 +164,20 @@ async function fetchNotifications() {
 
 function formatNotificationText(n) {
   const time = new Date(n.created_at).toLocaleString();
+
   switch (n.type) {
     case 'friend_request':
       return `👤 Friend request from user ID ${n.data.sender_id} <br><small>${time}</small>`;
+
+    case 'friend_accept':
+      return `
+        ✅ <strong>${n.data.username}</strong> accepted your friend request!<br>
+        <img src="${n.data.avatar_url ? (n.data.avatar_url.startsWith('http') ? n.data.avatar_url : API_BASE + n.data.avatar_url) : FRONTEND_BASE + '/img/avatar-placeholder.webp'}"
+             alt="${n.data.username}" 
+             style="width:32px;height:32px;border-radius:50%;margin-top:4px;">
+        <br><small>${time}</small>
+      `;
+
     default:
       return `${n.type} <br><small>${time}</small>`;
   }
