@@ -459,8 +459,8 @@ function createGameCard(game, minimal = false) {
       img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
     };
 
-    img.style.width = '64px';
-    img.style.height = '64px';
+    img.style.width = '48px';
+    img.style.height = '48px';
     img.style.borderRadius = '8px';
     img.style.border = '2px solid #c9a04e';
     img.style.objectFit = 'cover';
