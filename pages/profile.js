@@ -410,8 +410,12 @@ async function fetchFavoritesAndWishlist(userId) {
           favContainer.appendChild(createGameCard(game, true));
         });
       } else if (favoritesRes && favoritesRes.ok) {
-        favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
-      }
+  const isOwnProfile = String(userId) === String(getUserIdFromToken());
+  favContainer.innerHTML = isOwnProfile
+    ? '<div class="placeholder-box">No favorites yet.</div>'
+    : '';
+}
+
 
       if (wishlist.length > 0) {
         wishContainer.innerHTML = '';
@@ -420,8 +424,12 @@ async function fetchFavoritesAndWishlist(userId) {
           wishContainer.appendChild(createGameCard(game));
         });
       } else if (wishlistRes && wishlistRes.ok) {
-        wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
-      }
+  const isOwnProfile = String(userId) === String(getUserIdFromToken());
+  wishContainer.innerHTML = isOwnProfile
+    ? '<div class="placeholder-box">No wishlist entries yet.</div>'
+    : '';
+}
+
     }
 
   } catch (err) {
