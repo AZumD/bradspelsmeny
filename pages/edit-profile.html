@@ -64,6 +64,34 @@
     input[type="file"] {
       margin-top: 0.5rem;
     }
+#notificationIcon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  background: #8c3c1a;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+#notificationIcon:hover {
+  background-color: #a14b21;
+  transform: scale(1.05);
+}
+    #notificationDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+  box-shadow: 0 0 2px white;
+}
 
     .avatar-preview {
       display: block;
@@ -148,5 +176,9 @@
   <div id="message" class="message" aria-live="polite"></div>
 
   <script src="edit-profile.js"></script>
+  <div id="notificationIcon" title="Notifications">🔔</div>
+  <span id="notificationDot"></span>
+
+
 </body>
 </html>
