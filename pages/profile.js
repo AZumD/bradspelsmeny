@@ -391,24 +391,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
-  const profileUserId = viewedId; // 🔧 define it globally so it's accessible in the remove handler
+  const profileUserId = viewedId; // 🔧 needed in both checkFriendStatus and remove handler
 
-  checkFriendStatus(viewedId); // ✅ Inserted bonus line to show the remove friend button if applicable
+  checkFriendStatus(profileUserId); // ✅ This sets up the Remove Friend button if applicable
 
-  // Manual Add Friend (only visible on your own profile)
-  if (String(myId) === String(viewedId)) {
+  // ✅ Attach remove friend handler if button is present
+  const removeBtn = document.getElementById('removeFriendBtn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', async () => {
+      const confirmed = confirm('Are you sure you want to remove this friend?');
+      if (!confirmed) return;
+
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          alert('Friend removed');
+          location.reload();
+        } else {
+          const err = await res.json();
+          alert('Failed: ' + err.error);
+        }
+      } catch (err) {
+        console.error('❌ Error removing friend:', err);
+        alert('Something went wrong.');
+      }
+    });
+  }
+
+  // 📩 Manual Add Friend Modal (only on your own profile)
+  if (String(myId) === String(profileUserId)) {
     const modal = document.getElementById("addFriendModal");
     const closeBtn = document.getElementById("closeModalBtn");
     const submitBtn = document.getElementById("submitFriendRequest");
 
-    closeBtn.onclick = () => {
-      modal.style.display = "none";
-    };
+    closeBtn.onclick = () => modal.style.display = "none";
 
     window.onclick = (e) => {
-      if (e.target === modal) {
-        modal.style.display = "none";
-      }
+      if (e.target === modal) modal.style.display = "none";
     };
 
     submitBtn.onclick = async () => {
@@ -421,9 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, {
-          method: 'POST'
-        });
+        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, { method: 'POST' });
 
         if (res.ok) {
           alert("✅ Friend added!");
@@ -441,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // 🔔 Notification Modal Logic (available to all logged-in users)
+  // 🔔 Notifications
   const notifBtn = document.getElementById("notificationIcon");
   const notifModal = document.getElementById("notificationModal");
   const closeNotifBtn = document.getElementById("closeNotificationBtn");
@@ -452,16 +472,13 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchNotifications();
     };
 
-    closeNotifBtn.onclick = () => {
-      notifModal.style.display = 'none';
-    };
+    closeNotifBtn.onclick = () => notifModal.style.display = 'none';
 
     window.onclick = (e) => {
-      if (e.target === notifModal) {
-        notifModal.style.display = 'none';
-      }
+      if (e.target === notifModal) notifModal.style.display = 'none';
     };
   }
 });
+
 
 
