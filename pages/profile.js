@@ -443,6 +443,13 @@ function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
   card.className = 'game-entry';
 
+  const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
   if (minimal) {
     // Minimal version for favorites grid
     card.style.all = 'unset';
@@ -453,15 +460,10 @@ function createGameCard(game, minimal = false) {
     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
       imageUrl = `../${imageUrl}`;
     }
-    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-    const gameTitle =
-    game.title ||
-    game.title_en ||
-    game.title_sv ||
-    game.name ||
-    'Untitled';
-    img.alt = gameTitle;
 
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    img.alt = gameTitle;
+    img.title = gameTitle; // tooltip on hover
     img.onerror = () => {
       img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
     };
@@ -471,6 +473,7 @@ function createGameCard(game, minimal = false) {
     img.style.borderRadius = '8px';
     img.style.border = '2px solid #c9a04e';
     img.style.objectFit = 'cover';
+    img.style.margin = '2px';
 
     card.appendChild(img);
   } else {
@@ -504,15 +507,7 @@ function createGameCard(game, minimal = false) {
 
     const title = document.createElement('div');
     title.className = 'game-entry-title';
-    const gameTitle =
-    game.title ||
-    game.title_en ||
-    game.title_sv ||
-    game.name ||
-    'Untitled';
-
-  title.textContent = gameTitle;
-
+    title.textContent = gameTitle;
 
     card.appendChild(thumb);
     card.appendChild(title);
@@ -524,6 +519,7 @@ function createGameCard(game, minimal = false) {
 
   return card;
 }
+
 
 
 
