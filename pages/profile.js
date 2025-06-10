@@ -329,16 +329,24 @@ async function maybeShowAddFriendButton(currentUserId, profileId) {
 }
 
 async function checkFriendStatus(viewedUserId) {
-  const res = await fetchWithAuth(`${API_BASE}/friends`);
-  if (!res.ok) return;
+  const myId = getUserIdFromToken(); // ✅ FIXED
+  if (!viewedUserId || !myId || viewedUserId === myId) return;
 
-  const friends = await res.json();
-  const isFriend = friends.some(f => f.id === viewedUserId);
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
+    if (!res.ok) return;
 
-  if (isFriend && viewedUserId !== currentUser.id) {
-    document.getElementById('removeFriendBtn').style.display = 'block';
+    const friends = await res.json();
+    const isFriend = friends.some(f => f.id === parseInt(viewedUserId));
+
+    if (isFriend) {
+      document.getElementById('removeFriendBtn').style.display = 'block';
+    }
+  } catch (err) {
+    console.error('❌ Error in checkFriendStatus:', err);
   }
 }
+
 
 
 async function fetchGameLog(userId) {
