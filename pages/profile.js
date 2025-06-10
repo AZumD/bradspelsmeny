@@ -92,36 +92,44 @@ async function fetchNotifications() {
         const acceptBtn = document.createElement('button');
         acceptBtn.textContent = 'Accept';
         acceptBtn.className = 'btn-accept';
-        acceptBtn.onclick = async (e) => {
-          e.stopPropagation();
-          try {
-            const res = await fetchWithAuth(`${API_BASE}/friend-requests/${n.id}/accept`, {
-              method: 'POST',
-            });
-            if (res.ok) {
-              div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
-            } else {
-             let errorMsg = 'Failed to accept friend request';
-try {
-  const contentType = res.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    const err = await res.json();
-    errorMsg += ': ' + (err.error || JSON.stringify(err));
-  } else {
-    const text = await res.text();
-    errorMsg += ': ' + text;
-  }
-} catch (parseErr) {
-  console.error('Failed to parse error response:', parseErr);
-}
-alert(errorMsg);
+       acceptBtn.onclick = async (e) => {
+  e.stopPropagation();
 
-            }
-          } catch (err) {
-            console.error('❌ Accept failed:', err);
-            alert('Error accepting request.');
-          }
-        };
+  const requestId = n.data?.request_id;
+  if (!requestId) {
+    alert("Missing request ID. Cannot accept this request.");
+    return;
+  }
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/friend-requests/${requestId}/accept`, {
+      method: 'POST',
+    });
+
+    if (res.ok) {
+      div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
+    } else {
+      let errorMsg = 'Failed to accept friend request';
+      try {
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const err = await res.json();
+          errorMsg += ': ' + (err.error || JSON.stringify(err));
+        } else {
+          const text = await res.text();
+          errorMsg += ': ' + text;
+        }
+      } catch (parseErr) {
+        console.error('Failed to parse error response:', parseErr);
+      }
+      alert(errorMsg);
+    }
+  } catch (err) {
+    console.error('❌ Accept failed:', err);
+    alert('Error accepting request.');
+  }
+};
+
 
         const declineBtn = document.createElement('button');
         declineBtn.textContent = 'Decline';
