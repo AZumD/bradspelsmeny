@@ -107,6 +107,16 @@
   color: #5a2a0c;
   position: relative;
 }
+#notificationDot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
 
 .modal-content input {
   width: 100%;
@@ -176,6 +186,13 @@
 
 .btn-decline:hover {
   background-color: #c65555;
+}
+    #notificationIcon {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  cursor: pointer;
+  z-index: 999;
 }
 
     .notification-item button {
@@ -364,5 +381,6 @@
   </div>
 
   <script src="profile.js"></script>
+    <div id="notificationIcon" title="Notifications">🔔</div>
 </body>
 </html>
