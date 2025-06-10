@@ -456,16 +456,16 @@ function createGameCard(game) {
   card.style.gap = '12px';
   card.style.cursor = 'pointer';
 
-  // Handle image URL - prioritize 'img' field since that's where your thumbnails are stored
-  // Use the img field directly since it contains complete URLs
-  let imageUrl = game.img || game.thumbnail_url;
+   let imageUrl = game.img || game.thumbnail_url;
   
-  console.log('🖼️ Using image URL directly:', imageUrl);
-
-   if (imageUrl && imageUrl.includes('/pages/img/')) {
+  console.log('🖼️ Original image URL:', imageUrl);
+  
+  // Fix the URL by removing /pages from the path
+  if (imageUrl && imageUrl.includes('/pages/img/')) {
     imageUrl = imageUrl.replace('/pages/img/', '/img/');
   }
   
+  console.log('🖼️ Fixed image URL:', imageUrl);
   
   const thumb = document.createElement('img');
   
@@ -478,7 +478,6 @@ function createGameCard(game) {
     console.log('🖼️ Failed URL was:', thumb.src);
     thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
   };
-  
   // Set the source - use the constructed URL or fallback
   thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
   
