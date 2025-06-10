@@ -497,7 +497,15 @@ function createGameCard(game, minimal = false) {
 
     const title = document.createElement('div');
     title.className = 'game-entry-title';
-    title.textContent = game.title || 'Untitled';
+    const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
+  title.textContent = gameTitle;
+
 
     card.appendChild(thumb);
     card.appendChild(title);
