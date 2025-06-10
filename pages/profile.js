@@ -101,8 +101,21 @@ async function fetchNotifications() {
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
             } else {
-              const err = await res.json();
-              alert(`Failed: ${err.error}`);
+             let errorMsg = 'Failed to remove friend';
+try {
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    const err = await res.json();
+    errorMsg += ': ' + (err.error || JSON.stringify(err));
+  } else {
+    const text = await res.text();
+    errorMsg += ': ' + text;
+  }
+} catch (parseErr) {
+  console.error('Failed to parse error response:', parseErr);
+}
+alert(errorMsg);
+
             }
           } catch (err) {
             console.error('❌ Accept failed:', err);
