@@ -457,21 +457,33 @@ function createGameCard(game) {
   card.style.cursor = 'pointer';
 
   // Handle different possible image field names
-  let imageUrl = game.thumbnail_url || game.img;
+  let imageUrl = game.img || game.thumbnail_url;
+  
+  console.log('🖼️ Original image URL:', imageUrl);
+  
+  // Only prepend API_BASE if it's a relative path (doesn't start with http/https)
   if (imageUrl && !imageUrl.startsWith('http')) {
+    // Remove leading slash if present to avoid double slashes
+    imageUrl = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
     imageUrl = `${API_BASE}/${imageUrl}`;
   }
   
+  console.log('🖼️ Final image URL:', imageUrl);
+  
   const thumb = document.createElement('img');
-  thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
   
   // Get the game title - check multiple possible field names
   const gameTitle = game.title || game.title_en || game.title_sv || 'Untitled Game';
   
+  // Set up error handling BEFORE setting src
   thumb.onerror = () => {
     console.log('🖼️ Thumbnail failed to load, using fallback for:', gameTitle);
+    console.log('🖼️ Failed URL was:', thumb.src);
     thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
   };
+  
+  // Set the source - use the constructed URL or fallback
+  thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
   
   thumb.alt = gameTitle;
   thumb.style.width = '60px';  // Match your CSS
