@@ -407,7 +407,7 @@ async function fetchFavoritesAndWishlist(userId) {
         favContainer.innerHTML = '';
         favorites.forEach(game => {
           console.log('🎮 Adding favorite game:', game.title);
-          favContainer.appendChild(createGameCard(game));
+          favContainer.appendChild(createGameCard(game, true));
         });
       } else if (favoritesRes && favoritesRes.ok) {
         favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
@@ -439,71 +439,77 @@ async function fetchFavoritesAndWishlist(userId) {
 }
 
 // Also add some debugging to createGameCard function
-function createGameCard(game) {
-  console.log('🃏 Creating game card for:', game);
-  
+function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
   card.className = 'game-entry';
-  
-  // Apply styles that match your CSS
-  card.style.border = '1px dashed #d9b370';
-  card.style.borderRadius = '8px';
-  card.style.padding = '10px';
-  card.style.marginBottom = '10px';
-  card.style.backgroundColor = '#f9f6f2';
-  card.style.display = 'flex';
-  card.style.alignItems = 'center';
-  card.style.gap = '12px';
-  card.style.cursor = 'pointer';
 
-  // Handle image URL - prioritize 'img' field since that's where your thumbnails are stored
-  let imageUrl = game.img || game.thumbnail_url;
-  
-  console.log('🖼️ Original image URL:', imageUrl);
-  
-  // Fix the URL by removing /pages from the path
-  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-    imageUrl = `../${imageUrl}`;  // Go up one directory from /pages/ to root
+  if (minimal) {
+    // Minimal version for favorites grid
+    card.style.all = 'unset';
+    card.style.cursor = 'pointer';
+
+    const img = document.createElement('img');
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    img.alt = game.title || 'Game';
+    img.onerror = () => {
+      img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+
+    img.style.width = '64px';
+    img.style.height = '64px';
+    img.style.borderRadius = '8px';
+    img.style.border = '2px solid #c9a04e';
+    img.style.objectFit = 'cover';
+
+    card.appendChild(img);
+  } else {
+    // Full version for wishlist
+    card.style.border = '1px dashed #d9b370';
+    card.style.borderRadius = '8px';
+    card.style.padding = '10px';
+    card.style.marginBottom = '10px';
+    card.style.backgroundColor = '#f9f6f2';
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.gap = '12px';
+    card.style.cursor = 'pointer';
+
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+
+    const thumb = document.createElement('img');
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    thumb.alt = game.title || 'Game';
+    thumb.onerror = () => {
+      thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+    thumb.style.width = '60px';
+    thumb.style.height = '60px';
+    thumb.style.borderRadius = '8px';
+    thumb.style.border = '2px solid #c9a04e';
+    thumb.style.objectFit = 'cover';
+
+    const title = document.createElement('div');
+    title.className = 'game-entry-title';
+    title.textContent = game.title || 'Untitled';
+
+    card.appendChild(thumb);
+    card.appendChild(title);
   }
-  
-  console.log('🖼️ Fixed image URL:', imageUrl);
-  
-  const thumb = document.createElement('img');
-  
-  // Get the game title - check multiple possible field names
-  const gameTitle = game.title || game.title_en || game.title_sv || 'Untitled Game';
-  
-  // Set up error handling BEFORE setting src
-  thumb.onerror = () => {
-    console.log('🖼️ Thumbnail failed to load, using fallback for:', gameTitle);
-    console.log('🖼️ Failed URL was:', thumb.src);
-    thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
-  };
-  
-  // Set the source - use the constructed URL or fallback
-  thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-  
-  thumb.alt = gameTitle;
-  thumb.style.width = '60px';  // Match your CSS
-  thumb.style.height = '60px'; // Match your CSS
-  thumb.style.borderRadius = '8px';
-  thumb.style.border = '2px solid #c9a04e';
-  thumb.style.objectFit = 'cover';
-
-  const title = document.createElement('div');
-  title.className = 'game-entry-title'; // Use the CSS class
-  title.textContent = gameTitle;
-
-  card.appendChild(thumb);
-  card.appendChild(title);
 
   card.onclick = () => {
-    console.log('🎮 Navigating to game:', game.id);
     window.location.href = `game.html?id=${game.id}`;
   };
 
   return card;
 }
+
 
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
