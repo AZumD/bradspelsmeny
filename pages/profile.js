@@ -478,7 +478,7 @@ function createGameCard(game, minimal = false) {
     card.appendChild(img);
   } else {
     // Full version for wishlist
-    card.style.border = '1px dashed #d9b370';
+    card.style.border = 'none';
     card.style.borderRadius = '8px';
     card.style.padding = '10px';
     card.style.marginBottom = '10px';
