@@ -456,7 +456,8 @@ function createGameCard(game) {
   card.style.gap = '12px';
   card.style.cursor = 'pointer';
 
-   let imageUrl = game.img || game.thumbnail_url;
+  // Handle image URL - prioritize 'img' field since that's where your thumbnails are stored
+  let imageUrl = game.img || game.thumbnail_url;
   
   console.log('🖼️ Original image URL:', imageUrl);
   
@@ -478,6 +479,7 @@ function createGameCard(game) {
     console.log('🖼️ Failed URL was:', thumb.src);
     thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
   };
+  
   // Set the source - use the constructed URL or fallback
   thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
   
