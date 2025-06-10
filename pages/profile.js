@@ -461,6 +461,11 @@ function createGameCard(game) {
   let imageUrl = game.img || game.thumbnail_url;
   
   console.log('🖼️ Using image URL directly:', imageUrl);
+
+   if (imageUrl && imageUrl.includes('/pages/img/')) {
+    imageUrl = imageUrl.replace('/pages/img/', '/img/');
+  }
+  
   
   const thumb = document.createElement('img');
   
