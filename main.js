@@ -338,7 +338,18 @@ async function renderGames() {
     card.dataset.gameId = game.id;
     card.innerHTML = `
   <h3>${title}${isLent ? ' <span style="color:#999;">(Lent out)</span>' : ''}</h3>
+  <div class="game-thumbnail-wrapper">
   <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
+  <div class="game-card-icons">
+    <button class="icon-btn favorite ${userFavorites.includes(game.id) ? 'active' : ''}" onclick="toggleFavorite(${game.id})">
+      ${userFavorites.includes(game.id) ? '❤️' : '🤍'}
+    </button>
+    <button class="icon-btn wishlist ${userWishlist.includes(game.id) ? 'active' : ''}" onclick="toggleWishlist(${game.id})">
+      ${userWishlist.includes(game.id) ? '✅' : '🎯'}
+    </button>
+  </div>
+</div>
+
   <div class="game-card-icons">
     <button class="icon-btn favorite ${userFavorites.includes(game.id) ? 'active' : ''}" onclick="toggleFavorite(${game.id})">
       ${userFavorites.includes(game.id) ? '❤️' : '🤍'}
