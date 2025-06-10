@@ -306,6 +306,7 @@ async function fetchFavoritesAndWishlist(userId) {
 
 function createGameCard(game) {
   const card = document.createElement('div');
+  card.className = 'game-entry';
   card.style.border = '1px solid #d9b370';
   card.style.borderRadius = '8px';
   card.style.padding = '10px';
@@ -318,15 +319,20 @@ function createGameCard(game) {
   card.style.cursor = 'pointer';
 
   const thumb = document.createElement('img');
-  thumb.src = game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
-  thumb.alt = game.title;
+  thumb.src = game.thumbnail_url 
+    ? (game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${API_BASE}${game.thumbnail_url}`)
+    : `${FRONTEND_BASE}/img/default-thumb.webp`;
+  thumb.onerror = () => {
+    thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+  };
+  thumb.alt = game.title || 'Game';
   thumb.style.width = '48px';
   thumb.style.height = '48px';
   thumb.style.borderRadius = '6px';
   thumb.style.objectFit = 'cover';
 
   const title = document.createElement('div');
-  title.textContent = game.title;
+  title.textContent = game.title || 'Untitled Game';
   title.style.fontWeight = 'bold';
   title.style.color = '#5a2a0c';
 
@@ -341,53 +347,47 @@ function createGameCard(game) {
 }
 
 
+
 // Call this in fetchProfile() after loading basic user data:
 // fetchFavoritesAndWishlist(userIdToFetch);
 
-async function loadFriends(viewUserId = null) {
-  const targetUserId = viewUserId || getUserIdFromToken();
-  const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
-
+async function fetchFavoritesAndWishlist(userId) {
   try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
-    const friends = await res.json();
+    const [favoritesRes, wishlistRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`)
+    ]);
 
-    const friendsList = document.getElementById("friendsList");
-    friendsList.innerHTML = "";
+    const [favorites, wishlist] = await Promise.all([
+      favoritesRes.json(),
+      wishlistRes.json()
+    ]);
 
-    if (!friends.length && !isOwnProfile) {
-      friendsList.innerHTML = `<div class="placeholder-box">No friends to display… yet.</div>`;
-      return;
-    }
+    const favContainer = document.getElementById('favoritesList');
+    const wishContainer = document.getElementById('wishlistList');
 
-    for (const friend of friends) {
-      const img = document.createElement("img");
-      img.src = friend.avatar_url
-        ? (friend.avatar_url.startsWith('http') ? friend.avatar_url : API_BASE + friend.avatar_url)
-        : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
-      img.classList.add("friend-avatar");
-      img.title = `${friend.first_name} ${friend.last_name}`;
-      img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
-      friendsList.appendChild(img);
-    }
+    favContainer.innerHTML = favorites.length
+      ? ''
+      : '<div class="placeholder-box">No favorites yet.</div>';
+    wishContainer.innerHTML = wishlist.length
+      ? ''
+      : '<div class="placeholder-box">No wishlist entries yet.</div>';
 
-    // 👇 Add the "+" button if you're viewing your own profile
-    if (isOwnProfile) {
-      const plusBtn = document.createElement("div");
-      plusBtn.className = "add-friend-circle";
-      plusBtn.innerHTML = "+";
-      plusBtn.title = "Add Friend";
-      plusBtn.onclick = () => {
-        document.getElementById("addFriendModal").style.display = "flex";
-      };
-      friendsList.appendChild(plusBtn);
-    }
+    favorites.forEach(game => {
+      favContainer.appendChild(createGameCard(game));
+    });
+
+    wishlist.forEach(game => {
+      wishContainer.appendChild(createGameCard(game));
+    });
 
   } catch (err) {
-    console.error("❌ Failed to load friends:", err);
-    document.getElementById("friendsList").innerHTML = `<div class="placeholder-box">Could not load friends.</div>`;
+    console.error('❌ Failed to fetch favorites/wishlist:', err);
+    document.getElementById('favoritesList').innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    document.getElementById('wishlistList').innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
   }
 }
+
 
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
