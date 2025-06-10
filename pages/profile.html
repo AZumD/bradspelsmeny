@@ -354,9 +354,6 @@
 </head>
 <body>
   <div class="profile-container">
-    <!-- ...existing profile content... -->
- <div class="profile-container">
-
 <!-- 📨 Notification Modal -->
 <div id="notificationModal" class="modal" style="display:none;">
   <div class="modal-content">
@@ -424,16 +421,14 @@
 
    <div>
   <div class="section-title">Favorites</div>
-  <div id="favoritesList" class="favorites-grid placeholder-box">
-    Loading favorites…
-  </div>
+<div id="favoritesList" class="favorites-grid">
+  <div class="placeholder-box">Loading favorites…</div>
 </div>
 
-<div>
-  <div class="section-title">Want to Play</div>
-  <div id="wishlistList" class="wishlist-grid placeholder-box">
-    Loading wishlist…
-  </div>
+<div id="wishlistList" class="wishlist-grid">
+  <div class="placeholder-box">Loading wishlist…</div>
+</div>
+
 </div>
 
 
@@ -442,6 +437,7 @@
 
   <script src="profile.js"></script>
   <div id="notificationIcon" title="Notifications">🔔</div>
-  <span id="notificationDot"></span>
+<span id="notificationDot"></span>
 </body>
 </html>
+
