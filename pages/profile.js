@@ -269,47 +269,6 @@ async function fetchProfile() {
   }
 }
 
-function createGameCard(game) {
-  const card = document.createElement('div');
-  card.className = 'game-entry';
-  card.style.border = '1px solid #d9b370';
-  card.style.borderRadius = '8px';
-  card.style.padding = '10px';
-  card.style.marginBottom = '10px';
-  card.style.backgroundColor = '#f9f6f2';
-  card.style.boxShadow = '1px 1px 4px rgba(0,0,0,0.1)';
-  card.style.display = 'flex';
-  card.style.alignItems = 'center';
-  card.style.gap = '12px';
-  card.style.cursor = 'pointer';
-
-  const thumb = document.createElement('img');
-  thumb.src = game.thumbnail_url 
-    ? (game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${API_BASE}${game.thumbnail_url}`)
-    : `${FRONTEND_BASE}/img/default-thumb.webp`;
-  thumb.onerror = () => {
-    thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
-  };
-  thumb.alt = game.title || 'Game';
-  thumb.style.width = '48px';
-  thumb.style.height = '48px';
-  thumb.style.borderRadius = '6px';
-  thumb.style.objectFit = 'cover';
-
-  const title = document.createElement('div');
-  title.textContent = game.title || 'Untitled Game';
-  title.style.fontWeight = 'bold';
-  title.style.color = '#5a2a0c';
-
-  card.appendChild(thumb);
-  card.appendChild(title);
-
-  card.onclick = () => {
-    window.location.href = `game.html?id=${game.id}`;
-  };
-
-  return card;
-}
 
 async function loadFriends(viewUserId = null) {
   const targetUserId = viewUserId || getUserIdFromToken();
@@ -359,42 +318,175 @@ async function loadFriends(viewUserId = null) {
 // fetchFavoritesAndWishlist(userIdToFetch);
 
 async function fetchFavoritesAndWishlist(userId) {
+  console.log('🔍 fetchFavoritesAndWishlist called with userId:', userId);
+  
   try {
-    const [favoritesRes, wishlistRes] = await Promise.all([
-      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`),
-      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`)
-    ]);
-
-    const [favorites, wishlist] = await Promise.all([
-      favoritesRes.json(),
-      wishlistRes.json()
-    ]);
-
+    // Check if containers exist
     const favContainer = document.getElementById('favoritesList');
     const wishContainer = document.getElementById('wishlistList');
+    
+    if (!favContainer || !wishContainer) {
+      console.error('❌ Container elements not found:', {
+        favContainer: !!favContainer,
+        wishContainer: !!wishContainer
+      });
+      return;
+    }
 
-    favContainer.innerHTML = favorites.length
-      ? ''
-      : '<div class="placeholder-box">No favorites yet.</div>';
-    wishContainer.innerHTML = wishlist.length
-      ? ''
-      : '<div class="placeholder-box">No wishlist entries yet.</div>';
+    console.log('📡 Making API requests...');
+    
+    // Make the API calls with better error handling
+    const [favoritesRes, wishlistRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(err => {
+        console.error('❌ Favorites request failed:', err);
+        return null;
+      }),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(err => {
+        console.error('❌ Wishlist request failed:', err);
+        return null;
+      })
+    ]);
 
-    favorites.forEach(game => {
-      favContainer.appendChild(createGameCard(game));
+    console.log('📡 API responses:', {
+      favoritesRes: favoritesRes?.status,
+      wishlistRes: wishlistRes?.status
     });
 
-    wishlist.forEach(game => {
-      wishContainer.appendChild(createGameCard(game));
-    });
+    // Handle favorites
+    let favorites = [];
+    if (favoritesRes && favoritesRes.ok) {
+      try {
+        favorites = await favoritesRes.json();
+        console.log('✅ Favorites loaded:', favorites);
+      } catch (err) {
+        console.error('❌ Failed to parse favorites JSON:', err);
+        favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (JSON error).</div>';
+      }
+    } else if (favoritesRes) {
+      console.error('❌ Favorites request failed with status:', favoritesRes.status);
+      // Try to get error message
+      try {
+        const errorText = await favoritesRes.text();
+        console.error('Error response:', errorText);
+      } catch (e) {
+        console.error('Could not read error response');
+      }
+      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    } else {
+      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (network error).</div>';
+    }
+
+    // Handle wishlist
+    let wishlist = [];
+    if (wishlistRes && wishlistRes.ok) {
+      try {
+        wishlist = await wishlistRes.json();
+        console.log('✅ Wishlist loaded:', wishlist);
+      } catch (err) {
+        console.error('❌ Failed to parse wishlist JSON:', err);
+        wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (JSON error).</div>';
+      }
+    } else if (wishlistRes) {
+      console.error('❌ Wishlist request failed with status:', wishlistRes.status);
+      // Try to get error message
+      try {
+        const errorText = await wishlistRes.text();
+        console.error('Error response:', errorText);
+      } catch (e) {
+        console.error('Could not read error response');
+      }
+      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+    } else {
+      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (network error).</div>';
+    }
+
+    // Update UI with successful data
+    if (favorites.length > 0 || wishlist.length > 0) {
+      // Clear containers before adding content
+      if (favorites.length > 0) {
+        favContainer.innerHTML = '';
+        favorites.forEach(game => {
+          console.log('🎮 Adding favorite game:', game.title);
+          favContainer.appendChild(createGameCard(game));
+        });
+      } else if (favoritesRes && favoritesRes.ok) {
+        favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
+      }
+
+      if (wishlist.length > 0) {
+        wishContainer.innerHTML = '';
+        wishlist.forEach(game => {
+          console.log('🎮 Adding wishlist game:', game.title);
+          wishContainer.appendChild(createGameCard(game));
+        });
+      } else if (wishlistRes && wishlistRes.ok) {
+        wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
+      }
+    }
 
   } catch (err) {
     console.error('❌ Failed to fetch favorites/wishlist:', err);
-    document.getElementById('favoritesList').innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    document.getElementById('wishlistList').innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+    const favContainer = document.getElementById('favoritesList');
+    const wishContainer = document.getElementById('wishlistList');
+    
+    if (favContainer) {
+      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    }
+    if (wishContainer) {
+      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+    }
   }
 }
 
+// Also add some debugging to createGameCard function
+function createGameCard(game) {
+  console.log('🃏 Creating game card for:', game);
+  
+  const card = document.createElement('div');
+  card.className = 'game-entry';
+  
+  // Apply styles that match your CSS
+  card.style.border = '1px dashed #d9b370';
+  card.style.borderRadius = '8px';
+  card.style.padding = '10px';
+  card.style.marginBottom = '10px';
+  card.style.backgroundColor = '#f9f6f2';
+  card.style.display = 'flex';
+  card.style.alignItems = 'center';
+  card.style.gap = '12px';
+  card.style.cursor = 'pointer';
+
+  const thumb = document.createElement('img');
+  thumb.src = game.thumbnail_url 
+    ? (game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${API_BASE}${game.thumbnail_url}`)
+    : `${FRONTEND_BASE}/img/default-thumb.webp`;
+  
+  thumb.onerror = () => {
+    console.log('🖼️ Thumbnail failed to load, using fallback for:', game.title);
+    thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+  };
+  
+  thumb.alt = game.title || 'Game';
+  thumb.style.width = '60px';  // Match your CSS
+  thumb.style.height = '60px'; // Match your CSS
+  thumb.style.borderRadius = '8px';
+  thumb.style.border = '2px solid #c9a04e';
+  thumb.style.objectFit = 'cover';
+
+  const title = document.createElement('div');
+  title.className = 'game-entry-title'; // Use the CSS class
+  title.textContent = game.title || 'Untitled Game';
+
+  card.appendChild(thumb);
+  card.appendChild(title);
+
+  card.onclick = () => {
+    console.log('🎮 Navigating to game:', game.id);
+    window.location.href = `game.html?id=${game.id}`;
+  };
+
+  return card;
+}
 
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
