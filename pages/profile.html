@@ -322,7 +322,15 @@
     .game-list-container {
       margin-top: 1.5rem;
     }
-    .favorites-grid, .wishlist-grid {
+ .favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  justify-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.wishlist-grid {
   display: flex;
   flex-direction: column;
   gap: 8px;
