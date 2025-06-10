@@ -346,6 +346,51 @@ function createGameCard(game) {
   return card;
 }
 
+async function loadFriends(viewUserId = null) {
+  const targetUserId = viewUserId || getUserIdFromToken();
+  const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
+    const friends = await res.json();
+
+    const friendsList = document.getElementById("friendsList");
+    friendsList.innerHTML = "";
+
+    if (!friends.length && !isOwnProfile) {
+      friendsList.innerHTML = <div class="placeholder-box">No friends to display… yet.</div>;
+      return;
+    }
+
+    for (const friend of friends) {
+      const img = document.createElement("img");
+      img.src = friend.avatar_url
+  ? (friend.avatar_url.startsWith('http') ? friend.avatar_url : API_BASE + friend.avatar_url)
+  : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
+
+  img.title = `${friend.first_name} ${friend.last_name}`;
+  img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
+  
+      friendsList.appendChild(img);
+    }
+
+    // 👇 Add the "+" button if you're viewing your own profile
+    if (isOwnProfile) {
+      const plusBtn = document.createElement("div");
+      plusBtn.className = "add-friend-circle";
+      plusBtn.innerHTML = "+";
+      plusBtn.title = "Add Friend";
+      plusBtn.onclick = () => {
+        document.getElementById("addFriendModal").style.display = "flex";
+      };
+      friendsList.appendChild(plusBtn);
+    }
+
+  } catch (err) {
+    console.error("❌ Failed to load friends:", err);
+    document.getElementById("friendsList").innerHTML = <div class="placeholder-box">Could not load friends.</div>;
+  }
+}
 
 
 // Call this in fetchProfile() after loading basic user data:
