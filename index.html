@@ -143,6 +143,30 @@
       box-shadow: 2px 2px 0 #8b0000;
       transition: background-color 0.2s ease;
     }
+
+    .game-thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.game-thumbnail-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 2px 2px 0 #c19761;
+}
+
+/* Icons inside image */
+.game-thumbnail-wrapper .game-card-icons {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
     .language-toggle button:hover {
       background-color: #8b0000;
       color: gold;
