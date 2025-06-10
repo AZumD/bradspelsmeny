@@ -17,6 +17,29 @@
       color: #5a2a0c; /* Warm dark brown */
       user-select: none;
     }
+.notification-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.notification-item {
+  border-bottom: 1px solid #d9b370;
+  padding: 10px;
+  font-size: 0.9rem;
+  color: #5a2a0c;
+  background-color: #f9f6f2;
+}
+
+.notification-item.unread {
+  background-color: #fff3d6;
+  font-weight: bold;
+  border-left: 4px solid #d9b370;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
 
     h1 {
       font-family: 'Press Start 2P', monospace;
