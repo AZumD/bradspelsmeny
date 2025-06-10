@@ -456,17 +456,24 @@ function createGameCard(game) {
   card.style.gap = '12px';
   card.style.cursor = 'pointer';
 
+  // Handle different possible image field names
+  let imageUrl = game.thumbnail_url || game.img;
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    imageUrl = `${API_BASE}/${imageUrl}`;
+  }
+  
   const thumb = document.createElement('img');
-  thumb.src = game.thumbnail_url 
-    ? (game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${API_BASE}${game.thumbnail_url}`)
-    : `${FRONTEND_BASE}/img/default-thumb.webp`;
+  thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+  
+  // Get the game title - check multiple possible field names
+  const gameTitle = game.title || game.title_en || game.title_sv || 'Untitled Game';
   
   thumb.onerror = () => {
-    console.log('🖼️ Thumbnail failed to load, using fallback for:', game.title);
+    console.log('🖼️ Thumbnail failed to load, using fallback for:', gameTitle);
     thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
   };
   
-  thumb.alt = game.title || 'Game';
+  thumb.alt = gameTitle;
   thumb.style.width = '60px';  // Match your CSS
   thumb.style.height = '60px'; // Match your CSS
   thumb.style.borderRadius = '8px';
@@ -475,7 +482,7 @@ function createGameCard(game) {
 
   const title = document.createElement('div');
   title.className = 'game-entry-title'; // Use the CSS class
-  title.textContent = game.title || 'Untitled Game';
+  title.textContent = gameTitle;
 
   card.appendChild(thumb);
   card.appendChild(title);
