@@ -66,6 +66,50 @@ function getUserIdFromToken() {
   }
 }
 
+async function fetchNotifications() {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/notifications`);
+    if (!res.ok) throw new Error('Failed to fetch notifications');
+
+    const notifications = await res.json();
+    const list = document.getElementById('notificationList');
+    list.innerHTML = '';
+
+    if (!notifications.length) {
+      list.innerHTML = '<div class="placeholder-box">No notifications yet.</div>';
+      return;
+    }
+
+    for (const n of notifications) {
+      const div = document.createElement('div');
+      div.className = `notification-item ${n.read ? '' : 'unread'}`;
+      div.innerHTML = formatNotificationText(n);
+      div.onclick = async () => {
+        if (!n.read) {
+          await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
+          div.classList.remove('unread');
+        }
+      };
+      list.appendChild(div);
+    }
+
+  } catch (err) {
+    console.error('❌ Failed to fetch notifications:', err);
+    document.getElementById('notificationList').innerHTML = `<div class="placeholder-box">Could not load notifications.</div>`;
+  }
+}
+
+function formatNotificationText(n) {
+  const time = new Date(n.created_at).toLocaleString();
+  switch (n.type) {
+    case 'friend_request':
+      return `👤 Friend request from user ID ${n.data.sender_id} <br><small>${time}</small>`;
+    default:
+      return `${n.type} <br><small>${time}</small>`;
+  }
+}
+
+
 function getUserIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
