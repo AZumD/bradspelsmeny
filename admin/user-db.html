@@ -215,7 +215,17 @@
       </form>
     </div>
   </div>
-
+  <div id="badgeModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h1>🎖️ Award Badge</h1>
+    <form id="badgeForm">
+      <input type="hidden" id="badgeUserId" />
+      <label for="badgeSelect">Choose a badge:</label>
+      <select id="badgeSelect" required style="margin-top: 10px; width: 100%; font-size: 0.6rem;"></select>
+      <button type="submit" style="margin-top: 1rem;">✅ Award</button>
+    </form>
+  </div>
+</div>
   <!-- User List -->
   <div class="user-list" id="userList"></div>
 
