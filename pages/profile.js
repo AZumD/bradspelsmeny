@@ -262,6 +262,8 @@ async function fetchProfile() {
 
         fetchGameLog(userIdToFetch);
         fetchFavoritesAndWishlist(userIdToFetch); // 👈 ADD THIS
+        fetchBadges(userIdToFetch);
+
 
 
   } catch (err) {
@@ -528,6 +530,37 @@ function createGameCard(game, minimal = false) {
   return card;
 }
 
+async function fetchBadges(userId) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/badges`);
+    const badges = await res.json();
+    const container = document.getElementById('badgesList');
+
+    if (!badges.length) {
+      container.innerHTML = '<div class="placeholder-box">No badges earned yet.</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    badges.forEach(badge => {
+      const img = document.createElement('img');
+      img.src = badge.icon_url;
+      img.alt = badge.name;
+      img.title = `${badge.name} – ${badge.description}`;
+      img.style.width = '48px';
+      img.style.height = '48px';
+      img.style.borderRadius = '8px';
+      img.style.border = '2px solid #c9a04e';
+      img.style.objectFit = 'cover';
+      img.style.background = '#fff';
+      container.appendChild(img);
+    });
+  } catch (err) {
+    console.error('❌ Failed to fetch badges:', err);
+    const container = document.getElementById('badgesList');
+    container.innerHTML = '<div class="placeholder-box">Failed to load badges.</div>';
+  }
+}
 
 
 
