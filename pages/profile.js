@@ -66,6 +66,7 @@ function getUserIdFromToken() {
   }
 }
 
+
 async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
@@ -96,18 +97,15 @@ async function fetchNotifications() {
         acceptBtn.className = 'btn-accept';
         acceptBtn.onclick = async (e) => {
           e.stopPropagation();
-
           const requestId = n.data?.request_id;
           if (!requestId) {
             alert("Missing request ID. Cannot accept this request.");
             return;
           }
-
           try {
             const res = await fetchWithAuth(`${API_BASE}/friend-requests/${requestId}/accept`, {
               method: 'POST',
             });
-
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
             } else {
@@ -176,7 +174,6 @@ async function fetchNotifications() {
       list.appendChild(div);
     }
 
-    // Add notification dot if any unread
     if (notifications.some(n => !n.read)) {
       const icon = document.getElementById("notificationIcon");
       if (icon && !document.getElementById("notificationDot")) {
@@ -185,80 +182,12 @@ async function fetchNotifications() {
         icon.appendChild(dot);
       }
     }
-
   } catch (err) {
     console.error('❌ Failed to fetch notifications:', err);
     document.getElementById('notificationList').innerHTML =
       `<div class="placeholder-box">Could not load notifications.</div>`;
   }
 }
-
-
-
-
-
-        const declineBtn = document.createElement('button');
-        declineBtn.textContent = 'Decline';
-        declineBtn.className = 'btn-decline';
-        declineBtn.onclick = async (e) => {
-          e.stopPropagation();
-          try {
-            const res = await fetchWithAuth(`${API_BASE}/friend-requests/${n.id}/decline`, {
-              method: 'POST',
-            });
-            if (res.ok) {
-              div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small>`;
-            } else {
-              const err = await res.json();
-              alert(`Failed: ${err.error}`);
-            }
-          } catch (err) {
-            console.error('❌ Decline failed:', err);
-            alert('Error declining request.');
-          }
-        };
-
-        btnWrapper.appendChild(acceptBtn);
-        btnWrapper.appendChild(declineBtn);
-        div.appendChild(btnWrapper);
-      }
-for (const n of notifications) {
-  const div = document.createElement('div');
-  div.className = `notification-item ${n.read ? '' : 'unread'}`;
-  div.innerHTML = formatNotificationText(n);
-
-  const time = new Date(n.created_at).toLocaleString(); // 👈 ADD THIS
-
-  div.onclick = async () => {
-    if (!n.read) {
-      await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
-      div.classList.remove('unread');
-
-      if (n.type === 'badge_awarded' && n.data?.name && n.data?.icon_url) {
-        showBadgePopup(n.data.name, n.data.icon_url, time); // ✅ time now exists
-      }
-    }
-
-    if (n.type === 'friend_accept' && n.data.receiver_id) {
-      window.location.href = `profile.html?id=${n.data.receiver_id}`;
-    }
-  };
-
-
-
-      list.appendChild(div);
-    }
-
-    if (notifications.some(n => !n.read)) {
-  document.getElementById("notificationIcon").appendChild(document.createElement("span")).id = "notificationDot";
-}
-  } catch (err) {
-    console.error('❌ Failed to fetch notifications:', err);
-    document.getElementById('notificationList').innerHTML =
-      `<div class="placeholder-box">Could not load notifications.</div>`;
-  }
-}
-
 function formatNotificationText(n) {
   const time = new Date(n.created_at).toLocaleString();
 
@@ -297,339 +226,12 @@ function showBadgePopup(name, iconUrl, time) {
   const popup = document.getElementById('badgePopup');
   popup.style.display = 'flex';
 
-  // Optional: auto-close after 6s
+  // Optional: auto-close after 6 seconds
   setTimeout(() => {
     popup.style.display = 'none';
   }, 6000);
 }
 
-function getUserIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('id');
-}
-
-async function fetchProfile() {
-  const token = getAccessToken();
-
-  if (!token) {
-    alert('You must be logged in to view profiles.');
-    window.location.href = '/login.html';
-    return;
-  }
-
-  const urlUserId = getUserIdFromUrl();
-  const loggedInUserId = getUserIdFromToken();
-  const userIdToFetch = urlUserId && urlUserId !== String(loggedInUserId)
-    ? urlUserId
-    : loggedInUserId;
-
-  if (!userIdToFetch) {
-    alert('No user specified and you are not logged in.');
-    window.location.href = '/login.html';
-    return;
-  }
-
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${userIdToFetch}`);
-    if (!res.ok) throw new Error('Failed to load profile');
-
-    const data = await res.json();
-
-    document.getElementById('username').textContent = data.username || 'Unknown user';
-
-    const emailElem = document.getElementById('email');
-    if (emailElem) emailElem.style.display = 'none';
-
-    document.getElementById('bio').textContent = data.bio || '';
-
-    let avatarUrl = data.avatar_url || `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
-    if (avatarUrl && !avatarUrl.startsWith('http')) {
-      avatarUrl = API_BASE + avatarUrl;
-    }
-
-    const avatarElem = document.getElementById('avatar');
-    avatarElem.src = avatarUrl;
-    avatarElem.alt = `Avatar of ${data.username || 'user'}`;
-
-    const editBtn = document.getElementById('editProfileBtn');
-    if (String(userIdToFetch) === String(loggedInUserId)) {
-      editBtn.style.display = 'block';
-      loadFriends(); // own profile → load your own friends
-    } else {
-      editBtn.style.display = 'none';
-      loadFriends(userIdToFetch); // not your own → load target user's friends
-      maybeShowAddFriendButton(loggedInUserId, userIdToFetch);
-    }
-
-        fetchGameLog(userIdToFetch);
-        fetchFavoritesAndWishlist(userIdToFetch); // 👈 ADD THIS
-        fetchBadges(userIdToFetch);
-
-
-
-  } catch (err) {
-    alert('Error loading profile: ' + err.message);
-  }
-}
-
-
-async function loadFriends(viewUserId = null) {
-  const targetUserId = viewUserId || getUserIdFromToken();
-  const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
-    const friends = await res.json();
-    const friendsList = document.getElementById("friendsList");
-    friendsList.innerHTML = "";
-    
-    if (!friends.length && !isOwnProfile) {
-      friendsList.innerHTML = '<div class="placeholder-box">No friends to display… yet.</div>';
-      return;
-    }
-    
-    for (const friend of friends) {
-      const img = document.createElement("img");
-      img.className = "friend-avatar"; // 👈 Added the CSS class for proper styling
-      img.src = friend.avatar_url
-        ? (friend.avatar_url.startsWith('http') ? friend.avatar_url : API_BASE + friend.avatar_url)
-        : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
-      img.title = `${friend.first_name} ${friend.last_name}`;
-      img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
-      
-      friendsList.appendChild(img);
-    }
-    
-    // 👇 Add the "+" button if you're viewing your own profile
-    if (isOwnProfile) {
-      const plusBtn = document.createElement("div");
-      plusBtn.className = "add-friend-circle";
-      plusBtn.innerHTML = "+";
-      plusBtn.title = "Add Friend";
-      plusBtn.onclick = () => {
-        document.getElementById("addFriendModal").style.display = "flex";
-      };
-      friendsList.appendChild(plusBtn);
-    }
-  } catch (err) {
-    console.error("❌ Failed to load friends:", err);
-    document.getElementById("friendsList").innerHTML = '<div class="placeholder-box">Could not load friends.</div>';
-  }
-}
-
-
-// Call this in fetchProfile() after loading basic user data:
-// fetchFavoritesAndWishlist(userIdToFetch);
-
-async function fetchFavoritesAndWishlist(userId) {
-  console.log('🔍 fetchFavoritesAndWishlist called with userId:', userId);
-  
-  try {
-    // Check if containers exist
-    const favContainer = document.getElementById('favoritesList');
-    const wishContainer = document.getElementById('wishlistList');
-    
-    if (!favContainer || !wishContainer) {
-      console.error('❌ Container elements not found:', {
-        favContainer: !!favContainer,
-        wishContainer: !!wishContainer
-      });
-      return;
-    }
-
-    console.log('📡 Making API requests...');
-    
-    // Make the API calls with better error handling
-    const [favoritesRes, wishlistRes] = await Promise.all([
-      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(err => {
-        console.error('❌ Favorites request failed:', err);
-        return null;
-      }),
-      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(err => {
-        console.error('❌ Wishlist request failed:', err);
-        return null;
-      })
-    ]);
-
-    console.log('📡 API responses:', {
-      favoritesRes: favoritesRes?.status,
-      wishlistRes: wishlistRes?.status
-    });
-
-    // Handle favorites
-    let favorites = [];
-    if (favoritesRes && favoritesRes.ok) {
-      try {
-        favorites = await favoritesRes.json();
-        console.log('✅ Favorites loaded:', favorites);
-      } catch (err) {
-        console.error('❌ Failed to parse favorites JSON:', err);
-        favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (JSON error).</div>';
-      }
-    } else if (favoritesRes) {
-      console.error('❌ Favorites request failed with status:', favoritesRes.status);
-      // Try to get error message
-      try {
-        const errorText = await favoritesRes.text();
-        console.error('Error response:', errorText);
-      } catch (e) {
-        console.error('Could not read error response');
-      }
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    } else {
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (network error).</div>';
-    }
-
-    // Handle wishlist
-    let wishlist = [];
-    if (wishlistRes && wishlistRes.ok) {
-      try {
-        wishlist = await wishlistRes.json();
-        console.log('✅ Wishlist loaded:', wishlist);
-      } catch (err) {
-        console.error('❌ Failed to parse wishlist JSON:', err);
-        wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (JSON error).</div>';
-      }
-    } else if (wishlistRes) {
-      console.error('❌ Wishlist request failed with status:', wishlistRes.status);
-      // Try to get error message
-      try {
-        const errorText = await wishlistRes.text();
-        console.error('Error response:', errorText);
-      } catch (e) {
-        console.error('Could not read error response');
-      }
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
-    } else {
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (network error).</div>';
-    }
-
-    // Update UI with successful data
-    if (favorites.length > 0 || wishlist.length > 0) {
-      // Clear containers before adding content
-      if (favorites.length > 0) {
-        favContainer.innerHTML = '';
-        favorites.forEach(game => {
-          console.log('🎮 Adding favorite game:', game.title);
-          favContainer.appendChild(createGameCard(game, true));
-        });
-      } else if (favoritesRes && favoritesRes.ok) {
-  const isOwnProfile = String(userId) === String(getUserIdFromToken());
-  favContainer.innerHTML = isOwnProfile
-    ? '<div class="placeholder-box">No favorites yet.</div>'
-    : '';
-}
-
-
-      if (wishlist.length > 0) {
-        wishContainer.innerHTML = '';
-        wishlist.forEach(game => {
-          console.log('🎮 Adding wishlist game:', game.title);
-          wishContainer.appendChild(createGameCard(game));
-        });
-      } else if (wishlistRes && wishlistRes.ok) {
-  const isOwnProfile = String(userId) === String(getUserIdFromToken());
-  wishContainer.innerHTML = isOwnProfile
-    ? '<div class="placeholder-box">No wishlist entries yet.</div>'
-    : '';
-}
-
-    }
-
-  } catch (err) {
-    console.error('❌ Failed to fetch favorites/wishlist:', err);
-    const favContainer = document.getElementById('favoritesList');
-    const wishContainer = document.getElementById('wishlistList');
-    
-    if (favContainer) {
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    }
-    if (wishContainer) {
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
-    }
-  }
-}
-
-// Also add some debugging to createGameCard function
-function createGameCard(game, minimal = false) {
-  const card = document.createElement('div');
-  card.className = 'game-entry';
-
-  const gameTitle =
-    game.title ||
-    game.title_en ||
-    game.title_sv ||
-    game.name ||
-    'Untitled';
-
-  if (minimal) {
-    // Minimal version for favorites grid
-    card.style.all = 'unset';
-    card.style.cursor = 'pointer';
-
-    const img = document.createElement('img');
-    let imageUrl = game.img || game.thumbnail_url;
-    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-      imageUrl = `../${imageUrl}`;
-    }
-
-    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-    img.alt = gameTitle;
-    img.title = gameTitle; // tooltip on hover
-    img.onerror = () => {
-      img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
-    };
-
-    img.style.width = '48px';
-    img.style.height = '48px';
-    img.style.borderRadius = '8px';
-    img.style.border = '2px solid #c9a04e';
-    img.style.objectFit = 'cover';
-    img.style.margin = '2px';
-
-    card.appendChild(img);
-  } else {
-    // Full version for wishlist
-    card.style.border = 'none';
-    card.style.borderRadius = '8px';
-    card.style.padding = '10px';
-    card.style.marginBottom = '10px';
-    card.style.backgroundColor = '#f9f6f2';
-    card.style.display = 'flex';
-    card.style.alignItems = 'center';
-    card.style.gap = '12px';
-    card.style.cursor = 'pointer';
-
-    let imageUrl = game.img || game.thumbnail_url;
-    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-      imageUrl = `../${imageUrl}`;
-    }
-
-    const thumb = document.createElement('img');
-    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
-    thumb.alt = gameTitle;
-    thumb.onerror = () => {
-      thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
-    };
-    thumb.style.width = '60px';
-    thumb.style.height = '60px';
-    thumb.style.borderRadius = '8px';
-    thumb.style.border = '2px solid #c9a04e';
-    thumb.style.objectFit = 'cover';
-
-    const title = document.createElement('div');
-    title.className = 'game-entry-title';
-    title.textContent = gameTitle;
-
-    card.appendChild(thumb);
-    card.appendChild(title);
-  }
-
-  card.onclick = () => {
-    window.location.href = `game.html?id=${game.id}`;
-  };
-
-  return card;
-}
 
 async function fetchBadges(userId) {
   try {
@@ -655,9 +257,9 @@ async function fetchBadges(userId) {
       img.style.objectFit = 'cover';
       img.style.background = '#fff';
       img.style.cursor = 'pointer';
-img.onclick = () => openBadgeInfoModal(badge);
-container.appendChild(img);
 
+      img.onclick = () => openBadgeInfoModal(badge);
+      container.appendChild(img);
     });
   } catch (err) {
     console.error('❌ Failed to fetch badges:', err);
@@ -672,9 +274,6 @@ function openBadgeInfoModal(badge) {
   document.getElementById("badgeDescription").textContent = badge.description;
   document.getElementById("badgeInfoModal").style.display = "flex";
 }
-
-
-
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
   if (!currentUserId || !profileId || currentUserId === profileId) return;
@@ -713,7 +312,7 @@ async function maybeShowAddFriendButton(currentUserId, profileId) {
 }
 
 async function checkFriendStatus(viewedUserId) {
-  const myId = getUserIdFromToken(); // ✅ FIXED
+  const myId = getUserIdFromToken();
   if (!viewedUserId || !myId || viewedUserId === myId) return;
 
   try {
@@ -730,8 +329,6 @@ async function checkFriendStatus(viewedUserId) {
     console.error('❌ Error in checkFriendStatus:', err);
   }
 }
-
-
 
 async function fetchGameLog(userId) {
   try {
@@ -775,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
-  const profileUserId = viewedId; // 🔧 needed in both checkFriendStatus and remove handler
+  const profileUserId = viewedId;
 
   const closeBadgePopupBtn = document.getElementById("closeBadgePopup");
   if (closeBadgePopupBtn) {
@@ -784,8 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  
-    const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
+  const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
   if (badgeCloseBtn) {
     badgeCloseBtn.onclick = () => {
       const modal = document.getElementById("badgeInfoModal");
@@ -793,9 +389,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  checkFriendStatus(profileUserId); // ✅ This sets up the Remove Friend button if applicable
+  checkFriendStatus(profileUserId);
 
-  // ✅ Attach remove friend handler if button is present
   const removeBtn = document.getElementById('removeFriendBtn');
   if (removeBtn) {
     removeBtn.addEventListener('click', async () => {
@@ -821,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 📩 Manual Add Friend Modal (only on your own profile)
   if (String(myId) === String(profileUserId)) {
     const modal = document.getElementById("addFriendModal");
     const closeBtn = document.getElementById("closeModalBtn");
@@ -861,7 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // 🔔 Notifications
   const notifBtn = document.getElementById("notificationIcon");
   const notifModal = document.getElementById("notificationModal");
   const closeNotifBtn = document.getElementById("closeNotificationBtn");
@@ -879,6 +472,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 });
-
 
 
