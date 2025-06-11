@@ -158,14 +158,20 @@ async function fetchNotifications() {
       }
 
       div.onclick = async () => {
-        if (!n.read) {
-          await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
-          div.classList.remove('unread');
-        }
-        if (n.type === 'friend_accept' && n.data.receiver_id) {
-          window.location.href = `profile.html?id=${n.data.receiver_id}`;
-        }
-      };
+  if (!n.read) {
+    await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
+    div.classList.remove('unread');
+
+    if (n.type === 'badge_awarded' && n.data?.name && n.data?.icon_url) {
+      showBadgePopup(n.data.name, n.data.icon_url, time);
+    }
+  }
+
+  if (n.type === 'friend_accept' && n.data.receiver_id) {
+    window.location.href = `profile.html?id=${n.data.receiver_id}`;
+  }
+};
+
 
       list.appendChild(div);
     }
@@ -196,11 +202,33 @@ function formatNotificationText(n) {
         <br><small>${time}</small>
       `;
 
+    case 'badge_awarded':
+      return `
+        🏅 You earned a new badge!<br>
+        <strong>${n.data.name}</strong><br>
+        <img src="${n.data.icon_url}" alt="${n.data.name}" style="width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;margin-top:4px;"><br>
+        <small>${time}</small>
+      `;
+
     default:
       return `${n.type} <br><small>${time}</small>`;
   }
 }
 
+function showBadgePopup(name, iconUrl, time) {
+  document.getElementById('badgePopupImage').src = iconUrl;
+  document.getElementById('badgePopupImage').alt = name;
+  document.getElementById('badgePopupName').textContent = name;
+  document.getElementById('badgePopupTime').textContent = time;
+
+  const popup = document.getElementById('badgePopup');
+  popup.style.display = 'flex';
+
+  // Optional: auto-close after 6s
+  setTimeout(() => {
+    popup.style.display = 'none';
+  }, 6000);
+}
 
 function getUserIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -675,6 +703,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId; // 🔧 needed in both checkFriendStatus and remove handler
+
+  const closeBadgePopupBtn = document.getElementById("closeBadgePopup");
+  if (closeBadgePopupBtn) {
+    closeBadgePopupBtn.onclick = () => {
+      document.getElementById("badgePopup").style.display = "none";
+    };
+  }
+
+  
     const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
   if (badgeCloseBtn) {
     badgeCloseBtn.onclick = () => {
