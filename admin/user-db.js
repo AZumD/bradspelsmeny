@@ -112,54 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  async function openBadgeModal(userId) {
-    document.getElementById("badgeUserId").value = userId;
-
-    try {
-      const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/badges");
-      if (!res.ok) throw new Error("Could not fetch badges");
-      const badges = await res.json();
-
-      badgeSelect.innerHTML = "";
-      badges.forEach(badge => {
-        const opt = document.createElement("option");
-        opt.value = badge.id;
-        opt.textContent = `${badge.name} – ${badge.description}`;
-        badgeSelect.appendChild(opt);
-      });
-
-      badgeModal.style.display = "flex";
-    } catch (err) {
-      console.error("❌ Failed to open badge modal:", err);
-      alert("Kunde inte hämta badges.");
-    }
-  }
-
-  badgeForm.onsubmit = async (e) => {
-    e.preventDefault();
-    const userId = document.getElementById("badgeUserId").value;
-    const badgeId = badgeSelect.value;
-
-    try {
-      const res = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ badge_id: badgeId })
-      });
-
-      if (res.ok) {
-        alert("✅ Badge awarded!");
-        badgeModal.style.display = "none";
-      } else {
-        const err = await res.json();
-        alert("❌ Misslyckades: " + (err.error || "Något gick fel."));
-      }
-    } catch (err) {
-      console.error("❌ Error awarding badge:", err);
-      alert("Något gick fel när badge skulle tilldelas.");
-    }
-  };
-
   loadUsers();
 });
 
@@ -254,6 +206,32 @@ async function loadUsers() {
     });
   } catch (err) {
     console.error("Failed to load users:", err);
+  }
+}
+async function openBadgeModal(userId) {
+  const badgeModal = document.getElementById("badgeModal");
+  const badgeSelect = document.getElementById("badgeSelect");
+  const badgeUserIdInput = document.getElementById("badgeUserId");
+
+  badgeUserIdInput.value = userId;
+
+  try {
+    const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/badges");
+    if (!res.ok) throw new Error("Could not fetch badges");
+    const badges = await res.json();
+
+    badgeSelect.innerHTML = "";
+    badges.forEach(badge => {
+      const opt = document.createElement("option");
+      opt.value = badge.id;
+      opt.textContent = `${badge.name} – ${badge.description}`;
+      badgeSelect.appendChild(opt);
+    });
+
+    badgeModal.style.display = "flex";
+  } catch (err) {
+    console.error("❌ Failed to open badge modal:", err);
+    alert("Kunde inte hämta badges.");
   }
 }
 
