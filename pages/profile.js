@@ -233,6 +233,13 @@ function showBadgePopup(name, iconUrl, time) {
 }
 
 
+
+function getUserIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+
 async function fetchProfile() {
   const token = getAccessToken();
 
