@@ -235,4 +235,38 @@ async function openBadgeModal(userId) {
   }
 }
 
+badgeForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const userId = document.getElementById("badgeUserId").value;
+  const badgeId = badgeSelect.value;
+
+  try {
+    const res = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ badge_id: badgeId })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert("❌ Misslyckades: " + (err.error || "Något gick fel."));
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✅ " + (data.message || "Badge awarded!"));
+    } else {
+      alert("ℹ️ " + (data.message || "Användaren hade redan den här badgen."));
+    }
+
+    badgeModal.style.display = "none";
+  } catch (err) {
+    console.error("❌ Error awarding badge:", err);
+    alert("Något gick fel när badge skulle tilldelas.");
+  }
+};
+
+
 
