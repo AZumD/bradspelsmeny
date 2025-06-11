@@ -54,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const userForm = document.getElementById("userForm");
   const userList = document.getElementById("userList");
 
+  const badgeModal = document.getElementById("badgeModal");
+  const badgeForm = document.getElementById("badgeForm");
+  const badgeSelect = document.getElementById("badgeSelect");
+
   if (!localStorage.getItem("adminToken")) {
     window.location.href = "login.html";
     return;
@@ -67,6 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   userModal.addEventListener("click", (e) => {
     if (e.target === userModal) userModal.style.display = "none";
+  });
+
+  badgeModal.addEventListener("click", (e) => {
+    if (e.target === badgeModal) badgeModal.style.display = "none";
   });
 
   userForm.onsubmit = async (e) => {
@@ -104,6 +112,58 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  async function openBadgeModal(userId) {
+    document.getElementById("badgeUserId").value = userId;
+
+    try {
+      const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/badges");
+      if (!res.ok) throw new Error("Could not fetch badges");
+      const badges = await res.json();
+
+      badgeSelect.innerHTML = "";
+      badges.forEach(badge => {
+        const opt = document.createElement("option");
+        opt.value = badge.id;
+        opt.textContent = `${badge.name} – ${badge.description}`;
+        badgeSelect.appendChild(opt);
+      });
+
+      badgeModal.style.display = "flex";
+    } catch (err) {
+      console.error("❌ Failed to open badge modal:", err);
+      alert("Kunde inte hämta badges.");
+    }
+  }
+
+  badgeForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const userId = document.getElementById("badgeUserId").value;
+    const badgeId = badgeSelect.value;
+
+    try {
+      const res = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ badge_id: badgeId })
+      });
+
+      if (res.ok) {
+        alert("✅ Badge awarded!");
+        badgeModal.style.display = "none";
+      } else {
+        const err = await res.json();
+        alert("❌ Misslyckades: " + (err.error || "Något gick fel."));
+      }
+    } catch (err) {
+      console.error("❌ Error awarding badge:", err);
+      alert("Något gick fel när badge skulle tilldelas.");
+    }
+  };
+
+  loadUsers();
+});
+
+
   async function deleteUser(id) {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
@@ -134,60 +194,69 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function loadUsers() {
-    try {
-      const res = await fetchWithAdminAuth(API_URL);
-      if (!res.ok) throw new Error("Failed to fetch");
+async function loadUsers() {
+  try {
+    const res = await fetchWithAdminAuth(API_URL);
+    if (!res.ok) throw new Error("Failed to fetch");
 
-      const users = await res.json();
-      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
-      userList.innerHTML = "";
+    const users = await res.json();
+    users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+    userList.innerHTML = "";
 
-      users.forEach(user => {
-        const card = document.createElement("div");
-        card.className = "user-card";
+    users.forEach(user => {
+      const card = document.createElement("div");
+      card.className = "user-card";
 
-        const header = document.createElement("div");
-        header.className = "user-header";
+      const header = document.createElement("div");
+      header.className = "user-header";
 
-        const title = document.createElement("div");
-        title.className = "user-title";
-        title.textContent = `${user.first_name} ${user.last_name}`;
+      const title = document.createElement("div");
+      title.className = "user-title";
+      title.textContent = `${user.first_name} ${user.last_name}`;
 
-        const buttons = document.createElement("div");
+      const buttons = document.createElement("div");
 
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit-button";
-        editBtn.textContent = "✏️";
-        editBtn.onclick = () => {
-          userForm.reset();
-          userForm.dataset.editingId = user.id;
-          userForm.username.value = user.username || "";
-          userForm.password.value = "";
-          userForm.firstName.value = user.first_name;
-          userForm.lastName.value = user.last_name;
-          userForm.phone.value = user.phone;
-          userForm.email.value = user.email || "";
-          userForm.idNumber.value = user.id_number || "";
-          userModal.style.display = "flex";
-        };
+      const editBtn = document.createElement("button");
+      editBtn.className = "edit-button";
+      editBtn.textContent = "✏️";
+      editBtn.onclick = () => {
+        userForm.reset();
+        userForm.dataset.editingId = user.id;
+        userForm.username.value = user.username || "";
+        userForm.password.value = "";
+        userForm.firstName.value = user.first_name;
+        userForm.lastName.value = user.last_name;
+        userForm.phone.value = user.phone;
+        userForm.email.value = user.email || "";
+        userForm.idNumber.value = user.id_number || "";
+        userModal.style.display = "flex";
+      };
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "delete-button";
-        deleteBtn.textContent = "🗑️";
-        deleteBtn.onclick = () => deleteUser(user.id);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-button";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.onclick = () => deleteUser(user.id);
 
-        buttons.appendChild(editBtn);
-        buttons.appendChild(deleteBtn);
-        header.appendChild(title);
-        header.appendChild(buttons);
-        card.appendChild(header);
-        userList.appendChild(card);
-      });
-    } catch (err) {
-      console.error("Failed to load users:", err);
-    }
+      // 🎖️ Badge Button
+      const badgeBtn = document.createElement("button");
+      badgeBtn.className = "edit-button";
+      badgeBtn.textContent = "🎖️";
+      badgeBtn.onclick = () => openBadgeModal(user.id);
+
+      buttons.appendChild(editBtn);
+      buttons.appendChild(deleteBtn);
+      buttons.appendChild(badgeBtn); // 👈 Inserted here
+
+      header.appendChild(title);
+      header.appendChild(buttons);
+      card.appendChild(header);
+      userList.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Failed to load users:", err);
   }
+}
+
 
   loadUsers();
 });
