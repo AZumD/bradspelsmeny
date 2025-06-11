@@ -553,7 +553,10 @@ async function fetchBadges(userId) {
       img.style.border = '2px solid #c9a04e';
       img.style.objectFit = 'cover';
       img.style.background = '#fff';
-      container.appendChild(img);
+      img.style.cursor = 'pointer';
+img.onclick = () => openBadgeInfoModal(badge);
+container.appendChild(img);
+
     });
   } catch (err) {
     console.error('❌ Failed to fetch badges:', err);
@@ -569,9 +572,7 @@ function openBadgeInfoModal(badge) {
   document.getElementById("badgeInfoModal").style.display = "flex";
 }
 
-document.getElementById("closeBadgeInfoBtn").onclick = () => {
-  document.getElementById("badgeInfoModal").style.display = "none";
-};
+
 
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
@@ -674,6 +675,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId; // 🔧 needed in both checkFriendStatus and remove handler
+    const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
+  if (badgeCloseBtn) {
+    badgeCloseBtn.onclick = () => {
+      const modal = document.getElementById("badgeInfoModal");
+      if (modal) modal.style.display = "none";
+    };
+  }
 
   checkFriendStatus(profileUserId); // ✅ This sets up the Remove Friend button if applicable
 
