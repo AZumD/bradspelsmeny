@@ -196,6 +196,7 @@ async function fetchNotifications() {
 
 
 
+
         const declineBtn = document.createElement('button');
         declineBtn.textContent = 'Decline';
         declineBtn.className = 'btn-decline';
