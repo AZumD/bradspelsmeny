@@ -562,6 +562,16 @@ async function fetchBadges(userId) {
   }
 }
 
+function openBadgeInfoModal(badge) {
+  document.getElementById("badgeIcon").src = badge.icon_url;
+  document.getElementById("badgeName").textContent = badge.name;
+  document.getElementById("badgeDescription").textContent = badge.description;
+  document.getElementById("badgeInfoModal").style.display = "flex";
+}
+
+document.getElementById("closeBadgeInfoBtn").onclick = () => {
+  document.getElementById("badgeInfoModal").style.display = "none";
+};
 
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
