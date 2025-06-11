@@ -258,5 +258,3 @@ async function loadUsers() {
 }
 
 
-  loadUsers();
-});
