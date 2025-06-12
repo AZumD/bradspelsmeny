@@ -738,9 +738,75 @@ async function fetchGameLog(userId) {
   }
 }
 
+function getPartyIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+async function fetchPartyProfile() {
+  const id = getPartyIdFromUrl();
+  if (!id) {
+    alert('Missing party ID');
+    return;
+  }
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/party/${id}`);
+    if (!res.ok) throw new Error('Failed to load party');
+
+    const data = await res.json();
+    document.getElementById('partyName').textContent = data.name || 'Unnamed Party';
+    document.getElementById('partyDesc').textContent = data.description || '';
+
+    // Active session placeholder
+    document.getElementById('activeSessionBox').innerHTML = `
+      <div class="session-box">
+        <strong>Active Session:</strong><br>
+        <span style="opacity: 0.6;">Coming soon…</span>
+      </div>
+    `;
+
+    const membersList = document.getElementById('partyMembersList');
+    membersList.innerHTML = '';
+
+    for (const m of data.members) {
+      const el = document.createElement('div');
+      el.className = 'party-member';
+
+      const img = document.createElement('img');
+      img.src = m.avatar_url?.startsWith('http') ? m.avatar_url : `${API_BASE}${m.avatar_url}`;
+      img.alt = `${m.first_name} ${m.last_name}`;
+      img.className = 'party-avatar';
+
+      const name = document.createElement('span');
+      name.textContent = `${m.first_name} ${m.last_name}`;
+      name.className = 'party-name';
+
+      el.appendChild(img);
+      el.appendChild(name);
+      membersList.appendChild(el);
+    }
+
+    const sessionsList = document.getElementById('partySessionLog');
+    sessionsList.innerHTML = '';
+
+    for (const s of data.sessions || []) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${new Date(s.started_at).toLocaleDateString()}</td>
+        <td>${s.game_title || 'Unknown'}</td>
+      `;
+      sessionsList.appendChild(row);
+    }
+  } catch (err) {
+    console.error('❌ Failed to load party profile:', err);
+    alert('Could not load party profile.');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchProfile();
-
+  fetchPartyProfile();
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
