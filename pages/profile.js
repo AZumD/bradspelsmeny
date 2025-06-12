@@ -784,12 +784,23 @@ async function fetchPartyProfile() {
   }
 
   try {
-    const res = await fetchWithAuth(`${API_BASE}/party/${id}`);
-    if (!res.ok) throw new Error('Failed to load party');
+    const [partyRes, membersRes, sessionsRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/party/${id}`),
+      fetchWithAuth(`${API_BASE}/party/${id}/members`),
+      fetchWithAuth(`${API_BASE}/party/${id}/sessions`)
+    ]);
 
-    const data = await res.json();
+    if (!partyRes.ok || !membersRes.ok || !sessionsRes.ok) {
+      throw new Error('Failed to load party data');
+    }
+
+    const data = await partyRes.json();
+    const members = await membersRes.json();
+    const sessions = await sessionsRes.json();
+
     document.getElementById('partyName').textContent = data.name || 'Unnamed Party';
-    document.getElementById('partyDesc').textContent = data.description || '';
+    // Remove or add description field if you have one:
+    // document.getElementById('partyDesc').textContent = data.description || '';
 
     // Active session placeholder
     document.getElementById('activeSessionBox').innerHTML = `
@@ -801,8 +812,7 @@ async function fetchPartyProfile() {
 
     const membersList = document.getElementById('partyMembersList');
     membersList.innerHTML = '';
-
-    for (const m of data.members) {
+    for (const m of members) {
       const el = document.createElement('div');
       el.className = 'party-member';
 
@@ -822,8 +832,7 @@ async function fetchPartyProfile() {
 
     const sessionsList = document.getElementById('partySessionLog');
     sessionsList.innerHTML = '';
-
-    for (const s of data.sessions || []) {
+    for (const s of sessions) {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${new Date(s.started_at).toLocaleDateString()}</td>
@@ -836,6 +845,7 @@ async function fetchPartyProfile() {
     alert('Could not load party profile.');
   }
 }
+
 // Open modal and populate friends select
 async function openCreatePartyModal() {
   const modal = document.getElementById("createPartyModal");
