@@ -854,6 +854,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-});
 
 
