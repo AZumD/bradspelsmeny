@@ -784,168 +784,91 @@ async function fetchPartyProfile() {
   }
 
   try {
+    // Fetch party info, members, and sessions in parallel
     const [partyRes, membersRes, sessionsRes] = await Promise.all([
       fetchWithAuth(`${API_BASE}/party/${id}`),
       fetchWithAuth(`${API_BASE}/party/${id}/members`),
       fetchWithAuth(`${API_BASE}/party/${id}/sessions`)
     ]);
 
-    if (!partyRes.ok || !membersRes.ok || !sessionsRes.ok) {
-      throw new Error('Failed to load party data');
-    }
+    // Check all responses
+    if (!partyRes.ok) throw new Error('Failed to load party info');
+    if (!membersRes.ok) throw new Error('Failed to load party members');
+    if (!sessionsRes.ok) throw new Error('Failed to load party sessions');
 
-    const data = await partyRes.json();
+    // Parse JSON
+    const partyData = await partyRes.json();
     const members = await membersRes.json();
     const sessions = await sessionsRes.json();
 
-    document.getElementById('partyName').textContent = data.name || 'Unnamed Party';
-    // Remove or add description field if you have one:
-    // document.getElementById('partyDesc').textContent = data.description || '';
+    // Update party basic info
+    document.getElementById('partyName').textContent = partyData.name || 'Unnamed Party';
 
-    // Active session placeholder
-    document.getElementById('activeSessionBox').innerHTML = `
-      <div class="session-box">
-        <strong>Active Session:</strong><br>
-        <span style="opacity: 0.6;">Coming soon…</span>
-      </div>
-    `;
-
-    const membersList = document.getElementById('partyMembersList');
-    membersList.innerHTML = '';
-    for (const m of members) {
-      const el = document.createElement('div');
-      el.className = 'party-member';
-
-      const img = document.createElement('img');
-      img.src = m.avatar_url?.startsWith('http') ? m.avatar_url : `${API_BASE}${m.avatar_url}`;
-      img.alt = `${m.first_name} ${m.last_name}`;
-      img.className = 'party-avatar';
-
-      const name = document.createElement('span');
-      name.textContent = `${m.first_name} ${m.last_name}`;
-      name.className = 'party-name';
-
-      el.appendChild(img);
-      el.appendChild(name);
-      membersList.appendChild(el);
+    // If you have a description field in DB/backend, use it, else skip or add later
+    if (document.getElementById('partyDesc')) {
+      document.getElementById('partyDesc').textContent = partyData.description || '';
     }
 
-    const sessionsList = document.getElementById('partySessionLog');
-    sessionsList.innerHTML = '';
-    for (const s of sessions) {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${new Date(s.started_at).toLocaleDateString()}</td>
-        <td>${s.game_title || 'Unknown'}</td>
+    // Placeholder for active session (can be replaced later)
+    const activeSessionBox = document.getElementById('activeSessionBox');
+    if (activeSessionBox) {
+      activeSessionBox.innerHTML = `
+        <div class="session-box">
+          <strong>Active Session:</strong><br>
+          <span style="opacity: 0.6;">Coming soon…</span>
+        </div>
       `;
-      sessionsList.appendChild(row);
     }
+
+    // Render party members
+    const membersList = document.getElementById('partyMembersList');
+    if (membersList) {
+      membersList.innerHTML = '';
+      for (const m of members) {
+        const el = document.createElement('div');
+        el.className = 'party-member';
+
+        const img = document.createElement('img');
+        img.src = m.avatar_url?.startsWith('http') ? m.avatar_url : `${API_BASE}${m.avatar_url || ''}`;
+        img.alt = `${m.first_name} ${m.last_name}`;
+        img.className = 'party-avatar';
+
+        const name = document.createElement('span');
+        name.textContent = `${m.first_name} ${m.last_name}`;
+        name.className = 'party-name';
+
+        el.appendChild(img);
+        el.appendChild(name);
+        membersList.appendChild(el);
+      }
+    }
+
+    // Render party sessions
+    const sessionsList = document.getElementById('partySessionLog');
+    if (sessionsList) {
+      sessionsList.innerHTML = '';
+      if (sessions.length === 0) {
+        const noSessionsRow = document.createElement('tr');
+        noSessionsRow.innerHTML = `<td colspan="2" style="text-align:center; font-style: italic; color: #a07d3b;">No sessions recorded yet.</td>`;
+        sessionsList.appendChild(noSessionsRow);
+      } else {
+        for (const s of sessions) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${new Date(s.started_at).toLocaleDateString()}</td>
+            <td>${s.game_title || 'Unknown'}</td>
+          `;
+          sessionsList.appendChild(row);
+        }
+      }
+    }
+
   } catch (err) {
     console.error('❌ Failed to load party profile:', err);
     alert('Could not load party profile.');
   }
 }
 
-// Open modal and populate friends select
-async function openCreatePartyModal() {
-  const modal = document.getElementById("createPartyModal");
-  const select = document.getElementById("inviteFriendsSelect");
-
-  // Clear previous options
-  select.innerHTML = "";
-
-  try {
-    // Fetch your friends list to populate the dropdown
-    const res = await fetchWithAuth(`${API_BASE}/users/${getUserIdFromToken()}/friends`);
-    if (!res.ok) throw new Error('Failed to load friends');
-
-    const friends = await res.json();
-
-    if (friends.length === 0) {
-      const option = document.createElement('option');
-      option.textContent = 'No friends available to invite';
-      option.disabled = true;
-      select.appendChild(option);
-    } else {
-      friends.forEach(friend => {
-        const option = document.createElement('option');
-        option.value = friend.id;
-        option.textContent = `${friend.first_name} ${friend.last_name}`;
-        select.appendChild(option);
-      });
-    }
-  } catch (err) {
-    console.error('Failed to load friends for invite:', err);
-    const option = document.createElement('option');
-    option.textContent = 'Error loading friends';
-    option.disabled = true;
-    select.appendChild(option);
-  }
-
-  modal.style.display = "flex";
-}
-
-// Close modal and clear inputs
-function closeCreatePartyModal() {
-  const modal = document.getElementById("createPartyModal");
-  modal.style.display = "none";
-
-  document.getElementById("partyNameInput").value = "";
-  const select = document.getElementById("inviteFriendsSelect");
-  select.innerHTML = "";
-}
-
-// Submit create party request
-async function submitCreateParty() {
-  const partyName = document.getElementById("partyNameInput").value.trim();
-  const select = document.getElementById("inviteFriendsSelect");
-  const selectedFriendIds = Array.from(select.selectedOptions).map(opt => parseInt(opt.value));
-
-  if (!partyName) {
-    alert("Please enter a party name.");
-    return;
-  }
-
-  try {
-    // Create the party first
-    const createRes = await fetchWithAuth(`${API_BASE}/parties`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: partyName }),
-    });
-
-    if (!createRes.ok) {
-      const err = await createRes.json();
-      alert("Failed to create party: " + err.error);
-      return;
-    }
-
-    const party = await createRes.json();
-
-    // Invite friends (if any selected)
-    if (selectedFriendIds.length > 0) {
-      const inviteRes = await fetchWithAuth(`${API_BASE}/parties/${party.id}/invite`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_ids: selectedFriendIds }),
-      });
-
-      if (!inviteRes.ok) {
-        const err = await inviteRes.json();
-        alert("Party created, but failed to invite friends: " + err.error);
-      }
-    }
-
-    alert("🎉 Party created successfully!");
-    closeCreatePartyModal();
-
-    // Redirect to newly created party page
-    window.location.href = `party.html?id=${party.id}`;
-  } catch (err) {
-    console.error('Failed to create party:', err);
-    alert("Something went wrong while creating the party.");
-  }
-}
 
 
 document.addEventListener('DOMContentLoaded', () => {
