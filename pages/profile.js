@@ -486,13 +486,30 @@ function openGameModal(modalId, game) {
   const title = document.getElementById(`${modalId}Title`);
   const desc = document.getElementById(`${modalId}Description`);
 
-  img.src = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
-  img.alt = game.title || 'Untitled';
-  title.textContent = game.title || 'Untitled';
+  const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
+  let imageUrl = game.img || game.thumbnail_url;
+  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `../${imageUrl}`;
+  }
+  if (!imageUrl) {
+    imageUrl = `${FRONTEND_BASE}/img/default-thumb.webp`;
+  }
+
+  img.src = imageUrl;
+  img.alt = gameTitle;
+
+  title.textContent = gameTitle;
   desc.textContent = game.description || 'No description available.';
 
   document.getElementById(modalId).style.display = 'flex';
 }
+
 
 function closeGameModal(modalId) {
   document.getElementById(modalId).style.display = 'none';
