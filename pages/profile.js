@@ -842,6 +842,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === notifModal) notifModal.style.display = 'none';
     };
   }
+   document.addEventListener('click', (e) => {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      if (
+        e.target === modal &&
+        getComputedStyle(modal).display === 'flex'
+      ) {
+        modal.style.display = 'none';
+      }
+    });
+  });
+});
 });
 
 
