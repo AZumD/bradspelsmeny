@@ -803,6 +803,107 @@ async function fetchPartyProfile() {
     alert('Could not load party profile.');
   }
 }
+// Open modal and populate friends select
+async function openCreatePartyModal() {
+  const modal = document.getElementById("createPartyModal");
+  const select = document.getElementById("inviteFriendsSelect");
+
+  // Clear previous options
+  select.innerHTML = "";
+
+  try {
+    // Fetch your friends list to populate the dropdown
+    const res = await fetchWithAuth(`${API_BASE}/users/${getUserIdFromToken()}/friends`);
+    if (!res.ok) throw new Error('Failed to load friends');
+
+    const friends = await res.json();
+
+    if (friends.length === 0) {
+      const option = document.createElement('option');
+      option.textContent = 'No friends available to invite';
+      option.disabled = true;
+      select.appendChild(option);
+    } else {
+      friends.forEach(friend => {
+        const option = document.createElement('option');
+        option.value = friend.id;
+        option.textContent = `${friend.first_name} ${friend.last_name}`;
+        select.appendChild(option);
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load friends for invite:', err);
+    const option = document.createElement('option');
+    option.textContent = 'Error loading friends';
+    option.disabled = true;
+    select.appendChild(option);
+  }
+
+  modal.style.display = "flex";
+}
+
+// Close modal and clear inputs
+function closeCreatePartyModal() {
+  const modal = document.getElementById("createPartyModal");
+  modal.style.display = "none";
+
+  document.getElementById("partyNameInput").value = "";
+  const select = document.getElementById("inviteFriendsSelect");
+  select.innerHTML = "";
+}
+
+// Submit create party request
+async function submitCreateParty() {
+  const partyName = document.getElementById("partyNameInput").value.trim();
+  const select = document.getElementById("inviteFriendsSelect");
+  const selectedFriendIds = Array.from(select.selectedOptions).map(opt => parseInt(opt.value));
+
+  if (!partyName) {
+    alert("Please enter a party name.");
+    return;
+  }
+
+  try {
+    // Create the party first
+    const createRes = await fetchWithAuth(`${API_BASE}/parties`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: partyName }),
+    });
+
+    if (!createRes.ok) {
+      const err = await createRes.json();
+      alert("Failed to create party: " + err.error);
+      return;
+    }
+
+    const party = await createRes.json();
+
+    // Invite friends (if any selected)
+    if (selectedFriendIds.length > 0) {
+      const inviteRes = await fetchWithAuth(`${API_BASE}/parties/${party.id}/invite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_ids: selectedFriendIds }),
+      });
+
+      if (!inviteRes.ok) {
+        const err = await inviteRes.json();
+        alert("Party created, but failed to invite friends: " + err.error);
+      }
+    }
+
+    alert("🎉 Party created successfully!");
+    closeCreatePartyModal();
+
+    // Redirect to newly created party page
+    window.location.href = `party.html?id=${party.id}`;
+  } catch (err) {
+    console.error('Failed to create party:', err);
+    alert("Something went wrong while creating the party.");
+  }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchProfile();
@@ -859,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeBtn.onclick = () => modal.style.display = "none";
 
-
     submitBtn.onclick = async () => {
       const input = document.getElementById("manualFriendId");
       const friendId = input.value.trim();
@@ -899,9 +999,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     closeNotifBtn.onclick = () => notifModal.style.display = 'none';
-
   }
-     // ✅ Unified click-outside-to-close for all modals
+
+  // ✅ Unified click-outside-to-close for all modals
   window.addEventListener('click', (e) => {
     document.querySelectorAll('.modal').forEach(modal => {
       if (
@@ -913,6 +1013,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+   const createPartyBtn = document.getElementById("createPartyBtn");
+  if (createPartyBtn) {
+    createPartyBtn.addEventListener("click", async () => {
+      const confirmed = confirm("Do you want to create a new party?");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/parties`, {
+          method: 'POST'
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert("Failed to create party: " + err.error);
+          return;
+        }
+
+        const party = await res.json();
+        alert("🎉 Party created!");
+        window.location.href = `party.html?id=${party.id}`;
+      } catch (err) {
+        console.error("❌ Failed to create party:", err);
+        alert("Something went wrong.");
+      }
+    });
+  }
 });
 
 
