@@ -509,16 +509,20 @@ function createGameCard(game, minimal = false) {
     game.name ||
     'Untitled';
 
-  const imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
-
   if (minimal) {
+    // Minimal version for favorites grid
     card.style.all = 'unset';
     card.style.cursor = 'pointer';
 
     const img = document.createElement('img');
-    img.src = imageUrl;
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     img.alt = gameTitle;
-    img.title = gameTitle;
+    img.title = gameTitle; // tooltip on hover
     img.onerror = () => {
       img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
     };
@@ -531,8 +535,8 @@ function createGameCard(game, minimal = false) {
     img.style.margin = '2px';
 
     card.appendChild(img);
-    card.onclick = () => openGameModal('favoriteGameModal', game);
   } else {
+    // Full version for wishlist
     card.style.border = 'none';
     card.style.borderRadius = '8px';
     card.style.padding = '10px';
@@ -543,8 +547,13 @@ function createGameCard(game, minimal = false) {
     card.style.gap = '12px';
     card.style.cursor = 'pointer';
 
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+
     const thumb = document.createElement('img');
-    thumb.src = imageUrl;
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     thumb.alt = gameTitle;
     thumb.onerror = () => {
       thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
@@ -561,8 +570,16 @@ function createGameCard(game, minimal = false) {
 
     card.appendChild(thumb);
     card.appendChild(title);
-    card.onclick = () => openGameModal('wishlistGameModal', game);
   }
+
+ card.onclick = () => {
+  if (minimal) {
+    openGameModal('favoriteGameModal', game);
+  } else {
+    openGameModal('wishlistGameModal', game);
+  }
+};
+
 
   return card;
 }
