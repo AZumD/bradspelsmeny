@@ -869,11 +869,53 @@ async function fetchPartyProfile() {
   }
 }
 
+async function submitCreateParty() {
+  const nameInput = document.getElementById('partyNameInput');
+  const emojiInput = document.getElementById('partyEmojiInput');
+
+  const name = nameInput?.value.trim();
+  const emoji = emojiInput?.value.trim() || '🎲';
+
+  if (!name) {
+    alert('Please enter a party name.');
+    return;
+  }
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/party`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ name, emoji }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert(`Failed to create party: ${err.error || res.statusText}`);
+      return;
+    }
+
+    const data = await res.json();
+    alert(`Party created! Invite code: ${data.inviteCode}`);
+
+    // Optionally refresh party list or redirect
+    fetchUserParties();
+    closeCreatePartyModal();
+
+  } catch (err) {
+    console.error('Error creating party:', err);
+    alert('Error creating party. See console for details.');
+  }
+}
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  fetchProfile();
-  fetchUserParties();
+  document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await fetchProfile(); // Ensure token is valid and user data is loaded
+    await fetchUserParties(); // Now safe to call
+  } catch (err) {
+    console.error("❌ Error during initial load:", err);
+  }
+
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
