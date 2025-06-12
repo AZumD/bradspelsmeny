@@ -67,6 +67,8 @@ function getUserIdFromToken() {
 }
 
 
+
+
 async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
@@ -188,6 +190,21 @@ async function fetchNotifications() {
       `<div class="placeholder-box">Could not load notifications.</div>`;
   }
 }
+
+
+function formatNotificationText(n) {
+  switch (n.type) {
+    case 'friend_request':
+      return `👤 <strong>${n.sender_name || 'Someone'}</strong> sent you a friend request.`;
+    case 'friend_accept':
+      return `✅ <strong>${n.sender_name || 'Someone'}</strong> accepted your friend request.`;
+    case 'badge_awarded':
+      return `🏅 You earned a new badge: <strong>${n.data?.name || 'Unnamed Badge'}</strong>`;
+    default:
+      return `<strong>New notification:</strong> ${n.message || 'Something happened.'}`;
+  }
+}
+
 
 async function fetchUserParties() {
   const userId = getUserIdFromToken();
