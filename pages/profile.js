@@ -794,9 +794,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeBtn.onclick = () => modal.style.display = "none";
 
-    window.onclick = (e) => {
-      if (e.target === modal) modal.style.display = "none";
-    };
 
     submitBtn.onclick = async () => {
       const input = document.getElementById("manualFriendId");
@@ -838,21 +835,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeNotifBtn.onclick = () => notifModal.style.display = 'none';
 
-    window.onclick = (e) => {
-      if (e.target === notifModal) notifModal.style.display = 'none';
-    };
   }
-   document.addEventListener('click', (e) => {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
+     // ✅ Unified click-outside-to-close for all modals
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach(modal => {
       if (
         e.target === modal &&
-        getComputedStyle(modal).display === 'flex'
+        getComputedStyle(modal).display !== 'none'
       ) {
         modal.style.display = 'none';
       }
     });
   });
+
 });
 
 
