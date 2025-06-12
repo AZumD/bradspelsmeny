@@ -345,12 +345,10 @@ async function renderGames() {
   <div class="game-thumbnail-wrapper">
     <img src="${game.img}" alt="${title}" style="${isLent ? 'filter: grayscale(1); opacity: 0.5;' : ''}" />
     <div class="game-card-icons">
-      <button class="icon-btn favorite ${userFavorites.includes(game.id) ? 'active' : ''}" onclick="toggleFavorite(${game.id})">
-        ${userFavorites.includes(game.id) ? '❤️' : '🤍'}
-      </button>
-      <button class="icon-btn wishlist ${userWishlist.includes(game.id) ? 'active' : ''}" onclick="toggleWishlist(${game.id})">
-        ${userWishlist.includes(game.id) ? '✅' : '🎯'}
-      </button>
+      <button class="icon-btn favorite ${userFavorites.includes(game.id) ? 'icon-fav-on' : 'icon-fav-off'}" onclick="toggleFavorite(${game.id})"></button>
+
+      <button class="icon-btn wishlist ${userWishlist.includes(game.id) ? 'icon-wish-on' : 'icon-wish-off'}" onclick="toggleWishlist(${game.id})"></button>
+
     </div>
   </div>
 
