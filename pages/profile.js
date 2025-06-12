@@ -188,6 +188,38 @@ async function fetchNotifications() {
       `<div class="placeholder-box">Could not load notifications.</div>`;
   }
 }
+
+async function fetchUserParties(userId) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/parties`);
+    if (!res.ok) throw new Error('Failed to fetch parties');
+    const parties = await res.json();
+
+    const partyList = document.getElementById('partyList');
+    if (!partyList) return;
+
+    partyList.innerHTML = ''; // Clear current list
+
+    if (parties.length === 0) {
+      partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
+      return;
+    }
+
+    parties.forEach(party => {
+      const div = document.createElement('div');
+      div.className = 'party-entry';
+      div.textContent = party.name;
+      div.style.cursor = 'pointer';
+      div.onclick = () => {
+        window.location.href = `party.html?id=${party.id}`;
+      };
+      partyList.appendChild(div);
+    });
+  } catch (err) {
+    console.error('Failed to load parties:', err);
+  }
+}
+
 function formatNotificationText(n) {
   const time = new Date(n.created_at).toLocaleString();
 
@@ -296,7 +328,7 @@ async function fetchProfile() {
         fetchGameLog(userIdToFetch);
         fetchFavoritesAndWishlist(userIdToFetch); // 👈 ADD THIS
         fetchBadges(userIdToFetch);
-
+        fetchUserParties(userIdToFetch);
 
 
   } catch (err) {
