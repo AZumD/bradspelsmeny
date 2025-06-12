@@ -190,65 +190,54 @@ async function fetchNotifications() {
 }
 
 async function fetchUserParties() {
+  const userId = getUserIdFromToken();
+  console.log('👥 fetchUserParties() called for user ID:', userId);
+
+  const partyList = document.getElementById('partyList');
+  if (!partyList) {
+    console.warn('⚠️ #partyList element not found in DOM.');
+    return;
+  }
+
   try {
     const res = await fetchWithAuth(`${API_BASE}/my-parties`);
-    if (!res.ok) throw new Error('Failed to fetch parties');
+    console.log('📡 /my-parties response status:', res.status);
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('❌ Failed to fetch parties:', text);
+      throw new Error('Failed to fetch parties');
+    }
+
     const parties = await res.json();
+    console.log('✅ Parties loaded:', parties);
 
-    const partyList = document.getElementById('partyList');
-    if (!partyList) return;
-
-    partyList.innerHTML = ''; // Clear current list
+    partyList.innerHTML = '';
 
     if (parties.length === 0) {
       partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
       return;
     }
 
-    parties.forEach(party => {
+    for (const party of parties) {
       const div = document.createElement('div');
       div.className = 'party-entry';
-      div.textContent = party.name;
+      div.textContent = `${party.emoji || '🎲'} ${party.name}`;
+      div.title = `Party ID: ${party.id}, Leader: ${party.is_leader}`;
       div.style.cursor = 'pointer';
+
       div.onclick = () => {
         window.location.href = `party.html?id=${party.id}`;
       };
+
       partyList.appendChild(div);
-    });
+    }
   } catch (err) {
-    console.error('Failed to load parties:', err);
+    console.error('❌ Failed to load parties:', err);
+    partyList.innerHTML = '<div class="placeholder-box">Failed to load parties.</div>';
   }
 }
 
-
-function formatNotificationText(n) {
-  const time = new Date(n.created_at).toLocaleString();
-
-  switch (n.type) {
-    case 'friend_request':
-      return `👤 Friend request from user ID ${n.data.sender_id} <br><small>${time}</small>`;
-
-    case 'friend_accept':
-      return `
-        ✅ <strong>${n.data.username}</strong> accepted your friend request!<br>
-        <img src="${n.data.avatar_url ? (n.data.avatar_url.startsWith('http') ? n.data.avatar_url : API_BASE + n.data.avatar_url) : FRONTEND_BASE + '/img/avatar-placeholder.webp'}"
-             alt="${n.data.username}" 
-             style="width:32px;height:32px;border-radius:50%;margin-top:4px;">
-        <br><small>${time}</small>
-      `;
-
-    case 'badge_awarded':
-      return `
-        🏅 You earned a new badge!<br>
-        <strong>${n.data.name}</strong><br>
-        <img src="${n.data.icon_url}" alt="${n.data.name}" style="width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;margin-top:4px;"><br>
-        <small>${time}</small>
-      `;
-
-    default:
-      return `${n.type} <br><small>${time}</small>`;
-  }
-}
 
 function showBadgePopup(name, iconUrl, time) {
   document.getElementById('badgePopupImage').src = iconUrl;
