@@ -505,7 +505,8 @@ function openGameModal(modalId, game) {
   img.alt = gameTitle;
 
   title.textContent = gameTitle;
-  desc.textContent = game.description || 'No description available.';
+  desc.textContent = game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
+
 
   document.getElementById(modalId).style.display = 'flex';
 }
