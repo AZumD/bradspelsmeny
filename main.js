@@ -154,7 +154,9 @@ async function toggleFavorite(gameId) {
   });
 
   btn.classList.toggle('active');
-  btn.textContent = isActive ? '🤍' : '❤️';
+  btn.classList.toggle('icon-fav-on');
+  btn.classList.toggle('icon-fav-off');
+
 }
 
 async function toggleWishlist(gameId) {
@@ -171,7 +173,9 @@ async function toggleWishlist(gameId) {
   });
 
   btn.classList.toggle('active');
-  btn.textContent = isActive ? '🎯' : '✅';
+  btn.classList.toggle('icon-wish-on');
+  btn.classList.toggle('icon-wish-off');
+
 }
 
 
