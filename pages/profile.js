@@ -481,6 +481,93 @@ async function fetchFavoritesAndWishlist(userId) {
   }
 }
 
+function openGameModal(modalId, game) {
+  const img = document.getElementById(`${modalId}Img`);
+  const title = document.getElementById(`${modalId}Title`);
+  const desc = document.getElementById(`${modalId}Description`);
+
+  img.src = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
+  img.alt = game.title || 'Untitled';
+  title.textContent = game.title || 'Untitled';
+  desc.textContent = game.description || 'No description available.';
+
+  document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeGameModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function createGameCard(game, minimal = false) {
+  const card = document.createElement('div');
+  card.className = 'game-entry';
+
+  const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
+  const imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
+
+  if (minimal) {
+    card.style.all = 'unset';
+    card.style.cursor = 'pointer';
+
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = gameTitle;
+    img.title = gameTitle;
+    img.onerror = () => {
+      img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+
+    img.style.width = '48px';
+    img.style.height = '48px';
+    img.style.borderRadius = '8px';
+    img.style.border = '2px solid #c9a04e';
+    img.style.objectFit = 'cover';
+    img.style.margin = '2px';
+
+    card.appendChild(img);
+    card.onclick = () => openGameModal('favoriteGameModal', game);
+  } else {
+    card.style.border = 'none';
+    card.style.borderRadius = '8px';
+    card.style.padding = '10px';
+    card.style.marginBottom = '10px';
+    card.style.backgroundColor = '#f9f6f2';
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.gap = '12px';
+    card.style.cursor = 'pointer';
+
+    const thumb = document.createElement('img');
+    thumb.src = imageUrl;
+    thumb.alt = gameTitle;
+    thumb.onerror = () => {
+      thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+    thumb.style.width = '60px';
+    thumb.style.height = '60px';
+    thumb.style.borderRadius = '8px';
+    thumb.style.border = '2px solid #c9a04e';
+    thumb.style.objectFit = 'cover';
+
+    const title = document.createElement('div');
+    title.className = 'game-entry-title';
+    title.textContent = gameTitle;
+
+    card.appendChild(thumb);
+    card.appendChild(title);
+    card.onclick = () => openGameModal('wishlistGameModal', game);
+  }
+
+  return card;
+}
+
+
 // Also add some debugging to createGameCard function
 function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
