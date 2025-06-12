@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     /* ...existing styles... */
- /* Base page setup */
     body {
       margin: 0;
       padding: 20px;
@@ -14,42 +14,9 @@
       margin-left: auto;
       margin-right: auto;
       font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fffdf7; /* Warm cream */
-      color: #5a2a0c; /* Warm dark brown */
-      user-select: none;
-    }
-.notification-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 10px;
-}
-
-.notification-item {
-  border-bottom: 1px solid #d9b370;
-  padding: 10px;
-  font-size: 0.9rem;
-  color: #5a2a0c;
-  background-color: #f9f6f2;
-}
-
-.notification-item.unread {
-  background-color: #fff3d6;
-  font-weight: bold;
-  border-left: 4px solid #d9b370;
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-    
-
-    h1 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.2rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
+      background-color: #fffdf7;
       color: #5a2a0c;
-      text-shadow: 1px 1px 0 #d9b370;
+      user-select: none;
     }
 
     .profile-container {
@@ -58,184 +25,6 @@
       padding: 20px;
       border: 2px dashed #d9b370;
       box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
-    }
-
-    .avatar {
-      display: block;
-      margin: 0 auto 20px auto;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #c9a04e;
-      box-shadow: 2px 2px 5px rgba(90, 42, 12, 0.25);
-    }
-
-    .full-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 6px;
-      color: #6b3e0a;
-    }
-.friends-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-.modal {
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: #fffdf7;
-  border: 2px dashed #d9b370;
-  border-radius: 12px;
-  padding: 20px;
-  width: 80%;
-  max-width: 320px;
-  text-align: center;
-  color: #5a2a0c;
-  position: relative;
-}
-#notificationDot {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  display: none;
-}
-
-.modal-content input {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 10px;
-  border: 1px solid #d9b370;
-  border-radius: 6px;
-}
-
-.close-btn {
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #6b3e0a;
-}
-
-.friend-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid #d9b370;
-  object-fit: cover;
-  transition: transform 0.2s ease;
-}
-
-.friend-avatar:hover {
-  transform: scale(1.1);
-  cursor: pointer;
-}
-
-.add-friend-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px dashed #d9b370;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #d9b370;
-  font-size: 1.5rem;
-  background-color: transparent;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.add-friend-circle:hover {
-  background-color: #fff3d6;
-  transform: scale(1.1);
-}
-    
-.btn-accept {
-  background-color: #85c17e;
-  color: white;
-}
-
-.btn-decline {
-  background-color: #e06d6d;
-  color: white;
-}
-
-.btn-accept:hover {
-  background-color: #6fae65;
-}
-
-.btn-decline:hover {
-  background-color: #c65555;
-}
-#notificationIcon {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 1.5rem;
-  background: #8c3c1a;
-  color: white;
-  padding: 10px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
-  z-index: 1000;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-#notificationIcon:hover {
-  background-color: #a14b21;
-  transform: scale(1.05);
-}
-
-    .notification-item button {
-  margin-right: 8px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  font-family: 'Segoe UFI', Tahoma, sans-serif;
-}
-
-
-
-    .email {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #6b3e0a;
-      margin-bottom: 15px;
-      word-break: break-word;
-    }
-
-    .bio {
-      font-size: 0.9rem;
-      line-height: 1.3;
-      white-space: pre-wrap;
-      padding: 0 10px;
-      color: #5a2a0c;
-      border-left: 4px solid #d9b370;
-      margin-bottom: 20px;
     }
 
     .section-title {
@@ -250,113 +39,51 @@
       text-transform: uppercase;
     }
 
-    /* Borrow log table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      color: #5a2a0c;
+    .friends-grid, .parties-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 1rem;
     }
 
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #d9b370;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f9f6f2;
-      color: #6b3e0a;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    tbody tr:hover {
-      background-color: #fff3d6;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Placeholder boxes for badges and parties */
-    .placeholder-box {
-      background-color: #f9f6f2;
+    .party-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
       border: 2px dashed #d9b370;
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      color: #a07d3b;
-      font-style: italic;
-      user-select: text;
-    }
-
-    /* Edit Profile button */
-    #editProfileBtn {
-      display: none; /* Show only on own profile */
-      margin-top: 25px;
-      background-color: #d9b370;
-      color: #5a2a0c;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.75rem;
-      padding: 12px 0;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #6b3e0a;
-      text-align: center;
-      text-decoration: none;
-      user-select: none;
-      transition: background-color 0.3s ease;
-    }
-
-    #editProfileBtn:hover {
-      background-color: #c9a04e;
-      box-shadow: 2px 2px 0 #3f1f00;
-      color: #3f1f00;
-    }
-
-    /* Game list styling */
-    .game-list-container {
-      margin-top: 1.5rem;
-    }
- .favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 8px;
-  justify-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.wishlist-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 1.5rem;
-}
-    .game-entry {
-      padding: 10px;
-      border: 1px dashed #d9b370;
       background-color: #f9f6f2;
-      margin-bottom: 10px;
-      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-    .game-entry img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #c9a04e;
-    }
-    .game-entry-title {
-      font-size: 0.9rem;
-      font-weight: bold;
+      justify-content: center;
+      font-size: 1.2rem;
       color: #5a2a0c;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .party-avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .add-party-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px dashed #d9b370;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d9b370;
+      font-size: 1.5rem;
+      background-color: transparent;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .add-party-circle:hover {
+      background-color: #fff3d6;
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -387,8 +114,12 @@
 
     <div>
       <div class="section-title">Parties</div>
-      <div class="placeholder-box">Your parties and groups will show up here.</div>
+      <div id="partyList" class="parties-grid">
+        <!-- Parties will be dynamically inserted here -->
+      </div>
+      <div class="add-party-circle" onclick="openCreatePartyModal()">+</div>
     </div>
+
 <div>
   <div>
   <div class="section-title">Friends</div>
