@@ -189,9 +189,9 @@ async function fetchNotifications() {
   }
 }
 
-async function fetchUserParties(userId) {
+async function fetchUserParties() {
   try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/parties`);
+    const res = await fetchWithAuth(`${API_BASE}/my-parties`);
     if (!res.ok) throw new Error('Failed to fetch parties');
     const parties = await res.json();
 
@@ -219,6 +219,7 @@ async function fetchUserParties(userId) {
     console.error('Failed to load parties:', err);
   }
 }
+
 
 function formatNotificationText(n) {
   const time = new Date(n.created_at).toLocaleString();
@@ -939,6 +940,7 @@ async function submitCreateParty() {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchProfile();
+  fetchUserParties();
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
