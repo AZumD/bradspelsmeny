@@ -806,7 +806,6 @@ async function fetchPartyProfile() {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchProfile();
-  fetchPartyProfile();
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
