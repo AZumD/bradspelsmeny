@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Party Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fffdf7;
+      color: #5a2a0c;
+      user-select: none;
+    }
+
+    .profile-container {
+      background: rgba(249, 246, 242, 0.95);
+      border-radius: 10px;
+      padding: 20px;
+      border: 2px dashed #d9b370;
+      box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #5a2a0c;
+      text-shadow: 1px 1px 0 #d9b370;
+    }
+
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: #5a2a0c;
+      border-bottom: 2px solid #d9b370;
+      padding-bottom: 4px;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .placeholder-box {
+      background-color: #f9f6f2;
+      border: 2px dashed #d9b370;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      color: #a07d3b;
+      font-style: italic;
+      user-select: text;
+    }
+
+    .member-list, .session-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .session-card {
+      padding: 10px;
+      border: 1px dashed #d9b370;
+      background-color: #f9f6f2;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h1 id="partyName">Loading...</h1>
+    <div class="email" id="partyMeta"></div>
+    <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
+
+    <div>
+      <div class="section-title">Members</div>
+      <div id="memberList" class="member-list">
+        <div class="placeholder-box">Loading party members…</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">Active Session</div>
+      <div class="placeholder-box">No active session currently</div>
+    </div>
+
+    <div>
+      <div class="section-title">Past Sessions</div>
+      <div id="sessionList" class="session-list">
+        <div class="placeholder-box">No sessions yet</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="party.js"></script>
+</body>
+</html>
