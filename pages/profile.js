@@ -1013,32 +1013,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-   const createPartyBtn = document.getElementById("createPartyBtn");
-  if (createPartyBtn) {
-    createPartyBtn.addEventListener("click", async () => {
-      const confirmed = confirm("Do you want to create a new party?");
-      if (!confirmed) return;
+  const createPartyBtn = document.getElementById("createPartyBtn");
+if (createPartyBtn) {
+  createPartyBtn.onclick = openCreatePartyModal;
+}
 
-      try {
-        const res = await fetchWithAuth(`${API_BASE}/parties`, {
-          method: 'POST'
-        });
+const closeCreatePartyModalBtn = document.getElementById("closeCreatePartyModalBtn");
+if (closeCreatePartyModalBtn) {
+  closeCreatePartyModalBtn.onclick = closeCreatePartyModal;
+}
 
-        if (!res.ok) {
-          const err = await res.json();
-          alert("Failed to create party: " + err.error);
-          return;
-        }
-
-        const party = await res.json();
-        alert("🎉 Party created!");
-        window.location.href = `party.html?id=${party.id}`;
-      } catch (err) {
-        console.error("❌ Failed to create party:", err);
-        alert("Something went wrong.");
-      }
-    });
-  }
+const submitCreatePartyBtn = document.getElementById("submitCreatePartyBtn");
+if (submitCreatePartyBtn) {
+  submitCreatePartyBtn.onclick = submitCreateParty;
+}
 });
 
 
