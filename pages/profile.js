@@ -1050,7 +1050,8 @@ if (createPartyBtn) {
   createPartyBtn.onclick = openCreatePartyModal;
 }
 
-const closeCreatePartyModalBtn = document.getElementById("closeCreatePartyModalBtn");
+const closeCreatePartyModalBtn = document.getElementById("closeCreatePartyModal");
+
 if (closeCreatePartyModalBtn) {
   closeCreatePartyModalBtn.onclick = closeCreatePartyModal;
 }
