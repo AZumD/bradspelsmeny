@@ -896,7 +896,10 @@ async function submitCreateParty() {
   }
 }
 
-
+function openCreatePartyModal() {
+  const modal = document.getElementById("createPartyModal");
+  if (modal) modal.style.display = "flex";
+}
   document.addEventListener('DOMContentLoaded', async () => {
   try {
     await fetchProfile(); // Ensure token is valid and user data is loaded
