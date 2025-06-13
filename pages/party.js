@@ -21,16 +21,14 @@ async function fetchPartyData() {
   }
 });
 
-const data = await res.json(); // 👈 Only call this once!
+const data = await res.json(); // ✅ Only once
 
 if (!res.ok) {
   throw new Error(data.error || 'Failed to fetch party');
 }
 
+if (!data.name) throw new Error('Party not found');
 
-    const data = await res.json(); // ✅ only once!
-
-    if (!data.name) throw new Error('Party not found');
 
     document.getElementById('partyName').textContent = `${data.emoji} ${data.name}`;
     document.getElementById('partyMeta').textContent = `Created by ${data.creator_first_name} ${data.creator_last_name}`;
