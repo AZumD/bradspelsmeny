@@ -236,18 +236,34 @@ async function fetchUserParties() {
       return;
     }
 
-    for (const party of parties) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "party-avatar";
-  wrapper.title = `${party.name}`;
+  for (const party of parties) {
+  const card = document.createElement("div");
+  card.style.display = "flex";
+  card.style.flexDirection = "column";
+  card.style.alignItems = "center";
+  card.style.width = "60px";
 
-  wrapper.innerText = party.emoji || '🎲';
-  wrapper.onclick = () => {
-    window.location.href = `party.html?id=${party.id}`;
-  };
+  const img = document.createElement("img");
+  img.className = "friend-avatar"; // reuse friend avatar styling
+  img.src = party.avatar_url
+    ? (party.avatar_url.startsWith('http') ? party.avatar_url : API_BASE + party.avatar_url)
+    : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
+  img.alt = party.name;
+  img.title = party.name;
+  img.onclick = () => window.location.href = `party.html?id=${party.id}`;
 
-  partyList.appendChild(wrapper);
+  const label = document.createElement("div");
+  label.textContent = party.name;
+  label.style.fontSize = "0.65rem";
+  label.style.textAlign = "center";
+  label.style.marginTop = "4px";
+  label.style.color = "#5a2a0c";
+
+  card.appendChild(img);
+  card.appendChild(label);
+  partyList.appendChild(card);
 }
+
 
   } catch (err) {
     console.error('❌ Failed to load parties:', err);
