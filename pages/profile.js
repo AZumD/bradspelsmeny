@@ -247,17 +247,14 @@ async function fetchUserParties() {
   img.className = "friend-avatar"; // reuse friend avatar styling
   img.src = party.avatar
   ? (party.avatar.startsWith('http') ? party.avatar : API_BASE + party.avatar)
-  : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
+  : `${FRONTEND_BASE}/img/party-avatar-placeholder.webp`;
   img.alt = party.name;
   img.title = party.name;
   img.onclick = () => window.location.href = `party.html?id=${party.id}`;
 
-  const label = document.createElement("div");
-  label.textContent = party.name;
-  label.style.fontSize = "0.65rem";
-  label.style.textAlign = "center";
-  label.style.marginTop = "4px";
-  label.style.color = "#5a2a0c";
+  card.appendChild(img);
+// No label appended
+
 
   card.appendChild(img);
   card.appendChild(label);
