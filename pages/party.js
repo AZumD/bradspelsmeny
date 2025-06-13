@@ -15,60 +15,62 @@ async function fetchPartyData() {
   if (!partyId) return;
 
   try {
-    const res = await fetch(`${API_BASE}/party/${partyId}`, {
-  headers: {
-    'Authorization': `Bearer ${getAccessToken()}`
-  }
-});
-
-const data = await res.json(); // ✅ Only once
-
-if (!res.ok) {
-  throw new Error(data.error || 'Failed to fetch party');
-}
-
-if (!data.name) throw new Error('Party not found');
-
-
-    document.getElementById('partyName').textContent = `${data.emoji} ${data.name}`;
-    document.getElementById('partyMeta').textContent = `Created by ${data.creator_first_name} ${data.creator_last_name}`;
-    document.getElementById('inviteCodeBox').textContent = `Invite Code: ${data.invite_code}`;
-
-    // Set party avatar
-    const avatar = document.getElementById('partyAvatar');
-    if (avatar) {
-      avatar.src = data.avatar || '../img/avatar-party-placeholder.webp';
+  const res = await fetch(`${API_BASE}/party/${partyId}`, {
+    headers: {
+      'Authorization': `Bearer ${getAccessToken()}`
     }
+  });
 
-    // Load members
-    const memberRes = await fetch(`${API_BASE}/party/${partyId}/members`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    });
-    const members = await memberRes.json();
-    renderMemberList(members);
+  let data;
+  try {
+    data = await res.json();
+  } catch (parseError) {
+    throw new Error('Failed to parse server response');
+  }
 
-    // Placeholder session logic
-    const sessionList = document.getElementById('sessionList');
-    sessionList.innerHTML = '<div class="placeholder-box">No sessions yet</div>';
- } catch (err) {
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to fetch party');
+  }
+
+  if (!data.name) {
+    throw new Error('Malformed party data');
+  }
+
+  document.getElementById('partyName').textContent = `${data.emoji} ${data.name}`;
+  document.getElementById('partyMeta').textContent = `Created by ${data.creator_first_name} ${data.creator_last_name}`;
+  document.getElementById('inviteCodeBox').textContent = `Invite Code: ${data.invite_code}`;
+
+  const avatar = document.getElementById('partyAvatar');
+  if (avatar) {
+    avatar.src = data.avatar || '../img/avatar-party-placeholder.webp';
+  }
+
+  // Load members
+  const memberRes = await fetch(`${API_BASE}/party/${partyId}/members`, {
+    headers: {
+      'Authorization': `Bearer ${getAccessToken()}`
+    }
+  });
+  const members = await memberRes.json();
+  renderMemberList(members);
+
+  document.getElementById('sessionList').innerHTML = '<div class="placeholder-box">No sessions yet</div>';
+} catch (err) {
   console.error('Error loading party:', err);
 
   const nameEl = document.getElementById('partyName');
   const memberListEl = document.getElementById('memberList');
   const codeBoxEl = document.getElementById('inviteCodeBox');
+  const avatarEl = document.getElementById('partyAvatar');
 
-  console.log({
-    name: nameEl,
-    members: memberListEl,
-    code: codeBoxEl,
-  });
+  console.log({ name: nameEl, members: memberListEl, code: codeBoxEl, avatar: avatarEl });
 
   if (nameEl) nameEl.textContent = 'Party not found';
   if (memberListEl) memberListEl.innerHTML = '<div class="placeholder-box">Could not load members</div>';
   if (codeBoxEl) codeBoxEl.textContent = '---';
+  if (avatarEl) avatarEl.src = '../img/avatar-party-placeholder.webp';
 }
+
 
 
 }
