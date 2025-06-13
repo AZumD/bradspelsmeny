@@ -16,10 +16,18 @@ async function fetchPartyData() {
 
   try {
     const res = await fetch(`${API_BASE}/party/${partyId}`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    });
+  headers: {
+    'Authorization': `Bearer ${getAccessToken()}`
+  }
+});
+
+if (!res.ok) {
+  const err = await res.json();
+  throw new Error(err.error || 'Failed to fetch party');
+}
+
+const data = await res.json();
+console.log('Fetched party data:', data);
     const data = await res.json();
 
     if (!data.name) throw new Error('Party not found');
