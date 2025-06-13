@@ -122,6 +122,7 @@ function setupInviteModal() {
   };
 }
 
-// Init
-fetchPartyData();
-setupInviteModal();
+document.addEventListener('DOMContentLoaded', () => {
+  fetchPartyData();
+  setupInviteModal();
+});
