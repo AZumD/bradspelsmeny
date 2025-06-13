@@ -37,7 +37,7 @@ async function fetchPartyData() {
   }
 
   document.getElementById('partyName').textContent = `${data.emoji} ${data.name}`;
-  document.getElementById('partyMeta').textContent = `Created by ${data.creator_first_name} ${data.creator_last_name}`;
+  //document.getElementById('partyMeta').textContent = `Created by ${data.creator_first_name} ${data.creator_last_name}`;
   document.getElementById('inviteCodeBox').textContent = `Invite Code: ${data.invite_code}`;
 
   const avatar = document.getElementById('partyAvatar');
