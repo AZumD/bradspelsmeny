@@ -78,11 +78,13 @@ async function fetchPartyData() {
 function renderMemberList(members) {
   const container = document.getElementById('memberList');
   container.innerHTML = '';
+
   if (!members.length) {
     container.innerHTML = '<div class="placeholder-box">No members in this party</div>';
     return;
   }
 
+  // Add member avatars
   members.forEach(m => {
     const img = document.createElement('img');
     img.src = m.avatar_url || '../img/avatar-placeholder.webp';
@@ -91,7 +93,18 @@ function renderMemberList(members) {
     img.className = 'friend-avatar';
     container.appendChild(img);
   });
+
+  // Add "+" button
+  const addBtn = document.createElement('div');
+  addBtn.id = 'inviteToPartyBtn';
+  addBtn.className = 'add-friend-circle';
+  addBtn.textContent = '+';
+  container.appendChild(addBtn);
+
+  // Ensure modal behavior is hooked up
+  setupInviteModal();
 }
+
 
 // Invite to Party Modal Logic
 function setupInviteModal() {
@@ -139,5 +152,4 @@ function setupInviteModal() {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchPartyData();
-  setupInviteModal();
 });
