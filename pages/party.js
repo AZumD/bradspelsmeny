@@ -16,18 +16,17 @@ async function fetchPartyData() {
 
   try {
     const res = await fetch(`${API_BASE}/party/${partyId}`, {
-  headers: {
-    'Authorization': `Bearer ${getAccessToken()}`
-  }
-});
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    });
 
-if (!res.ok) {
-  const err = await res.json();
-  throw new Error(err.error || 'Failed to fetch party');
-}
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to fetch party');
+    }
 
-const data = await res.json();
-    const data = await res.json();
+    const data = await res.json(); // ✅ only once!
 
     if (!data.name) throw new Error('Party not found');
 
@@ -57,9 +56,8 @@ const data = await res.json();
     console.error('Error loading party:', err);
     document.getElementById('partyName').textContent = 'Party not found';
     document.getElementById('memberList').innerHTML = '<div class="placeholder-box">Could not load members</div>';
-    document.getElementById('inviteCodeBox').textContent = '---';
-  }
-}
+    document.getElementById('in
+
 
 function renderMemberList(members) {
   const container = document.getElementById('memberList');
