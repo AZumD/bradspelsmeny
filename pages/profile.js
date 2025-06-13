@@ -237,18 +237,18 @@ async function fetchUserParties() {
     }
 
     for (const party of parties) {
-      const div = document.createElement('div');
-      div.className = 'party-entry';
-      div.textContent = `${party.emoji || '🎲'} ${party.name}`;
-      div.title = `Party ID: ${party.id}, Leader: ${party.is_leader}`;
-      div.style.cursor = 'pointer';
+  const wrapper = document.createElement("div");
+  wrapper.className = "party-avatar";
+  wrapper.title = `${party.name}`;
 
-      div.onclick = () => {
-        window.location.href = `party.html?id=${party.id}`;
-      };
+  wrapper.innerText = party.emoji || '🎲';
+  wrapper.onclick = () => {
+    window.location.href = `party.html?id=${party.id}`;
+  };
 
-      partyList.appendChild(div);
-    }
+  partyList.appendChild(wrapper);
+}
+
   } catch (err) {
     console.error('❌ Failed to load parties:', err);
     partyList.innerHTML = '<div class="placeholder-box">Failed to load parties.</div>';
