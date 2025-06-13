@@ -52,12 +52,18 @@ async function fetchPartyData() {
     // Placeholder session logic
     const sessionList = document.getElementById('sessionList');
     sessionList.innerHTML = '<div class="placeholder-box">No sessions yet</div>';
-  } catch (err) {
-    console.error('Error loading party:', err);
-    document.getElementById('partyName').textContent = 'Party not found';
-    document.getElementById('memberList').innerHTML = '<div class="placeholder-box">Could not load members</div>';
-     document.getElementById('inviteCodeBox').textContent = '---';
-  }
+ } catch (err) {
+  console.error('Error loading party:', err);
+
+  const nameEl = document.getElementById('partyName');
+  const memberListEl = document.getElementById('memberList');
+  const codeBoxEl = document.getElementById('inviteCodeBox');
+
+  if (nameEl) nameEl.textContent = 'Party not found';
+  if (memberListEl) memberListEl.innerHTML = '<div class="placeholder-box">Could not load members</div>';
+  if (codeBoxEl) codeBoxEl.textContent = '---';
+}
+
 }
 
 function renderMemberList(members) {
