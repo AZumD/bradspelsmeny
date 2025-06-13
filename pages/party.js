@@ -27,7 +27,6 @@ if (!res.ok) {
 }
 
 const data = await res.json();
-console.log('Fetched party data:', data);
     const data = await res.json();
 
     if (!data.name) throw new Error('Party not found');
