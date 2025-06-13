@@ -245,9 +245,9 @@ async function fetchUserParties() {
 
   const img = document.createElement("img");
   img.className = "friend-avatar"; // reuse friend avatar styling
-  img.src = party.avatar_url
-    ? (party.avatar_url.startsWith('http') ? party.avatar_url : API_BASE + party.avatar_url)
-    : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
+  img.src = party.avatar
+  ? (party.avatar.startsWith('http') ? party.avatar : API_BASE + party.avatar)
+  : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
   img.alt = party.name;
   img.title = party.name;
   img.onclick = () => window.location.href = `party.html?id=${party.id}`;
