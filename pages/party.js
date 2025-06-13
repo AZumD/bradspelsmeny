@@ -16,15 +16,17 @@ async function fetchPartyData() {
 
   try {
     const res = await fetch(`${API_BASE}/party/${partyId}`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    });
+  headers: {
+    'Authorization': `Bearer ${getAccessToken()}`
+  }
+});
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Failed to fetch party');
-    }
+const data = await res.json(); // 👈 Only call this once!
+
+if (!res.ok) {
+  throw new Error(data.error || 'Failed to fetch party');
+}
+
 
     const data = await res.json(); // ✅ only once!
 
