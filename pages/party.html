@@ -35,21 +35,16 @@
       text-shadow: 1px 1px 0 #d9b370;
     }
 
-    .add-friend-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px dashed #d9b370;
+  .add-friend-circle {
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: 1.2rem;
   color: #a07d3b;
   background-color: #fffdf7;
+  border: 2px dashed #d9b370;
   cursor: pointer;
-  margin-top: 12px;
-  margin-left: auto;
-  margin-right: auto;
   transition: transform 0.2s ease;
 }
 
@@ -84,6 +79,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  align-items: center;
   justify-content: center;
 }
 
@@ -100,13 +96,14 @@
       border-radius: 8px;
     }
 
-    .friend-avatar {
+    .friend-avatar,
+.add-friend-circle {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid #d9b370;
   object-fit: cover;
-  transition: transform 0.2s ease;
+  border: 2px solid #d9b370;
+  box-sizing: border-box;
 }
 
 .friend-avatar:hover {
