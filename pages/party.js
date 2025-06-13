@@ -85,7 +85,7 @@ function renderMemberList(members) {
 
   members.forEach(m => {
     const img = document.createElement('img');
-    img.src = m.avatar || '../img/avatar-placeholder.webp';
+    img.src = m.avatar_url || '../img/avatar-placeholder.webp';
     img.alt = `${m.first_name}'s avatar`;
     img.title = `${m.first_name} ${m.last_name}${m.is_leader ? ' ⭐' : ''}`;
     img.className = 'friend-avatar';
