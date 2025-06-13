@@ -70,17 +70,44 @@
       background-color: #f9f6f2;
       border-radius: 8px;
     }
+
+    .friend-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #d9b370;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.friend-avatar:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+    .avatar {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #c9a04e;
+  box-shadow: 2px 2px 5px rgba(90, 42, 12, 0.25);
+}
   </style>
 </head>
 <body>
   <div class="profile-container">
     <h1 id="partyName">Loading...</h1>
+    <img id="partyAvatar" class="avatar" src="../img/avatar-party-placeholder.png" alt="Party Avatar" />
     <div class="email" id="partyMeta"></div>
     <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
 
     <div>
       <div class="section-title">Members</div>
       <div id="memberList" class="member-list">
+        <div class="add-friend-circle" id="inviteToPartyBtn">+</div>
         <div class="placeholder-box">Loading party members…</div>
       </div>
     </div>
@@ -97,6 +124,16 @@
       </div>
     </div>
   </div>
+<!-- Invite to Party Modal -->
+<div id="inviteToPartyModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn" id="closeInviteToPartyModal">&times;</span>
+    <h3>Invite a Friend to This Party</h3>
+    <p>Enter their User ID:</p>
+    <input type="number" id="inviteUserId" placeholder="User ID" />
+    <button id="submitPartyInvite" class="add-friend-btn" style="margin-top: 10px;">Send Invite</button>
+  </div>
+</div>
 
   <script src="party.js"></script>
 </body>
