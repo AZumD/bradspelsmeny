@@ -31,7 +31,7 @@ async function fetchPartyData() {
     // Set party avatar
     const avatar = document.getElementById('partyAvatar');
     if (avatar) {
-      avatar.src = data.avatar || '../img/avatar-party-placeholder.png';
+      avatar.src = data.avatar || '../img/avatar-party-placeholder.webp';
     }
 
     // Load members
