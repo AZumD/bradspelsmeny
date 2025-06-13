@@ -59,10 +59,17 @@ async function fetchPartyData() {
   const memberListEl = document.getElementById('memberList');
   const codeBoxEl = document.getElementById('inviteCodeBox');
 
+  console.log({
+    name: nameEl,
+    members: memberListEl,
+    code: codeBoxEl,
+  });
+
   if (nameEl) nameEl.textContent = 'Party not found';
   if (memberListEl) memberListEl.innerHTML = '<div class="placeholder-box">Could not load members</div>';
   if (codeBoxEl) codeBoxEl.textContent = '---';
 }
+
 
 }
 
