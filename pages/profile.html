@@ -70,6 +70,8 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
+        margin-left: 2px;
+
       border: 2px dashed #d9b370;
       display: flex;
       align-items: center;
@@ -440,10 +442,11 @@
 
     <div>
       <div class="section-title">Parties</div>
-      <div id="partyList" class="parties-grid">
-        <!-- Parties will be dynamically inserted here -->
-      </div>
-      <div class="add-party-circle" id="createPartyBtn">+</div>
+      <div class="parties-grid" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;" id="partyContainer">
+  <div id="partyList" style="display: contents;"></div>
+  <div class="add-party-circle" id="createPartyBtn" title="Create Party">+</div>
+</div>
+
       
     </div>
 
