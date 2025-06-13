@@ -56,8 +56,9 @@ async function fetchPartyData() {
     console.error('Error loading party:', err);
     document.getElementById('partyName').textContent = 'Party not found';
     document.getElementById('memberList').innerHTML = '<div class="placeholder-box">Could not load members</div>';
-    document.getElementById('in
-
+     document.getElementById('inviteCodeBox').textContent = '---';
+  }
+}
 
 function renderMemberList(members) {
   const container = document.getElementById('memberList');
