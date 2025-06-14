@@ -460,12 +460,13 @@ loadedMessageIds.add(msg.id);
     deleteBtn.onclick = async () => {
       const confirmed = confirm('Delete this message?');
       if (confirmed) {
-        await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.user_id}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`
-          }
-        });
+        await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.id}`, {
+  method: 'DELETE',
+  headers: {
+    Authorization: `Bearer ${getAccessToken()}`
+  }
+});
+
         loadedMessageIds.clear();
         chatBox.innerHTML = '';
         loadMessages();
