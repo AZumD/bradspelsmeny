@@ -245,9 +245,9 @@ async function fetchUserParties() {
 
       const img = document.createElement("img");
       img.className = "party-avatar";
-      img.src = party.avatar?.startsWith("http")
-        ? (party.avatar.startsWith('http') ? party.avatar : API_BASE + party.avatar)
-        : `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
+      img.src = party.avatar
+  ? (party.avatar.startsWith('http') ? party.avatar : `${API_BASE}${party.avatar}`)
+  : `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
       img.onerror = () => {
         img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
       };
