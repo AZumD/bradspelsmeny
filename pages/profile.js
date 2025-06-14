@@ -257,6 +257,17 @@ async function fetchUserParties() {
 
 
   card.appendChild(img);  
+  const label = document.createElement("div");
+label.textContent = party.name;
+label.style.fontSize = "0.7rem";
+label.style.marginTop = "0.2rem";
+label.style.textAlign = "center";
+label.style.maxWidth = "60px";
+label.style.overflow = "hidden";
+label.style.textOverflow = "ellipsis";
+label.style.whiteSpace = "nowrap";
+
+  card.appendChild(label);
   partyList.appendChild(card);
 }
 
