@@ -531,7 +531,10 @@ autocompleteBox.style.overflowY = 'auto';
 autocompleteBox.style.fontSize = '0.8rem';
 document.body.appendChild(autocompleteBox);
 
-chatInput.addEventListener('input', () => {
+let autocompleteMatches = [];
+let selectedIndex = -1;
+
+function updateAutocomplete() {
   const value = chatInput.value;
   const cursorPos = chatInput.selectionStart;
   const textBefore = value.slice(0, cursorPos);
@@ -543,30 +546,31 @@ chatInput.addEventListener('input', () => {
   }
 
   const partial = atMatch[1].toLowerCase();
-  const matches = allGames
+  autocompleteMatches = allGames
     .filter(g => g.title_en && g.title_en.toLowerCase().includes(partial))
     .slice(0, 6);
 
-  if (matches.length === 0) {
+  if (autocompleteMatches.length === 0) {
     autocompleteBox.style.display = 'none';
     return;
   }
 
+  selectedIndex = -1;
   autocompleteBox.innerHTML = '';
-  matches.forEach(game => {
+  autocompleteMatches.forEach((game, index) => {
     const item = document.createElement('div');
     item.textContent = game.title_en;
     item.style.padding = '6px 10px';
     item.style.cursor = 'pointer';
-    item.onmouseenter = () => item.style.background = '#f3ece3';
-    item.onmouseleave = () => item.style.background = 'transparent';
-    item.onclick = () => {
-      const before = value.slice(0, atMatch.index);
-      const after = value.slice(cursorPos);
-      chatInput.value = `${before}@${game.title_en} ${after}`;
-      chatInput.focus();
-      autocompleteBox.style.display = 'none';
+    item.dataset.index = index;
+
+    item.onmouseenter = () => {
+      setSelectedIndex(index);
     };
+    item.onclick = () => {
+      insertAutocomplete(index);
+    };
+
     autocompleteBox.appendChild(item);
   });
 
@@ -575,6 +579,54 @@ chatInput.addEventListener('input', () => {
   autocompleteBox.style.top = `${rect.bottom + window.scrollY}px`;
   autocompleteBox.style.width = `${rect.width}px`;
   autocompleteBox.style.display = 'block';
+}
+
+function setSelectedIndex(index) {
+  const items = autocompleteBox.children;
+  for (let i = 0; i < items.length; i++) {
+    items[i].style.background = i === index ? '#f3ece3' : 'transparent';
+  }
+  selectedIndex = index;
+}
+
+function insertAutocomplete(index) {
+  const value = chatInput.value;
+  const cursorPos = chatInput.selectionStart;
+  const textBefore = value.slice(0, cursorPos);
+  const atMatch = textBefore.match(/@([^\s@]*)$/);
+  if (!atMatch) return;
+
+  const before = value.slice(0, atMatch.index);
+  const after = value.slice(cursorPos);
+  const game = autocompleteMatches[index];
+  chatInput.value = `${before}@${game.title_en} ${after}`;
+  chatInput.focus();
+  autocompleteBox.style.display = 'none';
+}
+
+chatInput.addEventListener('input', updateAutocomplete);
+
+chatInput.addEventListener('keydown', (e) => {
+  if (autocompleteBox.style.display !== 'block') return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (selectedIndex < autocompleteMatches.length - 1) {
+      setSelectedIndex(selectedIndex + 1);
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+  } else if (e.key === 'Enter' || e.key === 'Tab') {
+    if (selectedIndex >= 0) {
+      e.preventDefault();
+      insertAutocomplete(selectedIndex);
+    }
+  } else if (e.key === 'Escape') {
+    autocompleteBox.style.display = 'none';
+  }
 });
 
 document.addEventListener('click', (e) => {
@@ -582,3 +634,4 @@ document.addEventListener('click', (e) => {
     autocompleteBox.style.display = 'none';
   }
 });
+
