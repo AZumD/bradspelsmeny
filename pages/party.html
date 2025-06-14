@@ -166,8 +166,15 @@
   <div class="profile-container">
     <h1 id="partyName">Loading...</h1>
     <img id="partyAvatar" class="avatar" src="../img/avatar-party-placeholder.webp" alt="Party Avatar" />
-    <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
-
+     <div>
+  <div class="section-title">Party Chat</div>
+  <div id="chatBox" class="placeholder-box" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+    <em>Loading messages…</em>
+  </div>
+  <input type="text" id="chatInput" placeholder="Write a message..." style="width: 100%; padding: 8px; border: 1px dashed #d9b370; border-radius: 6px;" />
+  <button id="sendMessage" style="margin-top: 8px; width: 100%; background-color: #d9b370; color: #5a2a0c; border: none; padding: 8px; border-radius: 6px;">Send</button>
+</div>
+</div>
     <div>
       <div class="section-title">Members</div>
       <div id="memberList" class="member-list">
@@ -187,15 +194,8 @@
         <div class="placeholder-box">No sessions yet</div>
       </div>
     </div>
-      <div>
-  <div class="section-title">Party Chat</div>
-  <div id="chatBox" class="placeholder-box" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
-    <em>Loading messages…</em>
-  </div>
-  <input type="text" id="chatInput" placeholder="Write a message..." style="width: 100%; padding: 8px; border: 1px dashed #d9b370; border-radius: 6px;" />
-  <button id="sendMessage" style="margin-top: 8px; width: 100%; background-color: #d9b370; color: #5a2a0c; border: none; padding: 8px; border-radius: 6px;">Send</button>
-</div>
-</div>
+      <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
+
   </div>
 <!-- Invite to Party Modal -->
 <div id="inviteToPartyModal" class="modal" style="display:none;">
