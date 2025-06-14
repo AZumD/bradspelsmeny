@@ -10,6 +10,12 @@ function getPartyIdFromURL() {
   return params.get('id');
 }
 
+function parseGameMentions(text) {
+  return text.replace(/@([\w\-]+)/g, (match, gameSlug) => {
+    return `<span class="game-mention" data-game="${gameSlug}">@${gameSlug}</span>`;
+  });
+}
+
 async function fetchPartyData() {
   const partyId = getPartyIdFromURL();
   if (!partyId) return;
@@ -223,7 +229,7 @@ async function loadMessages() {
     
 
     const content = document.createElement('div');
-    content.textContent = msg.content;
+    content.innerHTML = parseGameMentions(msg.content);
     content.style.fontSize = '0.8rem';
 
     const timestamp = document.createElement('div');
