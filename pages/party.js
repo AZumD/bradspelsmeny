@@ -162,36 +162,67 @@ async function loadMessages() {
   chatBox.innerHTML = '';
 
   messages.forEach(msg => {
-    const wrapper = document.createElement('div');
-    wrapper.style.display = 'flex';
-    wrapper.style.alignItems = 'center';
-    wrapper.style.marginBottom = '8px';
-    wrapper.style.gap = '10px';
+  const wrapper = document.createElement('div');
+  wrapper.style.display = 'flex';
+  wrapper.style.alignItems = 'flex-start';
+  wrapper.style.marginBottom = '12px';
 
-    const avatar = document.createElement('img');
-    avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
-    avatar.alt = `${msg.username}'s avatar`;
-    avatar.className = 'friend-avatar'; // already styled in your CSS
-    avatar.style.width = '32px';
-    avatar.style.height = '32px';
+  // Avatar + username column
+  const leftCol = document.createElement('div');
+  leftCol.style.display = 'flex';
+  leftCol.style.flexDirection = 'column';
+  leftCol.style.alignItems = 'center';
+  leftCol.style.width = '48px';
+  leftCol.style.marginRight = '10px';
 
-    const content = document.createElement('div');
-    content.style.flex = '1';
-    // Replace content.innerHTML with this instead:
-content.innerHTML = `
-  <div style="display: flex; flex-direction: column; align-items: center; width: 48px;">
-    <img src="${msg.avatar_url || '../img/avatar-placeholder.webp'}" class="friend-avatar" style="width: 32px; height: 32px;" />
-    <div style="font-size: 0.65rem; text-align: center;">${msg.username}</div>
-  </div>
-  <div style="margin-left: 10px; flex: 1; font-size: 0.8rem;">${msg.content}</div>
-`;
+  const avatar = document.createElement('img');
+  avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
+  avatar.alt = `${msg.username}'s avatar`;
+  avatar.className = 'friend-avatar';
+  avatar.style.width = '36px';
+  avatar.style.height = '36px';
 
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-    chatBox.appendChild(wrapper);
-  });
+  const username = document.createElement('div');
+  username.textContent = msg.username;
+  username.style.fontSize = '0.65rem';
+  username.style.textAlign = 'center';
+  username.style.marginTop = '2px';
+  username.style.color = '#a07d3b';
 
-  chatBox.scrollTop = chatBox.scrollHeight;
+  leftCol.appendChild(avatar);
+  leftCol.appendChild(username);
+
+  // Message bubble
+  const messageBubble = document.createElement('div');
+  messageBubble.style.backgroundColor = '#f9f6f2';
+  messageBubble.style.border = '1px dashed #d9b370';
+  messageBubble.style.borderRadius = '8px';
+  messageBubble.style.padding = '8px 12px';
+  messageBubble.style.maxWidth = '100%';
+  messageBubble.style.flex = '1';
+
+  const content = document.createElement('div');
+  content.textContent = msg.content;
+  content.style.fontSize = '0.8rem';
+
+  const timestamp = document.createElement('div');
+  const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  timestamp.textContent = time;
+  timestamp.style.fontSize = '0.65rem';
+  timestamp.style.color = '#a07d3b';
+  timestamp.style.marginTop = '4px';
+
+  messageBubble.appendChild(content);
+  messageBubble.appendChild(timestamp);
+
+  // Combine everything
+  wrapper.appendChild(leftCol);
+  wrapper.appendChild(messageBubble);
+  chatBox.appendChild(wrapper);
+});
+
+
+  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 }
 
 
