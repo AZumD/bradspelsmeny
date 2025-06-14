@@ -161,38 +161,51 @@ async function loadMessages() {
   const messages = await res.json();
   chatBox.innerHTML = '';
 
-  const currentUserId = parseInt(localStorage.getItem('userId')); // ← Make sure this is saved at login!
+  const currentUserId = parseInt(localStorage.getItem('userId'));
+  let lastSenderId = null;
 
   messages.forEach((msg, index) => {
+    const isSameSender = msg.user_id === lastSenderId;
+    lastSenderId = msg.user_id;
+
     const wrapper = document.createElement('div');
+    wrapper.classList.add('message-wrapper', 'fade-in');
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'flex-start';
-    wrapper.style.marginBottom = '12px';
+    wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
 
-    // Avatar + username column
-    const leftCol = document.createElement('div');
-    leftCol.style.display = 'flex';
-    leftCol.style.flexDirection = 'column';
-    leftCol.style.alignItems = 'center';
-    leftCol.style.width = '48px';
-    leftCol.style.marginRight = '10px';
+    // Left column (avatar + username) — only shown if not same sender
+    if (!isSameSender) {
+      const leftCol = document.createElement('div');
+      leftCol.style.display = 'flex';
+      leftCol.style.flexDirection = 'column';
+      leftCol.style.alignItems = 'center';
+      leftCol.style.width = '48px';
+      leftCol.style.marginRight = '10px';
 
-    const avatar = document.createElement('img');
-    avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
-    avatar.alt = `${msg.username}'s avatar`;
-    avatar.className = 'friend-avatar';
-    avatar.style.width = '36px';
-    avatar.style.height = '36px';
+      const avatar = document.createElement('img');
+      avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
+      avatar.alt = `${msg.username}'s avatar`;
+      avatar.className = 'friend-avatar';
+      avatar.style.width = '36px';
+      avatar.style.height = '36px';
 
-    const username = document.createElement('div');
-    username.textContent = msg.username;
-    username.style.fontSize = '0.65rem';
-    username.style.textAlign = 'center';
-    username.style.marginTop = '2px';
-    username.style.color = '#a07d3b';
+      const username = document.createElement('div');
+      username.textContent = msg.username;
+      username.style.fontSize = '0.65rem';
+      username.style.textAlign = 'center';
+      username.style.marginTop = '2px';
+      username.style.color = '#a07d3b';
 
-    leftCol.appendChild(avatar);
-    leftCol.appendChild(username);
+      leftCol.appendChild(avatar);
+      leftCol.appendChild(username);
+      wrapper.appendChild(leftCol);
+    } else {
+      const spacer = document.createElement('div');
+      spacer.style.width = '48px';
+      spacer.style.marginRight = '10px';
+      wrapper.appendChild(spacer);
+    }
 
     // Message bubble
     const messageBubble = document.createElement('div');
@@ -243,14 +256,11 @@ async function loadMessages() {
       messageBubble.appendChild(deleteBtn);
     }
 
-    wrapper.appendChild(leftCol);
     wrapper.appendChild(messageBubble);
     chatBox.appendChild(wrapper);
-
   });
-
-  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 }
+
 
 
 async function sendMessage() {
