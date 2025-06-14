@@ -813,6 +813,7 @@ async function fetchPartyProfile() {
     // Fetch party info, members, and sessions in parallel
     const [partyRes, membersRes, sessionsRes] = await Promise.all([
       fetchWithAuth(`${API_BASE}/party/${id}`),
+      fetchWithAuth(`${API_BASE}/party/${id}/avatar`),
       fetchWithAuth(`${API_BASE}/party/${id}/members`),
       fetchWithAuth(`${API_BASE}/party/${id}/sessions`)
     ]);
@@ -827,8 +828,8 @@ async function fetchPartyProfile() {
     const avatarElem = document.getElementById('partyAvatar');
 if (avatarElem) {
   avatarElem.src = partyData.avatar?.startsWith('http')
-    ? partyData.avatar
-    : `${FRONTEND_BASE}/${partyData.avatar || 'img/avatar-party-placeholder.webp'}`;
+  ? partyData.avatar
+  : `../${partyData.avatar || 'img/avatar-party-placeholder.webp'}`;
 
   avatarElem.onerror = () => {
     avatarElem.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
