@@ -44,7 +44,7 @@ function openGameModal(modalId, game) {
     ? `Players: ${game.min_players}–${game.max_players}`
     : null;
 
- // const titleEn = game.title_en ? `English Title: ${game.title_en}` : null;
+   const titleEn = game.title_en ? `English Title: ${game.title_en}` : null;
 
   details.textContent = [players, playtime].filter(Boolean).join(' · ');
 
