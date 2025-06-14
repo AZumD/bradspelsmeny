@@ -259,7 +259,7 @@ function renderMemberList(members) {
   // Add member avatars
   members.forEach(m => {
     const link = document.createElement('a');
-    link.href = `/pages/profile.html?id=${m.id}`;
+    link.href = `${FRONTEND_BASE}/pages/profile.html?id=${m.id}`;
     link.title = `${m.first_name} ${m.last_name}${m.is_leader ? ' ⭐' : ''}`;
     const img = document.createElement('img');
     img.src = m.avatar_url || '../img/avatar-placeholder.webp';
