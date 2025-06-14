@@ -372,7 +372,8 @@ async function loadMessages() {
     leftCol.style.marginRight = '10px';
 
     const avatarLink = document.createElement('a');
-    avatarLink.title = `${msg.username}'s profile`;
+    avatarLink.href = `${FRONTEND_BASE}/pages/profile.html?id=${msg.user_id}`;
+    avatarLink.title = `${msg.username}'s profile`; // or fallback if you don't have first/last name
 
 
     const avatar = document.createElement('img');
