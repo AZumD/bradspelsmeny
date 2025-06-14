@@ -2,10 +2,10 @@ let games = [];
 let editingIndex = null;
 
 const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
-let ADMIN_TOKEN = null;
+let USER_TOKEN = null;
 
-async function refreshAdminToken() {
-  const refreshToken = localStorage.getItem("adminRefreshToken");
+async function refreshUserToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) return false;
 
   try {
@@ -19,8 +19,8 @@ async function refreshAdminToken() {
 
     const data = await res.json();
     if (data.token) {
-      localStorage.setItem("adminToken", data.token);
-      ADMIN_TOKEN = data.token;
+      localStorage.setItem("userToken", data.token);
+      USER_TOKEN = data.token;
       return true;
     }
     return false;
@@ -30,8 +30,8 @@ async function refreshAdminToken() {
 }
 
 async function guardAdminSession() {
-  const token = localStorage.getItem("adminToken");
-  const refreshToken = localStorage.getItem("adminRefreshToken");
+  const token = localStorage.getItem("userToken");
+  const refreshToken = localStorage.getItem("refreshToken");
 
   if (!token && !refreshToken) {
     window.location.href = "login.html";
@@ -39,13 +39,13 @@ async function guardAdminSession() {
   }
 
   if (!token && refreshToken) {
-    const refreshed = await refreshAdminToken();
+    const refreshed = await refreshUserToken();
     if (!refreshed) {
       window.location.href = "login.html";
       return false;
     }
   } else {
-    ADMIN_TOKEN = token;
+    USER_TOKEN = token;
   }
 
   return true;
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const res = await fetch(`${API_BASE}/games`, {
         headers: {
-          Authorization: `Bearer ${ADMIN_TOKEN}`,
+          Authorization: `Bearer ${USER_TOKEN}`,
         },
       });
 
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(`${API_BASE}/games/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${ADMIN_TOKEN}`,
+          Authorization: `Bearer ${USER_TOKEN}`,
         },
       });
       if (!res.ok) throw new Error("Delete failed");
