@@ -1,12 +1,12 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
-let ADMIN_TOKEN = null;
+let USER_TOKEN = null;
 
-async function refreshAdminToken() {
-  const refreshToken = localStorage.getItem("adminRefreshToken");
+async function refreshUserToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) return false;
 
   try {
-    const res = await fetch(`${API_BASE}/admin/refresh-token`, {
+    const res = await fetch(`${API_BASE}/refresh-token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
@@ -15,8 +15,8 @@ async function refreshAdminToken() {
 
     const data = await res.json();
     if (data.token) {
-      localStorage.setItem("adminToken", data.token);
-      ADMIN_TOKEN = data.token;
+      localStorage.setItem("userToken", data.token);
+      USER_TOKEN = data.token;
       return true;
     }
     return false;
@@ -26,8 +26,8 @@ async function refreshAdminToken() {
 }
 
 async function guardAdminSession() {
-  const token = localStorage.getItem("adminToken");
-  const refreshToken = localStorage.getItem("adminRefreshToken");
+  const token = localStorage.getItem("userToken");
+  const refreshToken = localStorage.getItem("refreshToken");
 
   if (!token && !refreshToken) {
     window.location.href = "login.html";
@@ -35,13 +35,13 @@ async function guardAdminSession() {
   }
 
   if (!token && refreshToken) {
-    const refreshed = await refreshAdminToken();
+    const refreshed = await refreshUserToken();
     if (!refreshed) {
       window.location.href = "login.html";
       return false;
     }
   } else {
-    ADMIN_TOKEN = token;
+    USER_TOKEN = token;
   }
 
   return true;
@@ -59,7 +59,7 @@ let allGames = [];
 async function fetchGames() {
   try {
     const res = await fetch(`${API_BASE}/games`, {
-      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+      headers: { Authorization: `Bearer ${USER_TOKEN}` }
     });
     if (!res.ok) throw new Error(`Failed to fetch games: ${res.status}`);
     allGames = await res.json();
@@ -95,7 +95,7 @@ async function createGameCard(game) {
   if (game.lent_out) {
     try {
       const res = await fetch(`${API_BASE}/games/${game.id}/current-lend`, {
-        headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+        headers: { Authorization: `Bearer ${USER_TOKEN}` }
       });
       if (res.ok) {
         const data = await res.json();
@@ -124,7 +124,7 @@ async function createGameCard(game) {
 
 async function openLendModal(gameId) {
   const res = await fetch(`${API_BASE}/users`, {
-    headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+    headers: { Authorization: `Bearer ${USER_TOKEN}` }
   });
   const users = await res.json();
 
@@ -169,7 +169,7 @@ async function confirmLend() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${ADMIN_TOKEN}`
+      Authorization: `Bearer ${USER_TOKEN}`
     },
     body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
   });
@@ -183,7 +183,7 @@ async function returnGame(gameId) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${ADMIN_TOKEN}`
+      Authorization: `Bearer ${USER_TOKEN}`
     },
     body: JSON.stringify({})
   });
@@ -205,7 +205,7 @@ async function openHistoryModal(gameId) {
   const modal = document.getElementById('historyModal');
   const historyList = document.getElementById('historyList');
   const res = await fetch(`${API_BASE}/history/${gameId}`, {
-    headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+    headers: { Authorization: `Bearer ${USER_TOKEN}` }
   });
   const logs = await res.json();
 
@@ -237,7 +237,7 @@ if (newUserForm) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${ADMIN_TOKEN}`
+        Authorization: `Bearer ${USER_TOKEN}`
       },
       body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
     });
