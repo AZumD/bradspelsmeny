@@ -16,6 +16,128 @@ function parseGameMentions(text) {
   });
 }
 
+function openGameModal(modalId, game) {
+  const img = document.getElementById(`${modalId}Img`);
+  const title = document.getElementById(`${modalId}Title`);
+  const desc = document.getElementById(`${modalId}Description`);
+
+  const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
+  let imageUrl = game.img || game.thumbnail_url;
+  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `../${imageUrl}`;
+  }
+  if (!imageUrl) {
+    imageUrl = `${FRONTEND_BASE}/img/default-thumb.webp`;
+  }
+
+  img.src = imageUrl;
+  img.alt = gameTitle;
+
+  title.textContent = gameTitle;
+  desc.textContent = game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
+
+
+  document.getElementById(modalId).style.display = 'flex';
+}
+
+
+function closeGameModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function createGameCard(game, minimal = false) {
+  const card = document.createElement('div');
+  card.className = 'game-entry';
+
+  const gameTitle =
+    game.title ||
+    game.title_en ||
+    game.title_sv ||
+    game.name ||
+    'Untitled';
+
+  if (minimal) {
+    // Minimal version for favorites grid
+    card.style.all = 'unset';
+    card.style.cursor = 'pointer';
+
+    const img = document.createElement('img');
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    img.alt = gameTitle;
+    img.title = gameTitle; // tooltip on hover
+    img.onerror = () => {
+      img.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+
+    img.style.width = '48px';
+    img.style.height = '48px';
+    img.style.borderRadius = '8px';
+    img.style.border = '2px solid #c9a04e';
+    img.style.objectFit = 'cover';
+    img.style.margin = '2px';
+
+    card.appendChild(img);
+  } else {
+    // Full version for wishlist
+    card.style.border = 'none';
+    card.style.borderRadius = '8px';
+    card.style.padding = '10px';
+    card.style.marginBottom = '10px';
+    card.style.backgroundColor = '#f9f6f2';
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.gap = '12px';
+    card.style.cursor = 'pointer';
+
+    let imageUrl = game.img || game.thumbnail_url;
+    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      imageUrl = `../${imageUrl}`;
+    }
+
+    const thumb = document.createElement('img');
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    thumb.alt = gameTitle;
+    thumb.onerror = () => {
+      thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`;
+    };
+    thumb.style.width = '60px';
+    thumb.style.height = '60px';
+    thumb.style.borderRadius = '8px';
+    thumb.style.border = '2px solid #c9a04e';
+    thumb.style.objectFit = 'cover';
+
+    const title = document.createElement('div');
+    title.className = 'game-entry-title';
+    title.textContent = gameTitle;
+
+    card.appendChild(thumb);
+    card.appendChild(title);
+  }
+
+ card.onclick = () => {
+  if (minimal) {
+    openGameModal('favoriteGameModal', game);
+  } else {
+    openGameModal('wishlistGameModal', game);
+  }
+};
+
+
+  return card;
+}
+
+
 async function fetchPartyData() {
   const partyId = getPartyIdFromURL();
   if (!partyId) return;
