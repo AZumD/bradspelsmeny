@@ -250,6 +250,7 @@ async function fetchPartyData() {
 function renderMemberList(members) {
   const container = document.getElementById('memberList');
   container.innerHTML = '';
+  console.log('Party members:', members);
 
   if (!members.length) {
     container.innerHTML = '<div class="placeholder-box">No members in this party</div>';
