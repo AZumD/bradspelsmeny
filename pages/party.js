@@ -160,13 +160,36 @@ async function loadMessages() {
   });
   const messages = await res.json();
   chatBox.innerHTML = '';
+
   messages.forEach(msg => {
-    const p = document.createElement("p");
-    p.innerText = `${msg.sender_name}: ${msg.content}`;
-    chatBox.appendChild(p);
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.marginBottom = '8px';
+    wrapper.style.gap = '10px';
+
+    const avatar = document.createElement('img');
+    avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
+    avatar.alt = `${msg.username}'s avatar`;
+    avatar.className = 'friend-avatar'; // already styled in your CSS
+    avatar.style.width = '32px';
+    avatar.style.height = '32px';
+
+    const content = document.createElement('div');
+    content.style.flex = '1';
+    content.innerHTML = `
+      <div style="font-size: 0.65rem; font-weight: bold; color: #a07d3b;">${msg.username}</div>
+      <div style="font-size: 0.8rem;">${msg.content}</div>
+    `;
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
+    chatBox.appendChild(wrapper);
   });
+
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 async function sendMessage() {
   const content = chatInput.value.trim();
