@@ -21,6 +21,16 @@
     .fade-in {
   animation: fadeInChat 0.3s ease-in-out;
 }
+.new-glow {
+  animation: pulseGlow 1s ease-out;
+  box-shadow: 0 0 10px 2px #d9b37088;
+}
+
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 0px 0px #d9b37000; }
+  50%  { box-shadow: 0 0 10px 4px #d9b37088; }
+  100% { box-shadow: 0 0 0px 0px #d9b37000; }
+}
 
 @keyframes fadeInChat {
   from { opacity: 0; transform: translateY(4px); }
