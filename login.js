@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("userToken", data.token);
       localStorage.setItem("refreshToken", data.refreshToken); // <- new line
       localStorage.setItem("userData", JSON.stringify(data.user));
+      localStorage.setItem("userId", data.user.id); // 👈 THIS enables delete buttons
+
 
       alert(`👋 Welcome back, ${data.user.first_name}!`);
       window.location.href = "index.html"; // Or guest homepage
