@@ -27,8 +27,8 @@ function getPartyIdFromURL() {
   return params.get('id');
 }
 function parseGameMentions(text) {
-  return text.replace(/@([^\n@]+)/g, (match, titleEn) => {
-    return `<span class="game-mention" data-title-en="${titleEn}">@${titleEn}</span>`;
+  return text.replace(/@([^\n@.,!?;:]+)/g, (match, titleEn) => {
+    return `<span class="game-mention" data-title-en="${titleEn.trim()}">@${titleEn.trim()}</span>`;
   });
 }
 
