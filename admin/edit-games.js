@@ -52,8 +52,24 @@ async function fetchWithAdminAuth(url, options = {}, retry = true) {
   return res;
 }
 
-if (!localStorage.getItem("adminToken")) {
-  window.location.href = "login.html";
+async function guardAdminSession() {
+  const token = localStorage.getItem("adminToken");
+  const refreshToken = localStorage.getItem("adminRefreshToken");
+
+  if (!token && !refreshToken) {
+    window.location.href = "login.html";
+    return false;
+  }
+
+  if (!token && refreshToken) {
+    const refreshed = await refreshAdminToken();
+    if (!refreshed) {
+      window.location.href = "login.html";
+      return false;
+    }
+  }
+
+  return true;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -100,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (loadingSpinner) loadingSpinner.style.display = "block";
 
       const res = await fetchWithAdminAuth(`${API_BASE}/games`);
-      if (!res.ok) throw new Error("Failed to fetch games");
+      if (!res || !res.ok) throw new Error("Failed to fetch games");
 
       games = await res.json();
       displayGames(games);
@@ -283,8 +299,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  fetchGames();
+  // ✅ Properly guarded fetch call
+  (async () => {
+    if (await guardAdminSession()) {
+      await fetchGames();
+    }
+  })();
 
+  // Expose utilities
   window.openModal = openModal;
   window.deleteGame = deleteGame;
   window.updateStars = updateStars;
