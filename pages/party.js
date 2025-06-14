@@ -302,9 +302,9 @@ async function loadMessages() {
 
     const wrapper = document.createElement('div');
     wrapper.classList.add('message-wrapper', 'fade-in');
-    wrapper.style.display = 'flex';
-    wrapper.style.alignItems = 'flex-start';
+    wrapper.style.marginTop = isSameSender ? '4px' : '12px';
     wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
+
 
     if (!isSameSender) {
       const leftCol = document.createElement('div');
@@ -342,6 +342,7 @@ async function loadMessages() {
     messageBubble.style.backgroundColor = index % 2 === 0 ? '#f9f6f2' : '#f3ece3';
     messageBubble.style.border = '1px dashed #d9b370';
     messageBubble.style.borderRadius = '8px';
+    messageBubble.style.marginTop = '2px';
     messageBubble.style.padding = '8px 12px';
     messageBubble.style.width = '100%';
     messageBubble.style.flex = '1';
