@@ -161,66 +161,92 @@ async function loadMessages() {
   const messages = await res.json();
   chatBox.innerHTML = '';
 
-  messages.forEach(msg => {
-  const wrapper = document.createElement('div');
-  wrapper.style.display = 'flex';
-  wrapper.style.alignItems = 'flex-start';
-  wrapper.style.marginBottom = '12px';
+  const currentUserId = parseInt(localStorage.getItem('userId')); // ← Make sure this is saved at login!
 
-  // Avatar + username column
-  const leftCol = document.createElement('div');
-  leftCol.style.display = 'flex';
-  leftCol.style.flexDirection = 'column';
-  leftCol.style.alignItems = 'center';
-  leftCol.style.width = '48px';
-  leftCol.style.marginRight = '10px';
+  messages.forEach((msg, index) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'flex-start';
+    wrapper.style.marginBottom = '12px';
 
-  const avatar = document.createElement('img');
-  avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
-  avatar.alt = `${msg.username}'s avatar`;
-  avatar.className = 'friend-avatar';
-  avatar.style.width = '36px';
-  avatar.style.height = '36px';
+    // Avatar + username column
+    const leftCol = document.createElement('div');
+    leftCol.style.display = 'flex';
+    leftCol.style.flexDirection = 'column';
+    leftCol.style.alignItems = 'center';
+    leftCol.style.width = '48px';
+    leftCol.style.marginRight = '10px';
 
-  const username = document.createElement('div');
-  username.textContent = msg.username;
-  username.style.fontSize = '0.65rem';
-  username.style.textAlign = 'center';
-  username.style.marginTop = '2px';
-  username.style.color = '#a07d3b';
+    const avatar = document.createElement('img');
+    avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
+    avatar.alt = `${msg.username}'s avatar`;
+    avatar.className = 'friend-avatar';
+    avatar.style.width = '36px';
+    avatar.style.height = '36px';
 
-  leftCol.appendChild(avatar);
-  leftCol.appendChild(username);
+    const username = document.createElement('div');
+    username.textContent = msg.username;
+    username.style.fontSize = '0.65rem';
+    username.style.textAlign = 'center';
+    username.style.marginTop = '2px';
+    username.style.color = '#a07d3b';
 
-  // Message bubble
-  const messageBubble = document.createElement('div');
-  messageBubble.style.backgroundColor = '#f9f6f2';
-  messageBubble.style.border = '1px dashed #d9b370';
-  messageBubble.style.borderRadius = '8px';
-  messageBubble.style.padding = '8px 12px';
-  messageBubble.style.maxWidth = '100%';
-  messageBubble.style.flex = '1';
+    leftCol.appendChild(avatar);
+    leftCol.appendChild(username);
 
-  const content = document.createElement('div');
-  content.textContent = msg.content;
-  content.style.fontSize = '0.8rem';
+    // Message bubble
+    const messageBubble = document.createElement('div');
+    messageBubble.style.backgroundColor = index % 2 === 0 ? '#f9f6f2' : '#f3ece3';
+    messageBubble.style.border = '1px dashed #d9b370';
+    messageBubble.style.borderRadius = '8px';
+    messageBubble.style.padding = '8px 12px';
+    messageBubble.style.maxWidth = '100%';
+    messageBubble.style.flex = '1';
+    messageBubble.style.position = 'relative';
 
-  const timestamp = document.createElement('div');
-  const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  timestamp.textContent = time;
-  timestamp.style.fontSize = '0.65rem';
-  timestamp.style.color = '#a07d3b';
-  timestamp.style.marginTop = '4px';
+    const content = document.createElement('div');
+    content.textContent = msg.content;
+    content.style.fontSize = '0.8rem';
 
-  messageBubble.appendChild(content);
-  messageBubble.appendChild(timestamp);
+    const timestamp = document.createElement('div');
+    const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    timestamp.textContent = time;
+    timestamp.style.fontSize = '0.65rem';
+    timestamp.style.color = '#a07d3b';
+    timestamp.style.marginTop = '4px';
 
-  // Combine everything
-  wrapper.appendChild(leftCol);
-  wrapper.appendChild(messageBubble);
-  chatBox.appendChild(wrapper);
-});
+    messageBubble.appendChild(content);
+    messageBubble.appendChild(timestamp);
 
+    // 🗑️ Delete button (only for sender)
+    if (msg.user_id === currentUserId) {
+      const deleteBtn = document.createElement('span');
+      deleteBtn.textContent = '🗑️';
+      deleteBtn.title = 'Delete message';
+      deleteBtn.style.position = 'absolute';
+      deleteBtn.style.top = '4px';
+      deleteBtn.style.right = '8px';
+      deleteBtn.style.cursor = 'pointer';
+      deleteBtn.style.fontSize = '0.8rem';
+      deleteBtn.onclick = async () => {
+        const confirmed = confirm('Delete this message?');
+        if (confirmed) {
+          await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.id}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${getAccessToken()}`
+            }
+          });
+          loadMessages();
+        }
+      };
+      messageBubble.appendChild(deleteBtn);
+    }
+
+    wrapper.appendChild(leftCol);
+    wrapper.appendChild(messageBubble);
+    chatBox.appendChild(wrapper);
+  });
 
   chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 }
