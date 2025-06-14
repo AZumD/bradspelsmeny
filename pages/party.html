@@ -272,11 +272,14 @@
   <div id="chatBox" class="placeholder-box" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
     <em>Loading messages…</em>
   </div>
-  <input type="text" id="chatInput" placeholder="Write a message..." style="width: 100%; padding: 8px; border: 1px dashed #d9b370; border-radius: 6px;" />
-  <button id="sendMessage" style="margin-top: 8px; width: 100%; background-color: #d9b370; color: #5a2a0c; border: none; padding: 8px; border-radius: 6px;">Send</button>
 </div>
+<div id="favoriteGameModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn" onclick="document.getElementById('favoriteGameModal').style.display = 'none'">&times;</span>
+    <img id="favoriteGameModalImg" style="width: 100%; margin-bottom: 10px;" />
+    <p id="favoriteGameModalDescription" style="font-size: 0.85rem;"></p>
+  </div>
 </div>
-
   <script src="party.js" defer></script>
 </body>
 </html>
