@@ -11,7 +11,7 @@ function goTo(path) {
 
 function logout() {
   clearTokens(); // Assuming this function already exists
-  window.location.href = 'login.html';
+  window.location.href = '/pages/login.html';
 }
 
 
@@ -50,7 +50,7 @@ async function fetchWithAuth(url, options = {}) {
 
     if (!refreshResponse.ok) {
       clearTokens();
-      window.location.href = '/login.html';
+      window.location.href = '/pages/login.html';
       throw new Error('Session expired. Please log in again.');
     }
 
