@@ -111,6 +111,13 @@
   cursor: pointer;
 }
 
+    #chatBox p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+
     .avatar {
   display: block;
   margin: 0 auto 20px auto;
@@ -190,6 +197,15 @@
     <input type="number" id="inviteUserId" placeholder="User ID" />
     <button id="submitPartyInvite" class="add-friend-btn" style="margin-top: 10px;">Send Invite</button>
   </div>
+
+  <div>
+  <div class="section-title">Party Chat</div>
+  <div id="chatBox" class="placeholder-box" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+    <em>Loading messages…</em>
+  </div>
+  <input type="text" id="chatInput" placeholder="Write a message..." style="width: 100%; padding: 8px; border: 1px dashed #d9b370; border-radius: 6px;" />
+  <button id="sendMessage" style="margin-top: 8px; width: 100%; background-color: #d9b370; color: #5a2a0c; border: none; padding: 8px; border-radius: 6px;">Send</button>
+</div>
 </div>
 
   <script src="party.js" defer></script>
