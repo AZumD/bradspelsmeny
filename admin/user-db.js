@@ -1,4 +1,5 @@
 const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
+let ADMIN_TOKEN = null;
 
 async function refreshAdminToken() {
   const refreshToken = localStorage.getItem("adminRefreshToken");
@@ -15,6 +16,7 @@ async function refreshAdminToken() {
     const data = await res.json();
     if (data.token) {
       localStorage.setItem("adminToken", data.token);
+      ADMIN_TOKEN = data.token;
       return true;
     }
     return false;
@@ -23,32 +25,31 @@ async function refreshAdminToken() {
   }
 }
 
-async function fetchWithAdminAuth(url, options = {}, retry = true) {
-  if (!options.headers) options.headers = {};
+async function guardAdminSession() {
   const token = localStorage.getItem("adminToken");
-  if (!token) {
-    window.location.href = "login.html";
-    return;
-  }
-  options.headers['Authorization'] = `Bearer ${token}`;
+  const refreshToken = localStorage.getItem("adminRefreshToken");
 
-  let res = await fetch(url, options);
-  if (res.status === 401 && retry) {
-    const refreshed = await refreshAdminToken();
-    if (refreshed) {
-      options.headers['Authorization'] = `Bearer ${localStorage.getItem("adminToken")}`;
-      res = await fetch(url, options);
-    } else {
-      localStorage.removeItem("adminToken");
-      localStorage.removeItem("adminRefreshToken");
-      window.location.href = "login.html";
-      return;
-    }
+  if (!token && !refreshToken) {
+    window.location.href = "login.html";
+    return false;
   }
-  return res;
+
+  if (!token && refreshToken) {
+    const refreshed = await refreshAdminToken();
+    if (!refreshed) {
+      window.location.href = "login.html";
+      return false;
+    }
+  } else {
+    ADMIN_TOKEN = token;
+  }
+
+  return true;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!(await guardAdminSession())) return;
+
   const addUserButton = document.getElementById("addUserButton");
   const userModal = document.getElementById("userModal");
   const userForm = document.getElementById("userForm");
@@ -57,11 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const badgeModal = document.getElementById("badgeModal");
   const badgeForm = document.getElementById("badgeForm");
   const badgeSelect = document.getElementById("badgeSelect");
-
-  if (!localStorage.getItem("adminToken")) {
-    window.location.href = "login.html";
-    return;
-  }
 
   addUserButton.onclick = () => {
     userForm.reset();
@@ -94,9 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("id_number", userForm.idNumber.value);
 
     try {
-      const res = await fetchWithAdminAuth(url, {
+      const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${ADMIN_TOKEN}`
+        },
         body: formData.toString()
       });
 
@@ -112,16 +111,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  loadUsers();
-});
+  badgeForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const userId = document.getElementById("badgeUserId").value;
+    const badgeId = badgeSelect.value;
 
+    try {
+      const res = await fetch(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ADMIN_TOKEN}`
+        },
+        body: JSON.stringify({ badge_id: badgeId })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert("❌ Misslyckades: " + (err.error || "Något gick fel."));
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("✅ " + (data.message || "Badge awarded!"));
+      } else {
+        alert("ℹ️ " + (data.message || "Användaren hade redan den här badgen."));
+      }
+
+      badgeModal.style.display = "none";
+    } catch (err) {
+      console.error("❌ Error awarding badge:", err);
+      alert("Något gick fel när badge skulle tilldelas.");
+    }
+  };
 
   async function deleteUser(id) {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
     try {
-      const res = await fetchWithAdminAuth(`${API_URL}/${id}`, {
-        method: "DELETE"
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
       });
 
       if (res.ok) {
@@ -129,8 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         const data = await res.json();
         if (confirm(`${data.error || "Kunde inte radera användaren."} Vill du arkivera istället?`)) {
-          const archiveRes = await fetchWithAdminAuth(`${API_URL}/${id}`, {
-            method: "DELETE"
+          const archiveRes = await fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
           });
           if (archiveRes.ok) {
             alert("✅ Användare arkiverad.");
@@ -146,127 +179,101 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-async function loadUsers() {
-  try {
-    const res = await fetchWithAdminAuth(API_URL);
-    if (!res.ok) throw new Error("Failed to fetch");
+  async function loadUsers() {
+    try {
+      const res = await fetch(API_URL, {
+        headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+      });
 
-    const users = await res.json();
-    users.sort((a, b) => a.last_name.localeCompare(b.last_name));
-    userList.innerHTML = "";
+      if (!res.ok) throw new Error("Failed to fetch");
 
-    users.forEach(user => {
-      const card = document.createElement("div");
-      card.className = "user-card";
+      const users = await res.json();
+      users.sort((a, b) => a.last_name.localeCompare(b.last_name));
+      userList.innerHTML = "";
 
-      const header = document.createElement("div");
-      header.className = "user-header";
+      users.forEach(user => {
+        const card = document.createElement("div");
+        card.className = "user-card";
 
-      const title = document.createElement("div");
-      title.className = "user-title";
-      title.textContent = `${user.first_name} ${user.last_name}`;
+        const header = document.createElement("div");
+        header.className = "user-header";
 
-      const buttons = document.createElement("div");
+        const title = document.createElement("div");
+        title.className = "user-title";
+        title.textContent = `${user.first_name} ${user.last_name}`;
 
-      const editBtn = document.createElement("button");
-      editBtn.className = "edit-button";
-      editBtn.textContent = "✏️";
-      editBtn.onclick = () => {
-        userForm.reset();
-        userForm.dataset.editingId = user.id;
-        userForm.username.value = user.username || "";
-        userForm.password.value = "";
-        userForm.firstName.value = user.first_name;
-        userForm.lastName.value = user.last_name;
-        userForm.phone.value = user.phone;
-        userForm.email.value = user.email || "";
-        userForm.idNumber.value = user.id_number || "";
-        userModal.style.display = "flex";
-      };
+        const buttons = document.createElement("div");
 
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-button";
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.onclick = () => deleteUser(user.id);
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-button";
+        editBtn.textContent = "✏️";
+        editBtn.onclick = () => {
+          userForm.reset();
+          userForm.dataset.editingId = user.id;
+          userForm.username.value = user.username || "";
+          userForm.password.value = "";
+          userForm.firstName.value = user.first_name;
+          userForm.lastName.value = user.last_name;
+          userForm.phone.value = user.phone;
+          userForm.email.value = user.email || "";
+          userForm.idNumber.value = user.id_number || "";
+          userModal.style.display = "flex";
+        };
 
-      // 🎖️ Badge Button
-      const badgeBtn = document.createElement("button");
-      badgeBtn.className = "edit-button";
-      badgeBtn.textContent = "🎖️";
-      badgeBtn.onclick = () => openBadgeModal(user.id);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-button";
+        deleteBtn.textContent = "🗑️";
+        deleteBtn.onclick = () => deleteUser(user.id);
 
-      buttons.appendChild(editBtn);
-      buttons.appendChild(deleteBtn);
-      buttons.appendChild(badgeBtn); // 👈 Inserted here
+        const badgeBtn = document.createElement("button");
+        badgeBtn.className = "edit-button";
+        badgeBtn.textContent = "🎖️";
+        badgeBtn.onclick = () => openBadgeModal(user.id);
 
-      header.appendChild(title);
-      header.appendChild(buttons);
-      card.appendChild(header);
-      userList.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Failed to load users:", err);
-  }
-}
-async function openBadgeModal(userId) {
-  const badgeModal = document.getElementById("badgeModal");
-  const badgeSelect = document.getElementById("badgeSelect");
-  const badgeUserIdInput = document.getElementById("badgeUserId");
+        buttons.appendChild(editBtn);
+        buttons.appendChild(deleteBtn);
+        buttons.appendChild(badgeBtn);
 
-  badgeUserIdInput.value = userId;
-
-  try {
-    const res = await fetchWithAdminAuth("https://bradspelsmeny-backend-production.up.railway.app/badges");
-    if (!res.ok) throw new Error("Could not fetch badges");
-    const badges = await res.json();
-
-    badgeSelect.innerHTML = "";
-    badges.forEach(badge => {
-      const opt = document.createElement("option");
-      opt.value = badge.id;
-      opt.textContent = `${badge.name} – ${badge.description}`;
-      badgeSelect.appendChild(opt);
-    });
-
-    badgeModal.style.display = "flex";
-  } catch (err) {
-    console.error("❌ Failed to open badge modal:", err);
-    alert("Kunde inte hämta badges.");
-  }
-}
-
-badgeForm.onsubmit = async (e) => {
-  e.preventDefault();
-  const userId = document.getElementById("badgeUserId").value;
-  const badgeId = badgeSelect.value;
-
-  try {
-    const res = await fetchWithAdminAuth(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ badge_id: badgeId })
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      alert("❌ Misslyckades: " + (err.error || "Något gick fel."));
-      return;
+        header.appendChild(title);
+        header.appendChild(buttons);
+        card.appendChild(header);
+        userList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to load users:", err);
     }
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("✅ " + (data.message || "Badge awarded!"));
-    } else {
-      alert("ℹ️ " + (data.message || "Användaren hade redan den här badgen."));
-    }
-
-    badgeModal.style.display = "none";
-  } catch (err) {
-    console.error("❌ Error awarding badge:", err);
-    alert("Något gick fel när badge skulle tilldelas.");
   }
-};
 
+  async function openBadgeModal(userId) {
+    const badgeModal = document.getElementById("badgeModal");
+    const badgeSelect = document.getElementById("badgeSelect");
+    const badgeUserIdInput = document.getElementById("badgeUserId");
 
+    badgeUserIdInput.value = userId;
 
+    try {
+      const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/badges", {
+        headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+      });
+
+      if (!res.ok) throw new Error("Could not fetch badges");
+      const badges = await res.json();
+
+      badgeSelect.innerHTML = "";
+      badges.forEach(badge => {
+        const opt = document.createElement("option");
+        opt.value = badge.id;
+        opt.textContent = `${badge.name} – ${badge.description}`;
+        badgeSelect.appendChild(opt);
+      });
+
+      badgeModal.style.display = "flex";
+    } catch (err) {
+      console.error("❌ Failed to open badge modal:", err);
+      alert("Kunde inte hämta badges.");
+    }
+  }
+
+  // Initial load
+  loadUsers();
+});
