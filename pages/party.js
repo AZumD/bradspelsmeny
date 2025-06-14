@@ -29,13 +29,11 @@ function openGameModal(modalId, game) {
     game.name ||
     'Untitled';
 
-  let imageUrl = game.img || game.thumbnail_url;
-  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-    imageUrl = `../${imageUrl}`;
-  }
-  if (!imageUrl) {
-    imageUrl = `${FRONTEND_BASE}/img/default-thumb.webp`;
-  }
+  let imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
+if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+  imageUrl = `../${imageUrl}`;
+}
+
 
   img.src = imageUrl;
   img.alt = gameTitle;
