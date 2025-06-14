@@ -62,108 +62,112 @@
   </div>
 
   <script>
-    const loginForm = document.getElementById("loginForm");
-    const errorMsg = document.getElementById("errorMsg");
+   const loginForm = document.getElementById("loginForm");
+const errorMsg = document.getElementById("errorMsg");
 
-    // Helper: Refresh admin token
-    async function refreshAdminToken() {
-      const refreshToken = localStorage.getItem("adminRefreshToken");
-      if (!refreshToken) return false;
+// Helper: Refresh token
+async function refreshToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) return false;
 
-      try {
-        const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/admin/refresh-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refreshToken }),
-        });
-
-        if (!res.ok) {
-          // Refresh token invalid or expired
-          localStorage.removeItem("adminToken");
-          localStorage.removeItem("adminRefreshToken");
-          return false;
-        }
-
-        const data = await res.json();
-        if (data.token) {
-          localStorage.setItem("adminToken", data.token);
-          return true;
-        }
-        return false;
-      } catch (err) {
-        console.error("❌ Token refresh failed:", err);
-        return false;
-      }
-    }
-
-    // Wrapper for admin fetch with token refresh support
-    async function fetchWithAdminAuth(url, options = {}, retry = true) {
-      if (!options.headers) options.headers = {};
-      const token = localStorage.getItem("adminToken");
-      if (token) {
-        options.headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      let res = await fetch(url, options);
-
-      if (res.status === 401 && retry) {
-        const refreshed = await refreshAdminToken();
-        if (refreshed) {
-          options.headers["Authorization"] = `Bearer ${localStorage.getItem("adminToken")}`;
-          res = await fetch(url, options);
-        } else {
-          // Refresh failed, logout
-          localStorage.removeItem("adminToken");
-          localStorage.removeItem("adminRefreshToken");
-          window.location.href = "login.html";
-          throw new Error("Unauthorized, please login again.");
-        }
-      }
-      return res;
-    }
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorMsg.textContent = "";
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      try {
-        const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/admin/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
-
-        const text = await res.text();
-        let data;
-
-        try {
-          data = JSON.parse(text);
-        } catch (jsonErr) {
-          console.error("❌ Could not parse response as JSON:", text);
-          errorMsg.textContent = "Fel från servern. Försök igen senare.";
-          return;
-        }
-
-        if (!res.ok) {
-          errorMsg.textContent = data.error || "Något gick fel.";
-          return;
-        }
-
-        localStorage.setItem("adminToken", data.token);
-        if (data.refreshToken) {
-          localStorage.setItem("adminRefreshToken", data.refreshToken);
-        }
-
-        // Redirect to admin dashboard (adjust if needed)
-        window.location.href = "index.html";
-      } catch (err) {
-        errorMsg.textContent = "Något gick fel vid inloggning.";
-        console.error("❌ Login request failed:", err);
-      }
+  try {
+    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/refresh-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
     });
+
+    if (!res.ok) {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("refreshToken");
+      return false;
+    }
+
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem("userToken", data.token);
+      return true;
+    }
+
+    return false;
+  } catch (err) {
+    console.error("❌ Token refresh failed:", err);
+    return false;
+  }
+}
+
+// Wrapper for fetch with token refresh support
+async function fetchWithAuth(url, options = {}, retry = true) {
+  if (!options.headers) options.headers = {};
+  const token = localStorage.getItem("userToken");
+  if (token) {
+    options.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let res = await fetch(url, options);
+
+  if (res.status === 401 && retry) {
+    const refreshed = await refreshToken();
+    if (refreshed) {
+      options.headers["Authorization"] = `Bearer ${localStorage.getItem("userToken")}`;
+      res = await fetch(url, options);
+    } else {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/pages/login.html";
+      throw new Error("Unauthorized, please login again.");
+    }
+  }
+  return res;
+}
+
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorMsg.textContent = "";
+
+  const phone = document.getElementById("username").value.trim(); // reuse username field for phone
+  const password = document.getElementById("password").value.trim();
+
+  try {
+    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, password }),
+    });
+
+    const text = await res.text();
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (jsonErr) {
+      console.error("❌ Could not parse response as JSON:", text);
+      errorMsg.textContent = "Fel från servern. Försök igen senare.";
+      return;
+    }
+
+    if (!res.ok) {
+      errorMsg.textContent = data.error || "Något gick fel.";
+      return;
+    }
+
+    if (!data.user || !data.user.is_admin) {
+      errorMsg.textContent = "Du har inte admin-behörighet.";
+      return;
+    }
+
+    localStorage.setItem("userToken", data.token);
+    if (data.refreshToken) {
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+
+    window.location.href = "index.html";
+  } catch (err) {
+    errorMsg.textContent = "Något gick fel vid inloggning.";
+    console.error("❌ Login request failed:", err);
+  }
+});
+
   </script>
 </body>
 </html>
