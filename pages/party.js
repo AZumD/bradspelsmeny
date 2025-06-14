@@ -311,111 +311,81 @@ async function loadMessages() {
 
   const isAtTop = chatBox.scrollTop <= 100;
 
-  messages.forEach((msg, index) => {
-    if (loadedMessageIds.has(msg.id)) return;
-    loadedMessageIds.add(msg.id);
+  messages.reverse().forEach((msg, index) => {
+  if (loadedMessageIds.has(msg.id)) return;
+  loadedMessageIds.add(msg.id);
 
-    const isSameSender = msg.user_id === lastSenderId;
-    lastSenderId = msg.user_id;
+  const isSameSender = msg.user_id === lastSenderId;
+  lastSenderId = msg.user_id;
 
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('message-wrapper', 'fade-in');
-    wrapper.style.marginTop = isSameSender ? '4px' : '12px';
-    wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
-    wrapper.style.display = 'flex';
-    wrapper.style.flexDirection = 'row';
-    wrapper.style.alignItems = 'flex-start';
-    wrapper.style.gap = '8px';
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('message-wrapper', 'fade-in');
+  wrapper.style.marginTop = isSameSender ? '4px' : '12px';
+  wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
+  wrapper.style.display = 'flex';
+  wrapper.style.flexDirection = 'row';
+  wrapper.style.alignItems = 'flex-start';
+  wrapper.style.gap = '8px';
 
-    if (!isSameSender) {
-      const leftCol = document.createElement('div');
-      leftCol.style.display = 'flex';
-      leftCol.style.flexDirection = 'column';
-      leftCol.style.alignItems = 'center';
-      leftCol.style.width = '48px';
-      leftCol.style.marginRight = '10px';
+  if (!isSameSender) {
+    const leftCol = document.createElement('div');
+    leftCol.style.display = 'flex';
+    leftCol.style.flexDirection = 'column';
+    leftCol.style.alignItems = 'center';
+    leftCol.style.width = '48px';
+    leftCol.style.marginRight = '10px';
 
-      const avatar = document.createElement('img');
-      avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
-      avatar.alt = `${msg.username}'s avatar`;
-      avatar.className = 'friend-avatar';
-      avatar.style.width = '36px';
-      avatar.style.height = '36px';
+    const avatar = document.createElement('img');
+    avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
+    avatar.alt = `${msg.username}'s avatar`;
+    avatar.className = 'friend-avatar';
+    avatar.style.width = '36px';
+    avatar.style.height = '36px';
 
-      const username = document.createElement('div');
-      username.textContent = msg.username;
-      username.style.fontSize = '0.65rem';
-      username.style.textAlign = 'center';
-      username.style.marginTop = '2px';
-      username.style.color = '#a07d3b';
+    const username = document.createElement('div');
+    username.textContent = msg.username;
+    username.style.fontSize = '0.65rem';
+    username.style.textAlign = 'center';
+    username.style.marginTop = '2px';
+    username.style.color = '#a07d3b';
 
-      leftCol.appendChild(avatar);
-      leftCol.appendChild(username);
-      wrapper.appendChild(leftCol);
-    } else {
-      const spacer = document.createElement('div');
-      spacer.style.width = '48px';
-      spacer.style.marginRight = '10px';
-      wrapper.appendChild(spacer);
-    }
+    leftCol.appendChild(avatar);
+    leftCol.appendChild(username);
+    wrapper.appendChild(leftCol);
+  } else {
+    const spacer = document.createElement('div');
+    spacer.style.width = '48px';
+    spacer.style.marginRight = '10px';
+    wrapper.appendChild(spacer);
+  }
 
-    const messageBubble = document.createElement('div');
-    messageBubble.style.backgroundColor = index % 2 === 0 ? '#f9f6f2' : '#f3ece3';
-    messageBubble.style.border = '1px dashed #d9b370';
-    messageBubble.style.borderRadius = '8px';
-    messageBubble.style.marginTop = '2px';
-    messageBubble.style.padding = '8px 12px';
-    messageBubble.style.width = '100%';
-    messageBubble.style.flex = '1';
-    messageBubble.style.position = 'relative';
+  const messageBubble = document.createElement('div');
+  messageBubble.style.backgroundColor = index % 2 === 0 ? '#f9f6f2' : '#f3ece3';
+  messageBubble.style.border = '1px dashed #d9b370';
+  messageBubble.style.borderRadius = '8px';
+  messageBubble.style.marginTop = '2px';
+  messageBubble.style.padding = '8px 12px';
+  messageBubble.style.width = '100%';
+  messageBubble.style.flex = '1';
+  messageBubble.style.position = 'relative';
 
-    const content = document.createElement('div');
-    content.innerHTML = parseGameMentions(msg.content);
-    content.style.fontSize = '0.8rem';
+  const content = document.createElement('div');
+  content.innerHTML = parseGameMentions(msg.content);
+  content.style.fontSize = '0.8rem';
 
-    const timestamp = document.createElement('div');
-    const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    timestamp.textContent = time;
-    timestamp.style.fontSize = '0.65rem';
-    timestamp.style.color = '#a07d3b';
-    timestamp.style.marginTop = '4px';
+  const timestamp = document.createElement('div');
+  const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  timestamp.textContent = time;
+  timestamp.style.fontSize = '0.65rem';
+  timestamp.style.color = '#a07d3b';
+  timestamp.style.marginTop = '4px';
 
-    messageBubble.appendChild(content);
-    messageBubble.appendChild(timestamp);
+  messageBubble.appendChild(content);
+  messageBubble.appendChild(timestamp);
 
-    if (new Date(msg.created_at) > new Date(lastSeen)) {
-      messageBubble.classList.add('new-glow');
-    }
-
-    if (msg.user_id === currentUserId) {
-      const deleteBtn = document.createElement('span');
-      deleteBtn.textContent = '❌';
-      deleteBtn.title = 'Delete message';
-      deleteBtn.style.position = 'absolute';
-      deleteBtn.style.top = '4px';
-      deleteBtn.style.right = '8px';
-      deleteBtn.style.cursor = 'pointer';
-      deleteBtn.style.fontSize = '0.8rem';
-      deleteBtn.onclick = async () => {
-        const confirmed = confirm('Delete this message?');
-        if (confirmed) {
-          await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.id}`, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${getAccessToken()}`
-            }
-          });
-          loadedMessageIds.clear();
-          chatBox.innerHTML = '';
-          loadMessages();
-        }
-      };
-      messageBubble.appendChild(deleteBtn);
-    }
-
-    wrapper.appendChild(messageBubble);
-
-    if (!newDividerInserted && lastSeen && new Date(msg.created_at) > new Date(lastSeen)) {
+  if (new Date(msg.created_at) > new Date(lastSeen)) {
+    messageBubble.classList.add('new-glow');
+    if (!newDividerInserted) {
       const divider = document.createElement('div');
       divider.textContent = '── New Messages ──';
       divider.style.textAlign = 'center';
@@ -430,17 +400,38 @@ async function loadMessages() {
       chatBox.prepend(divider);
       newDividerInserted = true;
     }
+  }
 
-    messages.reverse().forEach((msg, index) => {
-  if (loadedMessageIds.has(msg.id)) return;
-  loadedMessageIds.add(msg.id);
+  if (msg.user_id === currentUserId) {
+    const deleteBtn = document.createElement('span');
+    deleteBtn.textContent = '❌';
+    deleteBtn.title = 'Delete message';
+    deleteBtn.style.position = 'absolute';
+    deleteBtn.style.top = '4px';
+    deleteBtn.style.right = '8px';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.style.fontSize = '0.8rem';
+    deleteBtn.onclick = async () => {
+      const confirmed = confirm('Delete this message?');
+      if (confirmed) {
+        await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${getAccessToken()}`
+          }
+        });
+        loadedMessageIds.clear();
+        chatBox.innerHTML = '';
+        loadMessages();
+      }
+    };
+    messageBubble.appendChild(deleteBtn);
+  }
 
-  // ... build your `wrapper` element like before ...
-
-  // (same code as in your original loop)
-  // then:
+  wrapper.appendChild(messageBubble);
   chatBox.prepend(wrapper);
 });
+
 
 
   if (isAtTop) {
