@@ -507,8 +507,25 @@ async function sendMessage() {
 
 sendMessageBtn.addEventListener("click", sendMessage);
 chatInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
+  const autocompleteOpen = document.getElementById("autocompleteBox")?.style.display === "block";
+  const hasSelection = document.querySelector("#autocompleteBox .autocomplete-item.active");
+
+  if (e.key === "Enter") {
+    if (autocompleteOpen && hasSelection) {
+      e.preventDefault(); // Don't send the message yet
+      insertAutocomplete(); // Assume you have this function available
+    } else {
+      sendMessage();
+    }
+  }
+
+  // Optionally: allow up/down arrow keys to navigate suggestions
+  if (autocompleteOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    e.preventDefault();
+    moveAutocompleteSelection(e.key === "ArrowDown" ? 1 : -1);
+  }
 });
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -599,7 +616,7 @@ function insertAutocomplete(index) {
   const before = value.slice(0, atMatch.index);
   const after = value.slice(cursorPos);
   const game = autocompleteMatches[index];
-  chatInput.value = `${before}@${game.title_en} ${after}`;
+  chatInput.value = `${before}@${game.title_en}${after}`;
   chatInput.focus();
   autocompleteBox.style.display = 'none';
 }
