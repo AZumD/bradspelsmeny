@@ -431,8 +431,12 @@ async function loadMessages() {
       newDividerInserted = true;
     }
 
-    chatBox.prepend(wrapper); // 👈 Reverse order insert
-  });
+    messages.reverse().forEach((msg, index) => {
+  // now you're prepending from newest to oldest
+  // so visually: newest is topmost, oldest is bottommost
+  chatBox.prepend(wrapper);
+});
+
 
   if (isAtTop) {
     chatBox.scrollTo({ top: 0, behavior: 'smooth' });
