@@ -9,6 +9,12 @@ function goTo(path) {
   window.location.href = base + path;
 }
 
+function logout() {
+  clearTokens(); // Assuming this function already exists
+  window.location.href = 'login.html';
+}
+
+
 function getRefreshToken() {
   return localStorage.getItem('refreshToken');
 }
