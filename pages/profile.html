@@ -19,7 +19,7 @@
       user-select: none;
     }
 
-    #pixelNav {
+#pixelNav {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -36,16 +36,19 @@
 #pixelNav button {
   background: none;
   border: none;
-  font-size: 1.25rem;
+  padding: 0;
   cursor: pointer;
-  color: #5a2a0c;
-  font-family: 'Press Start 2P', monospace;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
   transition: transform 0.2s ease;
 }
 
-#pixelNav button:hover {
+.nav-icon:hover {
   transform: scale(1.2);
-  color: #c9a04e;
 }
 
     .profile-container {
