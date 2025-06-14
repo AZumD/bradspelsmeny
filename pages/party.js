@@ -245,7 +245,8 @@ async function loadMessages() {
 
     wrapper.appendChild(leftCol);
     wrapper.appendChild(messageBubble);
-    chatBox.insertBefore(wrapper, chatBox.firstChild);
+    chatBox.appendChild(wrapper);
+
   });
 
   chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
