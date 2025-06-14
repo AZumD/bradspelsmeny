@@ -150,6 +150,47 @@ function setupInviteModal() {
   };
 }
 
+const chatBox = document.getElementById("chatBox");
+const chatInput = document.getElementById("chatInput");
+const sendMessageBtn = document.getElementById("sendMessage");
+const currentPartyId = getPartyIdFromURL();
+async function loadMessages() {
+  const res = await fetch(`${API_BASE}/party/${currentPartyId}/messages`, {
+    headers: { Authorization: `Bearer ${getAccessToken()}` }
+  });
+  const messages = await res.json();
+  chatBox.innerHTML = '';
+  messages.forEach(msg => {
+    const p = document.createElement("p");
+    p.innerText = `${msg.sender_name}: ${msg.content}`;
+    chatBox.appendChild(p);
+  });
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendMessage() {
+  const content = chatInput.value.trim();
+  if (!content) return;
+  await fetch(`${API_BASE}/party/${currentPartyId}/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`
+    },
+    body: JSON.stringify({ content })
+  });
+  chatInput.value = "";
+  await loadMessages();
+}
+
+sendMessageBtn.addEventListener("click", sendMessage);
+chatInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchPartyData();
+  loadMessages();
+  setInterval(loadMessages, 5000); // Refresh every 5 seconds
 });
