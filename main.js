@@ -262,7 +262,6 @@ function continueAsGuest() {
   localStorage.setItem("guestUser", "true");
   const welcomeModal = document.getElementById("welcomeModal");
   welcomeModal?.classList.remove("show");
-  updateTopBar();
 }
 window.continueAsGuest = continueAsGuest;
 
@@ -434,7 +433,6 @@ if (nav && userToken && !isTokenExpired(userToken)) {
     }
 
     await setLanguage(currentLang);
-    updateTopBar();
   } catch (err) {
     console.error("Unexpected loading error:", err);
     const errorBox = document.createElement('div');
