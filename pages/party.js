@@ -310,7 +310,7 @@ function setupInviteModal() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${getAccessToken()}`
         },
-        body: JSON.stringify({ user_id: parseInt(userId) })
+        body: JSON.stringify({ id: parseInt(userId) })
       });
 
       if (res.ok) {
@@ -351,8 +351,8 @@ async function loadMessages() {
   if (loadedMessageIds.has(msg.id)) return;
   loadedMessageIds.add(msg.id);
 
-  const isSameSender = msg.user_id === lastSenderId;
-  lastSenderId = msg.user_id;
+  const isSameSender = msg.id === lastSenderId;
+  lastSenderId = msg.id;
 
   const wrapper = document.createElement('div');
   wrapper.classList.add('message-wrapper', 'fade-in');
@@ -372,7 +372,7 @@ async function loadMessages() {
     leftCol.style.marginRight = '10px';
 
     const avatarLink = document.createElement('a');
-    avatarLink.href = `/pages/profile.html?id=${msg.user_id}`;
+    avatarLink.href = `/pages/profile.html?id=${msg.id}`;
     avatarLink.title = `${msg.username}'s profile`;
 
     const avatar = document.createElement('img');
@@ -447,7 +447,7 @@ async function loadMessages() {
     }
   }
 
-  if (msg.user_id === currentUserId) {
+  if (msg.id === currentUserId) {
     const deleteBtn = document.createElement('span');
     deleteBtn.textContent = '❌';
     deleteBtn.title = 'Delete message';
