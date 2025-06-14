@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("userData", JSON.stringify(data.user)); // 👈 Make sure to save full user data
 
       alert(`🎉 Welcome, ${data.user.first_name}! Your account is ready.`);
-      window.location.href = "index.html";
+      window.location.href = "/bradspelsmeny/index.html";
     } catch (err) {
       console.error("❌ Registration error:", err);
       alert("Something went wrong. Please try again.");
