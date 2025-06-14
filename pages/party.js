@@ -516,3 +516,69 @@ document.addEventListener('DOMContentLoaded', () => {
   loadMessages();
   loadAllGames();
 });
+
+// --- Autocomplete ---
+let autocompleteBox = document.createElement('div');
+autocompleteBox.id = 'autocompleteBox';
+autocompleteBox.style.position = 'absolute';
+autocompleteBox.style.background = '#fffdf7';
+autocompleteBox.style.border = '1px solid #c9a04e';
+autocompleteBox.style.borderRadius = '6px';
+autocompleteBox.style.zIndex = 1000;
+autocompleteBox.style.display = 'none';
+autocompleteBox.style.maxHeight = '150px';
+autocompleteBox.style.overflowY = 'auto';
+autocompleteBox.style.fontSize = '0.8rem';
+document.body.appendChild(autocompleteBox);
+
+chatInput.addEventListener('input', () => {
+  const value = chatInput.value;
+  const cursorPos = chatInput.selectionStart;
+  const textBefore = value.slice(0, cursorPos);
+  const atMatch = textBefore.match(/@([^\s@]*)$/);
+
+  if (!atMatch) {
+    autocompleteBox.style.display = 'none';
+    return;
+  }
+
+  const partial = atMatch[1].toLowerCase();
+  const matches = allGames
+    .filter(g => g.title_en && g.title_en.toLowerCase().includes(partial))
+    .slice(0, 6);
+
+  if (matches.length === 0) {
+    autocompleteBox.style.display = 'none';
+    return;
+  }
+
+  autocompleteBox.innerHTML = '';
+  matches.forEach(game => {
+    const item = document.createElement('div');
+    item.textContent = game.title_en;
+    item.style.padding = '6px 10px';
+    item.style.cursor = 'pointer';
+    item.onmouseenter = () => item.style.background = '#f3ece3';
+    item.onmouseleave = () => item.style.background = 'transparent';
+    item.onclick = () => {
+      const before = value.slice(0, atMatch.index);
+      const after = value.slice(cursorPos);
+      chatInput.value = `${before}@${game.title_en} ${after}`;
+      chatInput.focus();
+      autocompleteBox.style.display = 'none';
+    };
+    autocompleteBox.appendChild(item);
+  });
+
+  const rect = chatInput.getBoundingClientRect();
+  autocompleteBox.style.left = `${rect.left}px`;
+  autocompleteBox.style.top = `${rect.bottom + window.scrollY}px`;
+  autocompleteBox.style.width = `${rect.width}px`;
+  autocompleteBox.style.display = 'block';
+});
+
+document.addEventListener('click', (e) => {
+  if (!autocompleteBox.contains(e.target)) {
+    autocompleteBox.style.display = 'none';
+  }
+});
