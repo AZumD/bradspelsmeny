@@ -18,6 +18,14 @@
       user-select: none;
     }
 
+    .fade-in {
+  animation: fadeInChat 0.3s ease-in-out;
+}
+
+@keyframes fadeInChat {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
     .profile-container {
       background: rgba(249, 246, 242, 0.95);
       border-radius: 10px;
