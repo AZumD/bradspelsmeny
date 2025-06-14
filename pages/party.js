@@ -372,8 +372,8 @@ async function loadMessages() {
     leftCol.style.marginRight = '10px';
 
     const avatarLink = document.createElement('a');
-avatarLink.href = `/pages/profile.html?id=${msg.user_id}`; // ✅ assuming msg has user_id
-    avatarLink.title = `${m.first_name} ${m.last_name}'s profile`;
+    avatarLink.title = `${msg.username}'s profile`;
+
 
     const avatar = document.createElement('img');
     avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
