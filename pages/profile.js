@@ -206,9 +206,10 @@ function formatNotificationText(n) {
 }
 
 
-async function fetchUserParties() {
-  const userId = getUserIdFromToken();
-  console.log('👥 fetchUserParties() called for user ID:', userId);
+async function fetchUserParties(viewedUserId = null) {
+  const loggedInUserId = getUserIdFromToken();
+  const isOwnProfile = !viewedUserId || String(viewedUserId) === String(loggedInUserId);
+  const endpoint = isOwnProfile ? `${API_BASE}/my-parties` : `${API_BASE}/users/${viewedUserId}/parties`;
 
   const partyList = document.getElementById('partyList');
   if (!partyList) {
@@ -217,8 +218,8 @@ async function fetchUserParties() {
   }
 
   try {
-    const res = await fetchWithAuth(`${API_BASE}/my-parties`);
-    console.log('📡 /my-parties response status:', res.status);
+    const res = await fetchWithAuth(endpoint);
+    console.log('📡 Parties response status:', res.status);
 
     if (!res.ok) {
       const text = await res.text();
@@ -246,8 +247,8 @@ async function fetchUserParties() {
       const img = document.createElement("img");
       img.className = "party-avatar";
       img.src = party.avatar
-  ? (party.avatar.startsWith('http') ? party.avatar : `${API_BASE}${party.avatar}`)
-  : `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
+        ? (party.avatar.startsWith('http') ? party.avatar : `${API_BASE}${party.avatar}`)
+        : `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
       img.onerror = () => {
         img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
       };
@@ -256,15 +257,6 @@ async function fetchUserParties() {
       img.onclick = () => window.location.href = `party.html?id=${party.id}`;
 
       card.appendChild(img);
-
-      // Optional: add label below avatar
-      // const label = document.createElement("div");
-      // label.textContent = party.name;
-      // label.style.fontSize = "0.6rem";
-      // label.style.textAlign = "center";
-      // label.style.marginTop = "4px";
-      // card.appendChild(label);
-
       partyList.appendChild(card);
     }
 
@@ -273,6 +265,7 @@ async function fetchUserParties() {
     partyList.innerHTML = '<div class="placeholder-box">Failed to load parties.</div>';
   }
 }
+
 
 
 
@@ -936,7 +929,7 @@ async function submitCreateParty() {
     alert(`Party created! Invite code: ${data.inviteCode}`);
 
     // Optionally refresh party list or redirect
-    fetchUserParties();
+    fetchUserParties(userIdToFetch);
     closeCreatePartyModal();
 
   } catch (err) {
