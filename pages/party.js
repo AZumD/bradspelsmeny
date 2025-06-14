@@ -27,10 +27,24 @@ function getPartyIdFromURL() {
   return params.get('id');
 }
 function parseGameMentions(text) {
-  return text.replace(/@([^\n@.,!?;:]+)/g, (match, titleEn) => {
-    return `<span class="game-mention" data-title-en="${titleEn.trim()}">@${titleEn.trim()}</span>`;
-  });
+  if (!allGames.length) return text;
+
+  const titles = allGames
+    .map(g => g.title_en)
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length); // longest titles first
+
+  for (const title of titles) {
+    const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape regex characters
+    const regex = new RegExp(`@${escaped}\\b`, 'gi');
+    text = text.replace(regex, match => {
+      return `<span class="game-mention" data-title-en="${title}">${match}</span>`;
+    });
+  }
+
+  return text;
 }
+
 
 
 function openGameModal(modalId, game) {
