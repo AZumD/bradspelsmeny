@@ -69,7 +69,37 @@ function setUserToken(token) {
   localStorage.setItem('userToken', token);
 }
 function getRefreshToken() {
-  return localStorage.getItem('refreshToken');
+  return localStorage.get#pixelNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fffdf7;
+  border-top: 2px dashed #d9b370;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
+  z-index: 999;
+}
+
+#pixelNav button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+.nav-icon:hover {
+  transform: scale(1.2);
+}Item('refreshToken');
 }
 function removeTokens() {
   localStorage.removeItem('userToken');
@@ -122,7 +152,15 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
-
+    function goTo(path) {
+      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+      window.location.href = base + path;
+    }
+    function logout() {
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('refreshToken');
+      goTo('/');
+    }
 async function fetchUserLists() {
   const userId = JSON.parse(localStorage.getItem("userData"))?.id;
   if (!userId) return;
