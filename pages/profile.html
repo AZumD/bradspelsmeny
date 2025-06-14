@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    /* ...existing styles... */
-    body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
       padding: 20px;
       max-width: 600px;
@@ -19,604 +22,195 @@
       user-select: none;
     }
 
-#pixelNav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #fffdf7;
-  border-top: 2px dashed #d9b370;
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
-  box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
-  z-index: 999;
-}
-
-#pixelNav button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.nav-icon {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
-  transition: transform 0.2s ease;
-}
-
-.nav-icon:hover {
-  transform: scale(1.2);
-}
-
-    .profile-container {
-      background: rgba(249, 246, 242, 0.95);
-      border-radius: 10px;
-      padding: 20px;
-      border: 2px dashed #d9b370;
-      box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
+    .topbar {
+      background-color: #8c3c1a;
+      color: white;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 4px 0 #4a1f0f;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .section-title {
-      font-family: 'Press Start 2P', monospace;
+    .dashboard-title {
+      color: #fff4d9;
+      text-decoration: none;
       font-size: 0.75rem;
-      font-weight: bold;
-      color: #5a2a0c;
-      border-bottom: 2px solid #d9b370;
-      padding-bottom: 4px;
-      margin-top: 20px;
-      margin-bottom: 12px;
-      text-transform: uppercase;
     }
 
-    .friends-grid, .parties-grid {
+    .dashboard-title:hover {
+      text-decoration: underline;
+    }
+
+    .logout-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      box-shadow: 2px 2px 0 #c19761;
+      cursor: pointer;
+    }
+
+    .dashboard {
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    .tile {
+      background: #fff4d9;
+      border: 2px solid #3c2415;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 4px 4px 0 #c19761;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .tile h2 {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tile .value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .tile.large .value {
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
       justify-content: center;
-      margin-bottom: 1rem;
+      gap: 1rem;
+      padding: 0 1rem 2rem;
     }
 
-    .party-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .actions a {
+      background: #e6b35c;
+      padding: 0.6rem;
+      text-decoration: none;
+      color: #3c2415;
+      font-weight: bold;
+      border: 2px solid #3c2415;
+      border-radius: 6px;
+      box-shadow: 4px 4px 0 #c19761;
+      min-width: 140px;
+      text-align: center;
+      line-height: 1.2;
+      font-size: 0.6rem;
+    }
+
+    #orderFeed {
+      background: #fff9e8;
       border: 2px dashed #d9b370;
-      background-color: #f9f6f2;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-family: monospace;
+      font-size: 0.6rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #pixelNav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fffdf7;
+      border-top: 2px dashed #d9b370;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      color: #5a2a0c;
+      justify-content: space-around;
+      padding: 8px 0;
+      box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
+      z-index: 999;
+    }
+
+    #pixelNav button {
+      background: none;
+      border: none;
+      padding: 0;
       cursor: pointer;
+    }
+
+    .nav-icon {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
       transition: transform 0.2s ease;
     }
 
-    .party-avatar:hover {
-      transform: scale(1.1);
-    }
-
-    .add-party-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-        margin-left: 2px;
-
-      border: 2px dashed #d9b370;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #d9b370;
-      font-size: 1.5rem;
-      background-color: transparent;
-      cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-      .notification-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 10px;
-}
-
-    .notification-item {
-  border-bottom: 1px solid #d9b370;
-  padding: 10px;
-  font-size: 0.9rem;
-  color: #5a2a0c;
-  background-color: #f9f6f2;
-}
-
-.notification-item.unread {
-  background-color: #fff3d6;
-  font-weight: bold;
-  border-left: 4px solid #d9b370;
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-    
-
-    h1 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.2rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #5a2a0c;
-      text-shadow: 1px 1px 0 #d9b370;
-    }
-
-  
-    .avatar {
-      display: block;
-      margin: 0 auto 20px auto;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #c9a04e;
-      box-shadow: 2px 2px 5px rgba(90, 42, 12, 0.25);
-    }
-
-    .full-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 6px;
-      color: #6b3e0a;
-    }
-.modal {
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: #fffdf7;
-  border: 2px dashed #d9b370;
-  border-radius: 12px;
-  padding: 20px;
-  width: 80%;
-  max-width: 320px;
-  text-align: center;
-  color: #5a2a0c;
-  position: relative;
-}
-#notificationDot {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  display: none;
-}
-
-.modal-content input {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 10px;
-  border: 1px solid #d9b370;
-  border-radius: 6px;
-}
-
-.close-btn {
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #6b3e0a;
-}
-
-.friend-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid #d9b370;
-  object-fit: cover;
-  transition: transform 0.2s ease;
-}
-
-.friend-avatar:hover {
-  transform: scale(1.1);
-  cursor: pointer;
-}
-
-.add-friend-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px dashed #d9b370;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #d9b370;
-  font-size: 1.5rem;
-  background-color: transparent;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.add-friend-circle:hover {
-  background-color: #fff3d6;
-  transform: scale(1.1);
-}
-    
-.btn-accept {
-  background-color: #85c17e;
-  color: white;
-}
-
-.btn-decline {
-  background-color: #e06d6d;
-  color: white;
-}
-
-.btn-accept:hover {
-  background-color: #6fae65;
-}
-
-.btn-decline:hover {
-  background-color: #c65555;
-}
-#notificationIcon {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 1.5rem;
-  background: #8c3c1a;
-  color: white;
-  padding: 10px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
-  z-index: 1000;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-#notificationIcon:hover {
-  background-color: #a14b21;
-  transform: scale(1.05);
-}
-
-    .notification-item button {
-  margin-right: 8px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  font-family: 'Segoe UFI', Tahoma, sans-serif;
-}
-
-
-
-    .email {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #6b3e0a;
-      margin-bottom: 15px;
-      word-break: break-word;
-    }
-
-    .bio {
-      font-size: 0.9rem;
-      line-height: 1.3;
-      white-space: pre-wrap;
-      padding: 0 10px;
-      color: #5a2a0c;
-      border-left: 4px solid #d9b370;
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: #5a2a0c;
-      border-bottom: 2px solid #d9b370;
-      padding-bottom: 4px;
-      margin-top: 20px;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    /* Borrow log table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      color: #5a2a0c;
-    }
-
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #d9b370;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f9f6f2;
-      color: #6b3e0a;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    tbody tr:hover {
-      background-color: #fff3d6;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Placeholder boxes for badges and parties */
-    .placeholder-box {
-      background-color: #f9f6f2;
-      border: 2px dashed #d9b370;
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      color: #a07d3b;
-      font-style: italic;
-      user-select: text;
-    }
-
-    /* Edit Profile button */
-    #editProfileBtn {
-      display: none; /* Show only on own profile */
-      margin-top: 25px;
-      background-color: #d9b370;
-      color: #5a2a0c;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.75rem;
-      padding: 12px 0;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #6b3e0a;
-      text-align: center;
-      text-decoration: none;
-      user-select: none;
-      transition: background-color 0.3s ease;
-    }
-
-    #editProfileBtn:hover {
-      background-color: #c9a04e;
-      box-shadow: 2px 2px 0 #3f1f00;
-      color: #3f1f00;
-    }
-
-    /* Game list styling */
-    .game-list-container {
-      margin-top: 1.5rem;
-    }
- .favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 8px;
-  justify-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.wishlist-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 1.5rem;
-}
-    .game-entry {
-      padding: 10px;
-      border: 1px dashed #d9b370;
-      background-color: #f9f6f2;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .game-entry img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #c9a04e;
-    }
-    .game-entry-title {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #5a2a0c;
-    }
-    .add-party-circle:hover {
-      background-color: #fff3d6;
-      transform: scale(1.1);
-      margin-left: 4px;
+    .nav-icon:hover {
+      transform: scale(1.2);
     }
   </style>
+  <script defer src="admin.js"></script>
 </head>
 <body>
-      <img id="avatar" class="avatar" src="../img/avatar-placeholder.webp" alt="User Avatar" />
+  <header class="topbar">
+    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+    <button onclick="logout()" class="logout-btn">🚪 Logga ut</button>
+  </header>
 
-  <div class="profile-container">
-<!-- 📨 Notification Modal -->
-<div id="notificationModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeNotificationBtn">&times;</span>
-    <h3>Notifications</h3>
-    <div id="notificationList" class="notification-list">
-      <div class="placeholder-box">Loading...</div>
-    </div>
-  </div>
-</div>
+  <main class="dashboard">
+    <div id="orderFeed"></div>
 
-
-    <div class="full-name" id="username">Loading...</div>
-    <div class="email" id="email"></div>
-    <div class="bio" id="bio"></div>
-
-    <div>
-      <div class="section-title">Badges</div>
-      <div id="badgesList" class="favorites-grid"></div>
-
+    <div class="tile">
+      <h2>Utlånade spel</h2>
+      <div class="value" id="lentOutCount">–</div>
     </div>
 
-    <div>
-      <div class="section-title">Parties</div>
-      <div class="parties-grid" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;" id="partyContainer">
-  <div id="partyList" style="display: contents;"></div>
-  <div class="add-party-circle" id="createPartyBtn" title="Create Party">+</div>
-</div>
-
-      
+    <div class="tile">
+      <h2>Totalt antal spel</h2>
+      <div class="value" id="totalGamesCount">–</div>
     </div>
 
-<div>
-  <div>
-  <div class="section-title">Friends</div>
-  <div id="friendsList" class="friends-grid">
-    <!-- Friend avatars will be injected here -->
-  </div>
-  <button id="removeFriendBtn" style="display: none; margin-top: 10px; background-color: #e06d6d; color: white; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer;">Remove Friend</button>
-<nav id="pixelNav">
-  <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-  <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-  <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-</nav>
-</div>
+    <div class="tile large">
+      <h2>Mest spelade idag</h2>
+      <div class="value">Love Letter</div>
+    </div>
 
-<!-- Modal -->
-<div id="addFriendModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeModalBtn">&times;</span>
-    <h3>Add a Friend</h3>
-    <p>Enter their user ID:</p>
-    <input type="number" id="manualFriendId" placeholder="User ID" />
-    <button id="submitFriendRequest" class="add-friend-btn" style="margin-top: 10px;">Send Request</button>
-  </div>
-</div>
+    <div class="actions">
+      <a href="lending.html">📦 Låna ut spel</a>
+      <a href="user-db.html">📂 Användardatabas</a>
+      <a href="edit-games.html">🛠 Redigera spelbibliotek</a>
+      <a href="#">📊 Statistik</a>
+    </div>
+  </main>
 
-
-
-   <div>
-  <div class="section-title">Game Log</div>
-  <table id="borrowLogTable">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Game</th>
-        <!-- Removed Action and Note columns -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="2" style="text-align:center; padding:1rem;">Loading game log…</td></tr>
-    </tbody>
-  </table>
-</div>
-
-   <div>
-  <div class="section-title">Favorites</div>
-  <div id="favoritesList" class="favorites-grid"></div>
-
-</div>
-
-<div>
-  <div class="section-title">Want to play</div>
-  <div id="wishlistList" class="wishlist-grid"></div>
-</div>
-
-
-    <a href="edit-profile.html" id="editProfileBtn">Edit Profile</a>
-  </div>
-
-  <div style="height: 60px;"></div>
-  <div id="notificationIcon" title="Notifications">🔔</div>
-<span id="notificationDot"></span>
-    <!-- 🎖️ Badge Info Modal -->
-<div id="badgeInfoModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeBadgeInfoBtn">&times;</span>
-    <img id="badgeIcon" src="" alt="Badge Icon" style="width: 64px; height: 64px; margin-bottom: 1rem;" />
-    <h3 id="badgeName" style="margin-bottom: 0.5rem;"></h3>
-    <p id="badgeDescription" style="font-size: 0.9rem;"></p>
-  </div>
-</div>
-<div id="badgePopup" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeBadgePopup">&times;</span>
-    <h3 style="margin-bottom: 8px;">🏅 Badge Unlocked!</h3>
-    <img id="badgePopupImage" src="" alt="Badge" style="width: 64px; height: 64px; border: 2px solid #c9a04e; border-radius: 8px; margin-bottom: 10px;">
-    <div id="badgePopupName" style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;"></div>
-    <div id="badgePopupTime" style="font-size: 0.75rem; color: #a07d3b;"></div>
-  </div>
-</div>
-<!-- Favorite Game Modal -->
-<div id="favoriteGameModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeGameModal('favoriteGameModal')">&times;</span>
-    <img id="favoriteGameModalImg" src="" alt="" style="
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #c9a04e;
-" />
-    <h3 id="favoriteGameModalTitle" style="margin-bottom: 10px;"></h3>
-    <p id="favoriteGameModalDescription" style="font-size: 0.85rem;"></p>
-  </div>
-</div>
-
-<!-- Wishlist Game Modal -->
-<div id="wishlistGameModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeGameModal('wishlistGameModal')">&times;</span>
-    <img id="wishlistGameModalImg" src="" alt="" style="
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #c9a04e;
-" />
-
-    <h3 id="wishlistGameModalTitle" style="margin-bottom: 10px;"></h3>
-    <p id="wishlistGameModalDescription" style="font-size: 0.85rem;"></p>
-  </div>
-</div>
-    <!-- Create Party Modal -->
-<div id="createPartyModal" class="modal" style="display:none;">
-  <div class="modal-content" style="max-width: 400px;">
-    <span class="close-btn" id="closeCreatePartyModal">&times;</span>
-    <h3>Create a New Party</h3>
-
-    <label for="partyNameInput">Party Name:</label><br/>
-    <input type="text" id="partyNameInput" placeholder="Enter party name" style="width: 100%; padding: 6px; margin-bottom: 12px;" />
-
-    <label for="inviteFriendsSelect">Invite Friends:</label><br/>
-    <select id="inviteFriendsSelect" multiple style="width: 100%; height: 120px; margin-bottom: 12px;">
-      <!-- Options inserted dynamically -->
-    </select>
-
-    <button id="submitCreatePartyBtn" style="width: 100%; padding: 10px; background-color: #d9b370; border: none; cursor: pointer; font-weight: bold;">
-      Create Party!
+  <nav id="pixelNav">
+    <button onclick="goTo('/pages/profile.html')">
+      <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" />
     </button>
-  </div>
-</div>
+    <button onclick="goTo('/pages/boardgames.html')">
+      <img src="../img/icons/icon-profile.webp" alt="Games" class="nav-icon" />
+    </button>
+    <button onclick="logout()">
+      <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" />
+    </button>
+  </nav>
 
-<script src="profile.js"></script>
+  <script>
+    function logout() {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/pages/login.html";
+    }
+
+    function goTo(path) {
+      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+      window.location.href = base + path;
+    }
+  </script>
 </body>
 </html>
-
