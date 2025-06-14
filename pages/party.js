@@ -285,6 +285,7 @@ const sendMessageBtn = document.getElementById("sendMessage");
 const currentPartyId = getPartyIdFromURL();
 
 
+
 async function loadMessages() {
   const res = await fetch(`${API_BASE}/party/${currentPartyId}/messages`, {
     headers: { Authorization: `Bearer ${getAccessToken()}` }
@@ -296,12 +297,12 @@ async function loadMessages() {
   let newDividerInserted = false;
   let lastSenderId = null;
 
-  const isAtBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 100;
+  const isAtTop = chatBox.scrollTop <= 100;
 
-  messages.reverse().forEach((msg, index) => {
-    if (loadedMessageIds.has(msg.id)) return; // Skip already-rendered
-
+  messages.forEach((msg, index) => {
+    if (loadedMessageIds.has(msg.id)) return;
     loadedMessageIds.add(msg.id);
+
     const isSameSender = msg.user_id === lastSenderId;
     lastSenderId = msg.user_id;
 
@@ -392,8 +393,8 @@ async function loadMessages() {
               Authorization: `Bearer ${getAccessToken()}`
             }
           });
-          loadedMessageIds.clear(); // Reset cache
-          chatBox.innerHTML = '';  // Clear all and reload fresh
+          loadedMessageIds.clear();
+          chatBox.innerHTML = '';
           loadMessages();
         }
       };
@@ -413,16 +414,16 @@ async function loadMessages() {
       divider.style.top = '0';
       divider.style.background = '#fffdf7';
       divider.style.zIndex = '1';
-      chatBox.appendChild(divider);
+
+      chatBox.prepend(divider);
       newDividerInserted = true;
     }
 
-    chatBox.appendChild(wrapper);
+    chatBox.prepend(wrapper); // 👈 Reverse order insert
   });
 
-  // Scroll to bottom if user is already near bottom
-  if (isAtBottom) {
-    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+  if (isAtTop) {
+    chatBox.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   if (messages.length > 0) {
@@ -431,7 +432,7 @@ async function loadMessages() {
     window.latestMessageTimestamp = newestTimestamp;
   }
 
-  // Game mention logic
+  // Game mention handlers
   document.querySelectorAll('.game-mention').forEach(el => {
     el.addEventListener('click', async () => {
       const slug = el.dataset.game;
