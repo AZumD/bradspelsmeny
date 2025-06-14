@@ -154,6 +154,8 @@ const chatBox = document.getElementById("chatBox");
 const chatInput = document.getElementById("chatInput");
 const sendMessageBtn = document.getElementById("sendMessage");
 const currentPartyId = getPartyIdFromURL();
+
+
 async function loadMessages() {
   const res = await fetch(`${API_BASE}/party/${currentPartyId}/messages`, {
     headers: { Authorization: `Bearer ${getAccessToken()}` }
@@ -162,6 +164,8 @@ async function loadMessages() {
   chatBox.innerHTML = '';
 
   const currentUserId = parseInt(localStorage.getItem('userId'));
+  const lastSeen = localStorage.getItem(`partyLastSeen_${currentPartyId}`);
+  let newDividerInserted = false;
   let lastSenderId = null;
 
   messages.forEach((msg, index) => {
@@ -174,7 +178,7 @@ async function loadMessages() {
     wrapper.style.alignItems = 'flex-start';
     wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
 
-    // Left column (avatar + username) — only shown if not same sender
+    // Left column (avatar + username)
     if (!isSameSender) {
       const leftCol = document.createElement('div');
       leftCol.style.display = 'flex';
@@ -231,7 +235,7 @@ async function loadMessages() {
     messageBubble.appendChild(content);
     messageBubble.appendChild(timestamp);
 
-    // 🗑️ Delete button (only for sender)
+    // Delete button
     if (msg.user_id === currentUserId) {
       const deleteBtn = document.createElement('span');
       deleteBtn.textContent = '🗑️';
@@ -257,9 +261,34 @@ async function loadMessages() {
     }
 
     wrapper.appendChild(messageBubble);
+
+    // Insert divider if this is the first unseen message
+    if (!newDividerInserted && lastSeen && new Date(msg.created_at) > new Date(lastSeen)) {
+      const divider = document.createElement('div');
+      divider.textContent = '── New Messages ──';
+      divider.style.textAlign = 'center';
+      divider.style.fontSize = '0.7rem';
+      divider.style.color = '#a07d3b';
+      divider.style.margin = '8px 0';
+      divider.style.position = 'sticky';
+      divider.style.top = '0';
+      divider.style.background = '#fffdf7';
+      divider.style.zIndex = '1';
+
+      chatBox.appendChild(divider);
+      newDividerInserted = true;
+    }
+
     chatBox.appendChild(wrapper);
   });
+
+  // Save newest message timestamp
+  if (messages.length > 0) {
+    const newestTimestamp = messages[0].created_at;
+    localStorage.setItem(`partyLastSeen_${currentPartyId}`, newestTimestamp);
+  }
 }
+
 
 
 
