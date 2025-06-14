@@ -432,8 +432,13 @@ async function loadMessages() {
     }
 
     messages.reverse().forEach((msg, index) => {
-  // now you're prepending from newest to oldest
-  // so visually: newest is topmost, oldest is bottommost
+  if (loadedMessageIds.has(msg.id)) return;
+  loadedMessageIds.add(msg.id);
+
+  // ... build your `wrapper` element like before ...
+
+  // (same code as in your original loop)
+  // then:
   chatBox.prepend(wrapper);
 });
 
