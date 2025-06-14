@@ -39,6 +39,7 @@ function parseGameMentions(text) {
     const regex = new RegExp(`@${escaped}\\b`, 'gi');
     text = text.replace(regex, match => {
       return `<span class="game-mention" data-title-en="${title}">${title}</span>`;
+
     });
   }
 
@@ -265,7 +266,6 @@ function renderMemberList(members) {
     img.alt = `${m.first_name}'s avatar`;
     img.title = `${m.first_name} ${m.last_name}${m.is_leader ? ' ⭐' : ''}`;
     img.className = 'friend-avatar';
-    container.appendChild(img);
     link.appendChild(img);
     container.appendChild(link);
 
