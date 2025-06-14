@@ -11,7 +11,7 @@ function goTo(path) {
 
 function logout() {
   clearTokens(); // Assuming this function already exists
-  window.location.href = '/pages/login.html';
+  window.location.href = '/bradspelsmeny/pages/login.html';
 }
 
 
