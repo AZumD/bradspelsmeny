@@ -348,11 +348,11 @@ async function loadMessages() {
   const isAtTop = chatBox.scrollTop <= 100;
 
   messages.reverse().forEach((msg, index) => {
-  if (loadedMessageIds.has(msg.id)) return;
-  loadedMessageIds.add(msg.id);
+  if (loadedMessageIds.has(msg.user_id)) return;
+  loadedMessageIds.add(msg.user_id);
 
-  const isSameSender = msg.id === lastSenderId;
-  lastSenderId = msg.id;
+  const isSameSender = msg.user_id === lastSenderId;
+  lastSenderId = msg.user_id;
 
   const wrapper = document.createElement('div');
   wrapper.classList.add('message-wrapper', 'fade-in');
@@ -372,7 +372,7 @@ async function loadMessages() {
     leftCol.style.marginRight = '10px';
 
     const avatarLink = document.createElement('a');
-    avatarLink.href = `/pages/profile.html?id=${m.id}`;
+avatarLink.href = `/pages/profile.html?id=${msg.user_id}`; // ✅ assuming msg has user_id
     avatarLink.title = `${m.first_name} ${m.last_name}'s profile`;
 
     const avatar = document.createElement('img');
@@ -447,7 +447,7 @@ async function loadMessages() {
     }
   }
 
-  if (msg.id === currentUserId) {
+  if (msg.user_id === currentUserId) {
     const deleteBtn = document.createElement('span');
     deleteBtn.textContent = '❌';
     deleteBtn.title = 'Delete message';
@@ -459,7 +459,7 @@ async function loadMessages() {
     deleteBtn.onclick = async () => {
       const confirmed = confirm('Delete this message?');
       if (confirmed) {
-        await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.id}`, {
+        await fetch(`${API_BASE}/party/${currentPartyId}/messages/${msg.user_id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${getAccessToken()}`
