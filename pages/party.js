@@ -447,7 +447,7 @@ if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
 document.getElementById('favoriteGameModalImg').src = imageUrl;
 
         document.getElementById('favoriteGameModalDescription').textContent = game.description_en;
-        document.getElementById('favoriteGameModal').style.display = 'block';
+        document.getElementById('favoriteGameModal').style.display = 'flex';
       } catch (err) {
         alert("Couldn't load game info for @" + slug);
         console.error(err);
