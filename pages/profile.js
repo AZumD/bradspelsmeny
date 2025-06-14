@@ -272,7 +272,7 @@ async function fetchUserParties(viewedUserId = null) {
 
   } catch (err) {
     console.error('❌ Failed to load parties:', err);
-    partyList.innerHTML = '';
+    partyList.innerHTML = '<div class="placeholder-box">No parties to show.</div>';
   }
 }
 
