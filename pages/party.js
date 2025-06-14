@@ -393,8 +393,6 @@ async function loadMessages() {
     username.style.textAlign = 'center';
     username.style.marginTop = '2px';
     username.style.color = '#a07d3b';
-
-    leftCol.appendChild(avatar);
     leftCol.appendChild(username);
     wrapper.appendChild(leftCol);
   } else {
