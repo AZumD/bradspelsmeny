@@ -244,7 +244,7 @@ async function loadMessages() {
     // Delete button
     if (msg.user_id === currentUserId) {
       const deleteBtn = document.createElement('span');
-      deleteBtn.textContent = '🗑️';
+      deleteBtn.textContent = '❌';
       deleteBtn.title = 'Delete message';
       deleteBtn.style.position = 'absolute';
       deleteBtn.style.top = '4px';
