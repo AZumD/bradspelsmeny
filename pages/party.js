@@ -1,7 +1,7 @@
 // party.js
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 let loadedMessageIds = new Set();
-
+const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 function getAccessToken() {
   return localStorage.getItem('userToken');
 }
