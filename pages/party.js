@@ -5,7 +5,15 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 function getAccessToken() {
   return localStorage.getItem('userToken');
 }
+function goTo(path) {
+  const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+  window.location.href = base + path;
+}
 
+function logout() {
+  clearTokens(); // Assuming this function already exists
+  window.location.href = '/pages/login.html';
+}
 
 let allGames = [];
 
