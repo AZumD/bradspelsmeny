@@ -217,7 +217,7 @@ async function loadMessages() {
     messageBubble.style.border = '1px dashed #d9b370';
     messageBubble.style.borderRadius = '8px';
     messageBubble.style.padding = '8px 12px';
-    messageBubble.style.maxWidth = '100%';
+    messageBubble.style.width = '100%';
     messageBubble.style.flex = '1';
     messageBubble.style.position = 'relative';
     
