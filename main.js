@@ -77,10 +77,13 @@ function removeTokens() {
   localStorage.removeItem('userData');
 }
 
-function logoutUser() {
+function logout() {
   removeTokens();
-  window.location.href = 'login.html';
+  localStorage.removeItem("userData");
+  localStorage.removeItem("guestUser");
+  goTo('/pages/login.html'); // or '/' depending on UX
 }
+
 
 async function refreshToken() {
   const refreshToken = getRefreshToken();
@@ -116,7 +119,7 @@ async function fetchWithAuth(url, options = {}, retry = true) {
       options.headers['Authorization'] = `Bearer ${getUserToken()}`;
       res = await fetch(url, options);
     } else {
-      logoutUser();
+      logout();
       throw new Error('Unauthorized, please login again.');
     }
   }
@@ -126,11 +129,7 @@ async function fetchWithAuth(url, options = {}, retry = true) {
       const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
       window.location.href = base + path;
     }
-    function logout() {
-      localStorage.removeItem('userToken');
-      localStorage.removeItem('refreshToken');
-      goTo('/');
-    }
+    
 async function fetchUserLists() {
   const userId = JSON.parse(localStorage.getItem("userData"))?.id;
   if (!userId) return;
@@ -447,21 +446,31 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+function getAccessToken() {
+  return localStorage.getItem('userToken');
+}
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   const userToken = localStorage.getItem('userToken');
   const refreshToken = localStorage.getItem('refreshToken');
   const isGuest = localStorage.getItem("guestUser");
+  const nav = document.getElementById('pixelNav');
+if (nav && userToken && !isTokenExpired(userToken)) {
+  nav.style.display = 'flex';
+}
+
 
   // Refresh token if expired
   if (userToken && isTokenExpired(userToken)) {
     if (refreshToken) {
       const refreshed = await refreshToken();
       if (!refreshed) {
-        logoutUser();
+        logout();
         return;
       }
     } else {
-      logoutUser();
+      logout();
       return;
     }
   }
