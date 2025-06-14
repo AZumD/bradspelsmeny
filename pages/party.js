@@ -438,7 +438,12 @@ async function loadMessages() {
         const res = await fetch(`${API_BASE}/games/slug/${slug}`);
         if (!res.ok) throw new Error('Game not found');
         const game = await res.json();
-        document.getElementById('favoriteGameModalImg').src = game.image_url;
+        let imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
+if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+  imageUrl = `../${imageUrl}`;
+}
+document.getElementById('favoriteGameModalImg').src = imageUrl;
+
         document.getElementById('favoriteGameModalDescription').textContent = game.description;
         document.getElementById('favoriteGameModal').style.display = 'block';
       } catch (err) {
