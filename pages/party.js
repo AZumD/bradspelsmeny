@@ -46,7 +46,7 @@ function openGameModal(modalId, game) {
 
  // const titleEn = game.title_en ? `English Title: ${game.title_en}` : null;
 
-  details.textContent = [titleEn, players, playtime].filter(Boolean).join(' · ');
+  details.textContent = [players, playtime].filter(Boolean).join(' · ');
 
   // Trusted only disclaimer
   if (game.trusted_only) {
