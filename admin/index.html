@@ -53,7 +53,7 @@
     }
 
     .dashboard {
-      padding: 1.5rem 1rem;
+      padding: 1.5rem 1rem 4rem;
       max-width: 600px;
       margin: auto;
     }
@@ -121,6 +121,27 @@
       overflow-y: auto;
     }
 
+    #pixelNav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #8c3c1a;
+      border-top: 3px solid #5a2a0c;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0.3rem 0;
+      z-index: 10;
+    }
+
+    #pixelNav img {
+      width: 28px;
+      height: 28px;
+      image-rendering: pixelated;
+      cursor: pointer;
+    }
+
     @media (max-width: 600px) {
       .actions {
         flex-direction: column;
@@ -158,13 +179,32 @@
       <h2>Mest spelade idag</h2>
       <div class="value">Love Letter</div>
     </div>
+
+    <div class="actions">
+      <a href="lending.html">📦 Låna ut spel</a>
+      <a href="user-db.html">📂 Användardatabas</a>
+      <a href="edit-games.html">🛠 Redigera spelbibliotek</a>
+      <a href="#">📊 Statistik</a>
+    </div>
   </main>
 
-  <div class="actions">
-    <a href="lending.html">📦 Låna ut spel</a>
-    <a href="user-db.html">📂 Användardatabas</a>
-    <a href="edit-games.html">🛠 Redigera spelbibliotek</a>
-    <a href="#">📊 Statistik</a>
-  </div>
+  <nav id="pixelNav">
+    <img src="../img/icons/home.webp" alt="Home" onclick="goTo('/pages/profile.html')" />
+    <img src="../img/icons/boardgames.webp" alt="Boardgames" onclick="goTo('/pages/boardgames.html')" />
+    <img src="../img/icons/logout.webp" alt="Logout" onclick="logout()" />
+  </nav>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/pages/login.html";
+    }
+
+    function goTo(path) {
+      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+      window.location.href = base + path;
+    }
+  </script>
 </body>
 </html>
