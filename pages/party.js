@@ -39,7 +39,7 @@ function openGameModal(modalId, game) {
     game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
 
   // Playtime, player count
-  const playtime = game.play_time ? `${game.playtime} min` : null;
+  const playtime = game.play_time ? `${game.play_time} min` : null;
   const players = game.min_players && game.max_players
     ? `Players: ${game.min_players}–${game.max_players}`
     : null;
