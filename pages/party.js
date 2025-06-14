@@ -257,12 +257,18 @@ function renderMemberList(members) {
 
   // Add member avatars
   members.forEach(m => {
+    const link = document.createElement('a');
+    link.href = `/pages/profile.html?id=${m.id}`;
+    link.title = `${m.first_name} ${m.last_name}${m.is_leader ? ' ⭐' : ''}`;
     const img = document.createElement('img');
     img.src = m.avatar_url || '../img/avatar-placeholder.webp';
     img.alt = `${m.first_name}'s avatar`;
     img.title = `${m.first_name} ${m.last_name}${m.is_leader ? ' ⭐' : ''}`;
     img.className = 'friend-avatar';
     container.appendChild(img);
+    link.appendChild(img);
+    container.appendChild(link);
+
   });
 
   // Add "+" button
@@ -365,6 +371,10 @@ async function loadMessages() {
     leftCol.style.width = '48px';
     leftCol.style.marginRight = '10px';
 
+    const avatarLink = document.createElement('a');
+    avatarLink.href = `/pages/profile.html?id=${msg.user_id}`;
+    avatarLink.title = `${msg.username}'s profile`;
+
     const avatar = document.createElement('img');
     avatar.src = msg.avatar_url || '../img/avatar-placeholder.webp';
     avatar.alt = `${msg.username}'s avatar`;
@@ -372,6 +382,11 @@ async function loadMessages() {
     avatar.style.width = '36px';
     avatar.style.height = '36px';
 
+
+  avatarLink.appendChild(avatar);
+  leftCol.appendChild(avatarLink);
+
+    
     const username = document.createElement('div');
     username.textContent = msg.username;
     username.style.fontSize = '0.65rem';
