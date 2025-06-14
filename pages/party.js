@@ -6,16 +6,32 @@ function getAccessToken() {
   return localStorage.getItem('userToken');
 }
 
+
+let allGames = [];
+
+async function loadAllGames() {
+  try {
+    const res = await fetch(`${API_BASE}/games`, {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    });
+    if (!res.ok) throw new Error('Failed to load games');
+    allGames = await res.json();
+  } catch (err) {
+    console.error('Error loading games:', err);
+  }
+}
+
+
 function getPartyIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
 }
-
 function parseGameMentions(text) {
-  return text.replace(/@([\w\-]+)/g, (match, gameSlug) => {
-    return `<span class="game-mention" data-game="${gameSlug}">@${gameSlug}</span>`;
+  return text.replace(/@([\w\-]+)/g, (match, titleEn) => {
+    return `<span class="game-mention" data-title-en="${titleEn}">@${titleEn}</span>`;
   });
 }
+
 
 function openGameModal(modalId, game) {
   const img = document.getElementById(`${modalId}Img`);
@@ -446,24 +462,30 @@ async function loadMessages() {
 
   // Game mention handlers
   document.querySelectorAll('.game-mention').forEach(el => {
-    el.addEventListener('click', async () => {
-      const slug = el.dataset.game;
-      try {
-        const res = await fetch(`${API_BASE}/games/slug/${slug}`);
-        if (!res.ok) throw new Error('Game not found');
-        const game = await res.json();
-        let imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
-if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-  imageUrl = `../${imageUrl}`;
-}
-        openGameModal('favoriteGameModal', game);
+  el.addEventListener('click', async () => {
+    const titleEn = el.dataset.titleEn;
 
-      } catch (err) {
-        alert("Couldn't load game info for @" + slug);
-        console.error(err);
-      }
-    });
+    const matched = allGames.find(
+      g => g.title_en?.toLowerCase() === titleEn.toLowerCase()
+    );
+
+    if (!matched) {
+      alert(`No game found with English title "${titleEn}"`);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/games/slug/${matched.slug}`);
+      if (!res.ok) throw new Error('Game not found');
+      const game = await res.json();
+      openGameModal('favoriteGameModal', game);
+    } catch (err) {
+      alert("Couldn't load game info for @" + titleEn);
+      console.error(err);
+    }
   });
+});
+
 }
 
 
@@ -492,4 +514,5 @@ chatInput.addEventListener("keydown", e => {
 document.addEventListener('DOMContentLoaded', () => {
   fetchPartyData();
   loadMessages();
+  loadAllGames();
 });
