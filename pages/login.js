@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       alert(`👋 Welcome back, ${data.user.first_name}!`);
-      window.location.href = "/index.html"; // Or guest homepage
+      window.location.href = "/bradspelsmeny/index.html"; // Or guest homepage
     } catch (err) {
       console.error("❌ Login error:", err);
       alert("Something went wrong. Please try again.");
