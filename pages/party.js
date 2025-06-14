@@ -553,6 +553,12 @@ chatInput.addEventListener("keydown", (e) => {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  fetchPartyData();
+  loadMessages();
+  loadAllGames();
+});
+
 
 // --- Autocomplete ---
 let autocompleteBox = document.createElement('div');
