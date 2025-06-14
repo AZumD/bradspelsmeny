@@ -274,11 +274,20 @@
 </div>
 <div id="favoriteGameModal" class="modal" style="display: none;">
   <div class="modal-content">
-    <span class="close-btn" onclick="document.getElementById('favoriteGameModal').style.display = 'none'">&times;</span>
-    <img id="favoriteGameModalImg" style="width: 100%; margin-bottom: 10px;" />
+    <span class="close-btn" onclick="closeGameModal('favoriteGameModal')">&times;</span>
+    <img id="favoriteGameModalImg" src="" alt="" style="
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 2px solid #c9a04e;
+    " />
+    <h3 id="favoriteGameModalTitle" style="margin-top: 0.5rem;"></h3>
     <p id="favoriteGameModalDescription" style="font-size: 0.85rem;"></p>
   </div>
 </div>
+
   <script src="party.js" defer></script>
 </body>
 </html>
