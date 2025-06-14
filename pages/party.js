@@ -507,20 +507,25 @@ async function sendMessage() {
 
 sendMessageBtn.addEventListener("click", sendMessage);
 chatInput.addEventListener("keydown", e => {
-  const autocompleteOpen = document.getElementById("autocompleteBox")?.style.display === "block";
-  const hasSelection = document.querySelector("#autocompleteBox .autocomplete-item.active");
+  const autocompleteBox = document.getElementById("autocompleteBox");
+  const autocompleteVisible = autocompleteBox && autocompleteBox.style.display === "block";
+  const selectedItem = document.querySelector("#autocompleteBox .autocomplete-item.active");
 
   if (e.key === "Enter") {
-    if (autocompleteOpen && hasSelection) {
-      e.preventDefault(); // Don't send the message yet
-      insertAutocomplete(); // Assume you have this function available
-    } else {
-      sendMessage();
+    if (autocompleteVisible && selectedItem) {
+      // Use the selected autocomplete item
+      e.preventDefault();
+      e.stopPropagation(); // <-- prevents bubbling that might trigger sendMessage elsewhere
+      insertAutocomplete();
+      return; // Don't call sendMessage
     }
+
+    // If no autocomplete or no selected item, send the message
+    sendMessage();
   }
 
-  // Optionally: allow up/down arrow keys to navigate suggestions
-  if (autocompleteOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+  // Optional: arrow key navigation
+  if (autocompleteVisible && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
     e.preventDefault();
     moveAutocompleteSelection(e.key === "ArrowDown" ? 1 : -1);
   }
