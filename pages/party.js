@@ -220,6 +220,7 @@ async function loadMessages() {
     messageBubble.style.maxWidth = '100%';
     messageBubble.style.flex = '1';
     messageBubble.style.position = 'relative';
+    
 
     const content = document.createElement('div');
     content.textContent = msg.content;
@@ -234,6 +235,11 @@ async function loadMessages() {
 
     messageBubble.appendChild(content);
     messageBubble.appendChild(timestamp);
+
+    if (new Date(msg.created_at) > new Date(lastSeen)) {
+  messageBubble.classList.add('new-glow');
+}
+
 
     // Delete button
     if (msg.user_id === currentUserId) {
