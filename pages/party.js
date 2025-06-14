@@ -456,10 +456,8 @@ async function loadMessages() {
 if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
   imageUrl = `../${imageUrl}`;
 }
-document.getElementById('favoriteGameModalImg').src = imageUrl;
+        openGameModal('favoriteGameModal', game);
 
-        document.getElementById('favoriteGameModalDescription').textContent = game.description_en;
-        document.getElementById('favoriteGameModal').style.display = 'flex';
       } catch (err) {
         alert("Couldn't load game info for @" + slug);
         console.error(err);
