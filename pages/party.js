@@ -177,10 +177,14 @@ async function loadMessages() {
 
     const content = document.createElement('div');
     content.style.flex = '1';
-    content.innerHTML = `
-      <div style="font-size: 0.65rem; font-weight: bold; color: #a07d3b;">${msg.username}</div>
-      <div style="font-size: 0.8rem;">${msg.content}</div>
-    `;
+    // Replace content.innerHTML with this instead:
+content.innerHTML = `
+  <div style="display: flex; flex-direction: column; align-items: center; width: 48px;">
+    <img src="${msg.avatar_url || '../img/avatar-placeholder.webp'}" class="friend-avatar" style="width: 32px; height: 32px;" />
+    <div style="font-size: 0.65rem; text-align: center;">${msg.username}</div>
+  </div>
+  <div style="margin-left: 10px; flex: 1; font-size: 0.8rem;">${msg.content}</div>
+`;
 
     wrapper.appendChild(avatar);
     wrapper.appendChild(content);
