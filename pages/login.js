@@ -24,15 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Store access token and refresh token
+      // Store access token, refresh token, and user data
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("refreshToken", data.refreshToken); // <- new line
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("userData", JSON.stringify(data.user));
-      localStorage.setItem("userId", data.user.id); // 👈 THIS enables delete buttons
+      localStorage.setItem("userId", data.user.id);
 
+      // Redirect based on admin status
+      if (data.user.is_admin) {
+        alert(`🛠️ Logged in as admin: ${data.user.first_name}`);
+        window.location.href = "/bradspelsmeny/admin/index.html"; // Admin dashboard
+      } else {
+        alert(`👋 Welcome back, ${data.user.first_name}!`);
+        window.location.href = "/bradspelsmeny/index.html"; // Guest/member homepage
+      }
 
-      alert(`👋 Welcome back, ${data.user.first_name}!`);
-      window.location.href = "/bradspelsmeny/index.html"; // Or guest homepage
     } catch (err) {
       console.error("❌ Login error:", err);
       alert("Something went wrong. Please try again.");
