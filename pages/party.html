@@ -25,6 +25,31 @@
   animation: pulseGlow 1s ease-out;
   box-shadow: 0 0 10px 2px #d9b37088;
 }
+#chatInputContainer {
+  display: flex;
+  gap: 8px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 8px;
+  border: 1px dashed #d9b370;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+#sendMessage {
+  background-color: #d9b370;
+  color: #5a2a0c;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
 
 @keyframes pulseGlow {
   0%   { box-shadow: 0 0 0px 0px #d9b37000; }
