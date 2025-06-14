@@ -22,6 +22,24 @@
       user-select: none;
     }
 
+    #maincontain {
+  background: rgba(249, 246, 242, 0.95);
+  border-radius: 10px;
+  padding: 20px;
+  border: 2px dashed #d9b370;
+  box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
     .topbar {
       background-color: #8c3c1a;
       color: white;
@@ -158,6 +176,7 @@
 </head>
 <body>
   <main class="dashboard">
+    <div id="maincontain">
     <div id="orderFeed"></div>
 
     <div class="tile">
@@ -180,6 +199,7 @@
       <a href="user-db.html">📂 Användardatabas</a>
       <a href="edit-games.html">🛠 Redigera spelbibliotek</a>
       <a href="#">📊 Statistik</a>
+    </div>
     </div>
   </main>
 
