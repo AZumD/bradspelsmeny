@@ -1,29 +1,21 @@
-(async function () {
-  const token = localStorage.getItem("userToken");
-  if (!token) {
-    alert("Du måste vara inloggad för att se denna sida.");
-    window.location.href = "/bradspelsmeny/pages/login.html";
-    return;
-  }
+// 🔒 Immediately check token and role
+const token = localStorage.getItem("userToken");
+const decoded = parseJwt(token);
 
-  const decoded = parseJwt(token);
-  if (!decoded || decoded.role !== "admin") {
-    alert("Endast administratörer har åtkomst till denna sida.");
-    window.location.href = "/bradspelsmeny/pages/login.html";
-    return;
-  }
+if (!token || !decoded || decoded.role !== "admin") {
+  window.location.href = "/bradspelsmeny/pages/login.html";
+}
 
-  try {
-    await fetchStats();
-    await fetchOrders();
-  } catch {
-    // Fail silently
-  }
-})();
+// ✅ DOM logic after auth check
+document.addEventListener("DOMContentLoaded", () => {
+  fetchStats();
+  fetchOrders();
+  setInterval(fetchOrders, 5000);
+});
 
 console.log("✅ Admin dashboard loaded.");
 
-// Helper: parse JWT
+// 🔍 Helper: parse JWT
 function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -32,7 +24,7 @@ function parseJwt(token) {
   }
 }
 
-// Refresh token using stored refreshToken
+// 🔄 Refresh token
 async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) return false;
@@ -62,7 +54,7 @@ async function refreshToken() {
   }
 }
 
-// Wrapper fetch that refreshes token if expired
+// 📦 Auth wrapper
 async function fetchWithAuth(url, options = {}, retry = true) {
   if (!options.headers) options.headers = {};
   const token = localStorage.getItem("userToken");
@@ -89,6 +81,7 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   return res;
 }
 
+// 📊 Fetch stats
 async function fetchStats() {
   try {
     const [totalGamesRes, lentOutRes, mostLentRes] = await Promise.all([
@@ -120,14 +113,15 @@ async function fetchStats() {
   }
 }
 
+// 🧾 Fetch orders
 async function fetchOrders() {
   try {
     const res = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/order-game/latest");
     if (!res.ok) throw new Error("Failed to fetch orders");
 
     const orders = await res.json();
-
     const container = document.getElementById("orderFeed");
+
     if (!orders.length) {
       container.innerHTML = "<p style='padding:20px; font-style:italic;'>📭 No current game orders.</p>";
       return;
@@ -155,6 +149,7 @@ async function fetchOrders() {
   }
 }
 
+// ✅ Complete order
 async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
   try {
     const usersRes = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/users");
@@ -163,7 +158,6 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
       return;
     }
     const users = await usersRes.json();
-
     let user = users.find(u => u.phone === phone);
 
     if (!user) {
@@ -210,6 +204,7 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
   }
 }
 
+// 🧼 Clear orders
 async function clearAllOrders() {
   try {
     const res = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/order-game", {
@@ -225,8 +220,4 @@ async function clearAllOrders() {
   } catch (err) {
     console.error("❌ Failed to clear orders:", err);
   }
-}
-
-setInterval(fetchOrders, 5000);
-
 }
