@@ -256,8 +256,7 @@ async function fetchUserParties() {
 // No label appended
 
 
-  card.appendChild(img);
-  card.appendChild(label);
+  card.appendChild(img);  
   partyList.appendChild(card);
 }
 
