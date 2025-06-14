@@ -186,17 +186,6 @@ async function toggleWishlist(gameId) {
 }
 
 
-const profileBtn = document.getElementById('profileBtn');
-const userStatus = document.getElementById('userStatus');
-
-function updateUserStatus(user) {
-  userStatus.textContent = `Hi, ${user.first_name}!`;
-  profileBtn.style.display = 'inline-block';
-}
-
-profileBtn.onclick = () => {
-  window.location.href = './pages/profile.html';
-}
 
 function isMemberUser() {
   try {
@@ -378,56 +367,7 @@ async function renderGames() {
   bindOrderButtons();
 }
 
-function updateTopBar() {
-  const userStatus = document.getElementById("userStatus");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const userData = localStorage.getItem("userData");
-  const guestUser = localStorage.getItem("guestUser");
 
-  if (userData) {
-    const user = JSON.parse(userData);
-    const name = user.username && user.username.trim() !== ''
-      ? user.username
-      : `${user.first_name} ${user.last_name}`.trim() || user.phone;
-
-    userStatus.textContent = `${name}`;
-    profileBtn.style.display = 'inline-block';
-  } else {
-    userStatus.textContent = guestUser ? `Logged in as guest` : '';
-    profileBtn.style.display = 'none';
-  }
-
-  logoutBtn.addEventListener("click", () => {
-  removeTokens();
-  localStorage.removeItem("userData");
-  localStorage.removeItem("guestUser");
-
-  // Show welcome modal again
-  const welcomeModal = document.getElementById("welcomeModal");
-  if (welcomeModal) {
-    welcomeModal.classList.add("show");
-  }
-
-  // Clear userStatus and hide profile button
-  document.getElementById("userStatus").textContent = "";
-  if (profileBtn) profileBtn.style.display = "none";
-
-  // Clear game list to prevent errors
-  document.getElementById("gameList").innerHTML = "";
-
-  // Reset search bar
-  const searchBar = document.getElementById('searchBar');
-  if (searchBar) searchBar.value = '';
-
-  // Reset category to 'all' and rerender categories to update badges
-  currentCategory = 'all';
-  renderCategories();
-
-  // Optionally, focus a button in the welcome modal here
-});
-
-
-}
 
 
 // Distance helper for geolocation
