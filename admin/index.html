@@ -78,13 +78,24 @@
     }
 
     .tile {
-      background: #fff4d9;
-      border: 2px solid #3c2415;
-      padding: 1rem;
-      border-radius: 6px;
-      box-shadow: 4px 4px 0 #c19761;
-      margin-bottom: 1.5rem;
+      background: rgba(249, 246, 242, 0.95);
+      position: relative;
+      border: 2px dashed #d9b370;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
+      width: calc(100% + 40px); /* counteracts padding: 20px */
+      max-width: 600px;
+      margin-left: -20px;
+      margin-right: -20px;
+      font-family: Verdana, Geneva, Tahoma, sans-serif; /* more readable font */
+      font-size: 0.8rem;
+      color: #3c2415;
+      box-sizing: border-box;
     }
 
     .tile h2 {
