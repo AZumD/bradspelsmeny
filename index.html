@@ -9,75 +9,45 @@
     /* Reset and base */
     html, body {
       margin: 0;
-      padding: 0;
-      font-family: 'Press Start 2P', monospace;
-      overflow-x: hidden;
-      position: relative;
-      background: transparent;
-    
-      height: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      font-family: 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fffdf7;
+      color: #5a2a0c;
+      user-select: none;
+      padding-bottom: 60px; /* space for bottom nav */
     }
     * {
       box-sizing: border-box;
     }
 
     /* Top Bar */
-    #topBar {
-      background-color: #8c3c1a;
-      color: white;
+    #pixelNav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      padding: 1rem 1.5rem;
-      font-size: 0.8rem;
+      background-color: #fffdf7;
+      border-top: 2px dashed #d9b370;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 0 #4a1f0f;
-      box-sizing: border-box;
+      justify-content: space-around;
+      padding: 8px 0;
+      box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
+      z-index: 999;
     }
-    #topBar div {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    #userStatus {
-      font-weight: bold;
-    }
-    #profileBtn, #logoutBtn {
-      background: #e6b35c;
-      color: #3c2415;
-      border: 2px solid #3c2415;
-      border-radius: 4px;
-      padding: 0.3rem 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #c19761;
-    }
-    #profileBtn {
-      display: none;
-      font-weight: bold;
-    }
-    #logoutBtn button {
-  background: #444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  margin-left: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-}
 
-#logoutBtn button:hover {
-  background: #666;
-}
-    
-    #profileBtn:hover, #logoutBtn:hover {
-      background-color: #d3a34a;
-      box-shadow: 1px 1px 0 #8b5e09;
+    .nav-icon {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-icon:hover {
+      transform: scale(1.2);
     }
 .icon-btn {
   width: 48px;
@@ -637,6 +607,11 @@
 
       <div id="gameList"></div>
     </main>
+     <nav id="pixelNav">
+    <img src="img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+    <img src="img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
+    <img src="img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
+  </nav>
   </div>
 
   <div id="welcomeModal" class="modal show">
