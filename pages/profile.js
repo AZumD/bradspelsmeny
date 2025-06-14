@@ -236,42 +236,44 @@ async function fetchUserParties() {
       return;
     }
 
-  for (const party of parties) {
-  const card = document.createElement("div");
-  card.style.display = "flex";
-  card.style.flexDirection = "column";
-  card.style.alignItems = "center";
-  card.style.width = "60px";
+    for (const party of parties) {
+      const card = document.createElement("div");
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.alignItems = "center";
+      card.style.width = "60px";
 
-  const img = document.createElement("img");
-  img.className = "friend-avatar"; // reuse friend avatar styling
- img.src = party.avatar?.startsWith('http')
-  ? party.avatar
-  : `${FRONTEND_BASE}/${party.avatar || 'img/avatar-party-placeholder.webp'}`;
+      const img = document.createElement("img");
+      img.className = "party-avatar";
+      img.src = party.avatar?.startsWith("http")
+        ? party.avatar
+        : `${FRONTEND_BASE}/${party.avatar || 'img/avatar-party-placeholder.webp'}`;
+      img.onerror = () => {
+        img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
+      };
+      img.alt = `${party.emoji || ''} ${party.name}`;
+      img.title = `${party.emoji || ''} ${party.name}`;
+      img.onclick = () => window.location.href = `party.html?id=${party.id}`;
 
-img.onerror = () => {
-  img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
-};
+      card.appendChild(img);
 
-  img.alt = party.name;
-  img.title = party.name;
-  img.onclick = () => window.location.href = `party.html?id=${party.id}`;
+      // Optional: add label below avatar
+      // const label = document.createElement("div");
+      // label.textContent = party.name;
+      // label.style.fontSize = "0.6rem";
+      // label.style.textAlign = "center";
+      // label.style.marginTop = "4px";
+      // card.appendChild(label);
 
-  card.appendChild(img);
-// No label appended
-
-
-  card.appendChild(img);  
-  const label = document.createElement("div");
-  partyList.appendChild(card);
-}
-
+      partyList.appendChild(card);
+    }
 
   } catch (err) {
     console.error('❌ Failed to load parties:', err);
     partyList.innerHTML = '<div class="placeholder-box">Failed to load parties.</div>';
   }
 }
+
 
 
 function showBadgePopup(name, iconUrl, time) {
