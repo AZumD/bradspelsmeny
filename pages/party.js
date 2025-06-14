@@ -20,6 +20,8 @@ function parseGameMentions(text) {
 function openGameModal(modalId, game) {
   const img = document.getElementById(`${modalId}Img`);
   const title = document.getElementById(`${modalId}Title`);
+  title.textContent = gameTitle;
+
   const desc = document.getElementById(`${modalId}Description`);
 
   const gameTitle =
