@@ -955,7 +955,6 @@ function openCreatePartyModal() {
   document.addEventListener('DOMContentLoaded', async () => {
   try {
     await fetchProfile(); // Ensure token is valid and user data is loaded
-    await fetchUserParties(); // Now safe to call
   } catch (err) {
     console.error("❌ Error during initial load:", err);
   }
