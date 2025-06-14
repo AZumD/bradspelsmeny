@@ -20,32 +20,44 @@ function parseGameMentions(text) {
 function openGameModal(modalId, game) {
   const img = document.getElementById(`${modalId}Img`);
   const title = document.getElementById(`${modalId}Title`);
-  title.textContent = gameTitle;
-
   const desc = document.getElementById(`${modalId}Description`);
+  const details = document.getElementById(`${modalId}Details`);
+  const disclaimer = document.getElementById(`${modalId}Disclaimer`);
 
   const gameTitle =
-    game.title ||
-    game.title_en ||
-    game.title_sv ||
-    game.name ||
-    'Untitled';
+    game.title || game.title_en || game.title_sv || game.name || 'Untitled';
 
   let imageUrl = game.img || game.thumbnail_url || `${FRONTEND_BASE}/img/default-thumb.webp`;
-if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-  imageUrl = `../${imageUrl}`;
-}
-
+  if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `../${imageUrl}`;
+  }
 
   img.src = imageUrl;
   img.alt = gameTitle;
-
   title.textContent = gameTitle;
-  desc.textContent = game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
+  desc.textContent =
+    game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
 
+  // Playtime, player count
+  const playtime = game.playtime ? `${game.playtime} min` : null;
+  const players = game.min_players && game.max_players
+    ? `Players: ${game.min_players}–${game.max_players}`
+    : null;
+
+  const titleEn = game.title_en ? `English Title: ${game.title_en}` : null;
+
+  details.textContent = [titleEn, players, playtime].filter(Boolean).join(' · ');
+
+  // Trusted only disclaimer
+  if (game.trusted_only) {
+    disclaimer.textContent = '⚠️ This game can only be borrowed by trusted members.';
+  } else {
+    disclaimer.textContent = '';
+  }
 
   document.getElementById(modalId).style.display = 'flex';
 }
+
 
 
 function closeGameModal(modalId) {
