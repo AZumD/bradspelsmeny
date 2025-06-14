@@ -1,5 +1,6 @@
 // party.js
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+let loadedMessageIds = new Set();
 
 function getAccessToken() {
   return localStorage.getItem('userToken');
@@ -289,14 +290,18 @@ async function loadMessages() {
     headers: { Authorization: `Bearer ${getAccessToken()}` }
   });
   const messages = await res.json();
-  chatBox.innerHTML = '';
 
   const currentUserId = parseInt(localStorage.getItem('userId'));
   const lastSeen = localStorage.getItem(`partyLastSeen_${currentPartyId}`);
   let newDividerInserted = false;
   let lastSenderId = null;
 
-  messages.forEach((msg, index) => {
+  const isAtBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 100;
+
+  messages.reverse().forEach((msg, index) => {
+    if (loadedMessageIds.has(msg.id)) return; // Skip already-rendered
+
+    loadedMessageIds.add(msg.id);
     const isSameSender = msg.user_id === lastSenderId;
     lastSenderId = msg.user_id;
 
@@ -305,10 +310,9 @@ async function loadMessages() {
     wrapper.style.marginTop = isSameSender ? '4px' : '12px';
     wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
     wrapper.style.display = 'flex';
-    wrapper.style.flexDirection = 'row'; // 👈 this is key
+    wrapper.style.flexDirection = 'row';
     wrapper.style.alignItems = 'flex-start';
-    wrapper.style.gap = '8px'; // optional
-
+    wrapper.style.gap = '8px';
 
     if (!isSameSender) {
       const leftCol = document.createElement('div');
@@ -388,6 +392,8 @@ async function loadMessages() {
               Authorization: `Bearer ${getAccessToken()}`
             }
           });
+          loadedMessageIds.clear(); // Reset cache
+          chatBox.innerHTML = '';  // Clear all and reload fresh
           loadMessages();
         }
       };
@@ -407,7 +413,6 @@ async function loadMessages() {
       divider.style.top = '0';
       divider.style.background = '#fffdf7';
       divider.style.zIndex = '1';
-
       chatBox.appendChild(divider);
       newDividerInserted = true;
     }
@@ -415,7 +420,18 @@ async function loadMessages() {
     chatBox.appendChild(wrapper);
   });
 
-  // Parse and activate all @game mentions
+  // Scroll to bottom if user is already near bottom
+  if (isAtBottom) {
+    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+  }
+
+  if (messages.length > 0) {
+    const newestTimestamp = messages[0].created_at;
+    localStorage.setItem(`partyLastSeen_${currentPartyId}`, newestTimestamp);
+    window.latestMessageTimestamp = newestTimestamp;
+  }
+
+  // Game mention logic
   document.querySelectorAll('.game-mention').forEach(el => {
     el.addEventListener('click', async () => {
       const slug = el.dataset.game;
@@ -432,11 +448,6 @@ async function loadMessages() {
       }
     });
   });
-
-  if (messages.length > 0) {
-    const newestTimestamp = messages[0].created_at;
-    localStorage.setItem(`partyLastSeen_${currentPartyId}`, newestTimestamp);
-  }
 }
 
 
@@ -465,5 +476,4 @@ chatInput.addEventListener("keydown", e => {
 document.addEventListener('DOMContentLoaded', () => {
   fetchPartyData();
   loadMessages();
-  setInterval(loadMessages, 5000); // Refresh every 5 seconds
 });
