@@ -520,38 +520,39 @@ async function sendMessage() {
 }
 
 sendMessageBtn.addEventListener("click", sendMessage);
-chatInput.addEventListener("keydown", e => {
-  const autocompleteBox = document.getElementById("autocompleteBox");
-  const autocompleteVisible = autocompleteBox && autocompleteBox.style.display === "block";
-  const selectedItem = document.querySelector("#autocompleteBox .autocomplete-item.active");
+chatInput.addEventListener("keydown", (e) => {
+  const autocompleteVisible = autocompleteBox.style.display === "block";
 
-  if (e.key === "Enter") {
-    if (autocompleteVisible && selectedItem) {
-      // Use the selected autocomplete item
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    if (selectedIndex < autocompleteMatches.length - 1) {
+      setSelectedIndex(selectedIndex + 1);
+    }
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    if (selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+  } else if (e.key === "Enter") {
+    if (autocompleteVisible && selectedIndex >= 0) {
       e.preventDefault();
-      e.stopPropagation(); // <-- prevents bubbling that might trigger sendMessage elsewhere
-      insertAutocomplete();
-      return; // Don't call sendMessage
+      insertAutocomplete(selectedIndex);
+      return; // Do NOT send message
     }
 
-    // If no autocomplete or no selected item, send the message
-    sendMessage();
-  }
-
-  // Optional: arrow key navigation
-  if (autocompleteVisible && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    // If autocomplete not visible or no selection, send the message
     e.preventDefault();
-    moveAutocompleteSelection(e.key === "ArrowDown" ? 1 : -1);
+    sendMessage();
+  } else if (e.key === "Tab") {
+    if (autocompleteVisible && selectedIndex >= 0) {
+      e.preventDefault();
+      insertAutocomplete(selectedIndex);
+    }
+  } else if (e.key === "Escape") {
+    autocompleteBox.style.display = "none";
   }
 });
 
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetchPartyData();
-  loadMessages();
-  loadAllGames();
-});
 
 // --- Autocomplete ---
 let autocompleteBox = document.createElement('div');
@@ -641,29 +642,6 @@ function insertAutocomplete(index) {
 }
 
 chatInput.addEventListener('input', updateAutocomplete);
-
-chatInput.addEventListener('keydown', (e) => {
-  if (autocompleteBox.style.display !== 'block') return;
-
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    if (selectedIndex < autocompleteMatches.length - 1) {
-      setSelectedIndex(selectedIndex + 1);
-    }
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    if (selectedIndex > 0) {
-      setSelectedIndex(selectedIndex - 1);
-    }
-  } else if (e.key === 'Enter' || e.key === 'Tab') {
-    if (selectedIndex >= 0) {
-      e.preventDefault();
-      insertAutocomplete(selectedIndex);
-    }
-  } else if (e.key === 'Escape') {
-    autocompleteBox.style.display = 'none';
-  }
-});
 
 document.addEventListener('click', (e) => {
   if (!autocompleteBox.contains(e.target)) {
