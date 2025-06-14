@@ -348,8 +348,9 @@ async function loadMessages() {
   const isAtTop = chatBox.scrollTop <= 100;
 
   messages.reverse().forEach((msg, index) => {
-  if (loadedMessageIds.has(msg.user_id)) return;
-  loadedMessageIds.add(msg.user_id);
+  if (loadedMessageIds.has(msg.id)) return;
+loadedMessageIds.add(msg.id);
+
 
   const isSameSender = msg.user_id === lastSenderId;
   lastSenderId = msg.user_id;
