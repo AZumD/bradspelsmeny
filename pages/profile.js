@@ -822,6 +822,17 @@ async function fetchPartyProfile() {
 
     // Parse JSON
     const partyData = await partyRes.json();
+    const avatarElem = document.getElementById('partyAvatar');
+if (avatarElem) {
+  avatarElem.src = partyData.avatar?.startsWith('http')
+    ? partyData.avatar
+    : `${FRONTEND_BASE}/${partyData.avatar || 'img/avatar-party-placeholder.webp'}`;
+
+  avatarElem.onerror = () => {
+    avatarElem.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
+  };
+}
+
     const members = await membersRes.json();
     const sessions = await sessionsRes.json();
 
