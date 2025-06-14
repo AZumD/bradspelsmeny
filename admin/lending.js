@@ -1,4 +1,5 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+let ADMIN_TOKEN = null;
 
 async function refreshAdminToken() {
   const refreshToken = localStorage.getItem("adminRefreshToken");
@@ -15,6 +16,7 @@ async function refreshAdminToken() {
     const data = await res.json();
     if (data.token) {
       localStorage.setItem("adminToken", data.token);
+      ADMIN_TOKEN = data.token;
       return true;
     }
     return false;
@@ -23,34 +25,26 @@ async function refreshAdminToken() {
   }
 }
 
-async function fetchWithAdminAuth(url, options = {}, retry = true) {
-  if (!options.headers) options.headers = {};
+async function guardAdminSession() {
   const token = localStorage.getItem("adminToken");
-  if (!token) {
+  const refreshToken = localStorage.getItem("adminRefreshToken");
+
+  if (!token && !refreshToken) {
     window.location.href = "login.html";
-    return;
+    return false;
   }
-  options.headers['Authorization'] = `Bearer ${token}`;
 
-  let res = await fetch(url, options);
-  if (res.status === 401 && retry) {
+  if (!token && refreshToken) {
     const refreshed = await refreshAdminToken();
-    if (refreshed) {
-      options.headers['Authorization'] = `Bearer ${localStorage.getItem("adminToken")}`;
-      res = await fetch(url, options);
-    } else {
-      localStorage.removeItem("adminToken");
-      localStorage.removeItem("adminRefreshToken");
+    if (!refreshed) {
       window.location.href = "login.html";
-      return;
+      return false;
     }
+  } else {
+    ADMIN_TOKEN = token;
   }
-  return res;
-}
 
-// Redirect if no token initially
-if (!localStorage.getItem("adminToken")) {
-  window.location.href = "login.html";
+  return true;
 }
 
 const searchInput = document.getElementById('searchInput');
@@ -64,16 +58,15 @@ let allGames = [];
 
 async function fetchGames() {
   try {
-    const res = await fetchWithAdminAuth(`${API_BASE}/games`);
-    if (!res.ok) {
-      throw new Error(`Failed to fetch games: ${res.status} ${res.statusText}`);
-    }
-    const games = await res.json();
-    allGames = games;
+    const res = await fetch(`${API_BASE}/games`, {
+      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+    });
+    if (!res.ok) throw new Error(`Failed to fetch games: ${res.status}`);
+    allGames = await res.json();
     await renderGameLists();
   } catch (err) {
     console.error(err);
-    alert("❌ Failed to fetch games. Please check your login or network.");
+    alert("❌ Failed to fetch games.");
   }
 }
 
@@ -101,7 +94,9 @@ async function createGameCard(game) {
 
   if (game.lent_out) {
     try {
-      const res = await fetchWithAdminAuth(`${API_BASE}/games/${game.id}/current-lend`);
+      const res = await fetch(`${API_BASE}/games/${game.id}/current-lend`, {
+        headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+      });
       if (res.ok) {
         const data = await res.json();
         extra = `<br><small style="font-size: 0.5rem;">
@@ -128,11 +123,13 @@ async function createGameCard(game) {
 }
 
 async function openLendModal(gameId) {
-  const res = await fetchWithAdminAuth(`${API_BASE}/users`);
+  const res = await fetch(`${API_BASE}/users`, {
+    headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+  });
   const users = await res.json();
 
   if (!Array.isArray(users)) {
-    alert('❌ Failed to load users. You might be logged out.');
+    alert('❌ Failed to load users.');
     window.location.href = 'login.html';
     return;
   }
@@ -168,9 +165,12 @@ async function confirmLend() {
     return;
   }
 
-  await fetchWithAdminAuth(`${API_BASE}/lend/${gameId}`, {
+  await fetch(`${API_BASE}/lend/${gameId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${ADMIN_TOKEN}`
+    },
     body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
   });
 
@@ -179,9 +179,12 @@ async function confirmLend() {
 }
 
 async function returnGame(gameId) {
-  await fetchWithAdminAuth(`${API_BASE}/return/${gameId}`, {
+  await fetch(`${API_BASE}/return/${gameId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${ADMIN_TOKEN}`
+    },
     body: JSON.stringify({})
   });
 
@@ -201,7 +204,9 @@ function closeImageModal() {
 async function openHistoryModal(gameId) {
   const modal = document.getElementById('historyModal');
   const historyList = document.getElementById('historyList');
-  const res = await fetchWithAdminAuth(`${API_BASE}/history/${gameId}`);
+  const res = await fetch(`${API_BASE}/history/${gameId}`, {
+    headers: { Authorization: `Bearer ${ADMIN_TOKEN}` }
+  });
   const logs = await res.json();
 
   historyList.innerHTML = logs.map(log =>
@@ -228,9 +233,12 @@ if (newUserForm) {
     const lastName = document.getElementById('newLastName').value;
     const phone = document.getElementById('newPhone').value;
 
-    const res = await fetchWithAdminAuth(`${API_BASE}/users`, {
+    const res = await fetch(`${API_BASE}/users`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ADMIN_TOKEN}`
+      },
       body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
     });
 
@@ -256,4 +264,10 @@ function closeNewUserModal() {
 }
 
 searchInput.addEventListener('input', renderGameLists);
-window.onload = fetchGames;
+
+// ✅ Guarded entrypoint
+window.onload = async () => {
+  if (await guardAdminSession()) {
+    await fetchGames();
+  }
+};
