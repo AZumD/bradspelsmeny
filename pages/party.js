@@ -38,7 +38,7 @@ function parseGameMentions(text) {
     const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape regex characters
     const regex = new RegExp(`@${escaped}\\b`, 'gi');
     text = text.replace(regex, match => {
-      return `<span class="game-mention" data-title-en="${title}">${match}</span>`;
+      return `<span class="game-mention" data-title-en="${title}">${title}</span>`;
     });
   }
 
