@@ -3,94 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      overflow: hidden;
-      height: 100%;
+    * {
+      box-sizing: border-box;
     }
-    body {
-      font-family: 'Press Start 2P', monospace;
-      background-color: #f3e2c7;
-      color: #3c2415;
+
+    html, body {
       margin: 0;
       padding: 0;
+      font-family: 'Press Start 2P', monospace;
+      background-color: #fffdf7;
+      color: #5a2a0c;
+      user-select: none;
+    }
+
+    .topbar {
+      background-color: #8c3c1a;
+      color: white;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 4px 0 #4a1f0f;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
     }
-    .topbar {
-  background-color: #8c3c1a;
-  color: white;
-  width: 100%;
-  padding: 1rem 1.5rem; /* ← Add horizontal padding here */
-  box-shadow: 0 4px 0 #4a1f0f;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box; /* ensures padding doesn't break layout */
-}
+
     .dashboard-title {
       color: #fff4d9;
-      font-size: 1rem;
       text-decoration: none;
-      font-weight: bold;
+      font-size: 0.75rem;
     }
+
     .dashboard-title:hover {
       text-decoration: underline;
     }
-    .language-toggle {
-      font-size: 0.7rem;
+
+    .logout-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
       background: #e6b35c;
+      color: #3c2415;
       border: 2px solid #3c2415;
-      padding: 0.25rem 0.5rem;
       border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      box-shadow: 2px 2px 0 #c19761;
       cursor: pointer;
-      margin-left: auto;
     }
+
     .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 1rem;
-      width: 90%;
+      padding: 1.5rem 1rem;
       max-width: 600px;
-      text-align: center;
-      margin-top: 2rem;
+      margin: auto;
     }
+
     .tile {
       background: #fff4d9;
       border: 2px solid #3c2415;
       padding: 1rem;
       border-radius: 6px;
       box-shadow: 4px 4px 0 #c19761;
+      margin-bottom: 1.5rem;
+      text-align: center;
     }
+
     .tile h2 {
       font-size: 0.75rem;
       margin-bottom: 0.5rem;
     }
+
     .tile .value {
       font-size: 2rem;
       font-weight: bold;
     }
-    .tile.large {
-      grid-column: span 2;
+
+    .tile.large .value {
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Optional: adds spacing between items */
-}
     .actions {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.75rem;
-      margin: 1.5rem 0;
+      gap: 1rem;
+      padding: 0 1rem 2rem;
     }
+
     .actions a {
       background: #e6b35c;
-      padding: 0.5rem 0.5rem;
+      padding: 0.6rem;
       text-decoration: none;
       color: #3c2415;
       font-weight: bold;
@@ -101,13 +106,27 @@
       text-align: center;
       line-height: 1.2;
       font-size: 0.6rem;
-      word-break: break-word;
     }
+
+    #orderFeed {
+      background: #fff9e8;
+      border: 2px dashed #d9b370;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-family: monospace;
+      font-size: 0.6rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
     @media (max-width: 600px) {
       .actions {
         flex-direction: column;
         align-items: center;
       }
+
       .actions a {
         width: 90%;
         max-width: 300px;
@@ -118,35 +137,29 @@
 </head>
 <body>
   <header class="topbar">
-  <a href="index.html" class="dashboard-title">Admin Dashboard</a>
-  <button onclick="logout()" style="
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.6rem;
-    background: #e6b35c;
-    color: #3c2415;
-    border: 2px solid #3c2415;
-    border-radius: 4px;
-    padding: 0.4rem 0.6rem;
-    margin-left: 1rem;
-    box-shadow: 2px 2px 0 #c19761;
-    cursor: pointer;
-  ">🚪 Logga ut</button>
-</header>
-  <div class="dashboard">
-    <div id="orderFeed" style="padding:20px; font-family:monospace;"></div>
+    <a href="index.html" class="dashboard-title">Admin Dashboard</a>
+    <button onclick="logout()" class="logout-btn">🚪 Logga ut</button>
+  </header>
+
+  <main class="dashboard">
+    <div id="orderFeed"></div>
+
     <div class="tile">
       <h2>Utlånade spel</h2>
-      <div class="value"><span id="lentOutCount">–</span></div>
+      <div class="value" id="lentOutCount">–</div>
     </div>
+
     <div class="tile">
       <h2>Totalt antal spel</h2>
-      <div class="value"><span id="totalGamesCount">–</span></div>
+      <div class="value" id="totalGamesCount">–</div>
     </div>
+
     <div class="tile large">
       <h2>Mest spelade idag</h2>
-      <div class="value">Love letter</div>
+      <div class="value">Love Letter</div>
     </div>
-  </div>
+  </main>
+
   <div class="actions">
     <a href="lending.html">📦 Låna ut spel</a>
     <a href="user-db.html">📂 Användardatabas</a>
