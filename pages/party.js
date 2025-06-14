@@ -184,7 +184,6 @@ async function loadMessages() {
     wrapper.style.alignItems = 'flex-start';
     wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
 
-    // Left column (avatar + username)
     if (!isSameSender) {
       const leftCol = document.createElement('div');
       leftCol.style.display = 'flex';
@@ -217,7 +216,6 @@ async function loadMessages() {
       wrapper.appendChild(spacer);
     }
 
-    // Message bubble
     const messageBubble = document.createElement('div');
     messageBubble.style.backgroundColor = index % 2 === 0 ? '#f9f6f2' : '#f3ece3';
     messageBubble.style.border = '1px dashed #d9b370';
@@ -226,7 +224,6 @@ async function loadMessages() {
     messageBubble.style.width = '100%';
     messageBubble.style.flex = '1';
     messageBubble.style.position = 'relative';
-    
 
     const content = document.createElement('div');
     content.innerHTML = parseGameMentions(msg.content);
@@ -243,11 +240,9 @@ async function loadMessages() {
     messageBubble.appendChild(timestamp);
 
     if (new Date(msg.created_at) > new Date(lastSeen)) {
-  messageBubble.classList.add('new-glow');
-}
+      messageBubble.classList.add('new-glow');
+    }
 
-
-    // Delete button
     if (msg.user_id === currentUserId) {
       const deleteBtn = document.createElement('span');
       deleteBtn.textContent = '❌';
@@ -274,7 +269,6 @@ async function loadMessages() {
 
     wrapper.appendChild(messageBubble);
 
-    // Insert divider if this is the first unseen message
     if (!newDividerInserted && lastSeen && new Date(msg.created_at) > new Date(lastSeen)) {
       const divider = document.createElement('div');
       divider.textContent = '── New Messages ──';
@@ -294,13 +288,29 @@ async function loadMessages() {
     chatBox.appendChild(wrapper);
   });
 
-  // Save newest message timestamp
+  // Parse and activate all @game mentions
+  document.querySelectorAll('.game-mention').forEach(el => {
+    el.addEventListener('click', async () => {
+      const slug = el.dataset.game;
+      try {
+        const res = await fetch(`${API_BASE}/games/slug/${slug}`);
+        if (!res.ok) throw new Error('Game not found');
+        const game = await res.json();
+        document.getElementById('favoriteGameModalImg').src = game.image_url;
+        document.getElementById('favoriteGameModalDescription').textContent = game.description;
+        document.getElementById('favoriteGameModal').style.display = 'block';
+      } catch (err) {
+        alert("Couldn't load game info for @" + slug);
+        console.error(err);
+      }
+    });
+  });
+
   if (messages.length > 0) {
     const newestTimestamp = messages[0].created_at;
     localStorage.setItem(`partyLastSeen_${currentPartyId}`, newestTimestamp);
   }
 }
-
 
 
 
