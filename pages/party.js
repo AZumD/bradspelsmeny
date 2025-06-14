@@ -304,6 +304,10 @@ async function loadMessages() {
     wrapper.classList.add('message-wrapper', 'fade-in');
     wrapper.style.marginTop = isSameSender ? '4px' : '12px';
     wrapper.style.marginBottom = isSameSender ? '4px' : '12px';
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'row'; // 👈 this is key
+    wrapper.style.alignItems = 'flex-start';
+    wrapper.style.gap = '8px'; // optional
 
 
     if (!isSameSender) {
