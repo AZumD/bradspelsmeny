@@ -586,6 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === modal && getComputedStyle(modal).display !== 'none') {
         modal.style.display = 'none';
       }
+    }
 });
 
 
