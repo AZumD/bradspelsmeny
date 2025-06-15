@@ -472,200 +472,293 @@
     }
   </style>
 </head>
-<body>
-      <img id="avatar" class="avatar" src="../img/avatar-placeholder.webp" alt="User Avatar" />
+  
+  <body>
+    <img id="avatar" class="avatar" src="../img/avatar-placeholder.webp" alt="User Avatar"
+    />
+    <div class="profile-container">
+      <!-- 📨 Notification Modal -->
+      <div id="notificationModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close-btn" id="closeNotificationBtn">
+            &times;
+          </span>
+          <h3>
+            Notifications
+          </h3>
+          <div id="notificationList" class="notification-list">
+            <div class="placeholder-box">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="full-name" id="username">
+        Loading...
+      </div>
+      <div class="email" id="email">
+      </div>
+      <div class="bio" id="bio">
+      </div>
+      <div>
+        <div class="section-title">
+          Badges
+        </div>
+        <div id="badgesList" class="favorites-grid">
+        </div>
+      </div>
+      <div>
+        <div class="section-title">
+          Parties
+        </div>
+        <div class="parties-grid" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"
+        id="partyContainer">
+          <div id="partyList" style="display: contents;">
+          </div>
+          <div class="add-party-circle" id="createPartyBtn" title="Create Party">
+            +
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div class="section-title">
+            Friends
+          </div>
+          <div id="friendsList" class="friends-grid">
+            <!-- Friend avatars will be injected here -->
+          </div>
+          <button id="removeFriendBtn" style="display: none; margin-top: 10px; background-color: #e06d6d; color: white; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer;">
+            Remove Friend
+          </button>
+          <!-- PIXELNAV ---------------------------------------------------------------->
+          <nav id="pixelNav">
+            <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+            <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+            onclick="goTo('/pages/profile.html')">
+            <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+            class="nav-icon" onclick="logout()">
+            <button id="adminMenuToggle" class="nav-icon" style="display: none;">
+              <img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+              height="32" />
+            </button>
+          </nav>
+          <ul id="adminMenuDropdown" style="
+          display: none;
+          position: fixed;
+          bottom: 60px;
+          right: 35px;
+          background-color: #fffdf7;
+          border: 2px dashed #d9b370;
+          padding: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          list-style: none;
+          z-index: 999;
+          ">
+            <li>
+              <a href="/bradspelsmeny/admin/index.html">
+                <img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/edit-games.html">
+                <img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+                height="48" />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/user-db.html">
+                <img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/lending.html">
+                <img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="logout()">
+                <img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+          </ul>
+          <!-- Modal -------------------------------------------------------------------->
+          <div id="addFriendModal" class="modal" style="display:none;">
+            <div class="modal-content">
+              <span class="close-btn" id="closeModalBtn">
+                &times;
+              </span>
+              <h3>
+                Add a Friend
+              </h3>
+              <p>
+                Enter their user ID:
+              </p>
+              <input type="number" id="manualFriendId" placeholder="User ID" />
+              <button id="submitFriendRequest" class="add-friend-btn" style="margin-top: 10px;">
+                Send Request
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="section-title">
+              Game Log
+            </div>
+            <table id="borrowLogTable">
+              <thead>
+                <tr>
+                  <th>
+                    Date
+                  </th>
+                  <th>
+                    Game
+                  </th>
+                  <!-- Removed Action and Note columns -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="2" style="text-align:center; padding:1rem;">
+                    Loading game log…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="section-title">
+              Favorites
+            </div>
+            <div id="favoritesList" class="favorites-grid">
+            </div>
+          </div>
+          <div>
+            <div class="section-title">
+              Want to play
+            </div>
+            <div id="wishlistList" class="wishlist-grid">
+            </div>
+          </div>
+          <a href="edit-profile.html" id="editProfileBtn">
+            Edit Profile
+          </a>
+        </div>
+        <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
+        title="Notifications" width="58" height="58" />
+        <span id="notificationDot">
+        </span>
+        <!-- 🎖️ Badge Info Modal -->
+        <div id="badgeInfoModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-btn" id="closeBadgeInfoBtn">
+              &times;
+            </span>
+            <img id="badgeIcon" src="" alt="Badge Icon" style="width: 64px; height: 64px; margin-bottom: 1rem;"
+            />
+            <h3 id="badgeName" style="margin-bottom: 0.5rem;">
+            </h3>
+            <p id="badgeDescription" style="font-size: 0.9rem;">
+            </p>
+          </div>
+        </div>
+        <div id="badgePopup" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-btn" id="closeBadgePopup">
+              &times;
+            </span>
+            <h3 style="margin-bottom: 8px;">
+              🏅 Badge Unlocked!
+            </h3>
+            <img id="badgePopupImage" src="" alt="Badge" style="width: 64px; height: 64px; border: 2px solid #c9a04e; border-radius: 8px; margin-bottom: 10px;">
+            <div id="badgePopupName" style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;">
+            </div>
+            <div id="badgePopupTime" style="font-size: 0.75rem; color: #a07d3b;">
+            </div>
+          </div>
+        </div>
+        <!-- Favorite Game Modal -->
+        <div id="favoriteGameModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeGameModal('favoriteGameModal')">
+              &times;
+            </span>
+            <img id="favoriteGameModalImg" src="" alt="" style="
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid #c9a04e;
+            " />
+            <h3 id="favoriteGameModalTitle" style="margin-bottom: 10px;">
+            </h3>
+            <p id="favoriteGameModalDescription" style="font-size: 0.85rem;">
+            </p>
+          </div>
+        </div>
+        <!-- Wishlist Game Modal -->
+        <div id="wishlistGameModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeGameModal('wishlistGameModal')">
+              &times;
+            </span>
+            <img id="wishlistGameModalImg" src="" alt="" style="
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid #c9a04e;
+            " />
+            <h3 id="wishlistGameModalTitle" style="margin-bottom: 10px;">
+            </h3>
+            <p id="wishlistGameModalDescription" style="font-size: 0.85rem;">
+            </p>
+          </div>
+        </div>
+        <!-- Create Party Modal -->
+        <div id="createPartyModal" class="modal" style="display:none;">
+          <div class="modal-content" style="max-width: 400px;">
+            <span class="close-btn" id="closeCreatePartyModal">
+              &times;
+            </span>
+            <h3>
+              Create a New Party
+            </h3>
+            <label for="partyNameInput">
+              Party Name:
+            </label>
+            <br/>
+            <input type="text" id="partyNameInput" placeholder="Enter party name"
+            style="width: 100%; padding: 6px; margin-bottom: 12px;" />
+            <label for="inviteFriendsSelect">
+              Invite Friends:
+            </label>
+            <br/>
+            <select id="inviteFriendsSelect" multiple style="width: 100%; height: 120px; margin-bottom: 12px;">
+              <!-- Options inserted dynamically -->
+            </select>
+            <button id="submitCreatePartyBtn" style="width: 100%; padding: 10px; background-color: #d9b370; border: none; cursor: pointer; font-weight: bold;">
+              Create Party!
+            </button>
+          </div>
+        </div>
+        <div style="height: 80px;">
+        </div>
+        <script src="profile.js">
+        </script>
+  </body>
 
-  <div class="profile-container">
-<!-- 📨 Notification Modal -->
-<div id="notificationModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeNotificationBtn">&times;</span>
-    <h3>Notifications</h3>
-    <div id="notificationList" class="notification-list">
-      <div class="placeholder-box">Loading...</div>
-    </div>
-  </div>
-</div>
-
-
-    <div class="full-name" id="username">Loading...</div>
-    <div class="email" id="email"></div>
-    <div class="bio" id="bio"></div>
-
-    <div>
-      <div class="section-title">Badges</div>
-      <div id="badgesList" class="favorites-grid"></div>
-
-    </div>
-
-    <div>
-      <div class="section-title">Parties</div>
-      <div class="parties-grid" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;" id="partyContainer">
-  <div id="partyList" style="display: contents;"></div>
-  <div class="add-party-circle" id="createPartyBtn" title="Create Party">+</div>
-</div>
-
-      
-    </div>
-
-<div>
-  <div>
-  <div class="section-title">Friends</div>
-  <div id="friendsList" class="friends-grid">
-    <!-- Friend avatars will be injected here -->
-  </div>
-  <button id="removeFriendBtn" style="display: none; margin-top: 10px; background-color: #e06d6d; color: white; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer;">Remove Friend</button>    
-
-<!-- PIXELNAV ---------------------------------------------------------------->
-    
-<nav id="pixelNav">
-  <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-  <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-  <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-  <button id="adminMenuToggle" class="nav-icon" style="display: none;"><img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32" height="32" /></button>
-</nav>
-
-<ul id="adminMenuDropdown" style="
-  display: none;
-  position: fixed;
-  bottom: 60px;
-  right: 35px;
-  background-color: #fffdf7;
-  border: 2px dashed #d9b370;
-  padding: 10px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  list-style: none;
-  z-index: 999;
-">
-  <li><a href="/bradspelsmeny/admin/index.html"><img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></button></a></li>
-  <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></button></a></li>
-  <li><a href="/bradspelsmeny/admin/user-db.html"><img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></button></a></li>
-  <li><a href="/bradspelsmeny/admin/lending.html"><img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48" /></button></a></li>
-  <li><a href="#" onclick="logout()"><img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48" /></button></a></li>
-</ul>
-    
-<!-- Modal -------------------------------------------------------------------->
-<div id="addFriendModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeModalBtn">&times;</span>
-    <h3>Add a Friend</h3>
-    <p>Enter their user ID:</p>
-    <input type="number" id="manualFriendId" placeholder="User ID" />
-    <button id="submitFriendRequest" class="add-friend-btn" style="margin-top: 10px;">Send Request</button>
-  </div>
-</div>
-
-
-
-   <div>
-  <div class="section-title">Game Log</div>
-  <table id="borrowLogTable">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Game</th>
-        <!-- Removed Action and Note columns -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="2" style="text-align:center; padding:1rem;">Loading game log…</td></tr>
-    </tbody>
-  </table>
-</div>
-
-   <div>
-  <div class="section-title">Favorites</div>
-  <div id="favoritesList" class="favorites-grid"></div>
-
-</div>
-
-<div>
-  <div class="section-title">Want to play</div>
-  <div id="wishlistList" class="wishlist-grid"></div>
-</div>
-
-
-    <a href="edit-profile.html" id="editProfileBtn">Edit Profile</a>
-  </div>
-
-  <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications" title="Notifications"  width="58" height="58"/>
-<span id="notificationDot"></span>
-    <!-- 🎖️ Badge Info Modal -->
-<div id="badgeInfoModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeBadgeInfoBtn">&times;</span>
-    <img id="badgeIcon" src="" alt="Badge Icon" style="width: 64px; height: 64px; margin-bottom: 1rem;" />
-    <h3 id="badgeName" style="margin-bottom: 0.5rem;"></h3>
-    <p id="badgeDescription" style="font-size: 0.9rem;"></p>
-  </div>
-</div>
-<div id="badgePopup" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" id="closeBadgePopup">&times;</span>
-    <h3 style="margin-bottom: 8px;">🏅 Badge Unlocked!</h3>
-    <img id="badgePopupImage" src="" alt="Badge" style="width: 64px; height: 64px; border: 2px solid #c9a04e; border-radius: 8px; margin-bottom: 10px;">
-    <div id="badgePopupName" style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;"></div>
-    <div id="badgePopupTime" style="font-size: 0.75rem; color: #a07d3b;"></div>
-  </div>
-</div>
-<!-- Favorite Game Modal -->
-<div id="favoriteGameModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeGameModal('favoriteGameModal')">&times;</span>
-    <img id="favoriteGameModalImg" src="" alt="" style="
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #c9a04e;
-" />
-    <h3 id="favoriteGameModalTitle" style="margin-bottom: 10px;"></h3>
-    <p id="favoriteGameModalDescription" style="font-size: 0.85rem;"></p>
-  </div>
-</div>
-
-<!-- Wishlist Game Modal -->
-<div id="wishlistGameModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeGameModal('wishlistGameModal')">&times;</span>
-    <img id="wishlistGameModalImg" src="" alt="" style="
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #c9a04e;
-" />
-
-    <h3 id="wishlistGameModalTitle" style="margin-bottom: 10px;"></h3>
-    <p id="wishlistGameModalDescription" style="font-size: 0.85rem;"></p>
-  </div>
-</div>
-    <!-- Create Party Modal -->
-<div id="createPartyModal" class="modal" style="display:none;">
-  <div class="modal-content" style="max-width: 400px;">
-    <span class="close-btn" id="closeCreatePartyModal">&times;</span>
-    <h3>Create a New Party</h3>
-
-    <label for="partyNameInput">Party Name:</label><br/>
-    <input type="text" id="partyNameInput" placeholder="Enter party name" style="width: 100%; padding: 6px; margin-bottom: 12px;" />
-
-    <label for="inviteFriendsSelect">Invite Friends:</label><br/>
-    <select id="inviteFriendsSelect" multiple style="width: 100%; height: 120px; margin-bottom: 12px;">
-      <!-- Options inserted dynamically -->
-    </select>
-
-    <button id="submitCreatePartyBtn" style="width: 100%; padding: 10px; background-color: #d9b370; border: none; cursor: pointer; font-weight: bold;">
-      Create Party!
-    </button>
-  </div>
-</div>
-  <div style="height: 80px;"></div>
-
-<script src="profile.js"></script>
-</body>
 </html>
 
 
