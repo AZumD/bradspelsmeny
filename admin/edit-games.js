@@ -106,7 +106,10 @@
       maxPlayers.value = game.max_players || "";
       document.getElementById("time").value = game.playtime || "";
       document.getElementById("age").value = game.age || "";
-      document.getElementById("tags").value = (game.tags || []).join(", ");
+      document.getElementById("tags").value = Array.isArray(game.tags)
+      ? game.tags.join(", ")
+      : (game.tags || "");
+
       document.getElementById("img").value = game.image_url || "";
       document.getElementById("rules").value = game.rules_url || "";
       slowDayOnly.checked = !!game.slow_day_only;
