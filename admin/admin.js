@@ -10,12 +10,25 @@ function parseJwt(token) {
 // 🔒 Immediately check token and role
 (async function () {
   const token = localStorage.getItem("userToken");
-  const decoded = parseJwt(token);
-
-  if (!token || !decoded || decoded.role !== "admin") {
+  
+  if (!token) {
     window.location.href = "/bradspelsmeny/pages/login.html";
     return;
   }
+  
+  const decoded = parseJwt(token);
+  if (!decoded || decoded.role !== "admin") {
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+  
+  // Optional: Check token expiration
+  if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+    localStorage.removeItem("userToken");
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+})();
 
   // Continue only if valid admin
   document.addEventListener("DOMContentLoaded", () => {
