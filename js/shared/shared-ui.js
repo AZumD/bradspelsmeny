@@ -224,3 +224,18 @@ async function updateNotificationIcon() {
     console.error('❌ Failed to update notification icon:', err);
   }
 }
+
+ // Notification modal toggle
+  const notifBtn = document.getElementById('notificationIcon');
+  const notifModal = document.getElementById('notificationModal');
+  const closeNotifBtn = document.getElementById('closeNotificationBtn');
+
+  if (notifBtn && notifModal && closeNotifBtn) {
+    notifBtn.addEventListener('click', () => {
+      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
+      fetchNotifications();
+    });
+    closeNotifBtn.addEventListener('click', () => {
+      notifModal.style.display = 'none';
+    });
+  }
