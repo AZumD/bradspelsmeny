@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     gameList.innerHTML = "";
     gamesToShow.forEach((game, index) => {
       const card = document.createElement("div");
-      card.className = "game-card";
+      card.className = "section-title";
 
       const header = document.createElement("div");
       header.className = "game-header";
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await fetchGames();
     }
   })();
-}); // <- This closes the DOMContentLoaded
+}); 
 
-})(); // <- THIS is what you're missing!
+})();
 
