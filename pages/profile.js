@@ -460,7 +460,7 @@ function closeGameModal(modalId) {
 function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
   card.className = 'game-entry';
-  const gameTitle = game.title || game.name || 'Untitled';
+  const gameTitle = game.title_en || game.name || 'Untitled';
   const imageUrl = /^https?:/.test(game.img || game.thumbnail_url)
     ? game.img || game.thumbnail_url
     : `../${game.img || game.thumbnail_url || ''}`;
