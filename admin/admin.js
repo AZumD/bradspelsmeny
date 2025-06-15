@@ -34,9 +34,14 @@ function parseJwt(token) {
 })();
 
   // Continue only if valid admin
-  document.addEventListener("DOMContentLoaded", () => {
+ document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded started");
+    
     initPixelNav(); // 🧩 From shared-ui.js
-    updateNotificationIcon(); // 🔔 Just update icon on load
+    console.log("initPixelNav completed");
+    
+    updateNotificationIcon(); // 🔔 Just update icon on load  
+    console.log("updateNotificationIcon completed");
     setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
     fetchStats();
     fetchOrders();
