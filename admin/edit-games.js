@@ -107,22 +107,64 @@
       document.getElementById("time").value = game.playtime || "";
       document.getElementById("age").value = game.age || "";
       document.getElementById("tags").value = Array.isArray(game.tags)
-      ? game.tags.join(", ")
-      : (game.tags || "");
+        ? game.tags.join(", ")
+        : (game.tags || "");
 
       document.getElementById("img").value = game.image_url || "";
       document.getElementById("rules").value = game.rules_url || "";
       slowDayOnly.checked = !!game.slow_day_only;
       trustedOnly.checked = !!game.trusted_only;
       membersOnly.checked = !!game.members_only;
-      staffPicks.value = Array.isArray(game.staff_picks)
-      ? game.staff_picks.join(", ")
-      : (game.staff_picks || "");
+      staffPicks.value = game.staff_picks || "";
       minTableSize.value = game.min_table_size || "";
       conditionRatingValue.value = game.condition_rating || 0;
 
       updateStars(game.condition_rating || 0);
     }
+
+    gameForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        title_sv: titleInput.value,
+        description: descSvInput.value,
+        description_en: descEnInput.value,
+        min_players: parseInt(minPlayers.value) || null,
+        max_players: parseInt(maxPlayers.value) || null,
+        playtime: document.getElementById("time").value,
+        age: document.getElementById("age").value,
+        tags: document.getElementById("tags").value,
+        image_url: document.getElementById("img").value,
+        rules_url: document.getElementById("rules").value,
+        slow_day_only: slowDayOnly.checked,
+        trusted_only: trustedOnly.checked,
+        members_only: membersOnly.checked,
+        staff_picks: staffPicks.value,
+        min_table_size: minTableSize.value,
+        condition_rating: parseInt(conditionRatingValue.value) || 0,
+      };
+
+      try {
+        const method = editingIndex !== null ? "PUT" : "POST";
+        const endpoint = editingIndex !== null ? `${API_BASE}/games/${games[editingIndex].id}` : `${API_BASE}/games`;
+
+        const res = await fetch(endpoint, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${USER_TOKEN}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error("Failed to save game");
+
+        gameModal.style.display = "none";
+        await fetchGames();
+      } catch (err) {
+        alert("Kunde inte spara spelet.");
+        console.error(err);
+      }
+    });
 
     document.querySelectorAll("#conditionRating .star").forEach((star) => {
       star.addEventListener("click", () => {
