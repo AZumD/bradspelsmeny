@@ -10,81 +10,6 @@ function parseJwt(token) {
     return null;
   }
 }
-
-// 🔒 Immediately check token and role
-(async function () {
-  const token = localStorage.getItem("userToken");
-  
-  if (!token) {
-    window.location.href = "/bradspelsmeny/pages/login.html";
-    return;
-  }
-  
-  const decoded = parseJwt(token);
-  if (!decoded || decoded.role !== "admin") {
-    window.location.href = "/bradspelsmeny/pages/login.html";
-    return;
-  }
-  
-  // Optional: Check token expiration
-  if (decoded.exp && Date.now() >= decoded.exp * 1000) {
-    localStorage.removeItem("userToken");
-    window.location.href = "/bradspelsmeny/pages/login.html";
-    return;
-  }
-})();
-
-  // Continue only if valid admin
- document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOMContentLoaded started");
-    
-    initPixelNav(); // 🧩 From shared-ui.js
-    console.log("initPixelNav completed");
-    
-    updateNotificationIcon(); // 🔔 Just update icon on load  
-    console.log("updateNotificationIcon completed");
-    setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
-    fetchStats();
-    fetchOrders();
-    setInterval(fetchOrders, 5000);
-    console.log("✅ Admin dashboard loaded.");
-    
-    const adminToggle = document.getElementById("adminMenuToggle");
-    const adminDropdown = document.getElementById("adminMenuDropdown");
-    const logoutIcon = document.getElementById("logoutIcon");
-
-    console.log("adminToggle:", adminToggle);
-    console.log("adminDropdown:", adminDropdown);
-    console.log("getUserRole():", getUserRole());
-   
-   if (getUserRole() === "admin" && adminToggle && adminDropdown) {
-    console.log("Entering admin menu setup");
-    adminToggle.style.display = "inline-block";
-    if (logoutIcon) logoutIcon.style.display = "none";
-    
-    adminToggle.addEventListener("click", () => {
-        adminDropdown.style.display =
-            adminDropdown.style.display === "none" ? "block" : "none";
-    });
-    
-    document.addEventListener("click", (e) => {
-        if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-            adminDropdown.style.display = "none";
-        }
-    });
-} else {
-    console.log("Admin menu setup condition failed");
-}
-  // Modal click-to-close functionality
-  window.addEventListener('click', (e) => {
-    document.querySelectorAll('.modal').forEach((modal) => {
-      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
-        modal.style.display = 'none';
-      }
-    });
-  });
-});
-
 // 🔄 Refresh token
 async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
@@ -287,3 +212,56 @@ async function clearAllOrders() {
     console.error("❌ Failed to clear orders:", err);
   }
 }
+
+// 🔒 Immediately check token and role
+(async function () {
+  const token = localStorage.getItem("userToken");
+  
+  if (!token) {
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+  
+  const decoded = parseJwt(token);
+  if (!decoded || decoded.role !== "admin") {
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+  
+  // Optional: Check token expiration
+  if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+    localStorage.removeItem("userToken");
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+})();
+
+  // Continue only if valid admin
+ document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded started");
+    
+    initPixelNav(); // 🧩 From shared-ui.js
+    console.log("initPixelNav completed");
+    
+    updateNotificationIcon(); // 🔔 Just update icon on load  
+    console.log("updateNotificationIcon completed");
+    setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
+    fetchStats();
+    fetchOrders();
+    setInterval(fetchOrders, 5000);
+    console.log("✅ Admin dashboard loaded.");
+    
+    const adminToggle = document.getElementById("adminMenuToggle");
+    const adminDropdown = document.getElementById("adminMenuDropdown");
+    const logoutIcon = document.getElementById("logoutIcon");
+   
+  // Modal click-to-close functionality
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
+  });
+});
+
