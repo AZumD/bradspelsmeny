@@ -1,5 +1,3 @@
-I think this was the last working version, could you take a look and see what we might have borked on the way?
-
 let games = [];
 let editingIndex = null;
 
