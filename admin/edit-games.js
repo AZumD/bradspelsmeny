@@ -151,26 +151,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function deleteGame(index) {
-    const id = games[index].id;
-    if (!confirm("Vill du verkligen ta bort spelet?")) return;
-    try {
-      const res = await fetch(`${API_BASE}/games/${id}`, {
-  method: "DELETE",
-  headers: {
-    Authorization: `Bearer ${USER_TOKEN}`,
-  },
-});
-
-
-        },
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      await fetchGames();
-    } catch (err) {
-      alert("Kunde inte ta bort spel.");
-      console.error(err);
-    }
+  const id = games[index].id;
+  if (!confirm("Vill du verkligen ta bort spelet?")) return;
+  try {
+    const res = await fetch(`${API_BASE}/games/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${USER_TOKEN}`,
+      },
+    });
+    if (!res.ok) throw new Error("Delete failed");
+    await fetchGames();
+  } catch (err) {
+    alert("Kunde inte ta bort spel.");
+    console.error(err);
   }
+}
+
 
   if (searchBar) {
     searchBar.addEventListener("input", (e) => {
