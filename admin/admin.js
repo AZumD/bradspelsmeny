@@ -81,6 +81,11 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   return res;
 }
 
+    function goTo(path) {
+      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+      window.location.href = base + path;
+    }
+
 // 📊 Fetch stats
 async function fetchStats() {
   try {
