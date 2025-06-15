@@ -549,6 +549,49 @@ async function checkFriendStatus(viewedUserId) {
   }
 }
 
+// ------------ PARTY CREATION MODALS & HANDLERS ------------
+
+function openCreatePartyModal() {
+  const modal = document.getElementById('createPartyModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeCreatePartyModal() {
+  const modal = document.getElementById('createPartyModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function submitCreateParty() {
+  const nameInput = document.getElementById('partyNameInput');
+  const emojiInput = document.getElementById('partyEmojiInput');
+  const name = nameInput?.value.trim();
+  const emoji = emojiInput?.value.trim() || '🎲';
+  if (!name) {
+    alert('Please enter a party name.');
+    return;
+  }
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/party`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, emoji })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(`Failed to create party: ${err.error || res.statusText}`);
+      return;
+    }
+    const data = await res.json();
+    alert(`Party created! Invite code: ${data.inviteCode}`);
+    closeCreatePartyModal();
+    fetchUserParties(getUserIdFromToken());
+  } catch (err) {
+    console.error('Error creating party:', err);
+    alert('Error creating party. See console for details.');
+  }
+}
+
+
 // ------------ INITIAL LOAD ------------
 
 document.addEventListener('DOMContentLoaded', async () => {
