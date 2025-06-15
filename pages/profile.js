@@ -84,8 +84,6 @@ function getUserIdFromToken() {
   }
 }
 
-const isAdmin = localStorage.getItem("role") === "admin"; // or decode from JWT if needed
-
 //PIXELNAV=========================================================================
 
 function goTo(path) {
