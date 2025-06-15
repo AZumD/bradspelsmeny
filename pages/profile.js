@@ -29,7 +29,7 @@ if (isAdmin) {
   adminToggle?.remove(); // Remove hamburger if user is not admin
 }
 
-===============================================================================
+//=============================================================================
 
 function getRefreshToken() {
   return localStorage.getItem('refreshToken');
