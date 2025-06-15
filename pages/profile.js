@@ -95,17 +95,25 @@ function logout() {
   clearTokens();
   window.location.href = '/bradspelsmeny/pages/login.html';
 }
-
-const logoutBtn = document.getElementById("logoutBtn");
 const adminToggle = document.getElementById("adminMenuToggle");
-const adminMenu = document.getElementById("adminMenu");
+  const adminDropdown = document.getElementById("adminMenuDropdown");
+  const logoutIcon = document.getElementById("logoutIcon");
 
-if (isAdmin) {
-  logoutBtn?.remove();
-  adminToggle.style.display = "inline-block";
-} else {
-  adminToggle?.remove();
-}
+  if (isAdmin) {
+    adminToggle.style.display = "inline-block";
+    logoutIcon.style.display = "none";
+
+    adminToggle.addEventListener("click", () => {
+      adminDropdown.style.display = adminDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    // Optional: close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
+        adminDropdown.style.display = "none";
+      }
+    });
+  }
 
 //NOTIFICATIONS====================================================================
 
