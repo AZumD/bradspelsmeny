@@ -51,6 +51,32 @@
   transform: scale(1.2);
 }
 
+
+    .admin-popup-menu {
+  position: fixed;
+  bottom: 3.5rem;
+  right: 1rem;
+  background: #fffdf7;
+  border: 2px dashed #c9a04e;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  z-index: 9999;
+}
+
+.admin-popup-menu a,
+.admin-popup-menu button {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #3c2415;
+  text-decoration: none;
+  cursor: pointer;
+}
+
     .profile-container {
       background: rgba(249, 246, 242, 0.95);
       border-radius: 10px;
@@ -496,10 +522,30 @@
 <nav id="pixelNav">
   <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
   <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-  <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-  <button id="adminMenuToggle" style="display: none;">🍔</button>
+  <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
+  <button id="adminMenuToggle" class="nav-icon" style="display: none;">🍔</button>
 </nav>
 
+<ul id="adminMenuDropdown" style="
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  right: 10px;
+  background-color: #fffdf7;
+  border: 2px dashed #d9b370;
+  padding: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  list-style: none;
+  z-index: 999;
+">
+  <li><a href="/admin/index.html">🛠 Admin Home</a></li>
+  <li><a href="/admin/edit-games.html">🎲 Edit Games</a></li>
+  <li><a href="/admin/user-db.html">👥 User DB</a></li>
+  <li><a href="/admin/lending.html">📦 Lending</a></li>
+  <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+</ul>
+    
 <!-- Modal -------------------------------------------------------------------->
 <div id="addFriendModal" class="modal" style="display:none;">
   <div class="modal-content">
