@@ -6,44 +6,6 @@
   <title>Redigera Spel</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      font-family: 'Press Start 2P', 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fffdf7;
-      color: #5a2a0c;
-      user-select: none;
-    }
-
-    #maincontain {
-      background: rgba(249, 246, 242, 0.95);
-      border-radius: 10px;
-      padding: 20px;
-      border: 2px dashed #d9b370;
-      box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    * {
-      max-width: 100%;
-      box-sizing: border-box;
-      overflow-wrap: break-word;
-    }
-
-    h1 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.2rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #5a2a0c;
-      text-shadow: 1px 1px 0 #d9b370;
-    }
-
     #searchBar {
       width: 100%;
       padding: 0.5rem;
@@ -54,14 +16,15 @@
       font-family: 'Press Start 2P', monospace;
     }
 
-    .game-card {
+    /*.game-card {
       background: #fff4d9;
       border: 2px solid #3c2415;
       padding: 0.5rem;
       margin-bottom: 1rem;
       border-radius: 6px;
       box-shadow: 4px 4px 0 #c19761;
-    }
+    }*/
+    
 
     .game-header {
   display: flex;
@@ -90,16 +53,6 @@
       justify-content: center;
       align-items: center;
     }
-
-    .modal-content {
-      background: #fffaf0;
-      border: 2px solid #3c2415;
-      padding: 1rem;
-      border-radius: 6px;
-      width: 90%;
-      max-width: 500px;
-    }
-
     .modal-content input,
     .modal-content textarea,
     .modal-content select {
@@ -125,27 +78,6 @@
       text-align: center;
       margin-top: 1rem;
     }
-
-    #pixelNav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #fffdf7;
-      border-top: 2px dashed #d9b370;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
-      z-index: 999;
-    }
-
-    #pixelNav button {
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-    }
     .game-title {
   flex: 1 1 auto;
   min-width: 0;
@@ -154,17 +86,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-    .nav-icon {
-      width: 32px;
-      height: 32px;
-      image-rendering: pixelated;
-      transition: transform 0.2s ease;
-    }
-
-    .nav-icon:hover {
-      transform: scale(1.2);
-    }
   </style>
 </head>
 <body>
@@ -262,7 +183,8 @@
       <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" />
     </button>
   </nav>
- 
+  <link rel="stylesheet" href="../css/shared-ui.css">
+  <link rel="stylesheet" href="../css/main.css">
   <script defer src="edit-games.js"></script>
   <script>
     function logout() {
