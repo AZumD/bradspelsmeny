@@ -118,37 +118,7 @@
       overflow-y: auto;
     }
 
-    #pixelNav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #fffdf7;
-      border-top: 2px dashed #d9b370;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      box-shadow: 0 -2px 6px rgba(90, 42, 12, 0.2);
-      z-index: 999;
-    }
-
-    #pixelNav button {
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    .nav-icon {
-      width: 32px;
-      height: 32px;
-      image-rendering: pixelated;
-      transition: transform 0.2s ease;
-    }
-
-    .nav-icon:hover {
-      transform: scale(1.2);
-    }
+   
      h1 {
       font-family: 'Press Start 2P', monospace;
       font-size: 1.2rem;
@@ -189,29 +159,87 @@
     </div>
   </main>
 
-  <nav id="pixelNav">
-    <button onclick="goTo('/index.html')">
-      <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" />
-    </button>
-    <button onclick="goTo('/pages/profile.html')">
-      <img src="../img/icons/icon-profile.webp" alt="Games" class="nav-icon" />
-    </button>
-    <button onclick="logout()">
-      <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" />
-    </button>
-  </nav>
+  <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
+        title="Notifications" width="58" height="58" />
+        <span id="notificationDot"></span>
+  <div id="notificationModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close-btn" id="closeNotificationBtn">
+            &times;
+          </span>
+          <h3>
+            Notifications
+          </h3>
+          <div id="notificationList" class="notification-list">
+            <div class="placeholder-box">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </div>
+ <nav id="pixelNav">
+            <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+            <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+            onclick="goTo('/pages/profile.html')">
+            <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+            class="nav-icon" onclick="logout()">
+            <button id="adminMenuToggle" class="nav-icon" style="display: none;">
+              <img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+              height="32" />
+            </button>
+          </nav>
+          <ul id="adminMenuDropdown" style="
+          display: none;
+          position: fixed;
+          bottom: 60px;
+          right: 35px;
+          background-color: #fffdf7;
+          border: 2px dashed #d9b370;
+          padding: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          list-style: none;
+          z-index: 999;
+          ">
+            <li>
+              <a href="/bradspelsmeny/admin/index.html">
+                <img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/edit-games.html">
+                <img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+                height="48" />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/user-db.html">
+                <img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/lending.html">
+                <img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="logout()">
+                <img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+          </ul>
+  <div style="height: 60px;"></div>
+  <link rel="stylesheet" href="../css/shared-ui.css">
+  <script src="../js/shared/shared-ui.js"></script>
 <script defer src="admin.js"></script>
-  <script>
-    function logout() {
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/pages/login.html";
-    }
-
-    function goTo(path) {
-      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-      window.location.href = base + path;
-    }
-  </script>
 </body>
 </html>
