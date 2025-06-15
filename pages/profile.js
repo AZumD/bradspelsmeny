@@ -313,8 +313,7 @@ async function updateNotificationIcon() {
 }
 
 //PARTIES==========================================================================
-async
-function fetchUserParties(viewedUserId = null) {
+async function fetchUserParties(viewedUserId = null) {
   const loggedInUserId = getUserIdFromToken();
   const isOwnProfile = !viewedUserId || String(viewedUserId) === String(loggedInUserId);
   const endpoint = isOwnProfile ? `$ {
@@ -447,8 +446,7 @@ fetchBadges(userIdToFetch);fetchUserParties(userIdToFetch);
 }
 }
 
-async
-function loadFriends(viewUserId = null) {
+async function loadFriends(viewUserId = null) {
   const targetUserId = viewUserId || getUserIdFromToken();
   const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
   try {
@@ -499,8 +497,7 @@ function loadFriends(viewUserId = null) {
 
 // Call this in fetchProfile() after loading basic user data:
 // fetchFavoritesAndWishlist(userIdToFetch);
-async
-function fetchFavoritesAndWishlist(userId) {
+async function fetchFavoritesAndWishlist(userId) {
   console.log('🔍 fetchFavoritesAndWishlist called with userId:', userId);
 
   try {
@@ -774,8 +771,7 @@ function createGameCard(game, minimal = false) {
   return card;
 }
 
-async
-function fetchBadges(userId) {
+async function fetchBadges(userId) {
   try {
     const res = await fetchWithAuth(`$ {
       API_BASE
@@ -864,8 +860,7 @@ async function maybeShowAddFriendButton(currentUserId, profileId) {
   }
 }
 
-async
-function checkFriendStatus(viewedUserId) {
+async function checkFriendStatus(viewedUserId) {
   const myId = getUserIdFromToken();
   if (!viewedUserId || !myId || viewedUserId === myId) return;
 
@@ -930,8 +925,7 @@ function getPartyIdFromUrl() {
   return params.get('id');
 }
 
-async
-function fetchPartyProfile() {
+async function fetchPartyProfile() {
   const id = getPartyIdFromUrl();
   if (!id) {
     alert('Missing party ID');
@@ -1148,7 +1142,7 @@ async function submitCreateParty() {
   // Remove friend
   const removeBtn = document.getElementById('removeFriendBtn');
   if (removeBtn) {
-    removeBtn.addEventListener('click', async () => {
+    removeBtn.addEventListener('click', dc () => {
       if (!confirm('Are you sure you want to remove this friend?')) return;
 
       try {
