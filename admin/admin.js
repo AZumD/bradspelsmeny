@@ -1,20 +1,3 @@
-// 🔒 Immediately check token and role
-const token = localStorage.getItem("userToken");
-const decoded = parseJwt(token);
-
-if (!token || !decoded || decoded.role !== "admin") {
-  window.location.href = "/bradspelsmeny/pages/login.html";
-}
-
-// ✅ DOM logic after auth check
-document.addEventListener("DOMContentLoaded", () => {
-  fetchStats();
-  fetchOrders();
-  setInterval(fetchOrders, 5000);
-});
-
-console.log("✅ Admin dashboard loaded.");
-
 // 🔍 Helper: parse JWT
 function parseJwt(token) {
   try {
@@ -23,6 +6,27 @@ function parseJwt(token) {
     return null;
   }
 }
+
+// 🔒 Immediately check token and role
+(async function () {
+  const token = localStorage.getItem("userToken");
+  const decoded = parseJwt(token);
+
+  if (!token || !decoded || decoded.role !== "admin") {
+    window.location.href = "/bradspelsmeny/pages/login.html";
+    return;
+  }
+
+  // Continue only if valid admin
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchStats();
+    fetchOrders();
+    setInterval(fetchOrders, 5000);
+    console.log("✅ Admin dashboard loaded.");
+  });
+
+
+})();
 
 // 🔄 Refresh token
 async function refreshToken() {
