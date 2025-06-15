@@ -1,20 +1,73 @@
-import { getAccessToken, fetchWithAuth, isTokenExpired, clearTokens, getUserRole, getUserIdFromToken } from './api.js';
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
-//UTILITY======================================================================================
-
-export function goTo(path) {
+// Utility
+function getUserRole() {
+  const token = localStorage.getItem("userToken");
+  if (!token) return null;
+  try {
+    return JSON.parse(atob(token.split('.')[1])).role || null;
+  } catch {
+    return null;
+  }
+}
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+function getAccessToken() {
+  return localStorage.getItem('userToken');
+}
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
+}
+function clearTokens() {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('refreshToken');
+}
+function goTo(path) {
   const base = window.location.hostname === 'localhost'
     ? ''
     : '/bradspelsmeny';
   window.location.href = window.location.origin + base + path;
 }
-export function logout() {
+function logout() {
   clearTokens();
   window.location.href = '/bradspelsmeny/pages/login.html';
 }
+async function fetchWithAuth(url, options = {}) {
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+  if (!accessToken || !refreshToken) throw new Error('User not authenticated');
 
-//PIXELNAV=====================================================================================
-export function initPixelNav() {
+  options.headers = options.headers || {};
+  options.headers['Authorization'] = `Bearer ${accessToken}`;
+
+  let response = await fetch(url, options);
+  if (response.status === 401 || response.status === 403) {
+    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (refreshResponse.ok) {
+      const data = await refreshResponse.json();
+      if (data.token) {
+        localStorage.setItem('userToken', data.token);
+        options.headers['Authorization'] = `Bearer ${data.token}`;
+        return fetch(url, options);
+      }
+    }
+  }
+  return response;
+}
+
+// PixelNav Setup
+function initPixelNav() {
   const nav = document.getElementById('pixelNav');
   if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
     nav.style.display = 'flex';
@@ -41,8 +94,8 @@ export function initPixelNav() {
   }
 }
 
-//NOTIFICATIONS================================================================================
-export async function fetchNotifications() {
+// Notifications
+async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
@@ -129,7 +182,7 @@ export async function fetchNotifications() {
   }
 }
 
-export function formatNotificationText(n) {
+function formatNotificationText(n) {
   switch (n.type) {
     case 'friend_request':
       return `👤 <strong>${n.sender_name || 'Someone'}</strong> sent you a friend request.`;
@@ -142,7 +195,7 @@ export function formatNotificationText(n) {
   }
 }
 
-export function showBadgePopup(name, iconUrl, time) {
+function showBadgePopup(name, iconUrl, time) {
   const popup = document.getElementById('badgePopup');
   if (!popup) return;
 
@@ -157,7 +210,7 @@ export function showBadgePopup(name, iconUrl, time) {
   }, 6000);
 }
 
-export async function updateNotificationIcon() {
+async function updateNotificationIcon() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
@@ -172,45 +225,5 @@ export async function updateNotificationIcon() {
     }
   } catch (err) {
     console.error('❌ Failed to update notification icon:', err);
-  }
-}
-
-//Handles pixelnav and notification refresh.====================================================
-
-export function initSharedUI() {
-  initPixelNav();
-  updateNotificationIcon();
-  setInterval(updateNotificationIcon, 60000);
-}
-
-//Close buttons for both badge popups.==========================================================
-
-export function initBadgeModals() {
-  document.getElementById("closeBadgePopup")?.addEventListener('click', () => {
-    document.getElementById("badgePopup").style.display = "none";
-  });
-
-  document.getElementById("closeBadgeInfoBtn")?.addEventListener('click', () => {
-    const modal = document.getElementById("badgeInfoModal");
-    if (modal) modal.style.display = "none";
-  });
-}
-
-//Notification modal open/close toggle.=========================================================
-
-export function initNotificationModal() {
-  const notifBtn = document.getElementById("notificationIcon");
-  const notifModal = document.getElementById("notificationModal");
-  const closeNotifBtn = document.getElementById("closeNotificationBtn");
-
-  if (notifBtn && notifModal && closeNotifBtn) {
-    notifBtn.addEventListener('click', () => {
-      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
-      fetchNotifications();
-    });
-
-    closeNotifBtn.addEventListener('click', () => {
-      notifModal.style.display = 'none';
-    });
   }
 }
