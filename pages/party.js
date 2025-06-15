@@ -585,9 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal').forEach((modal) => {
       if (e.target === modal && getComputedStyle(modal).display !== 'none') {
         modal.style.display = 'none';
-      }
-    }
-  }
+    });
 });
 
 
