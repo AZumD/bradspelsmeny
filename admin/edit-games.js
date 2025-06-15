@@ -1,55 +1,57 @@
-let games = [];
-let editingIndex = null;
+(() => {
+  let games = [];
+  let editingIndex = null;
 
-const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
-let ADMIN_TOKEN = null;
+  const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
+  let USER_TOKEN = null;
 
-async function refreshAdminToken() {
-  const refreshToken = localStorage.getItem("adminRefreshToken");
-  if (!refreshToken) return false;
+  async function refreshUserToken() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) return false;
 
-  try {
-    const res = await fetch(${API_BASE}/admin/refresh-token, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
+    try {
+      const res = await fetch(`${API_BASE}/admin/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
 
-    if (!res.ok) return false;
+      if (!res.ok) return false;
 
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("adminToken", data.token);
-      ADMIN_TOKEN = data.token;
-      return true;
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem("userToken", data.token);
+        USER_TOKEN = data.token;
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
     }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-async function guardAdminSession() {
-  const token = localStorage.getItem("adminToken");
-  const refreshToken = localStorage.getItem("adminRefreshToken");
-
-  if (!token && !refreshToken) {
-    window.location.href = "login.html";
-    return false;
   }
 
-  if (!token && refreshToken) {
-    const refreshed = await refreshAdminToken();
-    if (!refreshed) {
+  async function guardAdminSession() {
+    const token = localStorage.getItem("userToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!token && !refreshToken) {
       window.location.href = "login.html";
       return false;
     }
-  } else {
-    ADMIN_TOKEN = token;
+
+    if (!token && refreshToken) {
+      const refreshed = await refreshUserToken();
+      if (!refreshed) {
+        window.location.href = "login.html";
+        return false;
+      }
+    } else {
+      USER_TOKEN = token;
+    }
+
+    return true;
   }
 
-  return true;
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   const gameModal = document.getElementById("gameModal");
