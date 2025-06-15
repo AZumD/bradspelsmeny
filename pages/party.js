@@ -1,18 +1,10 @@
 // party.js
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
-let loadedMessageIds = new Set();
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
+
+let loadedMessageIds = new Set();
 function getAccessToken() {
   return localStorage.getItem('userToken');
-}
-function goTo(path) {
-  const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-  window.location.href = base + path;
-}
-
-function logout() {
-  clearTokens(); // Assuming this function already exists
-  window.location.href = '/pages/login.html';
 }
 
 let allGames = [];
@@ -579,9 +571,21 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  initPixelNav(); // 🧩 From shared-ui.js
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
   fetchPartyData();
   loadMessages();
   loadAllGames();
+
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId;
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
 });
 
 
