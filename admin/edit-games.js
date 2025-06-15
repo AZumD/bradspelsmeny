@@ -179,9 +179,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  (async () => {
+    (async () => {
     if (await guardAdminSession()) {
       await fetchGames();
     }
   })();
-});
+}); // <- This closes the DOMContentLoaded
+
+})(); // <- THIS is what you're missing!
+
