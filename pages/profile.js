@@ -1,6 +1,21 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
+//CHECKADMIN=======================================================================
+
+function getUserRole() {
+  const token = localStorage.getItem("userToken");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+}
+
+const isAdmin = getUserRole() === "admin";
+
 //TOKENHANDLING====================================================================
 
 function getAccessToken() {
