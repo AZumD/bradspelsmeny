@@ -1,70 +1,20 @@
+import { getAccessToken, fetchWithAuth, isTokenExpired, clearTokens, getUserRole, getUserIdFromToken } from './api.js';
+
 //UTILITY======================================================================================
-function getUserRole() {
-  const token = localStorage.getItem("userToken");
-  if (!token) return null;
-  try {
-    return JSON.parse(atob(token.split('.')[1])).role || null;
-  } catch {
-    return null;
-  }
-}
-function isTokenExpired(token) {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.exp * 1000 < Date.now();
-  } catch {
-    return true;
-  }
-}
-function getAccessToken() {
-  return localStorage.getItem('userToken');
-}
-function getRefreshToken() {
-  return localStorage.getItem('refreshToken');
-}
-function clearTokens() {
-  localStorage.removeItem('userToken');
-  localStorage.removeItem('refreshToken');
-}
-function goTo(path) {
+
+export function goTo(path) {
   const base = window.location.hostname === 'localhost'
     ? ''
     : '/bradspelsmeny';
   window.location.href = window.location.origin + base + path;
 }
-function logout() {
+export function logout() {
   clearTokens();
   window.location.href = '/bradspelsmeny/pages/login.html';
 }
-async function fetchWithAuth(url, options = {}) {
-  const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-  if (!accessToken || !refreshToken) throw new Error('User not authenticated');
-
-  options.headers = options.headers || {};
-  options.headers['Authorization'] = `Bearer ${accessToken}`;
-
-  let response = await fetch(url, options);
-  if (response.status === 401 || response.status === 403) {
-    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (refreshResponse.ok) {
-      const data = await refreshResponse.json();
-      if (data.token) {
-        localStorage.setItem('userToken', data.token);
-        options.headers['Authorization'] = `Bearer ${data.token}`;
-        return fetch(url, options);
-      }
-    }
-  }
-  return response;
-}
 
 //PIXELNAV=====================================================================================
-function initPixelNav() {
+export function initPixelNav() {
   const nav = document.getElementById('pixelNav');
   if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
     nav.style.display = 'flex';
@@ -92,7 +42,7 @@ function initPixelNav() {
 }
 
 //NOTIFICATIONS================================================================================
-async function fetchNotifications() {
+export async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
@@ -179,7 +129,7 @@ async function fetchNotifications() {
   }
 }
 
-function formatNotificationText(n) {
+export function formatNotificationText(n) {
   switch (n.type) {
     case 'friend_request':
       return `👤 <strong>${n.sender_name || 'Someone'}</strong> sent you a friend request.`;
@@ -192,7 +142,7 @@ function formatNotificationText(n) {
   }
 }
 
-function showBadgePopup(name, iconUrl, time) {
+export function showBadgePopup(name, iconUrl, time) {
   const popup = document.getElementById('badgePopup');
   if (!popup) return;
 
@@ -207,7 +157,7 @@ function showBadgePopup(name, iconUrl, time) {
   }, 6000);
 }
 
-async function updateNotificationIcon() {
+export async function updateNotificationIcon() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
@@ -227,7 +177,7 @@ async function updateNotificationIcon() {
 
 //Handles pixelnav and notification refresh.====================================================
 
-function initSharedUI() {
+export function initSharedUI() {
   initPixelNav();
   updateNotificationIcon();
   setInterval(updateNotificationIcon, 60000);
@@ -235,7 +185,7 @@ function initSharedUI() {
 
 //Close buttons for both badge popups.==========================================================
 
-function initBadgeModals() {
+export function initBadgeModals() {
   document.getElementById("closeBadgePopup")?.addEventListener('click', () => {
     document.getElementById("badgePopup").style.display = "none";
   });
@@ -248,7 +198,7 @@ function initBadgeModals() {
 
 //Notification modal open/close toggle.=========================================================
 
-function initNotificationModal() {
+export function initNotificationModal() {
   const notifBtn = document.getElementById("notificationIcon");
   const notifModal = document.getElementById("notificationModal");
   const closeNotifBtn = document.getElementById("closeNotificationBtn");
