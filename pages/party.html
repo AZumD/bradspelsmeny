@@ -255,11 +255,66 @@
         <div class="section-title">Invite Code</div>
       <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
 </div>
-  <nav id="pixelNav">
-  <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-  <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-  <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-</nav>
+ <nav id="pixelNav">
+            <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+            <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+            onclick="goTo('/pages/profile.html')">
+            <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+            class="nav-icon" onclick="logout()">
+            <button id="adminMenuToggle" class="nav-icon" style="display: none;">
+              <img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+              height="32" />
+            </button>
+          </nav>
+          <ul id="adminMenuDropdown" style="
+          display: none;
+          position: fixed;
+          bottom: 60px;
+          right: 35px;
+          background-color: #fffdf7;
+          border: 2px dashed #d9b370;
+          padding: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          list-style: none;
+          z-index: 999;
+          ">
+            <li>
+              <a href="/bradspelsmeny/admin/index.html">
+                <img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/edit-games.html">
+                <img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+                height="48" />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/user-db.html">
+                <img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="/bradspelsmeny/admin/lending.html">
+                <img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="logout()">
+                <img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+                />
+                </button>
+              </a>
+            </li>
+          </ul>
   <div style="height: 60px;"></div>
 <!-- Invite to Party Modal -->
 <div id="inviteToPartyModal" class="modal" style="display:none;">
