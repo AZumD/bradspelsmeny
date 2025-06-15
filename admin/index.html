@@ -7,72 +7,7 @@
   <title>Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      font-family: 'Press Start 2P', 'Segoe UFI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fffdf7;
-      color: #5a2a0c;
-      user-select: none;
-    }
-
-    .maincontain {
-  background: rgba(249, 246, 242, 0.95);
-  border-radius: 10px;
-  padding: 20px;
-  border: 2px dashed #d9b370;
-  box-shadow: 2px 2px 6px rgba(90, 42, 12, 0.15);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-}
-
-* {
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: break-word;
-}
-
-    .modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background-color: rgba(0,0,0,0.4);
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background-color: #fffdf7;
-  border: 2px dashed #d9b370;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 300px; width: 80%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  text-align: center;
-}
-.close-btn {
-  float: right;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #5a2a0c;
-}
-.placeholder-box { /* …and your loading-state styling… */ }
-
-    .dashboard {
-      padding: 1.5rem 1rem 4rem;
-    }
-
-    .tile {
+    /*.section-title {
       background: rgba(249, 246, 242, 0.95);
       position: relative;
       border-top: 2px dashed #d9b370;
@@ -83,56 +18,33 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      width: calc(100% + 40px); /* counteracts padding: 20px */
+      width: calc(100% + 40px); 
       max-width: 600px;
       margin-left: -20px;
       margin-right: -20px;
-      font-family: Press Start 2P, Verdana, Geneva, Tahoma, sans-serif; /* more readable font */
+      font-family: Press Start 2P, Verdana, Geneva, Tahoma, sans-serif;
       font-size: 0.8rem;
       color: #3c2415;
       box-sizing: border-box;
-    }
+    } */
 
-    .tile h2 {
+    .section-title h2 {
       font-size: 0.75rem;
       margin-bottom: 0.5rem;
     }
 
-    .tile .value {
+    .section-title .value {
       font-size: 2rem;
       font-weight: bold;
     }
 
-    .tile.large .value {
+    .section-title.large .value {
       font-size: 1rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      padding: 0 1rem 2rem;
-    }
-
-    .actions a {
-      background: #e6b35c;
-      padding: 0.6rem;
-      text-decoration: none;
-      color: #3c2415;
-      font-weight: bold;
-      border: 2px solid #3c2415;
-      border-radius: 6px;
-      box-shadow: 4px 4px 0 #c19761;
-      min-width: 140px;
-      text-align: center;
-      line-height: 1.2;
-      font-size: 0.6rem;
-    }
-
+    
     #orderFeed {
       background: #fff9e8;
     /*  border: 2px dashed #d9b370;*/
@@ -145,16 +57,6 @@
       max-height: 200px;
       overflow-y: auto;
     }
-
-   
-     h1 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.2rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #5a2a0c;
-      text-shadow: 1px 1px 0 #d9b370;
-    }
   </style>
 </head>
 <body>
@@ -163,17 +65,17 @@
     <div class="maincontain">
     <div id="orderFeed"></div>
 
-    <div class="tile">
+    <div class="section-title">
       <h2>Utlånade spel</h2>
       <div class="value" id="lentOutCount">–</div>
     </div>
 
-    <div class="tile">
+    <div class="section-title">
       <h2>Totalt antal spel</h2>
       <div class="value" id="totalGamesCount">–</div>
     </div>
 
-    <div class="tile large">
+    <div class="section-title large">
       <h2>Mest spelade idag</h2>
       <div class="value">Love Letter</div>
     </div>
@@ -258,6 +160,7 @@
   </main>
   
   <div style="height: 60px;"></div>
+  <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/shared-ui.css">
   <script src="../js/shared/shared-ui.js"></script>
 <script defer src="admin.js"></script>
