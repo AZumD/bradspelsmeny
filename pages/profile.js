@@ -33,8 +33,7 @@ function clearTokens() {
   localStorage.removeItem('refreshToken');
 }
 
-async
-function fetchWithAuth(url, options = {}) {
+async function fetchWithAuth(url, options = {}) {
   let accessToken = getAccessToken();
   const refreshToken = getRefreshToken();
 
