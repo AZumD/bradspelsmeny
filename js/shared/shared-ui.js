@@ -1,6 +1,3 @@
-const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
-const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
-
 // Utility
 function getUserRole() {
   const token = localStorage.getItem("userToken");
