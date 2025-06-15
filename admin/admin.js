@@ -51,8 +51,13 @@ function parseJwt(token) {
     const adminToggle = document.getElementById("adminMenuToggle");
     const adminDropdown = document.getElementById("adminMenuDropdown");
     const logoutIcon = document.getElementById("logoutIcon");
-    
+
+    console.log("adminToggle:", adminToggle);
+    console.log("adminDropdown:", adminDropdown);
+    console.log("getUserRole():", getUserRole());
+   
     if (getUserRole() === "admin" && adminToggle && adminDropdown) {
+          console.log("Entering admin menu setup");
         adminToggle.style.display = "inline-block";
         if (logoutIcon) logoutIcon.style.display = "none";
         
