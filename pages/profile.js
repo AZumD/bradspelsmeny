@@ -277,6 +277,25 @@ function showBadgePopup(name, iconUrl, time) {
   }, 6000);
 }
 
+async function updateNotificationIcon() {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/notifications`);
+    if (!res.ok) throw new Error('Failed to fetch notifications');
+    const notifications = await res.json();
+    const hasUnread = notifications.some(n => !n.read);
+
+    const icon = document.getElementById("notificationIcon");
+    if (icon) {
+      icon.src = hasUnread
+        ? "../img/icons/icon-notif-on.webp"
+        : "../img/icons/icon-notif-off.webp";
+    }
+  } catch (err) {
+    console.error('❌ Failed to update notification icon:', err);
+  }
+}
+
+
 //PARTIES==========================================================================
 
 async function fetchUserParties(viewedUserId = null) {
@@ -997,6 +1016,8 @@ function openCreatePartyModal() {
   if (modal) modal.style.display = "flex";
 }
   document.addEventListener('DOMContentLoaded', async () => {
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh icon every minute
   try {
     await fetchProfile(); // Ensure token is valid and user data is loaded
   } catch (err) {
@@ -1090,9 +1111,10 @@ function openCreatePartyModal() {
 
   if (notifBtn && notifModal && closeNotifBtn) {
     notifBtn.onclick = () => {
-      notifModal.style.display = 'flex';
-      fetchNotifications();
-    };
+  notifModal.style.display = 'flex';
+  fetchNotifications(); // now only used when opening modal
+};
+
 
     closeNotifBtn.onclick = () => notifModal.style.display = 'none';
   }
