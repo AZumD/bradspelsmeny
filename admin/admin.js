@@ -56,22 +56,24 @@ function parseJwt(token) {
     console.log("adminDropdown:", adminDropdown);
     console.log("getUserRole():", getUserRole());
    
-    if (getUserRole() === "admin" && adminToggle && adminDropdown) {
-          console.log("Entering admin menu setup");
-        adminToggle.style.display = "inline-block";
-        if (logoutIcon) logoutIcon.style.display = "none";
-        
-        adminToggle.addEventListener("click", () => {
-            adminDropdown.style.display =
-                adminDropdown.style.display === "none" ? "block" : "none";
-        });
-        
-        document.addEventListener("click", (e) => {
-            if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-                adminDropdown.style.display = "none";
-            }
-        });
-    }
+   if (getUserRole() === "admin" && adminToggle && adminDropdown) {
+    console.log("Entering admin menu setup");
+    adminToggle.style.display = "inline-block";
+    if (logoutIcon) logoutIcon.style.display = "none";
+    
+    adminToggle.addEventListener("click", () => {
+        adminDropdown.style.display =
+            adminDropdown.style.display === "none" ? "block" : "none";
+    });
+    
+    document.addEventListener("click", (e) => {
+        if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
+            adminDropdown.style.display = "none";
+        }
+    });
+} else {
+    console.log("Admin menu setup condition failed");
+}
   // Modal click-to-close functionality
   window.addEventListener('click', (e) => {
     document.querySelectorAll('.modal').forEach((modal) => {
