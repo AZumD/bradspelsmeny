@@ -1,3 +1,4 @@
+<!--/admin/index.html-->
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -39,6 +40,33 @@
   box-sizing: border-box;
   overflow-wrap: break-word;
 }
+
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.4);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background-color: #fffdf7;
+  border: 2px dashed #d9b370;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 300px; width: 80%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.close-btn {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #5a2a0c;
+}
+.placeholder-box { /* …and your loading-state styling… */ }
 
     .dashboard {
       padding: 1.5rem 1rem 4rem;
@@ -237,7 +265,7 @@
               </a>
             </li>
           </ul>
-      </div>
+  
   <div style="height: 60px;"></div>
   <link rel="stylesheet" href="../css/shared-ui.css">
   <script src="../js/shared/shared-ui.js"></script>
