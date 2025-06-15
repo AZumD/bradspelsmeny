@@ -19,14 +19,42 @@ function parseJwt(token) {
 
   // Continue only if valid admin
   document.addEventListener("DOMContentLoaded", () => {
+    initPixelNav(); // 🧩 From shared-ui.js
+    updateNotificationIcon(); // 🔔 Just update icon on load
+    setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
     fetchStats();
     fetchOrders();
     setInterval(fetchOrders, 5000);
     console.log("✅ Admin dashboard loaded.");
+    
+    const adminToggle = document.getElementById("adminMenuToggle");
+    const adminDropdown = document.getElementById("adminMenuDropdown");
+    const logoutIcon = document.getElementById("logoutIcon");
+    
+    if (getUserRole() === "admin" && adminToggle && adminDropdown) {
+        adminToggle.style.display = "inline-block";
+        if (logoutIcon) logoutIcon.style.display = "none";
+        
+        adminToggle.addEventListener("click", () => {
+            adminDropdown.style.display =
+                adminDropdown.style.display === "none" ? "block" : "none";
+        });
+        
+        document.addEventListener("click", (e) => {
+            if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
+                adminDropdown.style.display = "none";
+            }
+        });
+    }
+  // Modal click-to-close functionality
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
   });
-
-
-})();
+});
 
 // 🔄 Refresh token
 async function refreshToken() {
