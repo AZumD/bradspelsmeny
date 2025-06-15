@@ -77,6 +77,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     gameModal.style.display = "none";
   });
 
+  function openModal(index = null) {
+  editingIndex = index;
+  const game = index !== null ? games[index] : {};
+
+  document.getElementById("gameModal").style.display = "block";
+  document.getElementById("gameForm").reset();
+
+  document.getElementById("title_sv").value = game.title_sv || "";
+  document.getElementById("title_en").value = game.title_en || "";
+  document.getElementById("description").value = game.description || "";
+  document.getElementById("slowDayOnly").checked = !!game.slow_day_only;
+  document.getElementById("trustedOnly").checked = !!game.trusted_only;
+  document.getElementById("membersOnly").checked = !!game.members_only;
+  document.getElementById("staffPicks").value = (game.staff_picks || []).join(", ");
+  document.getElementById("minTableSize").value = game.min_table_size || "";
+  document.getElementById("conditionRatingValue").value = game.condition_rating || 0;
+
+  updateStars(game.condition_rating || 0);
+}
+
+
   function updateStars(rating) {
     document.querySelectorAll("#conditionRating .star").forEach((star) => {
       const val = parseInt(star.dataset.value);
