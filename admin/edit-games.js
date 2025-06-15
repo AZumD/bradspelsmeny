@@ -10,7 +10,7 @@
     if (!refreshToken) return false;
 
     try {
-      const res = await fetch(`${API_BASE}/admin/refresh-token`, {
+      const res = await fetch(`${API_BASE}/refresh-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
@@ -96,11 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
       gameList.innerHTML = "";
       if (loadingSpinner) loadingSpinner.style.display = "block";
 
-      const res = await fetch(${API_BASE}/games, {
-        headers: {
-          Authorization: Bearer ${USER_TOKEN},
-        },
-      });
+      const res = await fetch(`${API_BASE}/games`, {
+  headers: {
+    Authorization: `Bearer ${USER_TOKEN}`,
+  },
+});
+
 
       if (!res || !res.ok) throw new Error("Failed to fetch games");
 
@@ -153,10 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = games[index].id;
     if (!confirm("Vill du verkligen ta bort spelet?")) return;
     try {
-      const res = await fetch(${API_BASE}/games/${id}, {
-        method: "DELETE",
-        headers: {
-          Authorization: Bearer ${USER_TOKEN},
+      const res = await fetch(`${API_BASE}/games/${id}`, {
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${USER_TOKEN}`,
+  },
+});
+
+
         },
       });
       if (!res.ok) throw new Error("Delete failed");
