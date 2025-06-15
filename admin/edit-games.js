@@ -88,6 +88,31 @@ document.addEventListener("DOMContentLoaded", () => {
       updateStars(rating);
     });
   });
+function openModal(index = null) {
+  editingIndex = index;
+  const game = index !== null ? games[index] : {};
+
+  document.getElementById("gameModal").style.display = "flex";
+  document.getElementById("gameForm").reset();
+
+  // Fill form with existing values if editing
+  document.getElementById("title_sv").value = game.title_sv || "";
+  document.getElementById("title_en").value = game.title_en || "";
+  document.getElementById("description_sv").value = game.description_sv || "";
+  document.getElementById("description_en").value = game.description_en || "";
+  document.getElementById("players").value = game.players || "";
+  document.getElementById("playtime").value = game.playtime || "";
+  document.getElementById("age").value = game.age || "";
+  document.getElementById("categories").value = (game.categories || []).join(", ");
+
+  document.getElementById("slowDayOnly").checked = game.slow_day_only || false;
+  document.getElementById("trustedOnly").checked = game.trusted_only || false;
+  document.getElementById("membersOnly").checked = game.members_only || false;
+  document.getElementById("staffPicks").value = (game.staff_picks || []).join(", ");
+  document.getElementById("minTableSize").value = game.min_table_size || "";
+  document.getElementById("conditionRatingValue").value = game.condition_rating || 0;
+  updateStars(game.condition_rating || 0);
+}
 
   async function fetchGames() {
     try {
