@@ -54,6 +54,13 @@
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  initPixelNav(); // 🧩 From shared-ui.js
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId;
+  
   const gameModal = document.getElementById("gameModal");
   const gameForm = document.getElementById("gameForm");
   const addGameButton = document.getElementById("addGameButton");
@@ -67,6 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const staffPicks = document.getElementById("staffPicks");
   const minTableSize = document.getElementById("minTableSize");
   const conditionRatingValue = document.getElementById("conditionRatingValue");
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
+  });
 
   addGameButton?.addEventListener("click", () => openModal());
   gameModal?.addEventListener("click", (e) => {
