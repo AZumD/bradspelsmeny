@@ -37,30 +37,32 @@ export function isTokenExpired(token) {
   }
 }
 export async function fetchWithAuth(url, options = {}) {
-  const token = getAccessToken();
-  const refresh = getRefreshToken();
-  if (!token || !refresh) throw new Error('Not authenticated');
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+  if (!accessToken || !refreshToken) throw new Error('User not authenticated');
 
   options.headers = options.headers || {};
-  options.headers['Authorization'] = `Bearer ${token}`;
+  options.headers['Authorization'] = `Bearer ${accessToken}`;
 
-  let res = await fetch(url, options);
-  if (res.status === 401 || res.status === 403) {
-    const refreshRes = await fetch(`${API_BASE}/refresh-token`, {
+  let response = await fetch(url, options);
+  if (response.status === 401 || response.status === 403) {
+    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken: refresh }),
+      body: JSON.stringify({ refreshToken }),
     });
-    if (refreshRes.ok) {
-      const data = await refreshRes.json();
-      localStorage.setItem('userToken', data.token);
-      options.headers['Authorization'] = `Bearer ${data.token}`;
-      return fetch(url, options);
+    if (refreshResponse.ok) {
+      const data = await refreshResponse.json();
+      if (data.token) {
+        localStorage.setItem('userToken', data.token);
+        options.headers['Authorization'] = `Bearer ${data.token}`;
+        return fetch(url, options);
+      }
     }
   }
-
-  return res;
+  return response;
 }
+
 
 export function getUserIdFromToken() {
   const token = getAccessToken();
