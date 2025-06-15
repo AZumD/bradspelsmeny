@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const res = await fetch(${API_BASE}/games, {
         headers: {
-          Authorization: Bearer ${ADMIN_TOKEN},
+          Authorization: Bearer ${USER_TOKEN},
         },
       });
 
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(${API_BASE}/games/${id}, {
         method: "DELETE",
         headers: {
-          Authorization: Bearer ${ADMIN_TOKEN},
+          Authorization: Bearer ${USER_TOKEN},
         },
       });
       if (!res.ok) throw new Error("Delete failed");
