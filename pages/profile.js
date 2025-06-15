@@ -76,35 +76,48 @@ function getUserIdFromToken() {
   }
 }
 
-// ------------ NAV & ADMIN ------------
+// ------------ GAMELOG ------------
 
-function goTo(path) {
-  const base = window.location.origin +
-    (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-  window.location.href = base + path;
-}
 
-function logout() {
-  clearTokens();
-  window.location.href = `${FRONTEND_BASE}/pages/login.html`;
-}
-
-const adminToggle = document.getElementById('adminMenuToggle');
-const adminDropdown = document.getElementById('adminMenuDropdown');
-const logoutIcon = document.getElementById('logoutIcon');
-if (isAdmin && adminToggle && adminDropdown && logoutIcon) {
-  adminToggle.style.display = 'inline-block';
-  logoutIcon.style.display = 'none';
-  adminToggle.addEventListener('click', () => {
-    adminDropdown.style.display =
-      adminDropdown.style.display === 'block' ? 'none' : 'block';
-  });
-  document.addEventListener('click', e => {
-    if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-      adminDropdown.style.display = 'none';
+async function fetchGameLog(userId) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/borrow-log`);
+    const tbody = document.querySelector('#borrowLogTable tbody');
+    
+    if (!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding:1rem; color:#999;">
+          Game log is private or unavailable.
+         </td></tr>`;
+      return;
     }
-  });
+    
+    const logs = await res.json();
+
+    if (logs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding:1rem;">
+          No game history yet.
+         </td></tr>`;
+      return;
+    }
+
+    const rowsHtml = logs.map(log => {
+      const date = new Date(log.timestamp).toLocaleDateString();
+      return `<tr>
+                <td>${date}</td>
+                <td>${log.game_title}</td>
+              </tr>`;
+    }).join('');
+
+    tbody.innerHTML = rowsHtml;
+
+  } catch (err) {
+    console.error('Failed to fetch game log:', err);
+    document.querySelector('#borrowLogTable tbody').innerHTML = `<tr><td colspan="2" style="text-align:center; padding:1rem; color:red;">
+        Failed to load game log.
+      </td></tr>`;
+  }
 }
+
 
 // ------------ NOTIFICATIONS ------------
 
