@@ -181,6 +181,16 @@ function createGameCard(game, minimal = false) {
   return card;
 }
 
+function getUserIdFromToken() {
+  const token = getAccessToken();
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  } catch {
+    return null;
+  }
+}
 
 async function fetchPartyData() {
   const partyId = getPartyIdFromURL();
