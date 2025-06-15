@@ -52,9 +52,28 @@
     return true;
   }
 
+  function setupPixelNav() {
+    const nav = document.createElement("div");
+    nav.id = "pixelNav";
+    nav.innerHTML = `
+      <a href="/admin/dashboard.html"><img src="../img/nav-home.png" alt="Home" /></a>
+      <a href="/admin/edit-games.html"><img src="../img/nav-boardgame.png" alt="Games" /></a>
+      <a href="#" onclick="logout()"><img src="../img/nav-logout.png" alt="Logout" /></a>
+    `;
+    document.body.appendChild(nav);
+  }
+
+  function logout() {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "/pages/login.html";
+  }
+
   document.addEventListener("DOMContentLoaded", async () => {
     const sessionOk = await guardAdminSession();
     if (!sessionOk) return;
+
+    setupPixelNav();
 
     const gameModal = document.getElementById("gameModal");
     const gameForm = document.getElementById("gameForm");
@@ -106,18 +125,14 @@
       maxPlayers.value = game.max_players || "";
       document.getElementById("time").value = game.playtime || "";
       document.getElementById("age").value = game.age || "";
-      document.getElementById("tags").value = Array.isArray(game.tags)
-        ? game.tags.join(", ")
-        : (game.tags || "");
+      document.getElementById("tags").value = game.tags || "";
 
       document.getElementById("img").value = game.image_url || "";
       document.getElementById("rules").value = game.rules_url || "";
       slowDayOnly.checked = !!game.slow_day_only;
       trustedOnly.checked = !!game.trusted_only;
       membersOnly.checked = !!game.members_only;
-      staffPicks.value = Array.isArray(game.staff_picks)
-        ? game.staff_picks.join(", ")
-        : (game.staff_picks || "");
+      staffPicks.value = Array.isArray(game.staff_picks) ? game.staff_picks.join(", ") : (game.staff_picks || "");
       minTableSize.value = game.min_table_size || "";
       conditionRatingValue.value = game.condition_rating || 0;
 
@@ -134,13 +149,13 @@
         max_players: parseInt(maxPlayers.value) || null,
         playtime: document.getElementById("time").value,
         age: document.getElementById("age").value,
-        tags: document.getElementById("tags").value.split(',').map(tag => tag.trim()).filter(tag => tag),
+        tags: document.getElementById("tags").value,
         image_url: document.getElementById("img").value,
         rules_url: document.getElementById("rules").value,
         slow_day_only: slowDayOnly.checked,
         trusted_only: trustedOnly.checked,
         members_only: membersOnly.checked,
-        staff_picks: staffPicks.value.split(',').map(p => p.trim()).filter(p => p),
+        staff_picks: staffPicks.value.split(",").map(s => s.trim()).filter(Boolean),
         min_table_size: minTableSize.value,
         condition_rating: parseInt(conditionRatingValue.value) || 0,
       };
