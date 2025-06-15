@@ -1117,147 +1117,125 @@ async function submitCreateParty() {
         const modal = document.getElementById("createPartyModal");
         if (modal) modal.style.display = "flex";
       }
-      document.addEventListener('DOMContentLoaded', async() = >{
-        updateNotificationIcon(); // 🔔 Just update icon on load
-        setInterval(updateNotificationIcon, 60000); // 🔁 Refresh icon every minute
-        try {
-          await fetchProfile(); // Ensure token is valid and user data is loaded
-        } catch(err) {
-          console.error("❌ Error during initial load:", err);
-        }
+      document.addEventListener('DOMContentLoaded', async () => {
+  initPixelNav(); // 🧩 From shared-ui.js
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
 
-        const myId = getUserIdFromToken();
-        const viewedId = getUserIdFromUrl() || myId;
-        const profileUserId = viewedId;
+  try {
+    await fetchProfile(); // Page-specific
+  } catch (err) {
+    console.error("❌ Error during initial load:", err);
+  }
 
-        const closeBadgePopupBtn = document.getElementById("closeBadgePopup");
-        if (closeBadgePopupBtn) {
-          closeBadgePopupBtn.onclick = () = >{
-            document.getElementById("badgePopup").style.display = "none";
-          };
-        }
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId;
 
-        const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
-        if (badgeCloseBtn) {
-          badgeCloseBtn.onclick = () = >{
-            const modal = document.getElementById("badgeInfoModal");
-            if (modal) modal.style.display = "none";
-          };
-        }
+  // Badge popup close
+  document.getElementById("closeBadgePopup")?.addEventListener('click', () => {
+    document.getElementById("badgePopup").style.display = "none";
+  });
 
-        checkFriendStatus(profileUserId);
+  // Badge info close
+  document.getElementById("closeBadgeInfoBtn")?.addEventListener('click', () => {
+    const modal = document.getElementById("badgeInfoModal");
+    if (modal) modal.style.display = "none";
+  });
 
-        const removeBtn = document.getElementById('removeFriendBtn');
-        if (removeBtn) {
-          removeBtn.addEventListener('click', async() = >{
-            const confirmed = confirm('Are you sure you want to remove this friend?');
-            if (!confirmed) return;
+  // Friend status
+  checkFriendStatus(profileUserId);
 
-            try {
-              const res = await fetchWithAuth(`$ {
-                API_BASE
-              }
-              /friends/remove / $ {
-                profileUserId
-              }`, {
-                method: 'DELETE'
-              });
+  // Remove friend
+  const removeBtn = document.getElementById('removeFriendBtn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to remove this friend?')) return;
 
-              if (res.ok) {
-                alert('Friend removed');
-                location.reload();
-              } else {
-                const err = await res.json();
-                alert('Failed: ' + err.error);
-              }
-            } catch(err) {
-              console.error('❌ Error removing friend:', err);
-              alert('Something went wrong.');
-            }
-          });
-        }
-
-        if (String(myId) === String(profileUserId)) {
-          const modal = document.getElementById("addFriendModal");
-          const closeBtn = document.getElementById("closeModalBtn");
-          const submitBtn = document.getElementById("submitFriendRequest");
-
-          closeBtn.onclick = () = >modal.style.display = "none";
-
-          submitBtn.onclick = async() = >{
-            const input = document.getElementById("manualFriendId");
-            const friendId = input.value.trim();
-
-            if (!friendId || isNaN(friendId) || friendId === String(myId)) {
-              alert("Please enter a valid user ID.");
-              return;
-            }
-
-            try {
-              const res = await fetchWithAuth(`$ {
-                API_BASE
-              }
-              /friends/$ {
-                friendId
-              }`, {
-                method: 'POST'
-              });
-
-              if (res.ok) {
-                alert("✅ Friend added!");
-                modal.style.display = "none";
-                input.value = "";
-                loadFriends();
-              } else {
-                const err = await res.json();
-                alert("❌ Failed: " + err.error);
-              }
-            } catch(err) {
-              console.error('❌ Failed to send manual friend request:', err);
-              alert("Something went wrong.");
-            }
-          };
-        }
-
-        const notifBtn = document.getElementById("notificationIcon");
-        const notifModal = document.getElementById("notificationModal");
-        const closeNotifBtn = document.getElementById("closeNotificationBtn");
-
-        if (notifBtn && notifModal && closeNotifBtn) {
-          notifBtn.onclick = () = >{
-            if (notifModal.style.display === 'flex') {
-              notifModal.style.display = 'none';
-            } else {
-              notifModal.style.display = 'flex';
-              fetchNotifications();
-            }
-          };
-
-          closeNotifBtn.onclick = () = >notifModal.style.display = 'none';
-        }
-
-        // ✅ Unified click-outside-to-close for all modals
-        window.addEventListener('click', (e) = >{
-          document.querySelectorAll('.modal').forEach(modal = >{
-            if (e.target === modal && getComputedStyle(modal).display !== 'none') {
-              modal.style.display = 'none';
-            }
-          });
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
+          method: 'DELETE',
         });
 
-        const createPartyBtn = document.getElementById("createPartyBtn");
-        if (createPartyBtn) {
-          createPartyBtn.onclick = openCreatePartyModal;
+        if (res.ok) {
+          alert('Friend removed');
+          location.reload();
+        } else {
+          const err = await res.json();
+          alert('Failed: ' + err.error);
         }
+      } catch (err) {
+        console.error('❌ Error removing friend:', err);
+        alert('Something went wrong.');
+      }
+    });
+  }
 
-        const closeCreatePartyModalBtn = document.getElementById("closeCreatePartyModal");
+  // Manual friend request
+  if (String(myId) === String(profileUserId)) {
+    const modal = document.getElementById("addFriendModal");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const submitBtn = document.getElementById("submitFriendRequest");
 
-        if (closeCreatePartyModalBtn) {
-          closeCreatePartyModalBtn.onclick = closeCreatePartyModal;
+    closeBtn?.addEventListener('click', () => modal.style.display = "none");
+
+    submitBtn?.addEventListener('click', async () => {
+      const input = document.getElementById("manualFriendId");
+      const friendId = input.value.trim();
+
+      if (!friendId || isNaN(friendId) || friendId === String(myId)) {
+        alert("Please enter a valid user ID.");
+        return;
+      }
+
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, {
+          method: 'POST',
+        });
+
+        if (res.ok) {
+          alert("✅ Friend added!");
+          modal.style.display = "none";
+          input.value = "";
+          loadFriends();
+        } else {
+          const err = await res.json();
+          alert("❌ Failed: " + err.error);
         }
+      } catch (err) {
+        console.error('❌ Failed to send manual friend request:', err);
+        alert("Something went wrong.");
+      }
+    });
+  }
 
-        const submitCreatePartyBtn = document.getElementById("submitCreatePartyBtn");
-        if (submitCreatePartyBtn) {
-          submitCreatePartyBtn.onclick = submitCreateParty;
-        }
-      });
+  // Notification modal toggle
+  const notifBtn = document.getElementById("notificationIcon");
+  const notifModal = document.getElementById("notificationModal");
+  const closeNotifBtn = document.getElementById("closeNotificationBtn");
+
+  if (notifBtn && notifModal && closeNotifBtn) {
+    notifBtn.addEventListener('click', () => {
+      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
+      fetchNotifications();
+    });
+
+    closeNotifBtn.addEventListener('click', () => {
+      notifModal.style.display = 'none';
+    });
+  }
+
+  // Close modals on background click
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
+  });
+
+  // Party modal
+  document.getElementById("createPartyBtn")?.addEventListener('click', openCreatePartyModal);
+  document.getElementById("closeCreatePartyModal")?.addEventListener('click', closeCreatePartyModal);
+  document.getElementById("submitCreatePartyBtn")?.addEventListener('click', submitCreateParty);
+});
