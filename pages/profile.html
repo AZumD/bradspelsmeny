@@ -490,14 +490,17 @@
     <!-- Friend avatars will be injected here -->
   </div>
   <button id="removeFriendBtn" style="display: none; margin-top: 10px; background-color: #e06d6d; color: white; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer;">Remove Friend</button>    
-    <nav id="pixelNav">
+
+<!-- PIXELNAV ---------------------------------------------------------------->
+    
+<nav id="pixelNav">
   <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
   <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
   <img src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
+  <button id="adminMenuToggle" style="display: none;">🍔</button>
 </nav>
-</div>
 
-<!-- Modal -->
+<!-- Modal -------------------------------------------------------------------->
 <div id="addFriendModal" class="modal" style="display:none;">
   <div class="modal-content">
     <span class="close-btn" id="closeModalBtn">&times;</span>
