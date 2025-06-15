@@ -115,7 +115,9 @@
       slowDayOnly.checked = !!game.slow_day_only;
       trustedOnly.checked = !!game.trusted_only;
       membersOnly.checked = !!game.members_only;
-      staffPicks.value = (game.staff_picks || []).join(", ");
+      staffPicks.value = Array.isArray(game.staff_picks)
+      ? game.staff_picks.join(", ")
+      : (game.staff_picks || "");
       minTableSize.value = game.min_table_size || "";
       conditionRatingValue.value = game.condition_rating || 0;
 
