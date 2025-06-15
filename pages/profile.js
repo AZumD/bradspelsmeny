@@ -463,22 +463,22 @@ function createGameCard(game, minimal = false) {
   const gameTitle = game.title_en || game.name || 'Untitled';
   const imageUrl = /^https?:/.test(game.img || game.thumbnail_url)
     ? game.img || game.thumbnail_url
-    : ../${game.img || game.thumbnail_url || ''};
+    : `../${game.img || game.thumbnail_url || ''}`;
   if (minimal) {
     const img = document.createElement('img');
-    img.src = imageUrl || ${FRONTEND_BASE}/img/default-thumb.webp;
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     img.alt = gameTitle;
     img.title = gameTitle;
     img.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;margin:2px;cursor:pointer';
-    img.onerror = () => { img.src = ${FRONTEND_BASE}/img/default-thumb.webp; };
+    img.onerror = () => { img.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
     card.appendChild(img);
   } else {
     card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;margin-bottom:10px;background:#f9f6f2;border-radius:8px;cursor:pointer';
     const thumb = document.createElement('img');
-    thumb.src = imageUrl || ${FRONTEND_BASE}/img/default-thumb.webp;
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     thumb.alt = gameTitle;
     thumb.style.cssText = 'width:60px;height:60px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;';
-    thumb.onerror = () => { thumb.src = ${FRONTEND_BASE}/img/default-thumb.webp; };
+    thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
     const titleEl = document.createElement('div');
     titleEl.className = 'game-entry-title';
     titleEl.textContent = gameTitle;
