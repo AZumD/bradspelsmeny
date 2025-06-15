@@ -1,9 +1,10 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
-//CHECKADMIN=======================================================================
+// ------------ AUTH & TOKENS ------------
+
 function getUserRole() {
-  const token = localStorage.getItem("userToken");
+  const token = localStorage.getItem('userToken');
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -12,10 +13,8 @@ function getUserRole() {
     return null;
   }
 }
+const isAdmin = getUserRole() === 'admin';
 
-const isAdmin = getUserRole() === "admin";
-
-//TOKENHANDLING====================================================================
 function getAccessToken() {
   return localStorage.getItem('userToken');
 }
@@ -36,42 +35,33 @@ function clearTokens() {
 async function fetchWithAuth(url, options = {}) {
   let accessToken = getAccessToken();
   const refreshToken = getRefreshToken();
-
   if (!accessToken || !refreshToken) {
     throw new Error('User not authenticated');
   }
 
-  options.headers = options.headers || {};
-  options.headers['Authorization'] = `Bearer $ {
-    accessToken
-  }`;
+  options.headers = {
+    ...(options.headers || {}),
+    Authorization: `Bearer ${accessToken}`
+  };
 
   let response = await fetch(url, options);
-
   if (response.status === 401 || response.status === 403) {
-    const refreshResponse = await fetch(`$ {
-      API_BASE
-    }
-    /refresh-token`, {
+    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json ' },
-      body: JSON.stringify({ refreshToken }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken })
     });
-
     if (!refreshResponse.ok) {
       clearTokens();
-      window.location.href = ' / pages / login.html ';
-      throw new Error('Session expired.Please log in again.');
+      window.location.href = `${FRONTEND_BASE}/pages/login.html`;
+      throw new Error('Session expired. Please log in again.');
     }
-
     const data = await refreshResponse.json();
-    const newAccessToken = data.token || data.accessToken;
-    setAccessToken(newAccessToken);
-
-    options.headers['Authorization '] = `Bearer ${newAccessToken}`;
+    const newToken = data.token || data.accessToken;
+    setAccessToken(newToken);
+    options.headers.Authorization = `Bearer ${newToken}`;
     response = await fetch(url, options);
   }
-
   return response;
 }
 
@@ -86,68 +76,63 @@ function getUserIdFromToken() {
   }
 }
 
-//PIXELNAV=========================================================================
+// ------------ NAV & ADMIN ------------
 
 function goTo(path) {
-  const base = window.location.origin + (window.location.hostname === 'localhost ' ? '' : ' / bradspelsmeny ');
+  const base = window.location.origin +
+    (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
   window.location.href = base + path;
 }
 
 function logout() {
   clearTokens();
-  window.location.href = ' / bradspelsmeny / pages / login.html ';
+  window.location.href = `${FRONTEND_BASE}/pages/login.html`;
 }
-const adminToggle = document.getElementById("adminMenuToggle");
-  const adminDropdown = document.getElementById("adminMenuDropdown");
-  const logoutIcon = document.getElementById("logoutIcon");
 
-  if (isAdmin) {
-    adminToggle.style.display = "inline-block";
-    logoutIcon.style.display = "none";
+const adminToggle = document.getElementById('adminMenuToggle');
+const adminDropdown = document.getElementById('adminMenuDropdown');
+const logoutIcon = document.getElementById('logoutIcon');
+if (isAdmin && adminToggle && adminDropdown && logoutIcon) {
+  adminToggle.style.display = 'inline-block';
+  logoutIcon.style.display = 'none';
+  adminToggle.addEventListener('click', () => {
+    adminDropdown.style.display =
+      adminDropdown.style.display === 'block' ? 'none' : 'block';
+  });
+  document.addEventListener('click', e => {
+    if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
+      adminDropdown.style.display = 'none';
+    }
+  });
+}
 
-    adminToggle.addEventListener("click", () => {
-      adminDropdown.style.display = adminDropdown.style.display === "none" ? "block" : "none";
-    });
-
-    // Optional: close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-        adminDropdown.style.display = "none";
-      }
-    });
-  }
-
-//NOTIFICATIONS====================================================================
+// ------------ NOTIFICATIONS ------------
 
 async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
-    if (!res.ok) throw new Error('Failed to fetch notifications ');
-
+    if (!res.ok) throw new Error('Failed to fetch notifications');
     const notifications = await res.json();
-    const list = document.getElementById('notificationList ');
+    const list = document.getElementById('notificationList');
     list.innerHTML = '';
 
     const hasUnread = notifications.some(n => !n.read);
-
-    // Swap bell icon
-    const icon = document.getElementById("notificationIcon");
+    const icon = document.getElementById('notificationIcon');
     if (icon) {
       icon.src = hasUnread
-        ? "../img/icons/icon-notif-on.webp"
-        : "../img/icons/icon-notif-off.webp";
+        ? `${FRONTEND_BASE}/img/icons/icon-notif-on.webp`
+        : `${FRONTEND_BASE}/img/icons/icon-notif-off.webp`;
     }
 
-    if (!notifications.length) {
-      list.innerHTML = ' < div class = "placeholder-box" > No notifications yet. < /div>';
+    if (notifications.length === 0) {
+      list.innerHTML = '<div class="placeholder-box">No notifications yet.</div>';
       return;
     }
 
-    for (const n of notifications) {
+    notifications.forEach(n => {
       const div = document.createElement('div');
       div.className = `notification-item ${n.read ? '' : 'unread'}`;
       div.innerHTML = formatNotificationText(n);
-
       const time = new Date(n.created_at).toLocaleString();
 
       if (n.type === 'friend_request') {
@@ -157,513 +142,301 @@ async function fetchNotifications() {
         const acceptBtn = document.createElement('button');
         acceptBtn.textContent = 'Accept';
         acceptBtn.className = 'btn-accept';
-        acceptBtn.onclick = async (e) => {
+        acceptBtn.onclick = async e => {
           e.stopPropagation();
           const requestId = n.data?.request_id;
           if (!requestId) {
-            alert("Missing request ID. Cannot accept this request.");
+            alert('Missing request ID. Cannot accept this request.');
             return;
           }
           try {
-            const res = await fetchWithAuth(`${API_BASE}/friend - requests / $ {
-      requestId
-    }
-    /accept`, {
-              method: 'POST',
-            });
+            const res = await fetchWithAuth(
+              `${API_BASE}/friend-requests/${requestId}/accept`,
+              { method: 'POST' }
+            );
             if (res.ok) {
-              div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small > `; icon.src = "../img/icons/icon-notif-off.webp"; // Optimistically reset icon
-  } else {
-    let errorMsg = 'Failed to accept friend request';
-    try {
-      const contentType = res.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const err = await res.json();
-        errorMsg += ': ' + (err.error || JSON.stringify(err));
-      } else {
-        const text = await res.text();
-        errorMsg += ': ' + text;
+              div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
+              if (icon) icon.src = `${FRONTEND_BASE}/img/icons/icon-notif-off.webp`;
+            } else {
+              let errorMsg = 'Failed to accept friend request';
+              try {
+                const ct = res.headers.get('content-type') || '';
+                if (ct.includes('application/json')) {
+                  const err = await res.json();
+                  errorMsg += ': ' + (err.error || JSON.stringify(err));
+                } else {
+                  errorMsg += ': ' + await res.text();
+                }
+              } catch {}
+              alert(errorMsg);
+            }
+          } catch (err) {
+            console.error('❌ Accept failed:', err);
+            alert('Error accepting request.');
+          }
+        };
+
+        const declineBtn = document.createElement('button');
+        declineBtn.textContent = 'Decline';
+        declineBtn.className = 'btn-decline';
+        declineBtn.onclick = async e => {
+          e.stopPropagation();
+          try {
+            const res = await fetchWithAuth(
+              `${API_BASE}/friend-requests/${n.id}/decline`,
+              { method: 'POST' }
+            );
+            if (res.ok) {
+              div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small>`;
+            } else {
+              const err = await res.json();
+              alert(`Failed: ${err.error}`);
+            }
+          } catch (err) {
+            console.error('❌ Decline failed:', err);
+            alert('Error declining request.');
+          }
+        };
+
+        btnWrapper.append(acceptBtn, declineBtn);
+        div.appendChild(btnWrapper);
       }
-    } catch(parseErr) {
-      console.error('Failed to parse error response:', parseErr);
-    }
-    alert(errorMsg);
-  }
-} catch(err) {
-  console.error('❌ Accept failed:', err);
-  alert('Error accepting request.');
-}
-};
 
-const declineBtn = document.createElement('button');
-declineBtn.textContent = 'Decline';
-declineBtn.className = 'btn-decline';
-declineBtn.onclick = async(e) = >{
-  e.stopPropagation();
-  try {
-    const res = await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /friend-requests/$ {
-      n.id
-    }
-    /decline`, {
-              method: 'POST',
-            });
-            if (res.ok) {
-              div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small > `;
-  } else {
-    const err = await res.json();
-    alert(`Failed: $ {
-      err.error
-    }`);
-  }
-} catch(err) {
-  console.error('❌ Decline failed:', err);
-  alert('Error declining request.');
-}
-};
-
-btnWrapper.appendChild(acceptBtn);
-btnWrapper.appendChild(declineBtn);
-div.appendChild(btnWrapper);
-}
-
-div.onclick = async() = >{
-  if (!n.read) {
-    await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /notifications/$ {
-      n.id
-    }
-    /read`, { method: 'POST' });
+      div.onclick = async () => {
+        if (!n.read) {
+          await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
           div.classList.remove('unread');
+          const unreadLeft = document.querySelectorAll('.notification-item.unread');
+          if (unreadLeft.length === 0 && icon) {
+            icon.src = `${FRONTEND_BASE}/img/icons/icon-notif-off.webp`;
+          }
+          if (n.type === 'badge_awarded' && n.data?.name && n.data.icon_url) {
+            showBadgePopup(n.data.name, n.data.icon_url, time);
+          }
+        }
+        if (n.type === 'friend_accept' && n.data?.receiver_id) {
+          window.location.href = `profile.html?id=${n.data.receiver_id}`;
+        }
+      };
 
-          / / Update icon again just in
-  case all are now read const updatedNotifications = list.querySelectorAll('.notification-item.unread');
-    if (updatedNotifications.length === 0) {
-      icon.src = "../img/icons/icon-notif-off.webp";
-    }
-
-    if (n.type === 'badge_awarded' && n.data ? .name && n.data ? .icon_url) {
-      showBadgePopup(n.data.name, n.data.icon_url, time);
-    }
-  }
-
-  if (n.type === 'friend_accept' && n.data.receiver_id) {
-    window.location.href = `profile.html ? id = $ {
-      n.data.receiver_id
-    }`;
-  }
-};
-
-list.appendChild(div);
-}
-
-} catch(err) {
-  console.error('❌ Failed to fetch notifications:', err);
-  document.getElementById('notificationList').innerHTML = ` < div class = "placeholder-box" > Could not load notifications. < /div>`;
+      list.appendChild(div);
+    });
+  } catch (err) {
+    console.error('❌ Failed to fetch notifications:', err);
+    document.getElementById('notificationList').innerHTML =
+      '<div class="placeholder-box">Could not load notifications.</div>';
   }
 }
-
 
 function formatNotificationText(n) {
   switch (n.type) {
     case 'friend_request':
-      return `👤 <strong>${n.sender_name || 'Someone'}</strong > sent you a friend request.`;
-case 'friend_accept':
-  return`✅ < strong > $ {
-    n.sender_name || 'Someone'
-  } < /strong> accepted your friend request.`;
+      return `👤 <strong>${n.sender_name || 'Someone'}</strong> sent you a friend request.`;
+    case 'friend_accept':
+      return `✅ <strong>${n.sender_name || 'Someone'}</strong> accepted your friend request.`;
     case 'badge_awarded':
-      return `🏅 You earned a new badge: <strong>${n.data?.name || 'Unnamed Badge'}</strong > `;
-default:
-  return` < strong > New notification: </strong> ${n.message || 'Something happened.'}`;
+      return `🏅 You earned a new badge: <strong>${n.data?.name || 'Unnamed Badge'}</strong>`;
+    default:
+      return `<strong>New notification:</strong> ${n.message || 'Something happened.'}`;
   }
 }
-
 
 function showBadgePopup(name, iconUrl, time) {
   document.getElementById('badgePopupImage').src = iconUrl;
   document.getElementById('badgePopupImage').alt = name;
   document.getElementById('badgePopupName').textContent = name;
   document.getElementById('badgePopupTime').textContent = time;
-
   const popup = document.getElementById('badgePopup');
   popup.style.display = 'flex';
-
-  setTimeout(() => {
-    popup.style.display = 'none';
-  }, 6000);
+  setTimeout(() => { popup.style.display = 'none'; }, 6000);
 }
 
 async function updateNotificationIcon() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
-  if (!res.ok) throw new Error('Failed to fetch notifications');const notifications = await res.json();const hasUnread = notifications.some(n = >!n.read);
-
-  const icon = document.getElementById("notificationIcon");
-  if (icon) {
-    icon.src = hasUnread ? "../img/icons/icon-notif-on.webp": "../img/icons/icon-notif-off.webp";
+    if (!res.ok) throw new Error();
+    const notifications = await res.json();
+    const icon = document.getElementById('notificationIcon');
+    if (icon) {
+      icon.src = notifications.some(n => !n.read)
+        ? `${FRONTEND_BASE}/img/icons/icon-notif-on.webp`
+        : `${FRONTEND_BASE}/img/icons/icon-notif-off.webp`;
+    }
+  } catch (err) {
+    console.error('❌ Failed to update notification icon:', err);
   }
-} catch(err) {
-  console.error('❌ Failed to update notification icon:', err);
-}
 }
 
-//PARTIES==========================================================================
+// ------------ PARTIES & PROFILE ------------
+
 async function fetchUserParties(viewedUserId = null) {
   const loggedInUserId = getUserIdFromToken();
   const isOwnProfile = !viewedUserId || String(viewedUserId) === String(loggedInUserId);
-  const endpoint = isOwnProfile ? `$ {
-    API_BASE
-  }
-  /my-parties` : `${API_BASE}/users / $ {
-    viewedUserId
-  }
-  /parties`;
+  const endpoint = isOwnProfile
+    ? `${API_BASE}/my-parties`
+    : `${API_BASE}/users/${viewedUserId}/parties`;
 
   const partyList = document.getElementById('partyList');
-  if (!partyList) {
-    console.warn('⚠️ #partyList element not found in DOM.');
-    return;
-  }
+  if (!partyList) return;
 
   try {
     const res = await fetchWithAuth(endpoint);
-    console.log('📡 Parties response status:', res.status);
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error('❌ Failed to fetch parties:', text);
-      throw new Error('Failed to fetch parties');
-    }
-
+    if (!res.ok) throw new Error();
     const parties = await res.json();
-    console.log('✅ Parties loaded:', parties);
-
     partyList.innerHTML = '';
-
     if (parties.length === 0) {
-      partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div > ';
+      partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
       return;
     }
-
-    for (const party of parties) {
-      const card = document.createElement("div");
-      card.style.display = "flex";
-      card.style.flexDirection = "column";
-      card.style.alignItems = "center";
-      card.style.width = "60px";
-
-      const img = document.createElement("img");
-      img.className = "party-avatar";
-      img.src = party.avatar
-        ? (party.avatar.startsWith('http ') ? party.avatar : `${API_BASE}${party.avatar}`)
-        : `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
-      img.onerror = () => {
-        img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
-      };
+    parties.forEach(party => {
+      const card = document.createElement('div');
+      card.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:60px';
+      const img = document.createElement('img');
+      img.className = 'party-avatar';
+      img.src = party.avatar && party.avatar.startsWith('http')
+        ? party.avatar
+        : `${party.avatar ? API_BASE + party.avatar : FRONTEND_BASE + '/img/avatar-party-placeholder.webp'}`;
+      img.onerror = () => { img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`; };
       img.alt = `${party.emoji || ''} ${party.name}`;
-      img.title = `${party.emoji || ''} ${party.name}`;
+      img.title = img.alt;
       img.onclick = () => window.location.href = `party.html?id=${party.id}`;
-
       card.appendChild(img);
       partyList.appendChild(card);
-    }
-
-  } catch (err) {
-    console.error('❌Failed to load parties: ', err);
+    });
+  } catch {
     partyList.innerHTML = '';
   }
 }
 
-
 function getUserIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('id ');
+  return new URLSearchParams(window.location.search).get('id');
 }
-
 
 async function fetchProfile() {
   const token = getAccessToken();
-
   if (!token) {
     alert('You must be logged in to view profiles.');
-    window.location.href = ' / login.html ';
+    window.location.href = '/login.html';
     return;
   }
-
   const urlUserId = getUserIdFromUrl();
   const loggedInUserId = getUserIdFromToken();
   const userIdToFetch = urlUserId && urlUserId !== String(loggedInUserId)
     ? urlUserId
     : loggedInUserId;
-
   if (!userIdToFetch) {
-    alert('No user specified and you are not logged in .');
-    window.location.href = ' / login.html ';
+    alert('No user specified and you are not logged in.');
+    window.location.href = '/login.html';
     return;
   }
 
   try {
     const res = await fetchWithAuth(`${API_BASE}/users/${userIdToFetch}`);
-    if (!res.ok) throw new Error('Failed to load profile ');
-
+    if (!res.ok) throw new Error();
     const data = await res.json();
-
-    document.getElementById('username ').textContent = data.username || 'Unknown user ';
-
-    const emailElem = document.getElementById('email ');
-    if (emailElem) emailElem.style.display = 'none ';
-
-    document.getElementById('bio ').textContent = data.bio || '';
-
+    document.getElementById('username').textContent = data.username || 'Unknown user';
+    document.getElementById('bio').textContent = data.bio || '';
     let avatarUrl = data.avatar_url || `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
-    if (avatarUrl && !avatarUrl.startsWith('http ')) {
-      avatarUrl = API_BASE + avatarUrl;
+    if (avatarUrl && !avatarUrl.startsWith('http')) avatarUrl = API_BASE + avatarUrl;
+    const avatarElem = document.getElementById('avatar');
+    avatarElem.src = avatarUrl;
+    avatarElem.alt = `Avatar of ${data.username}`;
+
+    const editBtn = document.getElementById('editProfileBtn');
+    if (String(userIdToFetch) === String(loggedInUserId)) {
+      editBtn.style.display = 'block';
+      loadFriends();
+    } else {
+      editBtn.style.display = 'none';
+      loadFriends(userIdToFetch);
+      maybeShowAddFriendButton(loggedInUserId, userIdToFetch);
     }
 
-    const avatarElem = document.getElementById('avatar ');
-    avatarElem.src = avatarUrl;
-    avatarElem.alt = `Avatar of ${data.username || 'user '}`;
-
-    const editBtn = document.getElementById('editProfileBtn ');
-    if (String(userIdToFetch) === String(loggedInUserId)) {
-      editBtn.style.display = 'block ';
-      loadFriends(); // own profile → load your own friends
-    } else {
-      editBtn.style.display = 'none ';
-      loadFriends(userIdToFetch); // not your own → load target user's friends maybeShowAddFriendButton(loggedInUserId, userIdToFetch);
-}
-
-fetchGameLog(userIdToFetch);fetchFavoritesAndWishlist(userIdToFetch); // 👈 ADD THIS
-fetchBadges(userIdToFetch);fetchUserParties(userIdToFetch);
-
-} catch(err) {
-  alert('Error loading profile: ' + err.message);
-}
+    fetchGameLog(userIdToFetch);
+    fetchFavoritesAndWishlist(userIdToFetch);
+    fetchBadges(userIdToFetch);
+    fetchUserParties(userIdToFetch);
+  } catch (err) {
+    alert('Error loading profile: ' + err.message);
+  }
 }
 
 async function loadFriends(viewUserId = null) {
   const targetUserId = viewUserId || getUserIdFromToken();
-  const isOwnProfile = String(targetUserId) === String(getUserIdFromToken());
+  const isOwn = String(targetUserId) === String(getUserIdFromToken());
   try {
-    const res = await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /users/$ {
-      targetUserId
-    }
-    /friends`);
+    const res = await fetchWithAuth(`${API_BASE}/users/${targetUserId}/friends`);
+    if (!res.ok) throw new Error();
     const friends = await res.json();
-    const friendsList = document.getElementById("friendsList");
-    friendsList.innerHTML = "";
-    
-    if (!friends.length && !isOwnProfile) {
-      friendsList.innerHTML = '<div class="placeholder-box">No friends to display… yet.</div > ';
+    const friendsList = document.getElementById('friendsList');
+    friendsList.innerHTML = '';
+    if (!friends.length && !isOwn) {
+      friendsList.innerHTML = '<div class="placeholder-box">No friends to display… yet.</div>';
       return;
     }
-    
-    for (const friend of friends) {
-      const img = document.createElement("img");
-      img.className = "friend-avatar"; // 👈 Added the CSS class for proper styling
-      img.src = friend.avatar_url
-        ? (friend.avatar_url.startsWith('http ') ? friend.avatar_url : API_BASE + friend.avatar_url)
-        : `${FRONTEND_BASE}/img/avatar-placeholder.webp`;
-      img.title = `${friend.first_name} ${friend.last_name}`;
-      img.onclick = () => window.location.href = `profile.html?id=${friend.id}`;
-      
+    friends.forEach(f => {
+      const img = document.createElement('img');
+      img.className = 'friend-avatar';
+      img.src = f.avatar_url && f.avatar_url.startsWith('http')
+        ? f.avatar_url
+        : API_BASE + f.avatar_url;
+      img.onerror = () => { img.src = `${FRONTEND_BASE}/img/avatar-placeholder.webp`; };
+      img.title = `${f.first_name} ${f.last_name}`;
+      img.onclick = () => window.location.href = `profile.html?id=${f.id}`;
       friendsList.appendChild(img);
-    }
-    
-    // 👇 Add the "+" button if you're viewing your own profile
-    if (isOwnProfile) {
-      const plusBtn = document.createElement("div");
-      plusBtn.className = "add-friend-circle";
-      plusBtn.innerHTML = "+";
-      plusBtn.title = "Add Friend";
-      plusBtn.onclick = () = >{
-        document.getElementById("addFriendModal").style.display = "flex";
-      };
+    });
+    if (isOwn) {
+      const plusBtn = document.createElement('div');
+      plusBtn.className = 'add-friend-circle';
+      plusBtn.textContent = '+';
+      plusBtn.title = 'Add Friend';
+      plusBtn.onclick = () => { document.getElementById('addFriendModal').style.display = 'flex'; };
       friendsList.appendChild(plusBtn);
     }
-  } catch(err) {
-    console.error("❌ Failed to load friends:", err);
-    document.getElementById("friendsList").innerHTML = '<div class="placeholder-box">Could not load friends.</div>';
+  } catch {
+    document.getElementById('friendsList').innerHTML = '<div class="placeholder-box">Could not load friends.</div>';
   }
 }
 
-// Call this in fetchProfile() after loading basic user data:
-// fetchFavoritesAndWishlist(userIdToFetch);
 async function fetchFavoritesAndWishlist(userId) {
-  console.log('🔍 fetchFavoritesAndWishlist called with userId:', userId);
-
+  const favContainer = document.getElementById('favoritesList');
+  const wishContainer = document.getElementById('wishlistList');
+  if (!favContainer || !wishContainer) return;
   try {
-    // Check if containers exist
-    const favContainer = document.getElementById('favoritesList');
-    const wishContainer = document.getElementById('wishlistList');
-
-    if (!favContainer || !wishContainer) {
-      console.error('❌ Container elements not found:', {
-        favContainer: !!favContainer,
-        wishContainer: !!wishContainer
-      });
-      return;
-    }
-
-    console.log('📡 Making API requests...');
-
-    // Make the API calls with better error handling
-    const[favoritesRes, wishlistRes] = await Promise.all([fetchWithAuth(`$ {
-      API_BASE
-    }
-    /users/$ {
-      userId
-    }
-    /favorites`).catch(err => {
-        console.error('❌ Favorites request failed:', err);
-        return null;
-      }),
-      fetchWithAuth(`${API_BASE}/users / $ {
-      userId
-    }
-    /wishlist`).catch(err => {
-        console.error('❌ Wishlist request failed:', err);
-        return null;
-      })
+    const [favRes, wishRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(() => null),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(() => null)
     ]);
+    let favorites = [], wishlist = [];
+    if (favRes && favRes.ok) favorites = await favRes.json(); else favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    if (wishRes && wishRes.ok) wishlist = await wishRes.json(); else wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
 
-    console.log('📡 API responses:', {
-      favoritesRes: favoritesRes?.status,
-      wishlistRes: wishlistRes?.status
-    });
+    if (favorites.length) {
+      favContainer.innerHTML = '';
+      favorites.forEach(g => favContainer.appendChild(createGameCard(g, true)));
+    } else if (favRes && favRes.ok) favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
 
-    / / Handle favorites let favorites = [];
-    if (favoritesRes && favoritesRes.ok) {
-      try {
-        favorites = await favoritesRes.json();
-        console.log('✅ Favorites loaded:', favorites);
-      } catch(err) {
-        console.error('❌ Failed to parse favorites JSON:', err);
-        favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (JSON error).</div>';
-      }
-    } else if (favoritesRes) {
-      console.error('❌ Favorites request failed with status:', favoritesRes.status);
-      // Try to get error message
-      try {
-        const errorText = await favoritesRes.text();
-        console.error('Error response:', errorText);
-      } catch(e) {
-        console.error('Could not read error response');
-      }
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    } else {
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites (network error).</div>';
-    }
-
-    // Handle wishlist
-    let wishlist = [];
-    if (wishlistRes && wishlistRes.ok) {
-      try {
-        wishlist = await wishlistRes.json();
-        console.log('✅ Wishlist loaded:', wishlist);
-      } catch(err) {
-        console.error('❌ Failed to parse wishlist JSON:', err);
-        wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (JSON error).</div>';
-      }
-    } else if (wishlistRes) {
-      console.error('❌ Wishlist request failed with status:', wishlistRes.status);
-      // Try to get error message
-      try {
-        const errorText = await wishlistRes.text();
-        console.error('Error response:', errorText);
-      } catch(e) {
-        console.error('Could not read error response');
-      }
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
-    } else {
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist (network error).</div>';
-    }
-
-    // Update UI with successful data
-    if (favorites.length > 0 || wishlist.length > 0) {
-      // Clear containers before adding content
-      if (favorites.length > 0) {
-        favContainer.innerHTML = '';
-        favorites.forEach(game = >{
-          console.log('🎮 Adding favorite game:', game.title);
-          favContainer.appendChild(createGameCard(game, true));
-        });
-      } else if (favoritesRes && favoritesRes.ok) {
-        const isOwnProfile = String(userId) === String(getUserIdFromToken());
-        favContainer.innerHTML = isOwnProfile ? '<div class="placeholder-box">No favorites yet.</div>': '';
-      }
-
-      if (wishlist.length > 0) {
-        wishContainer.innerHTML = '';
-        wishlist.forEach(game = >{
-          console.log('🎮 Adding wishlist game:', game.title);
-          wishContainer.appendChild(createGameCard(game));
-        });
-      } else if (wishlistRes && wishlistRes.ok) {
-        const isOwnProfile = String(userId) === String(getUserIdFromToken());
-        wishContainer.innerHTML = isOwnProfile ? '<div class="placeholder-box">No wishlist entries yet.</div>': '';
-      }
-
-    }
-
-  } catch(err) {
-    console.error('❌ Failed to fetch favorites/wishlist:', err);
-    const favContainer = document.getElementById('favoritesList');
-    const wishContainer = document.getElementById('wishlistList');
-
-    if (favContainer) {
-      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    }
-    if (wishContainer) {
-      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
-    }
+    if (wishlist.length) {
+      wishContainer.innerHTML = '';
+      wishlist.forEach(g => wishContainer.appendChild(createGameCard(g)));
+    } else if (wishRes && wishRes.ok) wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
+  } catch {
+    favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
   }
 }
 
 function openGameModal(modalId, game) {
-  const img = document.getElementById(`$ {
-    modalId
-  }
-  Img`);
-  const title = document.getElementById(`$ {
-    modalId
-  }
-  Title`);
-  const desc = document.getElementById(`$ {
-    modalId
-  }
-  Description`);
-
-  const gameTitle = game.title || game.title_en || game.title_sv || game.name || 'Untitled';
-
-  let imageUrl = game.img || game.thumbnail_url;
-  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-    imageUrl = `.. / $ {
-      imageUrl
-    }`;
-  }
-  if (!imageUrl) {
-    imageUrl = `$ {
-      FRONTEND_BASE
-    }
-    /img/
-  default - thumb.webp`;
-  }
-
-  img.src = imageUrl;
+  const img = document.getElementById(`${modalId}Img`);
+  const title = document.getElementById(`${modalId}Title`);
+  const desc = document.getElementById(`${modalId}Description`);
+  const gameTitle = game.title || game.name || 'Untitled';
+  let imageUrl = game.img || game.thumbnail_url || '';
+  if (imageUrl && !/^https?:/.test(imageUrl)) imageUrl = `../${imageUrl}`;
+  img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
   img.alt = gameTitle;
-
   title.textContent = gameTitle;
-  desc.textContent = game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
-
+  desc.textContent = game.description || 'No description available.';
   document.getElementById(modalId).style.display = 'flex';
 }
 
@@ -674,443 +447,111 @@ function closeGameModal(modalId) {
 function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
   card.className = 'game-entry';
-
-  const gameTitle = game.title || game.title_en || game.title_sv || game.name || 'Untitled';
+  const gameTitle = game.title || game.name || 'Untitled';
+  const imageUrl = /^https?:/.test(game.img || game.thumbnail_url)
+    ? game.img || game.thumbnail_url
+    : `../${game.img || game.thumbnail_url || ''}`;
 
   if (minimal) {
-    // Minimal version for favorites grid
-    card.style.all = 'unset';
-    card.style.cursor = 'pointer';
-
     const img = document.createElement('img');
-    let imageUrl = game.img || game.thumbnail_url;
-    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-      imageUrl = `.. / $ {
-        imageUrl
-      }`;
-    }
-
-    img.src = imageUrl || `$ {
-      FRONTEND_BASE
-    }
-    /img/
-  default - thumb.webp`;
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     img.alt = gameTitle;
-    img.title = gameTitle; // tooltip on hover
-    img.onerror = () = >{
-      img.src = `$ {
-        FRONTEND_BASE
-      }
-      /img/
-    default - thumb.webp`;
-    };
-
-    img.style.width = '48px';
-    img.style.height = '48px';
-    img.style.borderRadius = '8px';
-    img.style.border = '2px solid #c9a04e';
-    img.style.objectFit = 'cover';
-    img.style.margin = '2px';
-
+    img.title = gameTitle;
+    img.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;margin:2px;cursor:pointer';
+    img.onerror = () => { img.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
     card.appendChild(img);
   } else {
-    // Full version for wishlist
-    card.style.border = 'none';
-    card.style.borderRadius = '8px';
-    card.style.padding = '10px';
-    card.style.marginBottom = '10px';
-    card.style.backgroundColor = '#f9f6f2';
-    card.style.display = 'flex';
-    card.style.alignItems = 'center';
-    card.style.gap = '12px';
-    card.style.cursor = 'pointer';
-
-    let imageUrl = game.img || game.thumbnail_url;
-    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-      imageUrl = `.. / $ {
-        imageUrl
-      }`;
-    }
-
+    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;margin-bottom:10px;background:#f9f6f2;border-radius:8px;cursor:pointer';
     const thumb = document.createElement('img');
-    thumb.src = imageUrl || `$ {
-      FRONTEND_BASE
-    }
-    /img/
-  default - thumb.webp`;
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     thumb.alt = gameTitle;
-    thumb.onerror = () = >{
-      thumb.src = `$ {
-        FRONTEND_BASE
-      }
-      /img/
-    default - thumb.webp`;
-    };
-    thumb.style.width = '60px';
-    thumb.style.height = '60px';
-    thumb.style.borderRadius = '8px';
-    thumb.style.border = '2px solid #c9a04e';
-    thumb.style.objectFit = 'cover';
-
-    const title = document.createElement('div');
-    title.className = 'game-entry-title';
-    title.textContent = gameTitle;
-
-    card.appendChild(thumb);
-    card.appendChild(title);
+    thumb.style.cssText = 'width:60px;height:60px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;';
+    thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+    const titleEl = document.createElement('div');
+    titleEl.className = 'game-entry-title';
+    titleEl.textContent = gameTitle;
+    card.append(thumb, titleEl);
   }
 
-  card.onclick = () = >{
-    if (minimal) {
-      openGameModal('favoriteGameModal', game);
-    } else {
-      openGameModal('wishlistGameModal', game);
-    }
-  };
-
+  card.onclick = () => openGameModal(minimal ? 'favoriteGameModal' : 'wishlistGameModal', game);
   return card;
 }
 
 async function fetchBadges(userId) {
   try {
-    const res = await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /users/$ {
-      userId
-    }
-    /badges`);
+    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/badges`);
+    if (!res.ok) throw new Error();
     const badges = await res.json();
     const container = document.getElementById('badgesList');
-
-    if (!badges.length) {
-      container.innerHTML = '<div class="placeholder-box">No badges earned yet.</div > ';
+    if (badges.length === 0) {
+      container.innerHTML = '<div class="placeholder-box">No badges earned yet.</div>';
       return;
     }
-
     container.innerHTML = '';
     badges.forEach(badge => {
-      const img = document.createElement('img ');
+      const img = document.createElement('img');
       img.src = badge.icon_url;
       img.alt = badge.name;
       img.title = `${badge.name} – ${badge.description}`;
-      img.style.width = '48px ';
-      img.style.height = '48px ';
-      img.style.borderRadius = '8px ';
-      img.style.border = '2px solid#c9a04e ';
-      img.style.objectFit = 'cover ';
-      img.style.background = '#fff ';
-      img.style.cursor = 'pointer ';
-
+      img.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;background:#fff;cursor:pointer';
       img.onclick = () => openBadgeInfoModal(badge);
       container.appendChild(img);
     });
-  } catch (err) {
-    console.error('❌Failed to fetch badges: ', err);
-    const container = document.getElementById('badgesList ');
-    container.innerHTML = ' < div class = "placeholder-box" > Failed to load badges. < /div>';
+  } catch {
+    document.getElementById('badgesList').innerHTML = '<div class="placeholder-box">Failed to load badges.</div>';
   }
 }
 
 function openBadgeInfoModal(badge) {
-  document.getElementById("badgeIcon").src = badge.icon_url;
-  document.getElementById("badgeName").textContent = badge.name;
-  document.getElementById("badgeDescription").textContent = badge.description;
-  document.getElementById("badgeInfoModal").style.display = "flex";
+  document.getElementById('badgeIcon').src = badge.icon_url;
+  document.getElementById('badgeName').textContent = badge.name;
+  document.getElementById('badgeDescription').textContent = badge.description;
+  document.getElementById('badgeInfoModal').style.display = 'flex';
 }
 
 async function maybeShowAddFriendButton(currentUserId, profileId) {
   if (!currentUserId || !profileId || currentUserId === profileId) return;
-
-  const addFriendBtn = document.getElementById("addFriendBtn");
+  const addFriendBtn = document.getElementById('addFriendBtn');
   if (!addFriendBtn) return;
-
   try {
     const res = await fetchWithAuth(`${API_BASE}/friends`);
+    if (!res.ok) return;
     const friends = await res.json();
-
-    const alreadyFriend = friends.some(f = >f.id == profileId);
-    if (!alreadyFriend) {
-      addFriendBtn.style.display = "inline-block";
-      addFriendBtn.addEventListener("click", async() = >{
+    if (!friends.some(f => f.id === parseInt(profileId))) {
+      addFriendBtn.style.display = 'inline-block';
+      addFriendBtn.addEventListener('click', async () => {
         try {
-          const res = await fetchWithAuth(`$ {
-            API_BASE
-          }
-          /friends/$ {
-            profileId
-          }`, {
-            method: 'POST'
-          });
-
-          if (res.ok) {
-            addFriendBtn.disabled = true;
-            addFriendBtn.textContent = "✅ Friend Added";
-          } else {
-            const err = await res.json();
-            alert("Failed to add friend: " + err.error);
-          }
-        } catch(err) {
-          console.error('❌ Friend add failed:', err);
-        }
+          const r = await fetchWithAuth(`${API_BASE}/friends/${profileId}`, { method: 'POST' });
+          if (r.ok) { addFriendBtn.disabled = true; addFriendBtn.textContent = '✅ Friend Added'; }
+          else { const err = await r.json(); alert('Failed to add friend: ' + err.error); }
+        } catch {}
       });
     }
-  } catch(err) {
-    console.error('❌ Error checking friends:', err);
-  }
+  } catch {}
 }
+
 
 async function checkFriendStatus(viewedUserId) {
   const myId = getUserIdFromToken();
   if (!viewedUserId || !myId || viewedUserId === myId) return;
-
   try {
-    const res = await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /friends`);
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
     if (!res.ok) return;
-
     const friends = await res.json();
-    const isFriend = friends.some(f => f.id === parseInt(viewedUserId));
-
-    if (isFriend) {
-      document.getElementById('removeFriendBtn').style.display = 'block';
+    if (friends.some(f => f.id === parseInt(viewedUserId, 10))) {
+      const removeFriendBtn = document.getElementById('removeFriendBtn');
+      if (removeFriendBtn) {
+        removeFriendBtn.style.display = 'block';
+      }
     }
   } catch (err) {
     console.error('❌ Error in checkFriendStatus:', err);
   }
 }
 
-async function fetchGameLog(userId) {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/users / $ {
-      userId
-    }
-    /borrow-log`);
-    if (!res.ok) {
-      document.querySelector('#borrowLogTable tbody').innerHTML =
-        `<tr><td colspan="2" style="text-align:center; padding:1rem; color:#999;">
-          Game log is private or unavailable.
-         </td > </tr>`;
-      return;
-    }
-    const logs = await res.json();
+// ------------ INITIAL LOAD ------------
 
-    if (logs.length === 0) {
-      document.querySelector('#borrowLogTable tbody').innerHTML =
-        `<tr><td colspan="2" style="text-align:center; padding:1rem;">No game history yet.</td > </tr>`;
-      return;
-    }
-
-    const rowsHtml = logs.map(log => {
-      const date = new Date(log.timestamp).toLocaleDateString();
-      return `<tr>
-                <td>${date}</td > <td > $ {
-      log.game_title
-    } < /td>
-              </tr > `;
-  }).join('');
-
-  document.querySelector('#borrowLogTable tbody').innerHTML = rowsHtml;
-
-} catch(err) {
-  console.error('Failed to fetch game log:', err);
-  document.querySelector('#borrowLogTable tbody').innerHTML = ` < tr > <td colspan = "2"style = "text-align:center; padding:1rem; color:red;" > Failed to load game log. < /td></tr > `;
-}
-}
-
-function getPartyIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('id');
-}
-
-async function fetchPartyProfile() {
-  const id = getPartyIdFromUrl();
-  if (!id) {
-    alert('Missing party ID');
-    return;
-  }
-
-  try {
-    // Fetch party info, members, and sessions in parallel
-    const[partyRes, membersRes, sessionsRes] = await Promise.all([fetchWithAuth(`$ {
-      API_BASE
-    }
-    /party/$ {
-      id
-    }`), fetchWithAuth(`$ {
-      API_BASE
-    }
-    /party/$ {
-      id
-    }
-    /avatar`),
-      fetchWithAuth(`${API_BASE}/party / $ {
-      id
-    }
-    /members`),
-      fetchWithAuth(`${API_BASE}/party / $ {
-      id
-    }
-    /sessions`)
-    ]);
-
-    / / Check all responses
-    if (!partyRes.ok) throw new Error('Failed to load party info');
-    if (!membersRes.ok) throw new Error('Failed to load party members');
-    if (!sessionsRes.ok) throw new Error('Failed to load party sessions');
-
-    // Parse JSON
-    const partyData = await partyRes.json(); const avatarElem = document.getElementById('partyAvatar');
-    if (avatarElem) {
-      avatarElem.src = partyData.avatar ? .startsWith('http') ? partyData.avatar: `.. / $ {
-        partyData.avatar || 'img/avatar-party-placeholder.webp'
-      }`;
-
-      avatarElem.onerror = () = >{
-        avatarElem.src = `$ {
-          FRONTEND_BASE
-        }
-        /img/avatar - party - placeholder.webp`;
-      };
-    }
-
-    const members = await membersRes.json(); const sessions = await sessionsRes.json();
-
-    // Update party basic info
-    document.getElementById('partyName').textContent = partyData.name || 'Unnamed Party';
-
-    // If you have a description field in DB/backend, use it, else skip or add later
-    if (document.getElementById('partyDesc')) {
-      document.getElementById('partyDesc').textContent = partyData.description || '';
-    }
-
-    // Placeholder for active session (can be replaced later)
-    const activeSessionBox = document.getElementById('activeSessionBox');
-    if (activeSessionBox) {
-      activeSessionBox.innerHTML = ` < div class = "session-box" > <strong > Active Session: </strong><br>
-          <span style="opacity: 0.6;">Coming soon…</span > </div>
-      `;
-    }
-
-    / / Render party members const membersList = document.getElementById('partyMembersList');
-      if (membersList) {
-        membersList.innerHTML = '';
-        for (const m of members) {
-          const el = document.createElement('div');
-          el.className = 'party-member';
-
-          const img = document.createElement('img');
-          img.src = m.avatar_url ? .startsWith('http') ? m.avatar_url: `$ {
-            API_BASE
-          }
-          $ {
-            m.avatar_url || ''
-          }`;
-          img.alt = `$ {
-            m.first_name
-          }
-          $ {
-            m.last_name
-          }`;
-          img.className = 'party-avatar';
-
-          const name = document.createElement('span');
-          name.textContent = `$ {
-            m.first_name
-          }
-          $ {
-            m.last_name
-          }`;
-          name.className = 'party-name';
-
-          el.appendChild(img);
-          el.appendChild(name);
-          membersList.appendChild(el);
-        }
-      }
-
-      // Render party sessions
-      const sessionsList = document.getElementById('partySessionLog');
-      if (sessionsList) {
-        sessionsList.innerHTML = '';
-        if (sessions.length === 0) {
-          const noSessionsRow = document.createElement('tr');
-          noSessionsRow.innerHTML = ` < td colspan = "2"style = "text-align:center; font-style: italic; color: #a07d3b;" > No sessions recorded yet. < /td>`;
-        sessionsList.appendChild(noSessionsRow);
-      } else {
-        for (const s of sessions) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${new Date(s.started_at).toLocaleDateString()}</td > <td > $ {
-            s.game_title || 'Unknown'
-          } < /td>
-          `;
-          sessionsList.appendChild(row);
-        }
-      }
-    }
-
-  } catch (err) {
-    console.error('❌ Failed to load party profile:', err);
-    alert('Could not load party profile.');
-  }
-}
-
-async function submitCreateParty() {
-  const nameInput = document.getElementById('partyNameInput');
-  const emojiInput = document.getElementById('partyEmojiInput');
-
-  const name = nameInput?.value.trim();
-  const emoji = emojiInput?.value.trim() || '🎲';
-
-  if (!name) {
-    alert('Please enter a party name.');
-    return;
-  }
-
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/party`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name,
-              emoji
-            }),
-          });
-
-          if (!res.ok) {
-            const err = await res.json();
-            alert(`Failed to create party: $ {
-              err.error || res.statusText
-            }`);
-            return;
-          }
-
-          const data = await res.json();
-          alert(`Party created ! Invite code: $ {
-            data.inviteCode
-          }`);
-
-          // Optionally refresh party list or redirect
-          fetchUserParties(userIdToFetch);
-          closeCreatePartyModal();
-
-        } catch(err) {
-          console.error('Error creating party:', err);
-          alert('Error creating party. See console for details.');
-        }
-      }
-
-      function openCreatePartyModal() {
-        const modal = document.getElementById("createPartyModal");
-        if (modal) modal.style.display = "flex";
-      }
-      document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initPixelNav(); // 🧩 From shared-ui.js
   updateNotificationIcon(); // 🔔 Just update icon on load
   setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
@@ -1118,7 +559,7 @@ async function submitCreateParty() {
   try {
     await fetchProfile(); // Page-specific
   } catch (err) {
-    console.error("❌ Error during initial load:", err);
+    console.error('❌ Error during initial load:', err);
   }
 
   const myId = getUserIdFromToken();
@@ -1126,14 +567,14 @@ async function submitCreateParty() {
   const profileUserId = viewedId;
 
   // Badge popup close
-  document.getElementById("closeBadgePopup")?.addEventListener('click', () => {
-    document.getElementById("badgePopup").style.display = "none";
+  document.getElementById('closeBadgePopup')?.addEventListener('click', () => {
+    document.getElementById('badgePopup').style.display = 'none';
   });
 
   // Badge info close
-  document.getElementById("closeBadgeInfoBtn")?.addEventListener('click', () => {
-    const modal = document.getElementById("badgeInfoModal");
-    if (modal) modal.style.display = "none";
+  document.getElementById('closeBadgeInfoBtn')?.addEventListener('click', () => {
+    const modal = document.getElementById('badgeInfoModal');
+    if (modal) modal.style.display = 'none';
   });
 
   // Friend status
@@ -1142,14 +583,12 @@ async function submitCreateParty() {
   // Remove friend
   const removeBtn = document.getElementById('removeFriendBtn');
   if (removeBtn) {
-    removeBtn.addEventListener('click', dc () => {
+    removeBtn.addEventListener('click', async () => {
       if (!confirm('Are you sure you want to remove this friend?')) return;
-
       try {
         const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
           method: 'DELETE',
         });
-
         if (res.ok) {
           alert('Friend removed');
           location.reload();
@@ -1164,55 +603,49 @@ async function submitCreateParty() {
     });
   }
 
-  // Manual friend request
+  // Manual friend request (for own profile)
   if (String(myId) === String(profileUserId)) {
-    const modal = document.getElementById("addFriendModal");
-    const closeBtn = document.getElementById("closeModalBtn");
-    const submitBtn = document.getElementById("submitFriendRequest");
+    const modal = document.getElementById('addFriendModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const submitBtn = document.getElementById('submitFriendRequest');
 
-    closeBtn?.addEventListener('click', () => modal.style.display = "none");
+    closeBtn?.addEventListener('click', () => modal.style.display = 'none');
 
     submitBtn?.addEventListener('click', async () => {
-      const input = document.getElementById("manualFriendId");
+      const input = document.getElementById('manualFriendId');
       const friendId = input.value.trim();
-
       if (!friendId || isNaN(friendId) || friendId === String(myId)) {
-        alert("Please enter a valid user ID.");
+        alert('Please enter a valid user ID.');
         return;
       }
-
       try {
-        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, {
-          method: 'POST',
-        });
-
+        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, { method: 'POST' });
         if (res.ok) {
-          alert("✅ Friend added!");
-          modal.style.display = "none";
-          input.value = "";
+          alert('✅ Friend added!');
+          modal.style.display = 'none';
+          input.value = '';
           loadFriends();
         } else {
           const err = await res.json();
-          alert("❌ Failed: " + err.error);
+          alert('❌ Failed: ' + err.error);
         }
       } catch (err) {
         console.error('❌ Failed to send manual friend request:', err);
-        alert("Something went wrong.");
+        alert('Something went wrong.');
       }
     });
   }
 
   // Notification modal toggle
-  const notifBtn = document.getElementById("notificationIcon");
-  const notifModal = document.getElementById("notificationModal");
-  const closeNotifBtn = document.getElementById("closeNotificationBtn");
+  const notifBtn = document.getElementById('notificationIcon');
+  const notifModal = document.getElementById('notificationModal');
+  const closeNotifBtn = document.getElementById('closeNotificationBtn');
 
   if (notifBtn && notifModal && closeNotifBtn) {
     notifBtn.addEventListener('click', () => {
       notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
       fetchNotifications();
     });
-
     closeNotifBtn.addEventListener('click', () => {
       notifModal.style.display = 'none';
     });
@@ -1227,8 +660,8 @@ async function submitCreateParty() {
     });
   });
 
-  // Party modal
-  document.getElementById("createPartyBtn")?.addEventListener('click', openCreatePartyModal);
-  document.getElementById("closeCreatePartyModal")?.addEventListener('click', closeCreatePartyModal);
-  document.getElementById("submitCreatePartyBtn")?.addEventListener('click', submitCreateParty);
+  // Party modal controls
+  document.getElementById('createPartyBtn')?.addEventListener('click', openCreatePartyModal);
+  document.getElementById('closeCreatePartyModal')?.addEventListener('click', closeCreatePartyModal);
+  document.getElementById('submitCreatePartyBtn')?.addEventListener('click', submitCreateParty);
 });
