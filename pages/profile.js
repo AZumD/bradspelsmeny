@@ -132,8 +132,8 @@ async function fetchNotifications() {
     const icon = document.getElementById("notificationIcon");
     if (icon) {
       icon.src = hasUnread
-        ? "img/icons/icon-notif-on.webp"
-        : "img/icons/icon-notif-off.webp";
+        ? "../img/icons/icon-notif-on.webp"
+        : "../img/icons/icon-notif-off.webp";
     }
 
     if (!notifications.length) {
@@ -168,7 +168,7 @@ async function fetchNotifications() {
             });
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
-              icon.src = "img/icons/icon-notif-off.webp"; // Optimistically reset icon
+              icon.src = "../img/icons/icon-notif-off.webp"; // Optimistically reset icon
             } else {
               let errorMsg = 'Failed to accept friend request';
               try {
@@ -225,7 +225,7 @@ async function fetchNotifications() {
           // Update icon again just in case all are now read
           const updatedNotifications = list.querySelectorAll('.notification-item.unread');
           if (updatedNotifications.length === 0) {
-            icon.src = "img/icons/icon-notif-off.webp";
+            icon.src = "../img/icons/icon-notif-off.webp";
           }
 
           if (n.type === 'badge_awarded' && n.data?.name && n.data?.icon_url) {
