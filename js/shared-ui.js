@@ -1,7 +1,7 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
-// Utility
+//UTILITY======================================================================================
 function getUserRole() {
   const token = localStorage.getItem("userToken");
   if (!token) return null;
@@ -66,7 +66,7 @@ async function fetchWithAuth(url, options = {}) {
   return response;
 }
 
-// PixelNav Setup
+//PIXELNAV=====================================================================================
 function initPixelNav() {
   const nav = document.getElementById('pixelNav');
   if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
@@ -94,7 +94,7 @@ function initPixelNav() {
   }
 }
 
-// Notifications
+//NOTIFICATIONS================================================================================
 async function fetchNotifications() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/notifications`);
