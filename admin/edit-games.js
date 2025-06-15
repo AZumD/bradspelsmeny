@@ -115,7 +115,9 @@
       slowDayOnly.checked = !!game.slow_day_only;
       trustedOnly.checked = !!game.trusted_only;
       membersOnly.checked = !!game.members_only;
-      staffPicks.value = game.staff_picks || "";
+      staffPicks.value = Array.isArray(game.staff_picks)
+        ? game.staff_picks.join(", ")
+        : (game.staff_picks || "");
       minTableSize.value = game.min_table_size || "";
       conditionRatingValue.value = game.condition_rating || 0;
 
@@ -138,7 +140,7 @@
         slow_day_only: slowDayOnly.checked,
         trusted_only: trustedOnly.checked,
         members_only: membersOnly.checked,
-        staff_picks: staffPicks.value,
+        staff_picks: staffPicks.value.split(',').map(p => p.trim()).filter(p => p),
         min_table_size: minTableSize.value,
         condition_rating: parseInt(conditionRatingValue.value) || 0,
       };
