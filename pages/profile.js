@@ -126,6 +126,16 @@ async function fetchNotifications() {
     const list = document.getElementById('notificationList');
     list.innerHTML = '';
 
+    const hasUnread = notifications.some(n => !n.read);
+
+    // Swap bell icon
+    const icon = document.getElementById("notificationIcon");
+    if (icon) {
+      icon.src = hasUnread
+        ? "img/icons/icon-notif-on.webp"
+        : "img/icons/icon-notif-off.webp";
+    }
+
     if (!notifications.length) {
       list.innerHTML = '<div class="placeholder-box">No notifications yet.</div>';
       return;
@@ -158,6 +168,7 @@ async function fetchNotifications() {
             });
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
+              icon.src = "img/icons/icon-notif-off.webp"; // Optimistically reset icon
             } else {
               let errorMsg = 'Failed to accept friend request';
               try {
@@ -211,6 +222,12 @@ async function fetchNotifications() {
           await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
           div.classList.remove('unread');
 
+          // Update icon again just in case all are now read
+          const updatedNotifications = list.querySelectorAll('.notification-item.unread');
+          if (updatedNotifications.length === 0) {
+            icon.src = "img/icons/icon-notif-off.webp";
+          }
+
           if (n.type === 'badge_awarded' && n.data?.name && n.data?.icon_url) {
             showBadgePopup(n.data.name, n.data.icon_url, time);
           }
@@ -224,20 +241,13 @@ async function fetchNotifications() {
       list.appendChild(div);
     }
 
-    if (notifications.some(n => !n.read)) {
-      const icon = document.getElementById("notificationIcon");
-      if (icon && !document.getElementById("notificationDot")) {
-        const dot = document.createElement("span");
-        dot.id = "notificationDot";
-        icon.appendChild(dot);
-      }
-    }
   } catch (err) {
     console.error('❌ Failed to fetch notifications:', err);
     document.getElementById('notificationList').innerHTML =
       `<div class="placeholder-box">Could not load notifications.</div>`;
   }
 }
+
 
 function formatNotificationText(n) {
   switch (n.type) {
