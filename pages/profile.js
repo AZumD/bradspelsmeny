@@ -1111,9 +1111,14 @@ function openCreatePartyModal() {
 
   if (notifBtn && notifModal && closeNotifBtn) {
     notifBtn.onclick = () => {
-  notifModal.style.display = 'flex';
-  fetchNotifications(); // now only used when opening modal
+  if (notifModal.style.display === 'flex') {
+    notifModal.style.display = 'none';
+  } else {
+    notifModal.style.display = 'flex';
+    fetchNotifications();
+  }
 };
+
 
 
     closeNotifBtn.onclick = () => notifModal.style.display = 'none';
