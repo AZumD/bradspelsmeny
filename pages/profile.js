@@ -4,6 +4,10 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 function getAccessToken() {
   return localStorage.getItem('userToken');
 }
+const isAdmin = localStorage.getItem("role") === "admin"; // or decode from JWT if needed
+
+//PIXELNAV=====================================================================
+
 function goTo(path) {
   const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
   window.location.href = base + path;
@@ -14,6 +18,18 @@ function logout() {
   window.location.href = '/bradspelsmeny/pages/login.html';
 }
 
+const logoutBtn = document.getElementById("logoutBtn");
+const adminToggle = document.getElementById("adminMenuToggle");
+const adminMenu = document.getElementById("adminMenu");
+
+if (isAdmin) {
+  logoutBtn?.remove(); // Remove the standard logout button
+  adminToggle.style.display = "inline-block"; // Show hamburger
+} else {
+  adminToggle?.remove(); // Remove hamburger if user is not admin
+}
+
+===============================================================================
 
 function getRefreshToken() {
   return localStorage.getItem('refreshToken');
