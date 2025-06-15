@@ -87,232 +87,6 @@ function getUserIdFromToken() {
   }
 }
 
-//PIXELNAV=========================================================================
-
-function goTo(path) {
-  const base = window.location.origin + (window.location.hostname === 'localhost ' ? '' : ' / bradspelsmeny ');
-  window.location.href = base + path;
-}
-
-function logout() {
-  clearTokens();
-  window.location.href = ' / bradspelsmeny / pages / login.html ';
-}
-const adminToggle = document.getElementById("adminMenuToggle");
-  const adminDropdown = document.getElementById("adminMenuDropdown");
-  const logoutIcon = document.getElementById("logoutIcon");
-
-  if (isAdmin) {
-    adminToggle.style.display = "inline-block";
-    logoutIcon.style.display = "none";
-
-    adminToggle.addEventListener("click", () => {
-      adminDropdown.style.display = adminDropdown.style.display === "none" ? "block" : "none";
-    });
-
-    // Optional: close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-        adminDropdown.style.display = "none";
-      }
-    });
-  }
-
-//NOTIFICATIONS====================================================================
-
-async function fetchNotifications() {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/notifications`);
-    if (!res.ok) throw new Error('Failed to fetch notifications ');
-
-    const notifications = await res.json();
-    const list = document.getElementById('notificationList ');
-    list.innerHTML = '';
-
-    const hasUnread = notifications.some(n => !n.read);
-
-    // Swap bell icon
-    const icon = document.getElementById("notificationIcon");
-    if (icon) {
-      icon.src = hasUnread
-        ? "../img/icons/icon-notif-on.webp"
-        : "../img/icons/icon-notif-off.webp";
-    }
-
-    if (!notifications.length) {
-      list.innerHTML = ' < div class = "placeholder-box" > No notifications yet. < /div>';
-      return;
-    }
-
-    for (const n of notifications) {
-      const div = document.createElement('div');
-      div.className = `notification-item ${n.read ? '' : 'unread'}`;
-      div.innerHTML = formatNotificationText(n);
-
-      const time = new Date(n.created_at).toLocaleString();
-
-      if (n.type === 'friend_request') {
-        const btnWrapper = document.createElement('div');
-        btnWrapper.style.marginTop = '0.5rem';
-
-        const acceptBtn = document.createElement('button');
-        acceptBtn.textContent = 'Accept';
-        acceptBtn.className = 'btn-accept';
-        acceptBtn.onclick = async (e) => {
-          e.stopPropagation();
-          const requestId = n.data?.request_id;
-          if (!requestId) {
-            alert("Missing request ID. Cannot accept this request.");
-            return;
-          }
-          try {
-            const res = await fetchWithAuth(`${API_BASE}/friend - requests / $ {
-      requestId
-    }
-    /accept`, {
-              method: 'POST',
-            });
-            if (res.ok) {
-              div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small > `; icon.src = "../img/icons/icon-notif-off.webp"; // Optimistically reset icon
-  } else {
-    let errorMsg = 'Failed to accept friend request';
-    try {
-      const contentType = res.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const err = await res.json();
-        errorMsg += ': ' + (err.error || JSON.stringify(err));
-      } else {
-        const text = await res.text();
-        errorMsg += ': ' + text;
-      }
-    } catch(parseErr) {
-      console.error('Failed to parse error response:', parseErr);
-    }
-    alert(errorMsg);
-  }
-} catch(err) {
-  console.error('❌ Accept failed:', err);
-  alert('Error accepting request.');
-}
-};
-
-const declineBtn = document.createElement('button');
-declineBtn.textContent = 'Decline';
-declineBtn.className = 'btn-decline';
-declineBtn.onclick = async(e) = >{
-  e.stopPropagation();
-  try {
-    const res = await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /friend-requests/$ {
-      n.id
-    }
-    /decline`, {
-              method: 'POST',
-            });
-            if (res.ok) {
-              div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small > `;
-  } else {
-    const err = await res.json();
-    alert(`Failed: $ {
-      err.error
-    }`);
-  }
-} catch(err) {
-  console.error('❌ Decline failed:', err);
-  alert('Error declining request.');
-}
-};
-
-btnWrapper.appendChild(acceptBtn);
-btnWrapper.appendChild(declineBtn);
-div.appendChild(btnWrapper);
-}
-
-div.onclick = async() = >{
-  if (!n.read) {
-    await fetchWithAuth(`$ {
-      API_BASE
-    }
-    /notifications/$ {
-      n.id
-    }
-    /read`, { method: 'POST' });
-          div.classList.remove('unread');
-
-          / / Update icon again just in
-  case all are now read const updatedNotifications = list.querySelectorAll('.notification-item.unread');
-    if (updatedNotifications.length === 0) {
-      icon.src = "../img/icons/icon-notif-off.webp";
-    }
-
-    if (n.type === 'badge_awarded' && n.data ? .name && n.data ? .icon_url) {
-      showBadgePopup(n.data.name, n.data.icon_url, time);
-    }
-  }
-
-  if (n.type === 'friend_accept' && n.data.receiver_id) {
-    window.location.href = `profile.html ? id = $ {
-      n.data.receiver_id
-    }`;
-  }
-};
-
-list.appendChild(div);
-}
-
-} catch(err) {
-  console.error('❌ Failed to fetch notifications:', err);
-  document.getElementById('notificationList').innerHTML = ` < div class = "placeholder-box" > Could not load notifications. < /div>`;
-  }
-}
-
-
-function formatNotificationText(n) {
-  switch (n.type) {
-    case 'friend_request':
-      return `👤 <strong>${n.sender_name || 'Someone'}</strong > sent you a friend request.`;
-case 'friend_accept':
-  return`✅ < strong > $ {
-    n.sender_name || 'Someone'
-  } < /strong> accepted your friend request.`;
-    case 'badge_awarded':
-      return `🏅 You earned a new badge: <strong>${n.data?.name || 'Unnamed Badge'}</strong > `;
-default:
-  return` < strong > New notification: </strong> ${n.message || 'Something happened.'}`;
-  }
-}
-
-
-function showBadgePopup(name, iconUrl, time) {
-  document.getElementById('badgePopupImage').src = iconUrl;
-  document.getElementById('badgePopupImage').alt = name;
-  document.getElementById('badgePopupName').textContent = name;
-  document.getElementById('badgePopupTime').textContent = time;
-
-  const popup = document.getElementById('badgePopup');
-  popup.style.display = 'flex';
-
-  setTimeout(() => {
-    popup.style.display = 'none';
-  }, 6000);
-}
-
-async function updateNotificationIcon() {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/notifications`);
-  if (!res.ok) throw new Error('Failed to fetch notifications');const notifications = await res.json();const hasUnread = notifications.some(n = >!n.read);
-
-  const icon = document.getElementById("notificationIcon");
-  if (icon) {
-    icon.src = hasUnread ? "../img/icons/icon-notif-on.webp": "../img/icons/icon-notif-off.webp";
-  }
-} catch(err) {
-  console.error('❌ Failed to update notification icon:', err);
-}
-}
-
 //PARTIES==========================================================================
 async
 function fetchUserParties(viewedUserId = null) {
@@ -1114,150 +888,130 @@ async function submitCreateParty() {
       }
 
       function openCreatePartyModal() {
+        
         const modal = document.getElementById("createPartyModal");
         if (modal) modal.style.display = "flex";
       }
-      document.addEventListener('DOMContentLoaded', async() = >{
-        updateNotificationIcon(); // 🔔 Just update icon on load
-        setInterval(updateNotificationIcon, 60000); // 🔁 Refresh icon every minute
-        try {
-          await fetchProfile(); // Ensure token is valid and user data is loaded
-        } catch(err) {
-          console.error("❌ Error during initial load:", err);
-        }
+document.addEventListener('DOMContentLoaded', async () => {
+  initPixelNav(); // 🧩 From shared-ui.js
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
 
-        const myId = getUserIdFromToken();
-        const viewedId = getUserIdFromUrl() || myId;
-        const profileUserId = viewedId;
+  try {
+    await fetchProfile(); // Page-specific
+  } catch (err) {
+    console.error("❌ Error during initial load:", err);
+  }
 
-        const closeBadgePopupBtn = document.getElementById("closeBadgePopup");
-        if (closeBadgePopupBtn) {
-          closeBadgePopupBtn.onclick = () = >{
-            document.getElementById("badgePopup").style.display = "none";
-          };
-        }
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId;
 
-        const badgeCloseBtn = document.getElementById("closeBadgeInfoBtn");
-        if (badgeCloseBtn) {
-          badgeCloseBtn.onclick = () = >{
-            const modal = document.getElementById("badgeInfoModal");
-            if (modal) modal.style.display = "none";
-          };
-        }
+  // Badge popup close
+  document.getElementById("closeBadgePopup")?.addEventListener('click', () => {
+    document.getElementById("badgePopup").style.display = "none";
+  });
 
-        checkFriendStatus(profileUserId);
+  // Badge info close
+  document.getElementById("closeBadgeInfoBtn")?.addEventListener('click', () => {
+    const modal = document.getElementById("badgeInfoModal");
+    if (modal) modal.style.display = "none";
+  });
 
-        const removeBtn = document.getElementById('removeFriendBtn');
-        if (removeBtn) {
-          removeBtn.addEventListener('click', async() = >{
-            const confirmed = confirm('Are you sure you want to remove this friend?');
-            if (!confirmed) return;
+  // Friend status
+  checkFriendStatus(profileUserId);
 
-            try {
-              const res = await fetchWithAuth(`$ {
-                API_BASE
-              }
-              /friends/remove / $ {
-                profileUserId
-              }`, {
-                method: 'DELETE'
-              });
+  // Remove friend
+  const removeBtn = document.getElementById('removeFriendBtn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to remove this friend?')) return;
 
-              if (res.ok) {
-                alert('Friend removed');
-                location.reload();
-              } else {
-                const err = await res.json();
-                alert('Failed: ' + err.error);
-              }
-            } catch(err) {
-              console.error('❌ Error removing friend:', err);
-              alert('Something went wrong.');
-            }
-          });
-        }
-
-        if (String(myId) === String(profileUserId)) {
-          const modal = document.getElementById("addFriendModal");
-          const closeBtn = document.getElementById("closeModalBtn");
-          const submitBtn = document.getElementById("submitFriendRequest");
-
-          closeBtn.onclick = () = >modal.style.display = "none";
-
-          submitBtn.onclick = async() = >{
-            const input = document.getElementById("manualFriendId");
-            const friendId = input.value.trim();
-
-            if (!friendId || isNaN(friendId) || friendId === String(myId)) {
-              alert("Please enter a valid user ID.");
-              return;
-            }
-
-            try {
-              const res = await fetchWithAuth(`$ {
-                API_BASE
-              }
-              /friends/$ {
-                friendId
-              }`, {
-                method: 'POST'
-              });
-
-              if (res.ok) {
-                alert("✅ Friend added!");
-                modal.style.display = "none";
-                input.value = "";
-                loadFriends();
-              } else {
-                const err = await res.json();
-                alert("❌ Failed: " + err.error);
-              }
-            } catch(err) {
-              console.error('❌ Failed to send manual friend request:', err);
-              alert("Something went wrong.");
-            }
-          };
-        }
-
-        const notifBtn = document.getElementById("notificationIcon");
-        const notifModal = document.getElementById("notificationModal");
-        const closeNotifBtn = document.getElementById("closeNotificationBtn");
-
-        if (notifBtn && notifModal && closeNotifBtn) {
-          notifBtn.onclick = () = >{
-            if (notifModal.style.display === 'flex') {
-              notifModal.style.display = 'none';
-            } else {
-              notifModal.style.display = 'flex';
-              fetchNotifications();
-            }
-          };
-
-          closeNotifBtn.onclick = () = >notifModal.style.display = 'none';
-        }
-
-        // ✅ Unified click-outside-to-close for all modals
-        window.addEventListener('click', (e) = >{
-          document.querySelectorAll('.modal').forEach(modal = >{
-            if (e.target === modal && getComputedStyle(modal).display !== 'none') {
-              modal.style.display = 'none';
-            }
-          });
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/remove/${profileUserId}`, {
+          method: 'DELETE',
         });
 
-        const createPartyBtn = document.getElementById("createPartyBtn");
-        if (createPartyBtn) {
-          createPartyBtn.onclick = openCreatePartyModal;
+        if (res.ok) {
+          alert('Friend removed');
+          location.reload();
+        } else {
+          const err = await res.json();
+          alert('Failed: ' + err.error);
         }
+      } catch (err) {
+        console.error('❌ Error removing friend:', err);
+        alert('Something went wrong.');
+      }
+    });
+  }
 
-        const closeCreatePartyModalBtn = document.getElementById("closeCreatePartyModal");
+  // Manual friend request
+  if (String(myId) === String(profileUserId)) {
+    const modal = document.getElementById("addFriendModal");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const submitBtn = document.getElementById("submitFriendRequest");
 
-        if (closeCreatePartyModalBtn) {
-          closeCreatePartyModalBtn.onclick = closeCreatePartyModal;
+    closeBtn?.addEventListener('click', () => modal.style.display = "none");
+
+    submitBtn?.addEventListener('click', async () => {
+      const input = document.getElementById("manualFriendId");
+      const friendId = input.value.trim();
+
+      if (!friendId || isNaN(friendId) || friendId === String(myId)) {
+        alert("Please enter a valid user ID.");
+        return;
+      }
+
+      try {
+        const res = await fetchWithAuth(`${API_BASE}/friends/${friendId}`, {
+          method: 'POST',
+        });
+
+        if (res.ok) {
+          alert("✅ Friend added!");
+          modal.style.display = "none";
+          input.value = "";
+          loadFriends();
+        } else {
+          const err = await res.json();
+          alert("❌ Failed: " + err.error);
         }
+      } catch (err) {
+        console.error('❌ Failed to send manual friend request:', err);
+        alert("Something went wrong.");
+      }
+    });
+  }
 
-        const submitCreatePartyBtn = document.getElementById("submitCreatePartyBtn");
-        if (submitCreatePartyBtn) {
-          submitCreatePartyBtn.onclick = submitCreateParty;
-        }
-      });
+  // Notification modal toggle
+  const notifBtn = document.getElementById("notificationIcon");
+  const notifModal = document.getElementById("notificationModal");
+  const closeNotifBtn = document.getElementById("closeNotificationBtn");
+
+  if (notifBtn && notifModal && closeNotifBtn) {
+    notifBtn.addEventListener('click', () => {
+      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
+      fetchNotifications();
+    });
+
+    closeNotifBtn.addEventListener('click', () => {
+      notifModal.style.display = 'none';
+    });
+  }
+
+  // Close modals on background click
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
+  });
+
+  // Party modal
+  document.getElementById("createPartyBtn")?.addEventListener('click', openCreatePartyModal);
+  document.getElementById("closeCreatePartyModal")?.addEventListener('click', closeCreatePartyModal);
+  document.getElementById("submitCreatePartyBtn")?.addEventListener('click', submitCreateParty);
+});
+
