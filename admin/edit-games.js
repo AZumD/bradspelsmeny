@@ -35,14 +35,14 @@
     const refreshToken = localStorage.getItem("refreshToken");
 
     if (!token && !refreshToken) {
-      window.location.href = "login.html";
+      window.location.href = "/pages/login.html";
       return false;
     }
 
     if (!token && refreshToken) {
       const refreshed = await refreshUserToken();
       if (!refreshed) {
-        window.location.href = "login.html";
+        window.location.href = "/pages/login.html";
         return false;
       }
     } else {
@@ -50,47 +50,6 @@
     }
 
     return true;
-  }
-
-  function updateStars(rating) {
-    document.querySelectorAll("#conditionRating .star").forEach((star) => {
-      const val = parseInt(star.dataset.value);
-      star.classList.toggle("filled", val <= rating);
-    });
-  }
-
-  function openModal(index = null) {
-    editingIndex = index;
-    const game = index !== null ? games[index] : {};
-
-    const requiredIds = [
-      "gameModal", "gameForm", "title_sv", "title_en", "description",
-      "slowDayOnly", "trustedOnly", "membersOnly",
-      "staffPicks", "minTableSize", "conditionRatingValue",
-      "minPlayers", "maxPlayers"
-    ];
-
-    for (const id of requiredIds) {
-      const el = document.getElementById(id);
-      if (!el) console.warn(`Missing element with ID: ${id}`);
-    }
-
-    document.getElementById("gameModal").style.display = "block";
-    document.getElementById("gameForm").reset();
-
-    document.getElementById("title_sv").value = game.title_sv || "";
-    document.getElementById("title_en").value = game.title_en || "";
-    document.getElementById("description").value = game.description || "";
-    document.getElementById("slowDayOnly").checked = !!game.slow_day_only;
-    document.getElementById("trustedOnly").checked = !!game.trusted_only;
-    document.getElementById("membersOnly").checked = !!game.members_only;
-    document.getElementById("staffPicks").value = (game.staff_picks || []).join(", ");
-    document.getElementById("minTableSize").value = game.min_table_size || "";
-    document.getElementById("conditionRatingValue").value = game.condition_rating || 0;
-    document.getElementById("minPlayers").value = game.min_players || "";
-    document.getElementById("maxPlayers").value = game.max_players || "";
-
-    updateStars(game.condition_rating || 0);
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -111,6 +70,13 @@
     const minTableSize = document.getElementById("minTableSize");
     const conditionRatingValue = document.getElementById("conditionRatingValue");
 
+    const minPlayers = document.getElementById("minPlayers");
+    const maxPlayers = document.getElementById("maxPlayers");
+
+    const titleInput = document.getElementById("title");
+    const descSvInput = document.getElementById("descSv");
+    const descEnInput = document.getElementById("descEn");
+
     addGameButton?.addEventListener("click", () => openModal());
     gameModal?.addEventListener("click", (e) => {
       if (e.target === gameModal) gameModal.style.display = "none";
@@ -118,6 +84,40 @@
     document.getElementById("closeModal")?.addEventListener("click", () => {
       gameModal.style.display = "none";
     });
+
+    function updateStars(rating) {
+      document.querySelectorAll("#conditionRating .star").forEach((star) => {
+        const val = parseInt(star.dataset.value);
+        star.classList.toggle("filled", val <= rating);
+      });
+    }
+
+    function openModal(index = null) {
+      editingIndex = index;
+      const game = index !== null ? games[index] : {};
+
+      gameModal.style.display = "block";
+      gameForm.reset();
+
+      titleInput.value = game.title_sv || game.title_en || "";
+      descSvInput.value = game.description || "";
+      descEnInput.value = game.description_en || "";
+      minPlayers.value = game.min_players || "";
+      maxPlayers.value = game.max_players || "";
+      document.getElementById("time").value = game.playtime || "";
+      document.getElementById("age").value = game.age || "";
+      document.getElementById("tags").value = (game.tags || []).join(", ");
+      document.getElementById("img").value = game.image_url || "";
+      document.getElementById("rules").value = game.rules_url || "";
+      slowDayOnly.checked = !!game.slow_day_only;
+      trustedOnly.checked = !!game.trusted_only;
+      membersOnly.checked = !!game.members_only;
+      staffPicks.value = (game.staff_picks || []).join(", ");
+      minTableSize.value = game.min_table_size || "";
+      conditionRatingValue.value = game.condition_rating || 0;
+
+      updateStars(game.condition_rating || 0);
+    }
 
     document.querySelectorAll("#conditionRating .star").forEach((star) => {
       star.addEventListener("click", () => {
