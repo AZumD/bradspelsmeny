@@ -134,7 +134,7 @@
         max_players: parseInt(maxPlayers.value) || null,
         playtime: document.getElementById("time").value,
         age: document.getElementById("age").value,
-        tags: document.getElementById("tags").value,
+        tags: document.getElementById("tags").value.split(',').map(tag => tag.trim()).filter(tag => tag),
         image_url: document.getElementById("img").value,
         rules_url: document.getElementById("rules").value,
         slow_day_only: slowDayOnly.checked,
