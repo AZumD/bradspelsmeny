@@ -21,6 +21,9 @@ async function loadAllGames() {
   }
 }
 
+function getUserIdFromUrl() {
+  return new URLSearchParams(window.location.search).get('id');
+}
 
 function getPartyIdFromURL() {
   const params = new URLSearchParams(window.location.search);
