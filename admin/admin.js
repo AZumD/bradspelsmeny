@@ -1,3 +1,6 @@
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+
+
 // 🔍 Helper: parse JWT
 function parseJwt(token) {
   try {
