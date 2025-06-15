@@ -52,16 +52,6 @@
     return true;
   }
 
-  function setupPixelNav() {
-    const nav = document.createElement("div");
-    nav.id = "pixelNav";
-    nav.innerHTML = `
-      <a href="/admin/dashboard.html"><img src="../img/nav-home.png" alt="Home" /></a>
-      <a href="/admin/edit-games.html"><img src="../img/nav-boardgame.png" alt="Games" /></a>
-      <a href="#" onclick="logout()"><img src="../img/nav-logout.png" alt="Logout" /></a>
-    `;
-    document.body.appendChild(nav);
-  }
 
   function logout() {
     localStorage.removeItem("userToken");
