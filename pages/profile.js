@@ -461,10 +461,11 @@ function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
   card.className = 'game-entry';
   const gameTitle = game.title_en || game.name || 'Untitled';
+  const gameDescription = game.description_en || '';
   const imageUrl = /^https?:/.test(game.img || game.thumbnail_url)
     ? game.img || game.thumbnail_url
     : `../${game.img || game.thumbnail_url || ''}`;
-
+  
   if (minimal) {
     const img = document.createElement('img');
     img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
@@ -475,17 +476,29 @@ function createGameCard(game, minimal = false) {
     card.appendChild(img);
   } else {
     card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;margin-bottom:10px;background:#f9f6f2;border-radius:8px;cursor:pointer';
+    
     const thumb = document.createElement('img');
     thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
     thumb.alt = gameTitle;
     thumb.style.cssText = 'width:60px;height:60px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;';
     thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:4px;';
+    
     const titleEl = document.createElement('div');
     titleEl.className = 'game-entry-title';
     titleEl.textContent = gameTitle;
-    card.append(thumb, titleEl);
+    
+    const descriptionEl = document.createElement('div');
+    descriptionEl.className = 'game-entry-description';
+    descriptionEl.textContent = gameDescription;
+    descriptionEl.style.cssText = 'font-size:12px;color:#666;line-height:1.3;';
+    
+    contentDiv.append(titleEl, descriptionEl);
+    card.append(thumb, contentDiv);
   }
-
+  
   card.onclick = () => openGameModal(minimal ? 'favoriteGameModal' : 'wishlistGameModal', game);
   return card;
 }
