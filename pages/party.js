@@ -577,15 +577,19 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchPartyData();
   loadMessages();
   loadAllGames();
-
+  
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
+  
+  // Modal click-to-close functionality
   window.addEventListener('click', (e) => {
     document.querySelectorAll('.modal').forEach((modal) => {
       if (e.target === modal && getComputedStyle(modal).display !== 'none') {
         modal.style.display = 'none';
+      }
     });
+  });
 });
 
 
