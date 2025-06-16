@@ -7,36 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
   <title>Lending</title>
   <style>
-    body {
-      font-family: 'Press Start 2P', monospace;
-      background-color: #f3e2c7;
-      color: #3c2415;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .topbar {
-  background-color: #8c3c1a;
-  color: white;
-  width: 100%;
-  padding: 1rem 1.5rem; /* ← Add horizontal padding here */
-  box-shadow: 0 4px 0 #4a1f0f;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box; /* ensures padding doesn't break layout */
-}
-
-    .dashboard-title {
-      color: #fff4d9;
-      font-size: 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
     .form-container {
       width: 100%;
       max-width: 700px;
@@ -84,15 +54,6 @@
       gap: 1rem;
       padding: 1rem;
     }
-
-    .game-card {
-      background-color: #fffaf0;
-      border: 2px solid #3c2415;
-      padding: 1rem;
-      border-radius: 6px;
-      box-shadow: 2px 2px 0 #c19761;
-    }
-
     .game-card small {
       display: block;
       margin-top: 0.5rem;
@@ -104,25 +65,6 @@
       margin-top: 1rem;
       display: flex;
       gap: 0.5rem;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #fffaf0;
-      padding: 2rem;
-      border: 2px solid #3c2415;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
     }
     .caret {
       float: right;
@@ -153,7 +95,7 @@
 </header>
 
 
-  <div class="form-container">
+  <div class="maincontain">
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
     </div>
@@ -168,6 +110,95 @@
   <div id="availableGames" class="collapsible-content"></div>
 </div>
   </div>
+  <!--NOTIFICATIONS----------------------------------------------------------------------------->
+	
+<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
+title="Notifications" width="58" height="58" />
+<span id="notificationDot">
+</span>
+<div id="notificationModal" class="modal" style="display:none;">
+	<div class="modal-content">
+		<span class="close-btn" id="closeNotificationBtn">
+			&times;
+		</span>
+		<h3>
+			Notifications
+		</h3>
+		<div id="notificationList" class="notification-list">
+			<div class="placeholder-box">
+				Loading...
+			</div>
+		</div>
+	</div>
+</div>
+<!----------------------------------------------------------------------------/NOTIFICATIONS-->
+<!---PIXELNAV--------------------------------------------------------------------------------->
+	
+<nav id="pixelNav">
+	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+	onclick="goTo('/pages/profile.html')">
+	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+	class="nav-icon" onclick="logout()">
+	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
+		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+		height="32" />
+	</button>
+</nav>
+<ul id="adminMenuDropdown" style="
+display: none;
+position: fixed;
+bottom: 60px;
+right: 35px;
+background-color: #fffdf7;
+border: 2px dashed #d9b370;
+padding: 10px;
+font-family: 'Press Start 2P', monospace;
+font-size: 0.6rem;
+list-style: none;
+z-index: 999;
+">
+	<li>
+		<a href="/bradspelsmeny/admin/index.html">
+			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/edit-games.html">
+			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+			height="48" />
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/user-db.html">
+			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/lending.html">
+			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="#" onclick="logout()">
+			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+</ul>
+<!---------------------------------------------------------------------------------/PIXELNAV-->
+<!--SPACING----------------------------------------------------------------------------------->
+	
+<div style="height: 60px;">
+<!----------------------------------------------------------------------------------/SPACING-->
 
   <!-- Image Preview Modal -->
   <div id="imageModal" class="modal">
@@ -235,25 +266,9 @@
     </div>
   </div>
 
- <script>
-  function toggleSection(id, button) {
-    const section = document.getElementById(id);
-    const caret = button.querySelector('.caret');
-    const isOpen = section.style.display === 'flex';
-
-    section.style.display = isOpen ? 'none' : 'flex';
-    caret.textContent = isOpen ? '▼' : '▲';
-  }
-
-  // Expand both sections by default on load
-  window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('availableGames').style.display = 'flex';
-    document.getElementById('lentOutGames').style.display = 'flex';
-
-    // Set caret to open (▲) on load
-    document.querySelectorAll('.collapsible-header .caret').forEach(c => c.textContent = '▲');
-  });
-</script>
+  <link rel="stylesheet" href="../css/shared-ui.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/shared/shared-ui.js"></script>
   <script src="lending.js" defer></script>
 </body>
 </html>
