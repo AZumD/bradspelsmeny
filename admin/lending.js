@@ -124,7 +124,7 @@ async function createGameCard(game) {
     }
   }
 
-  card.className = 'game-card';
+  card.className = 'section-title';
   card.innerHTML = `
     <h3>${game.title_sv}${extra}</h3>
     <div class="buttons">
