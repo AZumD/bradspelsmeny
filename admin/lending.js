@@ -295,6 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
+  document.getElementById('availableGames').style.display = 'flex';
+  document.getElementById('lentOutGames').style.display = 'flex';
+
+    // Set caret to open (▲) on load
+    document.querySelectorAll('.collapsible-header .caret').forEach(c => c.textContent = '▲');
   window.addEventListener('click', (e) => {
     document.querySelectorAll('.modal').forEach((modal) => {
       if (e.target === modal && getComputedStyle(modal).display !== 'none') {
