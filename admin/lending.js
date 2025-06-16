@@ -1,4 +1,5 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 let USER_TOKEN = null;
 
 async function refreshUserToken() {
@@ -55,6 +56,21 @@ const newUserModal = document.getElementById('newUserModal');
 const newUserForm = document.getElementById('newUserForm');
 
 let allGames = [];
+
+function getUserIdFromUrl() {
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+function getUserIdFromToken() {
+  const token = getAccessToken();
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  } catch {
+    return null;
+  }
+}
 
 async function fetchGames() {
   try {
@@ -271,3 +287,21 @@ window.onload = async () => {
     await fetchGames();
   }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  initPixelNav(); // 🧩 From shared-ui.js
+  updateNotificationIcon(); // 🔔 Just update icon on load
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
+  const myId = getUserIdFromToken();
+  const viewedId = getUserIdFromUrl() || myId;
+  const profileUserId = viewedId;
+  window.addEventListener('click', (e) => {
+    document.querySelectorAll('.modal').forEach((modal) => {
+      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
+        modal.style.display = 'none';
+      }
+    });
+  });
+});
+
+
