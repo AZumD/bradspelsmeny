@@ -185,18 +185,7 @@
   </nav>
   <link rel="stylesheet" href="../css/shared-ui.css">
   <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/shared/shared-ui.js"></script>
   <script defer src="edit-games.js"></script>
-  <script>
-    function logout() {
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/pages/login.html";
-    }
-
-    function goTo(path) {
-      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-      window.location.href = base + path;
-    }
-  </script>
 </body>
 </html>
