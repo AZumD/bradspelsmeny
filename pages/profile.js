@@ -117,10 +117,6 @@ async function fetchGameLog(userId) {
       </td></tr>`;
   }
 }
-
-
-// ------------ NOTIFICATIONS ------------
-
 // ------------ PARTIES & PROFILE ------------
 
 async function fetchUserParties(viewedUserId = null) {
