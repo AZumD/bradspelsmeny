@@ -1,3 +1,6 @@
+const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
+const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
+
 (() => {
   let games = [];
   let editingIndex = null;
@@ -128,6 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (loadingSpinner) loadingSpinner.style.display = "none";
     }
   }
+
+  function getUserIdFromToken() {
+  const token = getAccessToken();
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  } catch {
+    return null;
+  }
+}
 
   function displayGames(gamesToShow) {
     gameList.innerHTML = "";
