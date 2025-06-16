@@ -170,6 +170,14 @@ async function openLendModal(gameId) {
 function closeLendModal() {
   document.getElementById('lendModal').style.display = 'none';
 }
+function toggleSection(id, button) {
+    const section = document.getElementById(id);
+    const caret = button.querySelector('.caret');
+    const isOpen = section.style.display === 'flex';
+
+    section.style.display = isOpen ? 'none' : 'flex';
+    caret.textContent = isOpen ? '▼' : '▲';
+  }
 
 async function confirmLend() {
   const gameId = document.getElementById('lendGameId').value;
