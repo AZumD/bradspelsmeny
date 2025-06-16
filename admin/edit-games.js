@@ -142,6 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 }
+function getUserIdFromUrl() {
+  return new URLSearchParams(window.location.search).get('id');
+}
 
   function displayGames(gamesToShow) {
     gameList.innerHTML = "";
