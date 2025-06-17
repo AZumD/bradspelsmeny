@@ -4,85 +4,61 @@ import { openGameModal } from './image-modal.js';
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
-export async function fetchFavoritesAndWishlist(userId) {
-  await Promise.all([
-    fetchFavorites(userId),
-    fetchWishlist(userId)
-  ]);
-}
-
-async function fetchFavorites(userId) {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/favorites`);
-    if (!res.ok) throw new Error();
-    const favorites = await res.json();
-    const favoritesGrid = document.getElementById('favoritesGrid');
-    if (!favoritesGrid) return;
-
-    favoritesGrid.innerHTML = '';
-    if (favorites.length === 0) {
-      favoritesGrid.innerHTML = '<div class="placeholder-box">No favorite games yet.</div>';
-      return;
-    }
-
-    favorites.forEach(game => {
-      const gameCard = createGameCard(game);
-      favoritesGrid.appendChild(gameCard);
-    });
-  } catch (err) {
-    console.error('Failed to fetch favorites:', err);
-    const favoritesGrid = document.getElementById('favoritesGrid');
-    if (favoritesGrid) {
-      favoritesGrid.innerHTML = '<div class="placeholder-box">Could not load favorites.</div>';
-    }
-  }
-}
-
-async function fetchWishlist(userId) {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`);
-    if (!res.ok) throw new Error();
-    const wishlist = await res.json();
-    const wishlistGrid = document.getElementById('wishlistGrid');
-    if (!wishlistGrid) return;
-
-    wishlistGrid.innerHTML = '';
-    if (wishlist.length === 0) {
-      wishlistGrid.innerHTML = '<div class="placeholder-box">No wishlist games yet.</div>';
-      return;
-    }
-
-    wishlist.forEach(game => {
-      const gameCard = createGameCard(game);
-      wishlistGrid.appendChild(gameCard);
-    });
-  } catch (err) {
-    console.error('Failed to fetch wishlist:', err);
-    const wishlistGrid = document.getElementById('wishlistGrid');
-    if (wishlistGrid) {
-      wishlistGrid.innerHTML = '<div class="placeholder-box">Could not load wishlist.</div>';
-    }
-  }
-}
-
-function createGameCard(game, minimal = false) {
+export function createGameCard(game, minimal = false) {
   const card = document.createElement('div');
-  card.className = 'game-card';
-  card.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:120px;margin:10px;';
-
-  const img = document.createElement('img');
-  img.className = 'game-thumbnail';
-  img.src = game.thumbnail_url || `${FRONTEND_BASE}/img/game-placeholder.webp`;
-  img.alt = game.title;
-  img.onerror = () => { img.src = `${FRONTEND_BASE}/img/game-placeholder.webp`; };
-  img.onclick = () => openGameModal('gameModal', game);
-
-  const title = document.createElement('div');
-  title.className = 'game-title';
-  title.textContent = game.title;
-  title.style.cssText = 'text-align:center;margin-top:5px;font-size:0.8rem;';
-
-  card.appendChild(img);
-  if (!minimal) card.appendChild(title);
+  card.className = 'game-entry';
+  const gameTitle = game.title_en || game.name || 'Untitled';
+  const imageUrl = /^https?:/.test(game.img || game.thumbnail_url)
+    ? game.img || game.thumbnail_url
+    : `../${game.img || game.thumbnail_url || ''}`;
+  if (minimal) {
+    const img = document.createElement('img');
+    img.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    img.alt = gameTitle;
+    img.title = gameTitle;
+    img.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;margin:2px;cursor:pointer';
+    img.onerror = () => { img.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+    card.appendChild(img);
+  } else {
+    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;margin-bottom:10px;background:#f9f6f2;border-radius:8px;cursor:pointer';
+    const thumb = document.createElement('img');
+    thumb.src = imageUrl || `${FRONTEND_BASE}/img/default-thumb.webp`;
+    thumb.alt = gameTitle;
+    thumb.style.cssText = 'width:60px;height:60px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;';
+    thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+    const titleEl = document.createElement('div');
+    titleEl.className = 'game-entry-title';
+    titleEl.textContent = gameTitle;
+    card.append(thumb, titleEl);
+  }
+  card.onclick = () => openGameModal(minimal ? 'favoriteGameModal' : 'wishlistGameModal', game);
   return card;
+}
+
+export async function fetchFavoritesAndWishlist(userId) {
+  const favContainer = document.getElementById('favoritesList');
+  const wishContainer = document.getElementById('wishlistList');
+  if (!favContainer || !wishContainer) return;
+  try {
+    const [favRes, wishRes] = await Promise.all([
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(() => null),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(() => null)
+    ]);
+    let favorites = [], wishlist = [];
+    if (favRes && favRes.ok) favorites = await favRes.json(); else favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    if (wishRes && wishRes.ok) wishlist = await wishRes.json(); else wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+
+    if (favorites.length) {
+      favContainer.innerHTML = '';
+      favorites.forEach(g => favContainer.appendChild(createGameCard(g, true)));
+    } else if (favRes && favRes.ok) favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
+
+    if (wishlist.length) {
+      wishContainer.innerHTML = '';
+      wishlist.forEach(g => wishContainer.appendChild(createGameCard(g)));
+    } else if (wishRes && wishRes.ok) wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
+  } catch {
+    favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+  }
 } 

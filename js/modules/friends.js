@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './api.js';
+import { fetchWithAuth, getUserIdFromToken } from './api.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
@@ -41,52 +41,41 @@ export async function loadFriends(viewUserId = null) {
 }
 
 export async function maybeShowAddFriendButton(currentUserId, profileId) {
-  if (!currentUserId || !profileId || String(currentUserId) === String(profileId)) return;
-  
+  if (!currentUserId || !profileId || currentUserId === profileId) return;
+  const addFriendBtn = document.getElementById('addFriendBtn');
+  if (!addFriendBtn) return;
   try {
-    const status = await checkFriendStatus(profileId);
-    const addFriendBtn = document.getElementById('addFriendBtn');
-    if (!addFriendBtn) return;
-    
-    if (status === 'none') {
-      addFriendBtn.style.display = 'block';
-      addFriendBtn.onclick = () => sendFriendRequest(profileId);
-    } else if (status === 'pending') {
-      addFriendBtn.style.display = 'block';
-      addFriendBtn.textContent = 'Request Sent';
-      addFriendBtn.disabled = true;
-    } else {
-      addFriendBtn.style.display = 'none';
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
+    if (!res.ok) return;
+    const friends = await res.json();
+    if (!friends.some(f => f.id === parseInt(profileId))) {
+      addFriendBtn.style.display = 'inline-block';
+      addFriendBtn.addEventListener('click', async () => {
+        try {
+          const r = await fetchWithAuth(`${API_BASE}/friends/${profileId}`, { method: 'POST' });
+          if (r.ok) { addFriendBtn.disabled = true; addFriendBtn.textContent = '✅ Friend Added'; }
+          else { const err = await r.json(); alert('Failed to add friend: ' + err.error); }
+        } catch {}
+      });
     }
-  } catch (err) {
-    console.error('Failed to check friend status:', err);
-  }
+  } catch {}
 }
 
-async function checkFriendStatus(viewedUserId) {
+export async function checkFriendStatus(viewedUserId) {
+  const myId = getUserIdFromToken();
+  if (!viewedUserId || !myId || viewedUserId === myId) return;
   try {
-    const res = await fetchWithAuth(`${API_BASE}/friends/status/${viewedUserId}`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    return data.status;
-  } catch {
-    return 'none';
-  }
-}
-
-async function sendFriendRequest(userId) {
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/friends/request/${userId}`, {
-      method: 'POST'
-    });
-    if (!res.ok) throw new Error();
-    const addFriendBtn = document.getElementById('addFriendBtn');
-    if (addFriendBtn) {
-      addFriendBtn.textContent = 'Request Sent';
-      addFriendBtn.disabled = true;
+    const res = await fetchWithAuth(`${API_BASE}/friends`);
+    if (!res.ok) return;
+    const friends = await res.json();
+    if (friends.some(f => f.id === parseInt(viewedUserId, 10))) {
+      const removeFriendBtn = document.getElementById('removeFriendBtn');
+      if (removeFriendBtn) {
+        removeFriendBtn.style.display = 'block';
+      }
     }
   } catch (err) {
-    alert('Failed to send friend request: ' + err.message);
+    console.error('❌ Error in checkFriendStatus:', err);
   }
 }
 

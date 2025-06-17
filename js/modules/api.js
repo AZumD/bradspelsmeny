@@ -1,5 +1,16 @@
 import { refreshToken } from './auth.js';
 
+export function getUserIdFromToken() {
+  const token = localStorage.getItem('userToken');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchWithAuth(url, options = {}, retry = true) {
     if (!options.headers) options.headers = {};
     const token = localStorage.getItem("userToken");

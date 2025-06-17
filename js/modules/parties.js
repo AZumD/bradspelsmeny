@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './api.js';
+import { fetchWithAuth, getUserIdFromToken } from './api.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
@@ -62,28 +62,32 @@ export function closeCreatePartyModal() {
 }
 
 export async function submitCreateParty() {
-  const nameInput = document.getElementById('partyName');
-  const emojiInput = document.getElementById('partyEmoji');
-  if (!nameInput || !emojiInput) return;
-
-  const name = nameInput.value.trim();
-  const emoji = emojiInput.value.trim();
+  const nameInput = document.getElementById('partyNameInput');
+  const emojiInput = document.getElementById('partyEmojiInput');
+  const name = nameInput?.value.trim();
+  const emoji = emojiInput?.value.trim() || '🎲';
   if (!name) {
-    alert('Please enter a party name');
+    alert('Please enter a party name.');
     return;
   }
-
   try {
-    const res = await fetchWithAuth(`${API_BASE}/parties`, {
+    const res = await fetchWithAuth(`${API_BASE}/party`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, emoji })
     });
-    if (!res.ok) throw new Error();
+    if (!res.ok) {
+      const err = await res.json();
+      alert(`Failed to create party: ${err.error || res.statusText}`);
+      return;
+    }
     const data = await res.json();
-    window.location.href = `party.html?id=${data.id}`;
+    alert(`Party created! Invite code: ${data.inviteCode}`);
+    closeCreatePartyModal();
+    fetchUserParties(getUserIdFromToken());
   } catch (err) {
-    alert('Failed to create party: ' + err.message);
+    console.error('Error creating party:', err);
+    alert('Error creating party. See console for details.');
   }
 }
 
