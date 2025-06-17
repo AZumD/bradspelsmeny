@@ -9,7 +9,45 @@ const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
 function getUserIdFromUrl() {
-  return new URLSearchParams(window.location.search).get('id');
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+function renderPartyList(parties) {
+  const partyList = document.getElementById('partyList');
+  if (!partyList) return;
+
+  if (parties.length) {
+    partyList.innerHTML = '';
+    parties.forEach(party => {
+      const partyEl = document.createElement('div');
+      partyEl.className = 'party-entry';
+      partyEl.innerHTML = `
+        <img src="${party.avatar || `${FRONTEND_BASE}/img/avatar-party-default.webp`}" alt="${party.name}" class="party-avatar">
+        <div class="party-info">
+          <h3>${party.emoji || '🎲'} ${party.name}</h3>
+          <p>Invite code: ${party.invite_code}</p>
+        </div>
+      `;
+      partyList.appendChild(partyEl);
+    });
+  } else {
+    partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
+  }
+
+  // Only show create button on own profile
+  const createBtn = document.getElementById('createPartyBtn');
+  if (createBtn) {
+    const myId = getUserIdFromToken();
+    const viewedId = getUserIdFromUrl() || myId;
+    createBtn.style.display = String(myId) === String(viewedId) ? 'block' : 'none';
+  }
+}
+
+async function fetchPartiesForProfile(userId) {
+  const res = await fetchWithAuth(`${API_BASE}/users/${userId}/parties`);
+  if (!res.ok) throw new Error('Failed to fetch parties');
+  return await res.json();
 }
 
 export async function fetchProfile() {
@@ -56,6 +94,8 @@ export async function fetchProfile() {
     fetchFavoritesAndWishlist(userIdToFetch);
     fetchBadges(userIdToFetch);
     fetchUserParties(userIdToFetch);
+
+    await fetchPartiesForProfile(userIdToFetch).then(renderPartyList);
   } catch (err) {
     alert('Error loading profile: ' + err.message);
   }
