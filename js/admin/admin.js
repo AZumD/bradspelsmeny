@@ -1,7 +1,7 @@
-import { checkAuth, getAccessToken } from '../js/modules/auth.js';
-import { fetchStats } from '../js/modules/stats.js';
-import { fetchOrders, completeOrder, clearAllOrders } from '../js/modules/orders.js';
-import { initPixelNav, updateNotificationIcon, goTo } from '../js/shared/shared-ui.js';
+import { checkAuth, getAccessToken } from '../modules/auth.js';
+import { fetchStats } from '../modules/stats.js';
+import { fetchOrders, completeOrder, clearAllOrders } from '../modules/orders.js';
+import { initPixelNav, updateNotificationIcon, goTo } from '../shared/shared-ui.js';
 
 // Initialize the admin dashboard
 (async function () {
