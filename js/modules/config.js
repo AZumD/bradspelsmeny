@@ -46,7 +46,7 @@ export const API_ENDPOINTS = {
         MARK_READ: (id) => `${API_BASE}/notifications/${id}/read`
     },
     LEND: (gameId) => `${API_BASE}/lend/${gameId}`,
-    FAVORITES: (userId) => `${API_BASE}/users/${userId}/favorites`,
+    FAVORITES: `${API_BASE}/favorite`,
     WISHLIST: (userId) => `${API_BASE}/users/${userId}/wishlist`
 };
 

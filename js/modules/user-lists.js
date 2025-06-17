@@ -79,7 +79,7 @@ export async function toggleFavorite(gameId, isFavorite) {
 
         console.log('Toggle Favorite Debug Info:', {
             method,
-            url: `${API_ENDPOINTS.FAVORITES(user.id)}`,
+            url: API_ENDPOINTS.FAVORITES,
             payload,
             token: token ? token.substring(0, 20) + '...' : 'No token found',
             user: {
@@ -88,7 +88,7 @@ export async function toggleFavorite(gameId, isFavorite) {
             }
         });
 
-        const response = await fetch(`${API_ENDPOINTS.FAVORITES(user.id)}`, {
+        const response = await fetch(API_ENDPOINTS.FAVORITES, {
             method,
             headers: {
                 'Content-Type': 'application/json',
