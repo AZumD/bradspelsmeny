@@ -26,6 +26,26 @@ export async function fetchGames() {
   }
 }
 
+export async function updateGame(id, gameData) {
+    const token = localStorage.getItem('userToken');
+    if (!token) throw new Error('No authentication token');
+
+    const res = await fetch(`${API_ENDPOINTS.GAMES}/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(gameData)
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to update game');
+    }
+
+    return res.json();
+}
+
 export async function saveGame(gameData) {
     const token = localStorage.getItem('userToken');
     if (!token) throw new Error('No authentication token');
