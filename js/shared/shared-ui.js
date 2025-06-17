@@ -6,6 +6,16 @@ export function goTo(path) {
   const base = window.location.hostname === 'localhost'
     ? ''
     : '/bradspelsmeny';
+
+  // Special handling for profile page
+  if (path === '/pages/profile.html') {
+    const token = getAccessToken();
+    if (token) {
+      const userId = JSON.parse(atob(token.split('.')[1])).id;
+      path = `/pages/profile.html?id=${userId}`;
+    }
+  }
+
   window.location.href = window.location.origin + base + path;
 }
 
