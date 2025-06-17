@@ -46,21 +46,16 @@ export function renderMessage(message) {
   header.style.gap = '8px';
   header.style.marginBottom = '4px';
 
-  const user = message.user || {};
-  const firstName = user.first_name || 'Unknown';
-  const lastName = user.last_name || 'User';
-  const avatar = user.avatar || '../img/avatar-placeholder.webp';
-
   const avatarEl = document.createElement('img');
-  avatarEl.src = avatar;
-  avatarEl.alt = `${firstName} ${lastName}`;
+  avatarEl.src = message.avatar_url || '../img/avatar-placeholder.webp';
+  avatarEl.alt = message.username || 'Unknown User';
   avatarEl.style.width = '24px';
   avatarEl.style.height = '24px';
   avatarEl.style.borderRadius = '50%';
   avatarEl.style.border = '2px solid #c9a04e';
 
   const name = document.createElement('span');
-  name.textContent = `${firstName} ${lastName}`;
+  name.textContent = message.username || 'Unknown User';
   name.style.fontWeight = 'bold';
   name.style.color = '#3c2415';
 
@@ -79,7 +74,7 @@ export function renderMessage(message) {
   content.style.padding = '8px 12px';
   content.style.borderRadius = '8px';
   content.style.marginBottom = '8px';
-  content.innerHTML = parseGameMentions(message.text);
+  content.innerHTML = parseGameMentions(message.content || '');
 
   messageEl.appendChild(header);
   messageEl.appendChild(content);
