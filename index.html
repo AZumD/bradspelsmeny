@@ -639,12 +639,45 @@
 
         <div id="gameList"></div>
       </main>
-      <nav id="pixelNav" style="display: none;">
-        <img src="img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-        <img src="img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-        <img src="img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-      </nav>
+      <nav id="pixelNav" role="navigation" aria-label="Huvudnavigation">
+        <img src="img/icons/icon-home.webp" alt="Hem" class="nav-icon" onclick="goTo('/')">
+        <img src="img/icons/icon-profile.webp" alt="Profil" class="nav-icon" onclick="goTo('/pages/profile.html')">
+        <img id="logoutIcon" src="img/icons/icon-logout.webp" alt="Logga ut" class="nav-icon" onclick="logout()">
+        <button id="adminMenuToggle" class="nav-icon" aria-label="Admin-meny" aria-expanded="false">
+            <img src="img/icons/icon-admintools.webp" alt="Admin-verktyg" width="32" height="32" />
+        </button>
+    </nav>
     </div>
+    <ul id="adminMenuDropdown" class="admin-menu" role="menu" aria-label="Admin-meny">
+        <li role="none">
+            <a href="/bradspelsmeny/admin/index.html" role="menuitem">
+                <img src="img/icons/icon-admin.webp" alt="Admin-panel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
+                <img src="img/icons/icon-editgames.webp" alt="Redigera spel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
+                <img src="img/icons/icon-friends.webp" alt="Användardatabas" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/lending.html" role="menuitem">
+                <img src="img/icons/icon-lending.webp" alt="Utlåning" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="#" onclick="logout()" role="menuitem">
+                <img src="img/icons/icon-logout.webp" alt="Logga ut" width="48" height="48" />
+            </a>
+        </li>
+    </ul>
+
+    <!-- Spacing for navigation -->
+    <div class="nav-spacing"></div>
 
     <div id="welcomeModal" class="modal show">
       <div>

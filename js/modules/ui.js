@@ -24,7 +24,7 @@ export function showModal(title, content) {
   };
 
   window.onclick = (event) => {
-    if (event.target === modal) {
+    if (event.target === modal) {a
       modal.remove();
     }
   };
