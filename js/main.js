@@ -3,7 +3,7 @@ import { renderCategories, renderIntro, renderGames } from './modules/game-list.
 import { getCurrentLang, setCurrentLang, getCurrentCategory, setCurrentCategory } from './modules/i18n.js';
 import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
-import { GAME_CATEGORIES } from './modules/config.js';
+import { GAME_CATEGORIES, API_BASE } from './modules/config.js';
 import { isTokenExpired, getAccessToken, refreshToken, logout } from './modules/auth.js';
 import { initPixelNav, initNotificationModal } from './shared/shared-ui.js';
 
