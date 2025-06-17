@@ -111,7 +111,7 @@ async function renderAdminGames() {
                     </div>
                     <div class="game-detail">
                         <strong>Taggar:</strong>
-                        <p>${game.tags.join(', ')}</p>
+                        <p>${game.tags ? game.tags.split(',').map(tag => tag.trim()).join(', ') : 'Inga taggar'}</p>
                     </div>
                 </div>
                 <div class="game-actions">
