@@ -51,7 +51,7 @@ export function initPixelNav() {
 // Notifications
 export async function fetchNotifications() {
   try {
-    const res = await fetch(`${API_ENDPOINTS}/notifications`, {
+    const res = await fetch(`${API_ENDPOINTS.NOTIFICATIONS.BASE}`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -183,7 +183,7 @@ function showBadgePopup(name, iconUrl, time) {
 
 export async function updateNotificationIcon() {
   try {
-    const res = await fetch(`${API_ENDPOINTS}/notifications`, {
+    const res = await fetch(`${API_ENDPOINTS.NOTIFICATIONS.BASE}`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
