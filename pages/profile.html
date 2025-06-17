@@ -43,6 +43,28 @@
   justify-content:center;
   margin-bottom:1rem;
 }
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  justify-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.badges-grid img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.badges-grid img:hover {
+  transform: scale(1.1);
+}
+
 .party-avatar {
   width:48px;
   height:48px;
@@ -317,6 +339,15 @@ tbody tr:last-child td {
   margin-left:4px;
 }
 
+.game-thumbnail img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #c9a04e;
+  background-color: #f9f6f2;
+}
+
   </style>
 </head>
   
@@ -339,7 +370,7 @@ tbody tr:last-child td {
       <div id="badgesGrid" class="badges-grid"></div>
 
       <div class="section-title">Favorite Games</div>
-      <div id="favoritesGrid" class="games-grid"></div>
+      <div id="favoritesGrid" class="favorites-grid"></div>
 
       <div class="section-title">Wishlist</div>
       <div id="wishlistGrid" class="games-grid"></div>

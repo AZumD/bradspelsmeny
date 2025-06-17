@@ -23,7 +23,7 @@ export async function fetchBadges(userId) {
       badgeElem.title = badge.description;
       
       const img = document.createElement('img');
-      img.src = badge.image_url || `${FRONTEND_BASE}/img/badge-placeholder.webp`;
+      img.src = badge.icon_url || `${FRONTEND_BASE}/img/badge-placeholder.webp`;
       img.alt = badge.name;
       img.onerror = () => { img.src = `${FRONTEND_BASE}/img/badge-placeholder.webp`; };
       
