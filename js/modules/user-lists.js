@@ -66,6 +66,10 @@ export async function toggleFavorite(gameId, isFavorite) {
             throw new Error('No user logged in or invalid user data');
         }
 
+        if (!gameId) {
+            throw new Error('No game ID provided');
+        }
+
         const method = isFavorite ? 'DELETE' : 'POST';
         const response = await fetch(`${API_ENDPOINTS.FAVORITES(user.id)}`, {
             method,
@@ -73,11 +77,15 @@ export async function toggleFavorite(gameId, isFavorite) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             },
-            body: JSON.stringify({ game_id: gameId })
+            body: JSON.stringify({ 
+                user_id: user.id,
+                game_id: gameId 
+            })
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update favorite status');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to update favorite status');
         }
 
         // Update local state
@@ -107,6 +115,10 @@ export async function toggleWishlist(gameId, isWishlisted) {
             throw new Error('No user logged in or invalid user data');
         }
 
+        if (!gameId) {
+            throw new Error('No game ID provided');
+        }
+
         const method = isWishlisted ? 'DELETE' : 'POST';
         const response = await fetch(`${API_ENDPOINTS.WISHLIST(user.id)}`, {
             method,
@@ -114,11 +126,15 @@ export async function toggleWishlist(gameId, isWishlisted) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             },
-            body: JSON.stringify({ game_id: gameId })
+            body: JSON.stringify({ 
+                user_id: user.id,
+                game_id: gameId 
+            })
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update wishlist status');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to update wishlist status');
         }
 
         // Update local state
