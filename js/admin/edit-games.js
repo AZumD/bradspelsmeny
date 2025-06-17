@@ -85,7 +85,6 @@ async function renderAdminGames() {
         <div class="game-item">
             <div class="game-header" onclick="toggleGameContent(${index})">
                 <span class="game-title">${game.title_sv}</span>
-                <span class="game-status">${game.available ? 'Tillgänglig' : 'Utlånad'}</span>
             </div>
             <div class="game-content" id="game-content-${index}">
                 <div class="game-details">
@@ -115,9 +114,51 @@ async function renderAdminGames() {
                     </div>
                 </div>
                 <div class="game-actions">
-                    <button onclick="openModal(${index})" class="edit-button">Redigera</button>
                     <button onclick="deleteGame(${game.id})" class="delete-button">Ta bort</button>
                 </div>
+                <form id="edit-form-${game.id}" class="edit-form" onsubmit="handleEditSubmit(event, ${game.id})">
+                    <div class="form-group">
+                        <label for="title_sv-${game.id}">Titel (SV):</label>
+                        <input type="text" id="title_sv-${game.id}" name="title_sv" value="${game.title_sv}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="title_en-${game.id}">Titel (EN):</label>
+                        <input type="text" id="title_en-${game.id}" name="title_en" value="${game.title_en}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description_sv-${game.id}">Beskrivning (SV):</label>
+                        <textarea id="description_sv-${game.id}" name="description_sv" required>${game.description_sv}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="description_en-${game.id}">Beskrivning (EN):</label>
+                        <textarea id="description_en-${game.id}" name="description_en" required>${game.description_en}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="min_players-${game.id}">Min spelare:</label>
+                        <input type="number" id="min_players-${game.id}" name="min_players" value="${game.min_players}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="max_players-${game.id}">Max spelare:</label>
+                        <input type="number" id="max_players-${game.id}" name="max_players" value="${game.max_players}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="play_time-${game.id}">Speltid (min):</label>
+                        <input type="number" id="play_time-${game.id}" name="play_time" value="${game.play_time}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age-${game.id}">Ålder:</label>
+                        <input type="number" id="age-${game.id}" name="age" value="${game.age}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags-${game.id}">Taggar (kommaseparerade):</label>
+                        <input type="text" id="tags-${game.id}" name="tags" value="${game.tags || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url-${game.id}">Bild URL:</label>
+                        <input type="text" id="image_url-${game.id}" name="image_url" value="${game.image_url || ''}">
+                    </div>
+                    <button type="submit" class="save-button">Spara ändringar</button>
+                </form>
             </div>
         </div>
     `).join('');
@@ -130,6 +171,32 @@ window.toggleGameContent = (index) => {
     const header = content.previousElementSibling;
     content.style.display = content.style.display === 'block' ? 'none' : 'block';
     header.classList.toggle('expanded');
+};
+
+window.handleEditSubmit = async (event, gameId) => {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const gameData = Object.fromEntries(formData.entries());
+    
+    try {
+        const token = localStorage.getItem('userToken');
+        const response = await fetch(`/bradspelsmeny/api/games/${gameId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(gameData)
+        });
+
+        if (!response.ok) throw new Error('Failed to update game');
+        
+        window.location.reload();
+    } catch (err) {
+        console.error('Error updating game:', err);
+        alert('Kunde inte uppdatera spelet. Försök igen.');
+    }
 };
 
 window.deleteGame = async (gameId) => {

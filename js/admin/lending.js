@@ -91,18 +91,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   } finally {
     loadingSpinner.style.display = 'none';
   }
-});
-
-function toggleSection(section) {
-  const content = section.querySelector('.game-content');
-  const header = section.querySelector('.game-header');
-  const caret = header.querySelector('.caret');
-  
-  if (content.style.display === 'flex') {
-    content.style.display = 'none';
-    caret.textContent = '▼';
-  } else {
-    content.style.display = 'flex';
-    caret.textContent = '▲';
-  }
-} 
+}); 
