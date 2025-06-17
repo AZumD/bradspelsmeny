@@ -37,14 +37,19 @@ export function createGameCard(game, minimal = false) {
 
 export async function fetchFavoritesAndWishlist(userId) {
   console.log('Fetching favorites and wishlist for user:', userId);
-  const favContainer = document.getElementById('favoritesList');
-  const wishContainer = document.getElementById('wishlistList');
+  
+  const favContainer = document.getElementById('favoritesGrid');
+  const wishContainer = document.getElementById('wishlistGrid');
+  
+  const containers = {
+    favoritesList: !!favContainer,
+    wishlistList: !!wishContainer
+  };
+  
+  console.log('Containers found:', containers);
   
   if (!favContainer || !wishContainer) {
-    console.error('Missing containers:', { 
-      favoritesList: !!favContainer, 
-      wishlistList: !!wishContainer 
-    });
+    console.error('Missing containers:', containers);
     return;
   }
 

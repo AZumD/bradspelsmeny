@@ -8,15 +8,16 @@ export async function fetchUserParties(viewedUserId) {
   if (!partyList) return;
 
   try {
-    // If viewing own profile, use /my-parties endpoint
+    // Only fetch parties if viewing own profile
     const loggedInUserId = getUserIdFromToken();
     const isOwnProfile = String(viewedUserId) === String(loggedInUserId);
     
-    const endpoint = isOwnProfile 
-      ? `${API_BASE}/my-parties`
-      : `${API_BASE}/users/${viewedUserId}/parties`;
+    if (!isOwnProfile) {
+      partyList.innerHTML = '<div class="placeholder-box">Parties are only visible to the owner.</div>';
+      return;
+    }
 
-    const res = await fetchWithAuth(endpoint);
+    const res = await fetchWithAuth(`${API_BASE}/my-parties`);
     if (!res.ok) throw new Error('Failed to fetch parties');
     const parties = await res.json();
 
