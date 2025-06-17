@@ -3,54 +3,49 @@ import { fetchWithAuth, getUserIdFromToken } from './api.js';
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
-export async function fetchUserParties(viewedUserId = null) {
-  const loggedInUserId = getUserIdFromToken();
-  const isOwnProfile = !viewedUserId || String(viewedUserId) === String(loggedInUserId);
-
-  // Always use /my-parties for the logged-in user's parties
-  const endpoint = `${API_BASE}/my-parties`;
-
+export async function fetchUserParties(viewedUserId) {
   const partyList = document.getElementById('partyList');
   if (!partyList) return;
 
   try {
+    // If viewing own profile, use /my-parties endpoint
+    const loggedInUserId = getUserIdFromToken();
+    const isOwnProfile = String(viewedUserId) === String(loggedInUserId);
+    
+    const endpoint = isOwnProfile 
+      ? `${API_BASE}/my-parties`
+      : `${API_BASE}/users/${viewedUserId}/parties`;
+
     const res = await fetchWithAuth(endpoint);
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error('Failed to fetch parties');
     const parties = await res.json();
-    partyList.innerHTML = '';
 
-    if (parties.length === 0) {
+    if (parties.length) {
+      partyList.innerHTML = '';
+      parties.forEach(party => {
+        const partyEl = document.createElement('div');
+        partyEl.className = 'party-entry';
+        partyEl.innerHTML = `
+          <img src="${party.avatar || `${FRONTEND_BASE}/img/avatar-party-default.webp`}" alt="${party.name}" class="party-avatar">
+          <div class="party-info">
+            <h3>${party.emoji || '🎲'} ${party.name}</h3>
+            <p>Invite code: ${party.invite_code}</p>
+          </div>
+        `;
+        partyList.appendChild(partyEl);
+      });
+    } else {
       partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
-      return;
     }
 
-    parties.forEach(party => {
-      const card = document.createElement('div');
-      card.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:60px';
-      const img = document.createElement('img');
-      img.className = 'party-avatar';
-      img.src = party.avatar && party.avatar.startsWith('http')
-        ? party.avatar
-        : `${party.avatar ? API_BASE + party.avatar : FRONTEND_BASE + '/img/avatar-party-placeholder.webp'}`;
-      img.onerror = () => { img.src = `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`; };
-      img.alt = `${party.emoji || ''} ${party.name}`;
-      img.title = img.alt;
-      img.onclick = () => window.location.href = `party.html?id=${party.id}`;
-      card.appendChild(img);
-      partyList.appendChild(card);
-    });
-
-    // Only show add party button on own profile
-    if (isOwnProfile) {
-      const addPartyBtn = document.createElement('div');
-      addPartyBtn.className = 'add-party-circle';
-      addPartyBtn.textContent = '+';
-      addPartyBtn.title = 'Create Party';
-      addPartyBtn.onclick = openCreatePartyModal;
-      partyList.appendChild(addPartyBtn);
+    // Only show create button on own profile
+    const createBtn = document.getElementById('createPartyBtn');
+    if (createBtn) {
+      createBtn.style.display = isOwnProfile ? 'block' : 'none';
     }
-  } catch {
-    partyList.innerHTML = '<div class="placeholder-box">Could not load parties.</div>';
+  } catch (err) {
+    console.error('Error fetching parties:', err);
+    partyList.innerHTML = '<div class="placeholder-box">Failed to load parties.</div>';
   }
 }
 
