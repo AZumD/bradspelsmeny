@@ -41,6 +41,20 @@
   font-size:0.55rem;
   z-index:9999;
 }
+
+.admin-menu {
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  right: 35px;
+  background-color: #fffdf7;
+  border: 2px dashed #d9b370;
+  padding: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  list-style: none;
+  z-index: 999;
+}
 .admin-popup-menu a,.admin-popup-menu button {
   margin-bottom:0.5rem;
   text-align:left;
