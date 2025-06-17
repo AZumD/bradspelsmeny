@@ -1,10 +1,10 @@
-import { initPixelNav, updateNotificationIcon } from '../js/shared/shared-ui.js';
-import { fetchGames } from '../js/modules/games.js';
-import { initLendForm } from '../js/modules/lend-form.js';
-import { checkAuth } from '../js/modules/auth.js';
-import { renderGameLists, returnGame, toggleSection } from '../js/modules/games.js';
-import { initHistoryModal } from '../js/modules/history.js';
-import { initImageModal } from '../js/modules/image-modal.js';
+import { initPixelNav, updateNotificationIcon } from '/bradspelsmeny/js/shared/shared-ui.js';
+import { fetchGames } from '/bradspelsmeny/js/modules/games.js';
+import { initLendForm } from '/bradspelsmeny/js/modules/lend-form.js';
+import { checkAuth } from '/bradspelsmeny/js/modules/auth.js';
+import { renderGameLists, returnGame, toggleSection } from '/bradspelsmeny/js/modules/games.js';
+import { initHistoryModal } from '/bradspelsmeny/js/modules/history.js';
+import { initImageModal } from '/bradspelsmeny/js/modules/image-modal.js';
 
 // Initialize the lending page
 document.addEventListener("DOMContentLoaded", async () => {
