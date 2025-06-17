@@ -18,6 +18,9 @@
             border-radius: 4px;
             font-family: 'Press Start 2P', monospace;
         }
+        .game-item {
+            margin-bottom: 1rem;
+        }
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -25,12 +28,11 @@
             flex-wrap: nowrap;
             gap: 0.5rem;
             background: #fffdf7;
-          /*  border: 2px dashed #d9b370; */
+            border: 2px solid #d9b370;
             border-radius: 4px;
             padding: 0.5rem;
-            margin-bottom: 0.5rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .game-header:hover {
@@ -52,11 +54,20 @@
             white-space: nowrap;
         }
 
+        .game-status {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            background: #d9b370;
+            color: #3c2415;
+        }
+
         .game-content {
             display: none;
             padding: 1rem;
-          /*  border-top: 2px dashed #d9b370; */
-            margin-top: 0.5rem;
+            border: 2px solid #d9b370;
+            border-top: none;
+            margin-top: 0;
             background: #fffdf7;
             border-bottom-left-radius: 4px;
             border-bottom-right-radius: 4px;
@@ -66,12 +77,63 @@
             display: block;
         }
 
+        .game-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-detail {
+            font-size: 0.6rem;
+            color: #3c2415;
+        }
+
+        .game-detail strong {
+            display: block;
+            margin-bottom: 0.2rem;
+            color: #d9b370;
+        }
+
+        .game-detail p {
+            margin: 0;
+            line-height: 1.4;
+        }
+
         .game-actions {
             display: flex;
             justify-content: flex-end;
+            gap: 0.5rem;
             margin-top: 1rem;
             padding-top: 1rem;
             border-top: 2px dashed #d9b370;
+        }
+
+        .edit-button {
+            font-size: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background: #d9b370;
+            color: #3c2415;
+            border: 2px solid #3c2415;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            box-shadow: 2px 2px 0 #3c2415;
+        }
+
+        .edit-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 #3c2415;
+        }
+
+        .edit-button:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #3c2415;
         }
 
         .delete-button {
@@ -103,6 +165,38 @@
 
         .delete-button::before {
             content: "🗑️";
+        }
+
+        .add-game-button {
+            font-size: 0.6rem;
+            padding: 0.5rem 1rem;
+            background: #d9b370;
+            color: #3c2415;
+            border: 2px solid #3c2415;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+            box-shadow: 2px 2px 0 #3c2415;
+        }
+
+        .add-game-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 #3c2415;
+        }
+
+        .add-game-button:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #3c2415;
+        }
+
+        .plus-icon {
+            font-size: 1.2em;
+            line-height: 1;
         }
 
         #gameModal {
@@ -142,24 +236,6 @@
         .button-group {
             display: flex;
             gap: 0.5rem;
-        }
-
-        .game-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .game-detail {
-            font-size: 0.6rem;
-            color: #3c2415;
-        }
-
-        .game-detail strong {
-            display: block;
-            margin-bottom: 0.2rem;
-            color: #d9b370;
         }
 
         .admin-menu {

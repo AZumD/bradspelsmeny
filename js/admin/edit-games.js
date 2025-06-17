@@ -44,13 +44,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Initialize search functionality
+    const searchBar = document.getElementById('searchBar');
+    if (searchBar) {
+        searchBar.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const gameHeaders = document.querySelectorAll('.game-header');
+            gameHeaders.forEach(header => {
+                const title = header.querySelector('.game-title').textContent.toLowerCase();
+                header.style.display = title.includes(searchTerm) ? 'flex' : 'none';
+            });
+        });
+    }
+
     // Fetch and display games
     try {
         const loadingSpinner = document.getElementById("loadingSpinner");
         if (loadingSpinner) loadingSpinner.style.display = "block";
         const token = localStorage.getItem('userToken');
         if (!token) throw new Error('No authentication token');
-        await renderGames();
+        await renderAdminGames();
     } catch (err) {
         const gameList = document.getElementById("gameList");
         if (gameList) {
@@ -63,7 +76,80 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
+async function renderAdminGames() {
+    const gameList = document.getElementById("gameList");
+    if (!gameList) return;
+
+    const games = await fetchGames();
+    gameList.innerHTML = games.map((game, index) => `
+        <div class="game-item">
+            <div class="game-header" onclick="toggleGameContent(${index})">
+                <span class="game-title">${game.title_sv}</span>
+                <span class="game-status">${game.available ? 'Tillgänglig' : 'Utlånad'}</span>
+            </div>
+            <div class="game-content" id="game-content-${index}">
+                <div class="game-details">
+                    <div class="game-detail">
+                        <strong>Beskrivning (SV):</strong>
+                        <p>${game.description_sv}</p>
+                    </div>
+                    <div class="game-detail">
+                        <strong>Beskrivning (EN):</strong>
+                        <p>${game.description_en}</p>
+                    </div>
+                    <div class="game-detail">
+                        <strong>Spelare:</strong>
+                        <p>${game.min_players}-${game.max_players}</p>
+                    </div>
+                    <div class="game-detail">
+                        <strong>Speltid:</strong>
+                        <p>${game.play_time} min</p>
+                    </div>
+                    <div class="game-detail">
+                        <strong>Ålder:</strong>
+                        <p>${game.age}+</p>
+                    </div>
+                    <div class="game-detail">
+                        <strong>Taggar:</strong>
+                        <p>${game.tags.join(', ')}</p>
+                    </div>
+                </div>
+                <div class="game-actions">
+                    <button onclick="openModal(${index})" class="edit-button">Redigera</button>
+                    <button onclick="deleteGame(${game.id})" class="delete-button">Ta bort</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
 // Make functions available globally for onclick handlers
 window.goTo = goTo;
-window.logout = logout;
+window.toggleGameContent = (index) => {
+    const content = document.getElementById(`game-content-${index}`);
+    const header = content.previousElementSibling;
+    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    header.classList.toggle('expanded');
+};
+
+window.deleteGame = async (gameId) => {
+    if (!confirm('Är du säker på att du vill ta bort detta spel?')) return;
+    
+    try {
+        const token = localStorage.getItem('userToken');
+        const response = await fetch(`/bradspelsmeny/api/games/${gameId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) throw new Error('Failed to delete game');
+        
+        window.location.reload();
+    } catch (err) {
+        console.error('Error deleting game:', err);
+        alert('Kunde inte ta bort spelet. Försök igen.');
+    }
+};
 
