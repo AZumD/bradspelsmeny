@@ -119,20 +119,9 @@ async function createGameCard(game) {
   let extra = '';
 
   if (game.lent_out) {
-    try {
-      const token = localStorage.getItem('userToken');
-      const res = await fetch(`${API_ENDPOINTS.GAMES}/${game.id}/current-lend`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        extra = `<br><small style="font-size: 0.5rem;">
-          Lånad ut till ${data.first_name || 'Okänd'} ${data.last_name || ''} (${data.note || 'okänt bord'}) – ${new Date(data.timestamp).toLocaleString('sv-SE')}
-        </small>`;
-      }
-    } catch (err) {
-      console.warn('⚠️ Could not fetch current lending info:', err);
-    }
+    extra = `<br><small style="font-size: 0.5rem;">
+      Lånad ut till ${game.lent_to_name || 'Okänd'} (${game.lent_to_table || 'okänt bord'}) – ${new Date(game.lent_at).toLocaleString('sv-SE')}
+    </small>`;
   }
 
   card.className = 'section-title';
