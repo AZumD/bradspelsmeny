@@ -55,8 +55,8 @@ export function logout() {
 }
 
 export async function refreshToken() {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) return false;
+    const storedRefreshToken = getRefreshToken();
+    if (!storedRefreshToken) return false;
 
     try {
         const res = await fetch(API_ENDPOINTS.REFRESH_TOKEN, {
@@ -64,7 +64,7 @@ export async function refreshToken() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ refreshToken })
+            body: JSON.stringify({ refreshToken: storedRefreshToken })
         });
 
         if (!res.ok) return false;

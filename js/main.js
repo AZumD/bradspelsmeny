@@ -32,7 +32,7 @@ async function initialize() {
 
     // Check authentication
     const userToken = getAccessToken();
-    const refreshToken = localStorage.getItem('refreshToken');
+    const storedRefreshToken = localStorage.getItem('refreshToken');
     const isGuest = localStorage.getItem("guestUser");
 
     // Initialize pixel navigation only if logged in
@@ -47,7 +47,7 @@ async function initialize() {
 
     // Refresh token if expired
     if (userToken && isTokenExpired(userToken)) {
-      if (refreshToken) {
+      if (storedRefreshToken) {
         const refreshed = await refreshToken();
         if (!refreshed) {
           logout();
