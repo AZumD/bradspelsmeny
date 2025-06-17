@@ -8,7 +8,7 @@ export function getGames() {
 
 export async function fetchGames(token) {
   try {
-    const res = await fetch(`${API_ENDPOINTS}/games`, {
+    const res = await fetch(API_ENDPOINTS.GAMES, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error(`Failed to fetch games: ${res.status}`);
