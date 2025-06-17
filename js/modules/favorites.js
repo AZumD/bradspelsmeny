@@ -36,44 +36,77 @@ export function createGameCard(game, minimal = false) {
 }
 
 export async function fetchFavoritesAndWishlist(userId) {
+  console.log('Fetching favorites and wishlist for user:', userId);
   const favContainer = document.getElementById('favoritesList');
   const wishContainer = document.getElementById('wishlistList');
-  if (!favContainer || !wishContainer) return;
+  
+  if (!favContainer || !wishContainer) {
+    console.error('Missing containers:', { 
+      favoritesList: !!favContainer, 
+      wishlistList: !!wishContainer 
+    });
+    return;
+  }
+
   try {
+    console.log('Fetching from endpoints:', {
+      favorites: `${API_BASE}/users/${userId}/favorites`,
+      wishlist: `${API_BASE}/users/${userId}/wishlist`
+    });
+
     // Get user's favorites and wishlist
     const [favRes, wishRes] = await Promise.all([
-      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(() => null),
-      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(() => null)
+      fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(err => {
+        console.error('Error fetching favorites:', err);
+        return null;
+      }),
+      fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(err => {
+        console.error('Error fetching wishlist:', err);
+        return null;
+      })
     ]);
+
+    console.log('API responses:', {
+      favorites: favRes?.status,
+      wishlist: wishRes?.status
+    });
 
     let favorites = [], wishlist = [];
     if (favRes && favRes.ok) {
       favorites = await favRes.json();
+      console.log('Favorites data:', favorites);
     } else {
+      console.error('Failed to load favorites:', favRes?.status);
       favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
     }
 
     if (wishRes && wishRes.ok) {
       wishlist = await wishRes.json();
+      console.log('Wishlist data:', wishlist);
     } else {
+      console.error('Failed to load wishlist:', wishRes?.status);
       wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
     }
 
     if (favorites.length) {
+      console.log('Rendering favorites:', favorites.length);
       favContainer.innerHTML = '';
       favorites.forEach(g => favContainer.appendChild(createGameCard(g, true)));
     } else if (favRes && favRes.ok) {
+      console.log('No favorites found');
       favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
     }
 
     if (wishlist.length) {
+      console.log('Rendering wishlist:', wishlist.length);
       wishContainer.innerHTML = '';
       wishlist.forEach(g => wishContainer.appendChild(createGameCard(g)));
     } else if (wishRes && wishRes.ok) {
+      console.log('No wishlist items found');
       wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
     }
   } catch (err) {
-    console.error('Error fetching favorites and wishlist:', err);
+    console.error('Error in fetchFavoritesAndWishlist:', err);
     favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
     wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
   }
