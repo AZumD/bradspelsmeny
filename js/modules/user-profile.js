@@ -4,6 +4,7 @@ import { fetchGameLog } from './borrow-log.js';
 import { fetchFavoritesAndWishlist } from './favorites.js';
 import { fetchBadges } from './badges.js';
 import { fetchUserParties } from './parties.js';
+import { openGameModal } from './image-modal.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
