@@ -4,18 +4,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard</title>
+  <meta name="description" content="Admin dashboard for board game management system" />
+  <title>Admin Dashboard - Brädspelsmeny</title>
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" as="style" />
+  <link rel="preload" href="/bradspelsmeny/css/main.css" as="style" />
+  <link rel="preload" href="/bradspelsmeny/css/shared-ui.css" as="style" />
+  
+  <!-- Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/bradspelsmeny/css/main.css">
+  <link rel="stylesheet" href="/bradspelsmeny/css/shared-ui.css">
+  
   <style>
+    /* Admin dashboard specific styles */
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .section-title {
+      background: #fffdf7;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px dashed #d9b370;
+      border-radius: 4px;
+    }
 
     .section-title h2 {
       font-size: 0.75rem;
       margin-bottom: 0.5rem;
+      color: #333;
     }
 
     .section-title .value {
       font-size: 2rem;
       font-weight: bold;
+      color: #d9b370;
     }
 
     .section-title.large .value {
@@ -35,138 +62,257 @@
       word-break: break-word;
       max-height: 200px;
       overflow-y: auto;
+      border: 2px dashed #d9b370;
+      border-radius: 4px;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      padding: 1rem;
+      margin: 1rem;
+      border: 1px solid #d32f2f;
+      background: #fff9e8;
+      font-family: monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .notification-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .notification-icon:hover {
+      transform: scale(1.1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fffdf7;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .admin-menu {
+      display: none;
+      position: fixed;
+      bottom: 60px;
+      right: 35px;
+      background-color: #fffdf7;
+      border: 2px dashed #d9b370;
+      padding: 10px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      list-style: none;
+      z-index: 999;
     }
   </style>
 </head>
-<body>
-	<main class="dashboard">
-		<h1>
-			Admin Dashboard
-		</h1>
-		<div class="maincontain">
-			<div id="orderFeed">
-			</div>
-			<div class="section-title">
-				<h2>
-					Utlånade spel
-				</h2>
-				<div class="value" id="lentOutCount">
-					–
+<body class="admin-page">
+	<main class="dashboard" role="main">
+		<header>
+			<h1>Admin Dashboard</h1>
+		</header>
+
+		<section class="maincontain" aria-label="Dashboard content">
+			<section id="orderFeed" aria-label="Game orders">
+				<!-- Orders will be populated by JavaScript -->
+			</section>
+
+			<section class="stats-grid">
+				<div class="section-title" aria-label="Lent out games">
+					<h2>Utlånade spel</h2>
+					<div class="value" id="lentOutCount" aria-live="polite">–</div>
+				</div>
+
+				<div class="section-title" aria-label="Total games">
+					<h2>Totalt antal spel</h2>
+					<div class="value" id="totalGamesCount" aria-live="polite">–</div>
+				</div>
+
+				<div class="section-title large" aria-label="Most played this month">
+					<h2>Mest spelade den här månaden</h2>
+					<div class="value" aria-live="polite">–</div>
+				</div>
+			</section>
+		</section>
+
+		<!-- Notifications -->
+		<section class="notifications" aria-label="Notifications">
+			<img id="notificationIcon" 
+				 src="../img/icons/icon-notif-off.webp" 
+				 alt="Notifications"
+				 title="Notifications" 
+				 width="58" 
+				 height="58"
+				 class="notification-icon"
+				 role="button"
+				 tabindex="0"
+				 aria-label="Open notifications" />
+			<span id="notificationDot" class="notification-dot" aria-hidden="true"></span>
+
+			<div id="notificationModal" class="modal" role="dialog" aria-label="Notifications">
+				<div class="modal-content">
+					<button class="close-btn" id="closeNotificationBtn" aria-label="Close notifications">&times;</button>
+					<h3>Notifications</h3>
+					<div id="notificationList" class="notification-list">
+						<div class="placeholder-box">Loading...</div>
+					</div>
 				</div>
 			</div>
-			<div class="section-title">
-				<h2>
-					Totalt antal spel
-				</h2>
-				<div class="value" id="totalGamesCount">
-					–
-				</div>
-			</div>
-			<div class="section-title large">
-				<h2>
-					Mest spelade den här månaden
-				</h2>
-				<div class="value">
-					Love Letter
-				</div>
-			</div>
-<!--NOTIFICATIONS----------------------------------------------------------------------------->
-	
-<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
-title="Notifications" width="58" height="58" />
-<span id="notificationDot">
-</span>
-<div id="notificationModal" class="modal" style="display:none;">
-	<div class="modal-content">
-		<span class="close-btn" id="closeNotificationBtn">
-			&times;
-		</span>
-		<h3>
-			Notifications
-		</h3>
-		<div id="notificationList" class="notification-list">
-			<div class="placeholder-box">
-				Loading...
-			</div>
-		</div>
-	</div>
-</div>
-<!----------------------------------------------------------------------------/NOTIFICATIONS-->
-<!---PIXELNAV--------------------------------------------------------------------------------->
-	
-<nav id="pixelNav">
-	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
-	onclick="goTo('/pages/profile.html')">
-	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
-	class="nav-icon" onclick="logout()">
-	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
-		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
-		height="32" />
-	</button>
-</nav>
-<ul id="adminMenuDropdown" style="
-display: none;
-position: fixed;
-bottom: 60px;
-right: 35px;
-background-color: #fffdf7;
-border: 2px dashed #d9b370;
-padding: 10px;
-font-family: 'Press Start 2P', monospace;
-font-size: 0.6rem;
-list-style: none;
-z-index: 999;
-">
-	<li>
-		<a href="/bradspelsmeny/admin/index.html">
-			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
-			/>
+		</section>
+
+		<!-- Navigation -->
+		<nav id="pixelNav" aria-label="Main navigation">
+			<img src="../img/icons/icon-home.webp" 
+				 alt="Home" 
+				 class="nav-icon" 
+				 onclick="goTo('/')"
+				 role="button"
+				 tabindex="0"
+				 aria-label="Go to home" />
+			
+			<img src="../img/icons/icon-profile.webp" 
+				 alt="Profile" 
+				 class="nav-icon"
+				 onclick="goTo('/pages/profile.html')"
+				 role="button"
+				 tabindex="0"
+				 aria-label="Go to profile" />
+			
+			<img id="logoutIcon" 
+				 src="../img/icons/icon-logout.webp" 
+				 alt="Logout"
+				 class="nav-icon" 
+				 onclick="logout()"
+				 role="button"
+				 tabindex="0"
+				 aria-label="Logout" />
+			
+			<button id="adminMenuToggle" 
+					class="nav-icon" 
+					style="display: none;"
+					aria-label="Toggle admin menu"
+					aria-expanded="false"
+					aria-controls="adminMenuDropdown">
+				<img src="../img/icons/icon-admintools.webp" 
+					 alt="Admin Menu" 
+					 width="32" 
+					 height="32" />
 			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/edit-games.html">
-			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
-			height="48" />
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/user-db.html">
-			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/lending.html">
-			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="#" onclick="logout()">
-			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-</ul>
-<!---------------------------------------------------------------------------------/PIXELNAV-->
-<!--SPACING----------------------------------------------------------------------------------->
-	
-<div style="height: 60px;">
-<!----------------------------------------------------------------------------------/SPACING-->
-			</div>
-		</div>
+		</nav>
+
+		<ul id="adminMenuDropdown" 
+			class="admin-menu"
+			role="menu"
+			aria-label="Admin menu"
+			aria-hidden="true">
+			<li role="none">
+				<a href="/bradspelsmeny/admin/index.html" role="menuitem">
+					<img src="../img/icons/icon-admin.webp" 
+						 alt="Admin Dashboard" 
+						 width="48" 
+						 height="48" />
+				</a>
+			</li>
+			<li role="none">
+				<a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
+					<img src="../img/icons/icon-editgames.webp" 
+						 alt="Edit Games" 
+						 width="48" 
+						 height="48" />
+				</a>
+			</li>
+			<li role="none">
+				<a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
+					<img src="../img/icons/icon-friends.webp" 
+						 alt="User Database" 
+						 width="48" 
+						 height="48" />
+				</a>
+			</li>
+			<li role="none">
+				<a href="/bradspelsmeny/admin/lending.html" role="menuitem">
+					<img src="../img/icons/icon-lending.webp" 
+						 alt="Lending" 
+						 width="48" 
+						 height="48" />
+				</a>
+			</li>
+			<li role="none">
+				<a href="#" 
+				   onclick="logout()" 
+				   role="menuitem">
+					<img src="../img/icons/icon-logout.webp" 
+						 alt="Logout" 
+						 width="48" 
+						 height="48" />
+				</a>
+			</li>
+		</ul>
+
+		<!-- Spacing for fixed navigation -->
+		<div style="height: 60px;" aria-hidden="true"></div>
 	</main>
-	<link rel="stylesheet" href="../css/main.css">
-	<link rel="stylesheet" href="../css/shared-ui.css">
-	<script src="../js/shared/shared-ui.js">
-	</script>
-	<script defer src="admin.js">
+
+	<!-- Scripts -->
+	<script type="module" src="/bradspelsmeny/js/shared/shared-ui.js"></script>
+	<script type="module" src="/bradspelsmeny/js/modules/auth.js"></script>
+	<script type="module" src="/bradspelsmeny/js/modules/stats.js"></script>
+	<script type="module" src="/bradspelsmeny/js/modules/orders.js"></script>
+	<script type="module" src="/bradspelsmeny/admin/admin.js"></script>
+
+	<!-- Error handling for module loading -->
+	<script>
+		window.addEventListener('error', function(e) {
+			if (e.filename && e.filename.includes('.js')) {
+				const errorDiv = document.createElement('div');
+				errorDiv.className = 'error-message';
+				errorDiv.setAttribute('role', 'alert');
+				errorDiv.textContent = `Failed to load module: ${e.message}`;
+				document.body.insertBefore(errorDiv, document.body.firstChild);
+			}
+		});
 	</script>
 </body>
 </html>

@@ -1,72 +1,21 @@
-// Utility
-function getUserRole() {
-  const token = localStorage.getItem("userToken");
-  if (!token) return null;
-  try {
-    return JSON.parse(atob(token.split('.')[1])).role || null;
-  } catch {
-    return null;
-  }
-}
-function isTokenExpired(token) {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.exp * 1000 < Date.now();
-  } catch {
-    return true;
-  }
-}
-function getAccessToken() {
-  return localStorage.getItem('userToken');
-}
-function getRefreshToken() {
-  return localStorage.getItem('refreshToken');
-}
-function clearTokens() {
-  localStorage.removeItem('userToken');
-  localStorage.removeItem('refreshToken');
-}
-function goTo(path) {
+import { API_ENDPOINTS } from '../modules/config.js';
+import { getAccessToken, isTokenExpired, getUserRole } from '../modules/auth.js';
+
+// Navigation
+export function goTo(path) {
   const base = window.location.hostname === 'localhost'
     ? ''
     : '/bradspelsmeny';
   window.location.href = window.location.origin + base + path;
 }
-function logout() {
-  clearTokens();
-  window.location.href = '/bradspelsmeny/pages/login.html';
-}
-async function fetchWithAuth(url, options = {}) {
-  const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-  if (!accessToken || !refreshToken) throw new Error('User not authenticated');
-
-  options.headers = options.headers || {};
-  options.headers['Authorization'] = `Bearer ${accessToken}`;
-
-  let response = await fetch(url, options);
-  if (response.status === 401 || response.status === 403) {
-    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (refreshResponse.ok) {
-      const data = await refreshResponse.json();
-      if (data.token) {
-        localStorage.setItem('userToken', data.token);
-        options.headers['Authorization'] = `Bearer ${data.token}`;
-        return fetch(url, options);
-      }
-    }
-  }
-  return response;
-}
 
 // PixelNav Setup
-function initPixelNav() {
+export function initPixelNav() {
   const nav = document.getElementById('pixelNav');
-  if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
+  if (!nav) return;
+
+  const token = getAccessToken();
+  if (token && !isTokenExpired(token)) {
     nav.style.display = 'flex';
   }
 
@@ -77,24 +26,36 @@ function initPixelNav() {
   if (getUserRole() === "admin" && adminToggle && adminDropdown) {
     adminToggle.style.display = "inline-block";
     if (logoutIcon) logoutIcon.style.display = "none";
+    
+    // Explicitly set initial state
+    adminDropdown.style.display = "none";
+    adminToggle.setAttribute("aria-expanded", "false");
 
     adminToggle.addEventListener("click", () => {
-      adminDropdown.style.display =
-        adminDropdown.style.display === "none" ? "block" : "none";
+      const isVisible = adminDropdown.style.display === "block";
+      adminDropdown.style.display = isVisible ? "none" : "block";
+      adminToggle.setAttribute("aria-expanded", !isVisible);
     });
 
     document.addEventListener("click", (e) => {
       if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
         adminDropdown.style.display = "none";
+        adminToggle.setAttribute("aria-expanded", "false");
       }
     });
+  } else if (logoutIcon) {
+    logoutIcon.style.display = "inline-block";
   }
 }
 
 // Notifications
-async function fetchNotifications() {
+export async function fetchNotifications() {
   try {
-    const res = await fetchWithAuth(`${API_BASE}/notifications`);
+    const res = await fetch(`${API_ENDPOINTS}/notifications`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    });
     if (!res.ok) throw new Error('Failed to fetch notifications');
 
     const notifications = await res.json();
@@ -131,8 +92,11 @@ async function fetchNotifications() {
         acceptBtn.className = 'btn-accept';
         acceptBtn.onclick = async (e) => {
           e.stopPropagation();
-          const res = await fetchWithAuth(`${API_BASE}/friend-requests/${n.data?.request_id}/accept`, {
+          const res = await fetch(`${API_ENDPOINTS}/friend-requests/${n.data?.request_id}/accept`, {
             method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${getAccessToken()}`
+            }
           });
           if (res.ok) {
             div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
@@ -145,7 +109,12 @@ async function fetchNotifications() {
         declineBtn.className = 'btn-decline';
         declineBtn.onclick = async (e) => {
           e.stopPropagation();
-          await fetchWithAuth(`${API_BASE}/friend-requests/${n.id}/decline`, { method: 'POST' });
+          await fetch(`${API_ENDPOINTS}/friend-requests/${n.id}/decline`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${getAccessToken()}`
+            }
+          });
           div.innerHTML = `❌ Friend request declined<br><small>${new Date().toLocaleString()}</small>`;
         };
 
@@ -156,7 +125,12 @@ async function fetchNotifications() {
 
       div.onclick = async () => {
         if (!n.read) {
-          await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
+          await fetch(`${API_ENDPOINTS}/notifications/${n.id}/read`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${getAccessToken()}`
+            }
+          });
           div.classList.remove('unread');
           const updated = list.querySelectorAll('.notification-item.unread');
           if (updated.length === 0) icon.src = "../img/icons/icon-notif-off.webp";
@@ -207,9 +181,13 @@ function showBadgePopup(name, iconUrl, time) {
   }, 6000);
 }
 
-async function updateNotificationIcon() {
+export async function updateNotificationIcon() {
   try {
-    const res = await fetchWithAuth(`${API_BASE}/notifications`);
+    const res = await fetch(`${API_ENDPOINTS}/notifications`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    });
     if (!res.ok) throw new Error('Failed to fetch notifications');
     const notifications = await res.json();
     const hasUnread = notifications.some(n => !n.read);
@@ -225,17 +203,20 @@ async function updateNotificationIcon() {
   }
 }
 
- // Notification modal toggle
-  const notifBtn = document.getElementById('notificationIcon');
-  const notifModal = document.getElementById('notificationModal');
-  const closeNotifBtn = document.getElementById('closeNotificationBtn');
+// Notification modal toggle
+const notifBtn = document.getElementById('notificationIcon');
+const notifModal = document.getElementById('notificationModal');
+const closeNotifBtn = document.getElementById('closeNotificationBtn');
 
-  if (notifBtn && notifModal && closeNotifBtn) {
-    notifBtn.addEventListener('click', () => {
-      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
-      fetchNotifications();
-    });
-    closeNotifBtn.addEventListener('click', () => {
-      notifModal.style.display = 'none';
-    });
-  }
+if (notifBtn && notifModal && closeNotifBtn) {
+  notifBtn.addEventListener('click', () => {
+    notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
+    fetchNotifications();
+  });
+  closeNotifBtn.addEventListener('click', () => {
+    notifModal.style.display = 'none';
+  });
+}
+
+// Make functions available globally for onclick handlers
+window.goTo = goTo;

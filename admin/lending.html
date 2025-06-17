@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hantera utlåning av spel i Bradspelsmeny" />
+  <title>Utlåning - Bradspelsmeny</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <title>Lending</title>
+  <link rel="stylesheet" href="/bradspelsmeny/css/main.css">
+  <link rel="stylesheet" href="/bradspelsmeny/css/shared-ui.css">
   <style>
-    .form-container {
-      width: 100%;
-      max-width: 700px;
-      padding: 2rem 1rem;
-      box-sizing: border-box;
-    }
-
+    /* Lending page specific styles */
     .search-bar {
       margin-bottom: 1.5rem;
     }
@@ -32,15 +28,15 @@
 
     .collapsible-section {
       width: 100%;
-      border-radius:10px;
+      border-radius: 10px;
       max-width: 700px;
       margin-bottom: 1rem;
     }
 
-    .collapsible-header {
-      color:#5a2a0c;
+    .game-header {
+      color: #5a2a0c;
       background-color: #fffdf7;
-      border:2px dashed #d9b370;
+      border: 2px dashed #d9b370;
       padding: 1rem;
       cursor: pointer;
       font-size: 0.75rem;
@@ -50,12 +46,13 @@
       text-align: left;
     }
 
-    .collapsible-content {
+    .game-content {
       display: none;
       flex-direction: column;
       gap: 1rem;
       padding: 1rem;
     }
+
     .game-card small {
       display: block;
       margin-top: 0.5rem;
@@ -68,6 +65,7 @@
       display: flex;
       gap: 0.5rem;
     }
+
     .caret {
       float: right;
       font-size: 0.75rem;
@@ -78,181 +76,170 @@
     }
   </style>
 </head>
-<body>
+<body class="admin-page">
   <div class="maincontain">
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
     </div>
 
     <div class="collapsible-section">
-  <button class="collapsible-header" onclick="toggleSection('lentOutGames', this)">Utlånade spel <span class="caret">▼</span></button>
-  <div id="lentOutGames" class="collapsible-content"></div>
-</div>
+      <button class="game-header" data-section="lentOutGames">
+        Utlånade spel <span class="caret">▼</span>
+      </button>
+      <div id="lentOutGames" class="game-content"></div>
+    </div>
 
-<div class="collapsible-section">
-  <button class="collapsible-header" onclick="toggleSection('availableGames', this)">Tillgängliga spel <span class="caret">▼</span></button>
-  <div id="availableGames" class="collapsible-content"></div>
-</div>
+    <div class="collapsible-section">
+      <button class="game-header" data-section="availableGames">
+        Tillgängliga spel <span class="caret">▼</span>
+      </button>
+      <div id="availableGames" class="game-content"></div>
+    </div>
   </div>
-  <!--NOTIFICATIONS----------------------------------------------------------------------------->
-	
-<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
-title="Notifications" width="58" height="58" />
-<span id="notificationDot">
-</span>
-<div id="notificationModal" class="modal" style="display:none;">
-	<div class="modal-content">
-		<span class="close-btn" id="closeNotificationBtn">
-			&times;
-		</span>
-		<h3>
-			Notifications
-		</h3>
-		<div id="notificationList" class="notification-list">
-			<div class="placeholder-box">
-				Loading...
-			</div>
-		</div>
-	</div>
-</div>
-<!----------------------------------------------------------------------------/NOTIFICATIONS-->
-<!---PIXELNAV--------------------------------------------------------------------------------->
-	
-<nav id="pixelNav">
-	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
-	onclick="goTo('/pages/profile.html')">
-	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
-	class="nav-icon" onclick="logout()">
-	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
-		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
-		height="32" />
-	</button>
-</nav>
-<ul id="adminMenuDropdown" style="
-display: none;
-position: fixed;
-bottom: 60px;
-right: 35px;
-background-color: #fffdf7;
-border: 2px dashed #d9b370;
-padding: 10px;
-font-family: 'Press Start 2P', monospace;
-font-size: 0.6rem;
-list-style: none;
-z-index: 999;
-">
-	<li>
-		<a href="/bradspelsmeny/admin/index.html">
-			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/edit-games.html">
-			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
-			height="48" />
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/user-db.html">
-			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/lending.html">
-			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="#" onclick="logout()">
-			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-</ul>
-<!---------------------------------------------------------------------------------/PIXELNAV-->
-<!--SPACING----------------------------------------------------------------------------------->
-	
-<div style="height: 60px;">
-<!----------------------------------------------------------------------------------/SPACING-->
+
+  <!-- Notifications -->
+  <div class="notification-container">
+    <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifieringar" width="58" height="58" />
+    <span id="notificationDot"></span>
+    <div id="notificationModal" class="modal" role="dialog" aria-labelledby="notificationTitle">
+      <div class="modal-content">
+        <span class="close-btn" id="closeNotificationBtn" aria-label="Stäng">&times;</span>
+        <h3 id="notificationTitle">Notifieringar</h3>
+        <div id="notificationList" class="notification-list">
+          <div class="placeholder-box">Laddar...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="pixelNav" role="navigation" aria-label="Huvudnavigation">
+    <img src="../img/icons/icon-home.webp" alt="Hem" class="nav-icon" onclick="goTo('/')">
+    <img src="../img/icons/icon-profile.webp" alt="Profil" class="nav-icon" onclick="goTo('/pages/profile.html')">
+    <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logga ut" class="nav-icon" onclick="logout()">
+    <button id="adminMenuToggle" class="nav-icon" aria-label="Admin-meny" aria-expanded="false">
+      <img src="../img/icons/icon-admintools.webp" alt="Admin-verktyg" width="32" height="32" />
+    </button>
+  </nav>
+
+  <ul id="adminMenuDropdown" role="menu" aria-label="Admin-meny">
+    <li role="none">
+      <a href="/bradspelsmeny/admin/index.html" role="menuitem">
+        <img src="../img/icons/icon-admin.webp" alt="Admin-panel" width="48" height="48" />
+      </a>
+    </li>
+    <li role="none">
+      <a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
+        <img src="../img/icons/icon-editgames.webp" alt="Redigera spel" width="48" height="48" />
+      </a>
+    </li>
+    <li role="none">
+      <a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
+        <img src="../img/icons/icon-friends.webp" alt="Användardatabas" width="48" height="48" />
+      </a>
+    </li>
+    <li role="none">
+      <a href="/bradspelsmeny/admin/lending.html" role="menuitem">
+        <img src="../img/icons/icon-lending.webp" alt="Utlåning" width="48" height="48" />
+      </a>
+    </li>
+    <li role="none">
+      <a href="#" onclick="logout()" role="menuitem">
+        <img src="../img/icons/icon-logout.webp" alt="Logga ut" width="48" height="48" />
+      </a>
+    </li>
+  </ul>
+
+  <!-- Spacing for navigation -->
+  <div class="nav-spacing"></div>
 
   <!-- Image Preview Modal -->
-  <div id="imageModal" class="modal">
+  <div id="imageModal" class="modal" role="dialog" aria-labelledby="imageModalTitle">
     <div class="modal-content">
-      <img id="modalImage" style="max-width: 100%;" />
-      <div style="margin-top: 1rem;">
-        <button onclick="closeImageModal()">Stäng</button>
+      <h3 id="imageModalTitle" class="visually-hidden">Bildförhandsvisning</h3>
+      <img id="modalImage" alt="Spelbild" style="max-width: 100%;" />
+      <div class="form-actions">
+        <button class="pixel-button" data-action="close">Stäng</button>
       </div>
     </div>
   </div>
 
   <!-- Game History Modal -->
-  <div id="historyModal" class="modal">
+  <div id="historyModal" class="modal" role="dialog" aria-labelledby="historyModalTitle">
     <div class="modal-content">
-      <h3>Historik</h3>
+      <h3 id="historyModalTitle">Historik</h3>
       <ul id="historyList"></ul>
-      <div style="margin-top: 1rem;">
-        <button onclick="closeHistoryModal()">Stäng</button>
+      <div class="form-actions">
+        <button class="pixel-button" data-action="close">Stäng</button>
       </div>
     </div>
   </div>
 
   <!-- Lend Out Modal -->
-  <div id="lendModal" class="modal">
+  <div id="lendModal" class="modal" role="dialog" aria-labelledby="lendModalTitle">
     <div class="modal-content">
-      <h3>Låna ut spel</h3>
-      <input type="hidden" id="lendGameId" />
-      <label for="userSelect">Välj användare:</label>
-      <select id="userSelect"></select>
-      <div style="margin-top: 0.5rem;">
-        <button id="addUserButton">➕ Ny användare</button>
-      </div>
-
-      <!-- Step 2: Show after user is selected or added -->
-      <div id="tableStep" style="display: none;">
-        <label for="tableNumber">Bordsnummer:</label>
-        <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" style="width: 100%; font-family: monospace;" />
-        <div style="margin-top: 1rem;">
-          <button onclick="confirmLend()">✅ Bekräfta utlåning</button>
+      <h3 id="lendModalTitle">Låna ut spel</h3>
+      <form id="lendForm" class="form-container">
+        <input type="hidden" id="lendGameId" />
+        
+        <div class="form-group">
+          <label for="userSelect">Välj användare:</label>
+          <select id="userSelect" required aria-label="Välj användare"></select>
         </div>
-      </div>
 
-      <div style="margin-top: 1rem;">
-        <button onclick="closeLendModal()">❌ Avbryt</button>
-      </div>
-    </div>
-  </div>
+        <div class="form-group">
+          <button type="button" id="addUserButton" class="pixel-button">➕ Ny användare</button>
+        </div>
 
-  <!-- New User Modal -->
-  <div id="newUserModal" class="modal">
-    <div class="modal-content">
-      <h3>Ny användare</h3>
-      <form id="newUserForm">
-        <label for="newFirstName">Förnamn:</label>
-        <input type="text" id="newFirstName" required style="width: 100%; font-family: monospace;" />
-        <label for="newLastName">Efternamn:</label>
-        <input type="text" id="newLastName" required style="width: 100%; font-family: monospace;" />
-        <label for="newPhone">Telefonnummer:</label>
-        <input type="text" id="newPhone" style="width: 100%; font-family: monospace;" />
-        <div style="margin-top: 1rem;">
-          <button type="submit">Skapa användare</button>
-          <button type="button" onclick="closeNewUserModal()">Avbryt</button>
+        <!-- Step 2: Show after user is selected or added -->
+        <div id="tableStep" class="form-group" style="display: none;">
+          <label for="tableNumber">Bordsnummer:</label>
+          <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" required aria-label="Bordsnummer" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="pixel-button">✅ Bekräfta utlåning</button>
+          <button type="button" class="pixel-button" data-action="close">❌ Avbryt</button>
         </div>
       </form>
     </div>
   </div>
 
-  <link rel="stylesheet" href="../css/shared-ui.css">
-  <link rel="stylesheet" href="../css/main.css">
-  <script src="../js/shared/shared-ui.js"></script>
-  <script src="lending.js" defer></script>
+  <!-- New User Modal -->
+  <div id="newUserModal" class="modal" role="dialog" aria-labelledby="newUserModalTitle">
+    <div class="modal-content">
+      <h3 id="newUserModalTitle">Ny användare</h3>
+      <form id="newUserForm" class="form-container">
+        <div class="form-group">
+          <label for="newFirstName">Förnamn:</label>
+          <input type="text" id="newFirstName" required aria-label="Förnamn" />
+        </div>
+
+        <div class="form-group">
+          <label for="newLastName">Efternamn:</label>
+          <input type="text" id="newLastName" required aria-label="Efternamn" />
+        </div>
+
+        <div class="form-group">
+          <label for="newPhone">Telefonnummer:</label>
+          <input type="text" id="newPhone" aria-label="Telefonnummer" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="pixel-button">Skapa användare</button>
+          <button type="button" class="pixel-button" data-action="close">Avbryt</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/bradspelsmeny/js/shared/shared-ui.js"></script>
+  <script type="module" src="/bradspelsmeny/js/modules/auth.js"></script>
+  <script type="module" src="/bradspelsmeny/js/modules/games.js"></script>
+  <script type="module" src="/bradspelsmeny/js/modules/lend-form.js"></script>
+  <script type="module" src="/bradspelsmeny/js/modules/history.js"></script>
+  <script type="module" src="/bradspelsmeny/js/modules/image-modal.js"></script>
+  <script type="module" src="/bradspelsmeny/admin/lending.js"></script>
 </body>
 </html>

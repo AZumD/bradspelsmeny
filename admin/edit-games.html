@@ -1,256 +1,356 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redigera Spel</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    #searchBar {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 0.6rem;
-      margin-bottom: 1rem;
-      border: 2px solid #3c2415;
-      border-radius: 4px;
-      font-family: 'Press Start 2P', monospace;
-    }
-    .game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Redigera spel i Bradspelsmeny" />
+    <title>Redigera Spel - Bradspelsmeny</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/bradspelsmeny/css/main.css">
+    <link rel="stylesheet" href="/bradspelsmeny/css/shared-ui.css">
+    <style>
+        #searchBar {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 0.6rem;
+            margin-bottom: 1rem;
+            border: 2px solid #3c2415;
+            border-radius: 4px;
+            font-family: 'Press Start 2P', monospace;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 0.5rem;
+            background: #fffdf7;
+          /*  border: 2px dashed #d9b370; */
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
 
+        .game-header:hover {
+            background-color: rgba(217, 179, 112, 0.1);
+        }
 
-    .edit-button, .delete-button {
-      font-size: 0.5rem;
-      padding: 0.2rem 0.4rem;
-      background: #e6b35c;
-      color: #3c2415;
-      border: 2px solid #3c2415;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        .game-header.expanded {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-bottom: 0;
+        }
 
-    #gameModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content input,
-    .modal-content textarea,
-    .modal-content select {
-      width: 100%;
-      margin-bottom: 0.5rem;
-      font-size: 0.5rem;
-      font-family: 'Press Start 2P', monospace;
-      padding: 0.4rem;
-    }
+        .game-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-    .star-rating {
-      display: flex;
-      gap: 0.3rem;
-      font-size: 2rem;
-      cursor: pointer;
-    }
+        .game-content {
+            display: none;
+            padding: 1rem;
+          /*  border-top: 2px dashed #d9b370; */
+            margin-top: 0.5rem;
+            background: #fffdf7;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
 
-    .star-rating .star.filled {
-      color: gold;
-    }
+        .game-content.expanded {
+            display: block;
+        }
 
-    #loadingSpinner {
-      text-align: center;
-      margin-top: 1rem;
-    }
-    .game-title {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-  </style>
+        .game-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px dashed #d9b370;
+        }
+
+        .delete-button {
+            font-size: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background: #ff6b6b;
+            color: #3c2415;
+            border: 2px solid #3c2415;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            box-shadow: 2px 2px 0 #3c2415;
+        }
+
+        .delete-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 #3c2415;
+        }
+
+        .delete-button:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #3c2415;
+        }
+
+        .delete-button::before {
+            content: "🗑️";
+        }
+
+        #gameModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            font-size: 0.5rem;
+            font-family: 'Press Start 2P', monospace;
+            padding: 0.4rem;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 0.3rem;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .star-rating .star.filled {
+            color: gold;
+        }
+
+        #loadingSpinner {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .game-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-detail {
+            font-size: 0.6rem;
+            color: #3c2415;
+        }
+
+        .game-detail strong {
+            display: block;
+            margin-bottom: 0.2rem;
+            color: #d9b370;
+        }
+
+        .admin-menu {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 35px;
+            background-color: #fffdf7;
+            border: 2px dashed #d9b370;
+            padding: 10px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            list-style: none;
+            z-index: 999;
+        }
+    </style>
 </head>
-<body>
-  <main class="dashboard">
-    <h1>Redigera Spel</h1>
-    <div class="maincontain">
-      <div style="text-align: center; margin-bottom: 1rem;">
-        <button id="addGameButton">➕ Lägg till spel</button>
-      </div>
-      <input id="searchBar" type="text" placeholder="Sök efter spel..." />
-      <div id="loadingSpinner">🔄 Laddar spel...</div>
-      <div id="gameList"></div>
+<body class="admin-page">
+    <main class="maincontain">
+        <h1>Redigera spel</h1>
+        
+        <button class="add-game-button" onclick="openModal()">
+            <span class="plus-icon">+</span>
+            Lägg till nytt spel
+        </button>
+
+        <input type="text" id="searchBar" placeholder="Sök spel...">
+        <div id="loadingSpinner" class="loading-spinner"></div>
+        <div id="gameList"></div>
+    </main>
+
+    <div id="gameModal" class="modal" role="dialog" aria-labelledby="formTitle">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('gameModal').style.display='none'">&times;</button>
+            <h2 id="formTitle">Lägg till nytt spel</h2>
+            <form id="gameForm">
+                <input type="hidden" id="editingIndex" />
+
+                <div class="form-group">
+                    <label for="title">Titel</label>
+                    <input type="text" id="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descSv">Beskrivning (sv)</label>
+                    <textarea id="descSv" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="descEn">Beskrivning (en)</label>
+                    <textarea id="descEn" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="minPlayers">Min spelare</label>
+                    <input type="number" id="minPlayers" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxPlayers">Max spelare</label>
+                    <input type="number" id="maxPlayers" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Speltid (min)</label>
+                    <input type="number" id="time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Ålder</label>
+                    <input type="number" id="age" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">Taggar (kommaseparerade)</label>
+                    <input type="text" id="tags" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="img">Bild-URL</label>
+                    <input type="text" id="img" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rules">Regellänk</label>
+                    <input type="text" id="rules">
+                </div>
+
+                <div class="form-group checkbox">
+                    <label>
+                        <input type="checkbox" id="slowDayOnly">
+                        Endast för lugna dagar
+                    </label>
+                </div>
+
+                <div class="form-group checkbox">
+                    <label>
+                        <input type="checkbox" id="trustedOnly">
+                        Endast för betrodda gäster
+                    </label>
+                </div>
+
+                <div class="form-group checkbox">
+                    <label>
+                        <input type="checkbox" id="membersOnly">
+                        Endast för medlemmar
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Skick (1–5):</label>
+                    <div class="star-rating" role="radiogroup">
+                        <span class="star" data-value="1" role="radio" aria-label="1 stjärna">★</span>
+                        <span class="star" data-value="2" role="radio" aria-label="2 stjärnor">★</span>
+                        <span class="star" data-value="3" role="radio" aria-label="3 stjärnor">★</span>
+                        <span class="star" data-value="4" role="radio" aria-label="4 stjärnor">★</span>
+                        <span class="star" data-value="5" role="radio" aria-label="5 stjärnor">★</span>
+                    </div>
+                    <input type="hidden" id="conditionRatingValue" value="0">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Spara</button>
+                    <button type="button" onclick="document.getElementById('gameModal').style.display='none'">Avbryt</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </main>
 
-  <div id="gameModal">
-    <div class="modal-content">
-      <h2 id="formTitle">Redigera spel</h2>
-     <form id="gameForm" enctype="multipart/form-data">
-  <input type="hidden" id="editingIndex" />
-
-  <input id="title" placeholder="Title" required />
-  <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
-  <textarea id="descEn" placeholder="Description (en)"></textarea>
-
-  <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <input id="minPlayers" placeholder="Min spelare" style="flex: 1;" />
-    <input id="maxPlayers" placeholder="Max spelare" style="flex: 1;" />
-  </div>
-
-  <input id="time" placeholder="Tid" />
-  <input id="age" placeholder="Ålder" />
-  <input id="tags" placeholder="Taggar (kommaseparerade)" />
-
-  <input id="img" placeholder="Bild-URL" />
-  <label for="imgFile">📷 Eller ladda upp en bild:</label>
-  <input type="file" id="imgFile" accept="image/*" />
-
-  <input id="rules" placeholder="Regellänk (valfritt)" />
-  <label for="rulesFile">📄 Eller ladda upp regler (PDF):</label>
-  <input type="file" id="rulesFile" accept=".pdf" />
-
-  <label>
-    <span>Endast för lugna dagar</span>
-    <input type="checkbox" id="slowDayOnly">
-  </label>
-  <label>
-    <span>Endast för betrodda gäster</span>
-    <input type="checkbox" id="trustedOnly">
-  </label>
-  <label>
-  <span>Endast för medlemmar</span>
-  <input type="checkbox" id="membersOnly">
-</label>
-
-
-  <label for="minTableSize">Minsta bordstorlek:</label>
-  <select id="minTableSize">
-    <option value="">Valfri</option>
-    <option value="1-2">1–2</option>
-    <option value="3-4">3–4</option>
-    <option value="5-6">5–6</option>
-    <option value="7+">7+</option>
-  </select>
-
-  <div class="condition-label">
-    <span>Skick (1–5):</span>
-    <div id="conditionRating" class="star-rating">
-      <span class="star" data-value="1">★</span>
-      <span class="star" data-value="2">★</span>
-      <span class="star" data-value="3">★</span>
-      <span class="star" data-value="4">★</span>
-      <span class="star" data-value="5">★</span>
+    <!-- Notifications -->
+    <div class="notification-container">
+        <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifieringar" width="58" height="58" />
+        <span id="notificationDot"></span>
+        <div id="notificationModal" class="modal" role="dialog" aria-labelledby="notificationTitle">
+            <div class="modal-content">
+                <span class="close-btn" id="closeNotificationBtn" aria-label="Stäng">&times;</span>
+                <h3 id="notificationTitle">Notifieringar</h3>
+                <div id="notificationList" class="notification-list">
+                    <div class="placeholder-box">Laddar...</div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <input type="hidden" id="conditionRatingValue" name="conditionRating" />
 
-  <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
+    <!-- Navigation -->
+    <nav id="pixelNav" role="navigation" aria-label="Huvudnavigation">
+        <img src="../img/icons/icon-home.webp" alt="Hem" class="nav-icon" onclick="goTo('/')">
+        <img src="../img/icons/icon-profile.webp" alt="Profil" class="nav-icon" onclick="goTo('/pages/profile.html')">
+        <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logga ut" class="nav-icon" onclick="logout()">
+        <button id="adminMenuToggle" class="nav-icon" aria-label="Admin-meny" aria-expanded="false">
+            <img src="../img/icons/icon-admintools.webp" alt="Admin-verktyg" width="32" height="32" />
+        </button>
+    </nav>
 
-  <button type="submit">💾 Spara</button>
-  <button type="button" id="closeModal">❌ Avbryt</button>
-</form>
- </div>
-  </div>
-<!--NOTIFICATIONS----------------------------------------------------------------------------->
-	
-<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
-title="Notifications" width="58" height="58" />
-<span id="notificationDot">
-</span>
-<div id="notificationModal" class="modal" style="display:none;">
-	<div class="modal-content">
-		<span class="close-btn" id="closeNotificationBtn">
-			&times;
-		</span>
-		<h3>
-			Notifications
-		</h3>
-		<div id="notificationList" class="notification-list">
-			<div class="placeholder-box">
-				Loading...
-			</div>
-		</div>
-	</div>
-</div>
-<!----------------------------------------------------------------------------/NOTIFICATIONS-->
-<!---PIXELNAV--------------------------------------------------------------------------------->
-	
-<nav id="pixelNav">
-	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
-	onclick="goTo('/pages/profile.html')">
-	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
-	class="nav-icon" onclick="logout()">
-	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
-		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
-		height="32" />
-	</button>
-</nav>
-<ul id="adminMenuDropdown" style="
-display: none;
-position: fixed;
-bottom: 60px;
-right: 35px;
-background-color: #fffdf7;
-border: 2px dashed #d9b370;
-padding: 10px;
-font-family: 'Press Start 2P', monospace;
-font-size: 0.6rem;
-list-style: none;
-z-index: 999;
-">
-	<li>
-		<a href="/bradspelsmeny/admin/index.html">
-			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/edit-games.html">
-			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
-			height="48" />
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/user-db.html">
-			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="/bradspelsmeny/admin/lending.html">
-			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-	<li>
-		<a href="#" onclick="logout()">
-			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
-			/>
-			</button>
-		</a>
-	</li>
-</ul>
-<!---------------------------------------------------------------------------------/PIXELNAV-->
-<!--SPACING----------------------------------------------------------------------------------->
-	
-<div style="height: 60px;">
-<!----------------------------------------------------------------------------------/SPACING-->
-  <link rel="stylesheet" href="../css/shared-ui.css">
-  <link rel="stylesheet" href="../css/main.css">
-  <script src="../js/shared/shared-ui.js"></script>
-  <script defer src="edit-games.js"></script>
+    <ul id="adminMenuDropdown" class="admin-menu" role="menu" aria-label="Admin-meny">
+        <li role="none">
+            <a href="/bradspelsmeny/admin/index.html" role="menuitem">
+                <img src="../img/icons/icon-admin.webp" alt="Admin-panel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
+                <img src="../img/icons/icon-editgames.webp" alt="Redigera spel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
+                <img src="../img/icons/icon-friends.webp" alt="Användardatabas" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/lending.html" role="menuitem">
+                <img src="../img/icons/icon-lending.webp" alt="Utlåning" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="#" onclick="logout()" role="menuitem">
+                <img src="../img/icons/icon-logout.webp" alt="Logga ut" width="48" height="48" />
+            </a>
+        </li>
+    </ul>
+
+    <!-- Spacing for navigation -->
+    <div class="nav-spacing"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="/bradspelsmeny/js/shared/shared-ui.js"></script>
+    <script type="module" src="/bradspelsmeny/js/modules/auth.js"></script>
+    <script type="module" src="/bradspelsmeny/js/modules/games.js"></script>
+    <script type="module" src="/bradspelsmeny/js/modules/game-form.js"></script>
+    <script type="module" src="/bradspelsmeny/js/modules/game-list.js"></script>
+    <script type="module" src="/bradspelsmeny/admin/edit-games.js"></script>
 </body>
 </html>

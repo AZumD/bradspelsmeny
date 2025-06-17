@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <title>Board Game Menu</title>  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/shared-ui.css">
   <style>
     /* Reset and base */
 
@@ -569,94 +571,101 @@
 </head>
 <body>
   <div id="banner">
-        <img src="banner3.png" alt="Banner" />
-    </div>
+    <img src="banner3.png" alt="Banner" />
+  </div>
   <div id="maincontain">
-  <div id="orderModal" class="modal">
-    <div>
-      <h2 id="orderGameTitle">Order Game</h2>
-      <div id="loggedInNotice" style="display:none; margin-bottom: 1rem;">
-        👤 You're logged in. We only need your table number.
-      </div>
-      <form id="orderForm">
-        <div id="userFields">
-          <label>
-            First Name:<br />
-            <input type="text" name="first_name" required />
-          </label><br />
-          <label>
-            Last Name:<br />
-            <input type="text" name="last_name" required />
-          </label><br />
-          <label>
-            Country Code:<br />
-            <select name="country_code" required>
-              <option value="+46">🇸🇪 +46 Sweden</option>
-              <option value="+47">🇳🇴 +47 Norway</option>
-              <option value="+358">🇫🇮 +358 Finland</option>
-              <option value="+45">🇩🇰 +45 Denmark</option>
-              <option value="+49">🇩🇪 +49 Germany</option>
-              <option value="+44">🇬🇧 +44 UK</option>
-              <option value="+1">🇺🇸 +1 USA</option>
-            </select>
-          </label><br />
-          <label>
-            Phone Number:<br />
-            <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
-          </label><br />
+    <div id="orderModal" class="modal">
+      <div>
+        <h2 id="orderGameTitle">Order Game</h2>
+        <div id="loggedInNotice" style="display:none; margin-bottom: 1rem;">
+          👤 You're logged in. We only need your table number.
         </div>
-        <br />
-        <label>
-          Table Number:<br />
-          <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
-        </label><br />
-        <button type="submit">Order</button>
-        <button type="button" id="closeModal">Cancel</button>
-      </form>
+        <form id="orderForm">
+          <div id="userFields">
+            <label>
+              First Name:<br />
+              <input type="text" name="first_name" required />
+            </label><br />
+            <label>
+              Last Name:<br />
+              <input type="text" name="last_name" required />
+            </label><br />
+            <label>
+              Country Code:<br />
+              <select name="country_code" required>
+                <option value="+46">🇸🇪 +46 Sweden</option>
+                <option value="+47">🇳🇴 +47 Norway</option>
+                <option value="+358">🇫🇮 +358 Finland</option>
+                <option value="+45">🇩🇰 +45 Denmark</option>
+                <option value="+49">🇩🇪 +49 Germany</option>
+                <option value="+44">🇬🇧 +44 UK</option>
+                <option value="+1">🇺🇸 +1 USA</option>
+              </select>
+            </label><br />
+            <label>
+              Phone Number:<br />
+              <input type="text" name="phone" pattern="[0-9]+" required placeholder="Without leading 0 or +" />
+            </label><br />
+          </div>
+          <br />
+          <label>
+            Table Number:<br />
+            <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
+          </label><br />
+          <button type="submit">Order</button>
+          <button type="button" id="closeModal">Cancel</button>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <div class="bg"></div>
+    <div class="bg"></div>
 
-  <div class="wrapper">
-    
-
-    <div class="language-toggle">
-      <button onclick="setLanguage('sv')">🇸🇪</button>
-      <button onclick="setLanguage('en')">🇬🇧</button>
-    </div>
-    <div class="filters">
-      <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
-      <div id="categoryBadges" class="category-badges"></div>
-    </div>
-
-    <main>
-      <h2 id="categoryHeading"></h2>
-
-      <div id="loadingSpinner" class="loading-spinner">
-        <span>Laddar spel...</span>
+    <div class="wrapper">
+      <div class="language-toggle">
+        <button onclick="setLanguage('sv')">🇸🇪</button>
+        <button onclick="setLanguage('en')">🇬🇧</button>
+      </div>
+      <div class="filters">
+        <input type="text" id="searchBar" placeholder="Search..." onkeyup="renderGames()" />
+        <div id="categoryBadges" class="category-badges"></div>
       </div>
 
-      <div id="gameList"></div>
-    </main>
-     <nav id="pixelNav" style="display: none;">
-    <img src="img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-    <img src="img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-    <img src="img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
-  </nav>
-  </div>
+      <main>
+        <h2 id="categoryHeading"></h2>
 
-  <div id="welcomeModal" class="modal show">
-  <div>
-    <div id="intro"></div>
-    <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
-    <button class="nice-button" onclick="window.location.href='pages/login.html'">Log In</button>
-    <button class="nice-button" onclick="window.location.href='pages/register.html'">Register for more games!</button>
-    <button class="nice-button" onclick="continueAsGuest()">Continue as Guest</button>
-  </div>
-</div>
+        <div id="loadingSpinner" class="loading-spinner">
+          <span>Laddar spel...</span>
+        </div>
 
-  <script src="main.js"></script>
+        <div id="gameList"></div>
+      </main>
+      <nav id="pixelNav" style="display: none;">
+        <img src="img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+        <img src="img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
+        <img src="img/icons/icon-logout.webp" alt="Logout" class="nav-icon" onclick="logout()">
+      </nav>
+    </div>
+
+    <div id="welcomeModal" class="modal show">
+      <div>
+        <div id="intro"></div>
+        <p style="margin-bottom: 1rem;">Please choose how you want to continue:</p>
+        <button class="nice-button" onclick="window.location.href='pages/login.html'">Log In</button>
+        <button class="nice-button" onclick="window.location.href='pages/register.html'">Register for more games!</button>
+        <button class="nice-button" onclick="continueAsGuest()">Continue as Guest</button>
+      </div>
+    </div>
+
+    <!-- Module imports -->
+    <script type="module" src="js/shared/shared-ui.js"></script>
+    <script type="module" src="js/modules/auth.js"></script>
+    <script type="module" src="js/modules/i18n.js"></script>
+    <script type="module" src="js/modules/game-list.js"></script>
+    <script type="module" src="js/modules/user-lists.js"></script>
+    <script type="module" src="js/modules/location.js"></script>
+    <script type="module" src="js/modules/ui.js"></script>
+    <script type="module" src="js/modules/config.js"></script>
+    <script type="module" src="js/main.js"></script>
   </div>
 </body>
 </html>
