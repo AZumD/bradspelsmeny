@@ -18,6 +18,7 @@ export async function fetchUserParties(viewedUserId = null) {
     if (!res.ok) throw new Error();
     const parties = await res.json();
     partyList.innerHTML = '';
+
     if (parties.length === 0) {
       partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
       return;
