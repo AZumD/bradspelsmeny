@@ -1,3 +1,11 @@
+import { getUserIdFromToken, fetchWithAuth } from '../js/modules/api.js';
+import { fetchProfile } from '../js/modules/user-profile.js';
+import { loadFriends } from '../js/modules/friends.js';
+import { fetchGameLog } from '../js/modules/borrow-log.js';
+import { fetchFavoritesAndWishlist } from '../js/modules/favorites.js';
+import { fetchBadges } from '../js/modules/badges.js';
+import { fetchUserParties } from '../js/modules/parties.js';
+
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
