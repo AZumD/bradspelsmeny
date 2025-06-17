@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from './config.js';
 
-const API_ENDPOINT = `${API_ENDPOINTS}/users`;
+const API_ENDPOINT = API_ENDPOINTS.USERS.BASE;
 
 export async function fetchUsers(token) {
     const res = await fetch(API_ENDPOINT, {
