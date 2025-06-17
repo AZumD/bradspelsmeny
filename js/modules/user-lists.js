@@ -113,8 +113,12 @@ export async function toggleFavorite(gameId, isFavorite) {
         if (isFavorite) {
             userFavorites = userFavorites.filter(game => game.id !== gameId);
         } else {
-            // Add the game to favorites (you might need to fetch the game details first)
-            const gameResponse = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}`);
+            // Fetch the full game details
+            const gameResponse = await fetch(`${API_ENDPOINTS.API_BASE}/games/${gameId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (gameResponse.ok) {
                 const game = await gameResponse.json();
                 userFavorites.push(game);
@@ -182,8 +186,12 @@ export async function toggleWishlist(gameId, isWishlisted) {
         if (isWishlisted) {
             userWishlist = userWishlist.filter(game => game.id !== gameId);
         } else {
-            // Add the game to wishlist (you might need to fetch the game details first)
-            const gameResponse = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}`);
+            // Fetch the full game details
+            const gameResponse = await fetch(`${API_ENDPOINTS.API_BASE}/games/${gameId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (gameResponse.ok) {
                 const game = await gameResponse.json();
                 userWishlist.push(game);
