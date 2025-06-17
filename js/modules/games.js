@@ -25,8 +25,8 @@ export async function saveGame(gameData) {
     if (!token) throw new Error('No authentication token');
 
     const url = gameData.id 
-        ? `${API_ENDPOINTS}/games/${gameData.id}`
-        : `${API_ENDPOINTS}/games`;
+        ? `${API_ENDPOINTS.GAMES}/${gameData.id}`
+        : API_ENDPOINTS.GAMES;
 
     const res = await fetch(url, {
         method: gameData.id ? 'PUT' : 'POST',
@@ -48,7 +48,7 @@ export async function deleteGame(gameId) {
     const token = localStorage.getItem('userToken');
     if (!token) throw new Error('No authentication token');
 
-    const res = await fetch(`${API_ENDPOINTS}/games/${gameId}`, {
+    const res = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`
@@ -61,20 +61,31 @@ export async function deleteGame(gameId) {
 }
 
 export async function renderGameLists(searchTerm, availableContainer, lentOutContainer, token) {
+  if (!availableContainer || !lentOutContainer) {
+    console.error('Container elements not found');
+    return;
+  }
+
   const filteredAvailable = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm.toLowerCase()));
   const filteredLentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm.toLowerCase()));
 
   availableContainer.innerHTML = '<p>Laddar spel...</p>';
   lentOutContainer.innerHTML = '<p>Laddar spel...</p>';
 
-  const availableCards = await Promise.all(filteredAvailable.map(game => createGameCard(game, token)));
-  const lentOutCards = await Promise.all(filteredLentOut.map(game => createGameCard(game, token)));
+  try {
+    const availableCards = await Promise.all(filteredAvailable.map(game => createGameCard(game, token)));
+    const lentOutCards = await Promise.all(filteredLentOut.map(game => createGameCard(game, token)));
 
-  availableContainer.innerHTML = '';
-  lentOutContainer.innerHTML = '';
+    availableContainer.innerHTML = '';
+    lentOutContainer.innerHTML = '';
 
-  for (const card of availableCards) availableContainer.appendChild(card);
-  for (const card of lentOutCards) lentOutContainer.appendChild(card);
+    for (const card of availableCards) availableContainer.appendChild(card);
+    for (const card of lentOutCards) lentOutContainer.appendChild(card);
+  } catch (err) {
+    console.error('Error rendering game lists:', err);
+    availableContainer.innerHTML = '<p>Ett fel uppstod när spelen skulle laddas.</p>';
+    lentOutContainer.innerHTML = '<p>Ett fel uppstod när spelen skulle laddas.</p>';
+  }
 }
 
 async function createGameCard(game, token) {
@@ -83,7 +94,7 @@ async function createGameCard(game, token) {
 
   if (game.lent_out) {
     try {
-      const res = await fetch(`${API_ENDPOINTS}/games/${game.id}/current-lend`, {
+      const res = await fetch(`${API_ENDPOINTS.GAMES}/${game.id}/current-lend`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -114,28 +125,37 @@ async function createGameCard(game, token) {
 }
 
 export async function returnGame(gameId, token) {
-  const res = await fetch(`${API_ENDPOINTS}/return/${gameId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({})
-  });
-  
-  if (!res.ok) {
-    throw new Error('Failed to return game');
+  try {
+    const res = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}/return`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({})
+    });
+    
+    if (!res.ok) {
+      throw new Error('Failed to return game');
+    }
+    
+    return res.json();
+  } catch (err) {
+    console.error('Error returning game:', err);
+    throw new Error('Failed to return game. Please try again.');
   }
-  
-  return res.json();
 }
 
 export function toggleSection(section) {
+  if (!section) return;
+  
   const header = section.querySelector('.game-header');
   const content = section.querySelector('.game-content');
-  const caret = header.querySelector('.caret');
-  const isOpen = content.style.display === 'flex';
+  const caret = header?.querySelector('.caret');
+  
+  if (!header || !content || !caret) return;
 
+  const isOpen = content.style.display === 'flex';
   content.style.display = isOpen ? 'none' : 'flex';
   caret.textContent = isOpen ? '▼' : '▲';
 } 

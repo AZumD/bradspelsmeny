@@ -10,16 +10,18 @@ export async function fetchUserLists() {
         const user = getCurrentUser();
         if (!user || !user.id) {
             console.warn('No user logged in or invalid user data');
+            userFavorites = [];
+            userWishlist = [];
             return { favorites: [], wishlist: [] };
         }
 
         const [favoritesRes, wishlistRes] = await Promise.all([
-            fetch(`${API_ENDPOINTS.API_BASE}/users/${user.id}/favorites`, {
+            fetch(`${API_ENDPOINTS.FAVORITES}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                 }
             }),
-            fetch(`${API_ENDPOINTS.API_BASE}/users/${user.id}/wishlist`, {
+            fetch(`${API_ENDPOINTS.WISHLIST}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                 }
@@ -35,10 +37,16 @@ export async function fetchUserLists() {
             wishlistRes.json()
         ]);
 
+        // Update module-level variables
+        userFavorites = favorites;
+        userWishlist = wishlist;
+
         return { favorites, wishlist };
     } catch (error) {
         console.error('Error fetching user lists:', error);
         showError('Failed to load your lists');
+        userFavorites = [];
+        userWishlist = [];
         return { favorites: [], wishlist: [] };
     }
 }
@@ -59,7 +67,7 @@ export async function toggleFavorite(gameId, isFavorite) {
         }
 
         const method = isFavorite ? 'DELETE' : 'POST';
-        const response = await fetch(`${API_ENDPOINTS.API_BASE}/favorite`, {
+        const response = await fetch(`${API_ENDPOINTS.FAVORITES}`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
@@ -70,6 +78,18 @@ export async function toggleFavorite(gameId, isFavorite) {
 
         if (!response.ok) {
             throw new Error('Failed to update favorite status');
+        }
+
+        // Update local state
+        if (isFavorite) {
+            userFavorites = userFavorites.filter(game => game.id !== gameId);
+        } else {
+            // Add the game to favorites (you might need to fetch the game details first)
+            const gameResponse = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}`);
+            if (gameResponse.ok) {
+                const game = await gameResponse.json();
+                userFavorites.push(game);
+            }
         }
 
         return true;
@@ -88,7 +108,7 @@ export async function toggleWishlist(gameId, isWishlisted) {
         }
 
         const method = isWishlisted ? 'DELETE' : 'POST';
-        const response = await fetch(`${API_ENDPOINTS.API_BASE}/wishlist`, {
+        const response = await fetch(`${API_ENDPOINTS.WISHLIST}`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
@@ -99,6 +119,18 @@ export async function toggleWishlist(gameId, isWishlisted) {
 
         if (!response.ok) {
             throw new Error('Failed to update wishlist status');
+        }
+
+        // Update local state
+        if (isWishlisted) {
+            userWishlist = userWishlist.filter(game => game.id !== gameId);
+        } else {
+            // Add the game to wishlist (you might need to fetch the game details first)
+            const gameResponse = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}`);
+            if (gameResponse.ok) {
+                const game = await gameResponse.json();
+                userWishlist.push(game);
+            }
         }
 
         return true;

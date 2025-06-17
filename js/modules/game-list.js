@@ -1,6 +1,6 @@
 import { getCurrentLang, getCurrentCategory, getTranslation, setCurrentCategory } from './i18n.js';
 import { getCurrentLocation } from './location.js';
-import { isFavorite, isWishlisted } from './user-lists.js';
+import { isFavorite, isWishlisted, toggleFavorite, toggleWishlist } from './user-lists.js';
 import { showError } from './ui.js';
 import { API_ENDPOINTS } from './config.js';
 import { fetchWithAuth } from './auth.js';
@@ -120,16 +120,24 @@ function createGameCard(game) {
 
     const favBtn = document.createElement('button');
     favBtn.className = `icon-btn ${isFavorite(game.id) ? 'icon-fav-on' : 'icon-fav-off'}`;
-    favBtn.onclick = (e) => {
+    favBtn.onclick = async (e) => {
         e.stopPropagation();
-        toggleFavorite(game.id, favBtn);
+        const currentState = isFavorite(game.id);
+        const success = await toggleFavorite(game.id, currentState);
+        if (success) {
+            favBtn.className = `icon-btn ${!currentState ? 'icon-fav-on' : 'icon-fav-off'}`;
+        }
     };
 
     const wishBtn = document.createElement('button');
     wishBtn.className = `icon-btn ${isWishlisted(game.id) ? 'icon-wish-on' : 'icon-wish-off'}`;
-    wishBtn.onclick = (e) => {
+    wishBtn.onclick = async (e) => {
         e.stopPropagation();
-        toggleWishlist(game.id, wishBtn);
+        const currentState = isWishlisted(game.id);
+        const success = await toggleWishlist(game.id, currentState);
+        if (success) {
+            wishBtn.className = `icon-btn ${!currentState ? 'icon-wish-on' : 'icon-wish-off'}`;
+        }
     };
 
     icons.appendChild(favBtn);

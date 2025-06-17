@@ -6,11 +6,17 @@ export function initLendForm(token, onLendSuccess) {
   const tableStep = document.getElementById('tableStep');
   const form = document.getElementById('lendForm');
 
-  // Close modal when clicking outside
+  // Close modal when clicking outside or on close buttons
   window.addEventListener('click', (e) => {
     if (e.target === modal) {
       closeModal();
     }
+  });
+
+  // Add event listeners for close buttons
+  const closeButtons = modal.querySelectorAll('[data-action="close"]');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', closeModal);
   });
 
   // Handle user selection
@@ -31,7 +37,7 @@ export function initLendForm(token, onLendSuccess) {
     }
 
     try {
-      const res = await fetch(`${API_ENDPOINTS}/lend/${gameId}`, {
+      const res = await fetch(API_ENDPOINTS.LEND(gameId), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +61,7 @@ export function initLendForm(token, onLendSuccess) {
   return {
     openModal: async (gameId) => {
       try {
-        const res = await fetch(`${API_ENDPOINTS}/users`, {
+        const res = await fetch(API_ENDPOINTS.USERS.BASE, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const users = await res.json();
@@ -80,5 +86,8 @@ export function initLendForm(token, onLendSuccess) {
 }
 
 function closeModal() {
-  document.getElementById('lendModal').style.display = 'none';
+  const modal = document.getElementById('lendModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 } 
