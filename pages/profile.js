@@ -5,7 +5,7 @@ import { fetchGameLog } from '../js/modules/borrow-log.js';
 import { fetchFavoritesAndWishlist, createGameCard, } from '../js/modules/favorites.js';
 import { fetchBadges } from '../js/modules/badges.js';
 import { fetchUserParties, openCreatePartyModal, closeCreatePartyModal, submitCreateParty } from '../js/modules/parties.js';
-import { initPixelNav, updateNotificationIcon } from '../js/shared/shared-ui.js';
+import { initPixelNav, updateNotificationIcon, initNotificationModal } from '../js/shared/shared-ui.js';
 import { getUserRole } from '../js/modules/auth.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
@@ -23,6 +23,7 @@ function getUserIdFromUrl() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   initPixelNav(); // 🧩 From shared-ui.js
+  initNotificationModal();
   updateNotificationIcon(); // 🔔 Just update icon on load
   setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
 

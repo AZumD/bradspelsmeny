@@ -5,7 +5,7 @@ import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
 import { GAME_CATEGORIES } from './modules/config.js';
 import { isTokenExpired, getAccessToken, refreshToken, logout } from './modules/auth.js';
-import { initPixelNav } from './shared/shared-ui.js';
+import { initPixelNav, initNotificationModal } from './shared/shared-ui.js';
 
 // Make language functions available globally
 window.setLanguage = (lang) => {
@@ -77,6 +77,9 @@ async function initialize() {
 
     // Set up event listeners
     setupEventListeners();
+
+    // Initialize notification modal
+    initNotificationModal();
   } catch (err) {
     console.error('Failed to initialize:', err);
     showError('Failed to load page content');
