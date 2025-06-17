@@ -80,7 +80,7 @@ export async function toggleFavorite(gameId, isFavorite) {
 
         console.log('Toggle Favorite Debug Info:', {
             method,
-            url: API_ENDPOINTS.FAVORITES(user.id),
+            url: `${API_ENDPOINTS.API_BASE}/favorite`,
             payload,
             token: token ? token.substring(0, 20) + '...' : 'No token found',
             user: {
@@ -89,7 +89,7 @@ export async function toggleFavorite(gameId, isFavorite) {
             }
         });
 
-        const response = await fetch(API_ENDPOINTS.FAVORITES(user.id), {
+        const response = await fetch(`${API_ENDPOINTS.API_BASE}/favorite`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ export async function toggleWishlist(gameId, isWishlisted) {
 
         console.log('Toggle Wishlist Debug Info:', {
             method,
-            url: API_ENDPOINTS.WISHLIST(user.id),
+            url: `${API_ENDPOINTS.API_BASE}/wishlist`,
             payload,
             token: token ? token.substring(0, 20) + '...' : 'No token found',
             user: {
@@ -158,7 +158,7 @@ export async function toggleWishlist(gameId, isWishlisted) {
             }
         });
 
-        const response = await fetch(API_ENDPOINTS.WISHLIST(user.id), {
+        const response = await fetch(`${API_ENDPOINTS.API_BASE}/wishlist`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
