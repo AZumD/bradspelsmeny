@@ -6,10 +6,16 @@ export function getGames() {
     return allGames;
 }
 
-export async function fetchGames(token) {
+export async function fetchGames() {
   try {
+    const token = localStorage.getItem('userToken');
+    if (!token) throw new Error('No authentication token');
+
     const res = await fetch(API_ENDPOINTS.GAMES, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
     if (!res.ok) throw new Error(`Failed to fetch games: ${res.status}`);
     allGames = await res.json();
@@ -60,7 +66,7 @@ export async function deleteGame(gameId) {
     }
 }
 
-export async function renderGameLists(searchTerm, availableContainer, lentOutContainer, token) {
+export async function renderGameLists(searchTerm, availableContainer, lentOutContainer) {
   if (!availableContainer || !lentOutContainer) {
     console.error('Container elements not found');
     return;
@@ -73,8 +79,8 @@ export async function renderGameLists(searchTerm, availableContainer, lentOutCon
   lentOutContainer.innerHTML = '<p>Laddar spel...</p>';
 
   try {
-    const availableCards = await Promise.all(filteredAvailable.map(game => createGameCard(game, token)));
-    const lentOutCards = await Promise.all(filteredLentOut.map(game => createGameCard(game, token)));
+    const availableCards = await Promise.all(filteredAvailable.map(game => createGameCard(game)));
+    const lentOutCards = await Promise.all(filteredLentOut.map(game => createGameCard(game)));
 
     availableContainer.innerHTML = '';
     lentOutContainer.innerHTML = '';
@@ -88,12 +94,13 @@ export async function renderGameLists(searchTerm, availableContainer, lentOutCon
   }
 }
 
-async function createGameCard(game, token) {
+async function createGameCard(game) {
   const card = document.createElement('div');
   let extra = '';
 
   if (game.lent_out) {
     try {
+      const token = localStorage.getItem('userToken');
       const res = await fetch(`${API_ENDPOINTS.GAMES}/${game.id}/current-lend`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -116,7 +123,6 @@ async function createGameCard(game, token) {
         ${game.lent_out ? '↩️ Återlämna' : '🎲 Låna ut'}
       </button>
       <div class="utility-buttons">
-        <button data-action="image" data-image="${game.img}" title="Visa bild">🖼️</button>
         <button data-action="history" data-game-id="${game.id}" title="Visa historik">📜</button>
       </div>
     </div>
@@ -124,21 +130,25 @@ async function createGameCard(game, token) {
   return card;
 }
 
-export async function returnGame(gameId, token) {
+export async function returnGame(gameId) {
   try {
+    const token = localStorage.getItem('userToken');
+    if (!token) throw new Error('No authentication token');
+
     const res = await fetch(`${API_ENDPOINTS.GAMES}/${gameId}/return`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({})
+        'Authorization': `Bearer ${token}`
+      }
     });
     
     if (!res.ok) {
       throw new Error('Failed to return game');
     }
     
+    // Refresh the games list
+    await fetchGames();
     return res.json();
   } catch (err) {
     console.error('Error returning game:', err);

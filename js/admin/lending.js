@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(updateNotificationIcon, 60000);
 
   // Initialize modals
-  const lendForm = initLendForm(token, () => fetchGames(token).then(() => renderGameLists('', availableContainer, lentOutContainer, token)));
+  const lendForm = initLendForm(token, async () => {
+    await fetchGames();
+    renderGameLists(searchInput.value, availableContainer, lentOutContainer);
+  });
   const historyModal = initHistoryModal(token);
   const imageModal = initImageModal();
 
@@ -29,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loadingSpinner = document.getElementById('loadingSpinner');
 
   // Set up event listeners
-  searchInput.addEventListener('input', () => renderGameLists(searchInput.value, availableContainer, lentOutContainer, token));
+  searchInput.addEventListener('input', () => renderGameLists(searchInput.value, availableContainer, lentOutContainer));
 
   // Handle collapsible sections
   document.querySelectorAll('.game-header').forEach(header => {
@@ -56,12 +59,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
       case 'return':
         try {
-          await returnGame(gameId, token);
-          await fetchGames(token);
-          renderGameLists(searchInput.value, availableContainer, lentOutContainer, token);
+          await returnGame(gameId);
+          renderGameLists(searchInput.value, availableContainer, lentOutContainer);
         } catch (err) {
           console.error('Error returning game:', err);
-          alert('Failed to return game. Please try again.');
+          alert('Kunde inte återlämna spelet. Försök igen.');
         }
         break;
       case 'image':
@@ -81,12 +83,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load initial data
   try {
     loadingSpinner.style.display = 'block';
-    await fetchGames(token);
-    renderGameLists('', availableContainer, lentOutContainer, token);
+    await fetchGames();
+    renderGameLists('', availableContainer, lentOutContainer);
   } catch (err) {
     console.error('Error initializing page:', err);
-    alert('Failed to load games. Please refresh the page.');
+    alert('Kunde inte ladda spelen. Ladda om sidan.');
   } finally {
     loadingSpinner.style.display = 'none';
   }
-}); 
+});
+
+function toggleSection(section) {
+  const content = section.querySelector('.game-content');
+  const header = section.querySelector('.game-header');
+  const caret = header.querySelector('.caret');
+  
+  if (content.style.display === 'flex') {
+    content.style.display = 'none';
+    caret.textContent = '▼';
+  } else {
+    content.style.display = 'flex';
+    caret.textContent = '▲';
+  }
+} 
