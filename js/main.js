@@ -241,4 +241,56 @@ function debounce(func, wait) {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initialize); 
+document.addEventListener('DOMContentLoaded', initialize);
+
+async function renderGames() {
+  const container = document.getElementById('gameList');
+  const search = document.getElementById('searchBar').value.toLowerCase();
+  const heading = document.getElementById('categoryHeading');
+  heading.textContent = translations[currentLang].categories[currentCategory];
+
+  try {
+    const res = await fetch(getGameApiUrl());
+    if (!res.ok) throw new Error('Failed to fetch games');
+    
+    const dataText = await res.text();
+    let dataJson;
+    try {
+      dataJson = JSON.parse(dataText);
+    } catch (e) {
+      console.error('Failed to parse /games response as JSON:', dataText);
+      throw new Error('Invalid JSON from server');
+    }
+    games = dataJson;
+
+    const isMember = isMemberUser();
+
+    let filtered = currentCategory === 'all'
+      ? games
+      : games.filter(g => g.tags.split(',').includes(currentCategory));
+
+    filtered = filtered.filter(game => {
+      const title = game.title_en;
+      return title?.toLowerCase().includes(search);
+    });
+
+    filtered = filtered.filter(game => {
+      return !game.members_only || isMember;
+    });
+
+    filtered.sort((a, b) => {
+      const aTitle = a.title_en;
+      const bTitle = b.title_en;
+      return aTitle?.toLowerCase().localeCompare(bTitle?.toLowerCase());
+    });
+
+    container.innerHTML = '';
+    filtered.forEach(game => {
+      const card = createGameCard(game);
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Error loading games:', error);
+    container.innerHTML = '<p class="error">Failed to load games</p>';
+  }
+} 
