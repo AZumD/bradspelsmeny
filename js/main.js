@@ -74,6 +74,7 @@ async function initialize() {
     renderCategories();
     renderIntro();
     await renderGames();
+    bindOrderButtons();
 
     // Set up event listeners
     setupEventListeners();
