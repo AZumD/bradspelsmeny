@@ -58,12 +58,15 @@ export function initPixelNav() {
     adminDropdown.style.display = "none";
     adminToggle.setAttribute("aria-expanded", "false");
 
-    adminToggle.addEventListener("click", () => {
+    // Toggle menu on click
+    adminToggle.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent event from bubbling up
       const isVisible = adminDropdown.style.display === "block";
       adminDropdown.style.display = isVisible ? "none" : "block";
       adminToggle.setAttribute("aria-expanded", !isVisible);
     });
 
+    // Close menu when clicking outside
     document.addEventListener("click", (e) => {
       if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
         adminDropdown.style.display = "none";
