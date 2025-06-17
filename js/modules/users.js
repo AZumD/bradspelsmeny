@@ -17,26 +17,34 @@ export async function saveUser(userData, token, editingId = null) {
     const method = editingId ? "PUT" : "POST";
 
     const payload = {
-        username: userData.username,
-        password: userData.password,
+        username: userData.username || null,
         first_name: userData.firstName,
         last_name: userData.lastName,
         phone: userData.phone,
-        email: userData.email,
-        id_number: userData.idNumber
+        email: userData.email || null,
+        bio: userData.bio || null,
+        membership_status: userData.membershipStatus || null
     };
 
-    const res = await fetch(url, {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
 
-    if (!res.ok) throw new Error("Failed to save user");
-    return res.json();
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.error || `Failed to save user: ${res.status} ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Save user error details:', error);
+        throw error;
+    }
 }
 
 export async function deleteUser(id, token) {

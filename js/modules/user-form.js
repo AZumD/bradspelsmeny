@@ -23,12 +23,12 @@ export function initUserForm(token, onSuccess) {
         const editingId = userForm.dataset.editingId;
         const userData = {
             username: userForm.username.value,
-            password: userForm.password.value,
             firstName: userForm.firstName.value,
             lastName: userForm.lastName.value,
             phone: userForm.phone.value,
             email: userForm.email.value,
-            idNumber: userForm.idNumber.value
+            bio: userForm.bio?.value || null,
+            membershipStatus: userForm.membershipStatus?.value || null
         };
 
         try {
@@ -47,12 +47,12 @@ export function initUserForm(token, onSuccess) {
             if (user) {
                 userForm.dataset.editingId = user.id;
                 userForm.username.value = user.username || "";
-                userForm.password.value = "";
-                userForm.firstName.value = user.first_name;
-                userForm.lastName.value = user.last_name;
-                userForm.phone.value = user.phone;
+                userForm.firstName.value = user.first_name || "";
+                userForm.lastName.value = user.last_name || "";
+                userForm.phone.value = user.phone || "";
                 userForm.email.value = user.email || "";
-                userForm.idNumber.value = user.id_number || "";
+                if (userForm.bio) userForm.bio.value = user.bio || "";
+                if (userForm.membershipStatus) userForm.membershipStatus.value = user.membership_status || "";
             } else {
                 userForm.dataset.editingId = "";
             }
