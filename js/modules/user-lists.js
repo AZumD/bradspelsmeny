@@ -80,7 +80,7 @@ export async function toggleFavorite(gameId, isFavorite) {
 
         console.log('Toggle Favorite Debug Info:', {
             method,
-            url: API_ENDPOINTS.FAVORITES,
+            url: API_ENDPOINTS.FAVORITES(user.id),
             payload,
             token: token ? token.substring(0, 20) + '...' : 'No token found',
             user: {
@@ -89,7 +89,7 @@ export async function toggleFavorite(gameId, isFavorite) {
             }
         });
 
-        const response = await fetch(API_ENDPOINTS.FAVORITES, {
+        const response = await fetch(API_ENDPOINTS.FAVORITES(user.id), {
             method,
             headers: {
                 'Content-Type': 'application/json',
@@ -141,20 +141,40 @@ export async function toggleWishlist(gameId, isWishlisted) {
         }
 
         const method = isWishlisted ? 'DELETE' : 'POST';
-        const response = await fetch(`${API_ENDPOINTS.WISHLIST(user.id)}`, {
+        const token = localStorage.getItem('userToken');
+        const payload = { 
+            user_id: user.id,
+            game_id: gameId 
+        };
+
+        console.log('Toggle Wishlist Debug Info:', {
+            method,
+            url: API_ENDPOINTS.WISHLIST(user.id),
+            payload,
+            token: token ? token.substring(0, 20) + '...' : 'No token found',
+            user: {
+                id: user.id,
+                role: user.role
+            }
+        });
+
+        const response = await fetch(API_ENDPOINTS.WISHLIST(user.id), {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ 
-                user_id: user.id,
-                game_id: gameId 
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
+            console.error('Toggle Wishlist Error Details:', {
+                status: response.status,
+                statusText: response.statusText,
+                errorData,
+                url: response.url
+            });
             throw new Error(errorData.message || 'Failed to update wishlist status');
         }
 
