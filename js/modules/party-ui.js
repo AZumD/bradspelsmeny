@@ -163,4 +163,23 @@ export function createGameCard(game, minimal = false) {
   }
 
   return card;
+}
+
+export function renderActiveSession(session) {
+  const activeSessionContainer = document.querySelector('.section-title:contains("Active Session")').nextElementSibling;
+  
+  if (!session) {
+    activeSessionContainer.innerHTML = '<div class="placeholder-box">No active session currently</div>';
+    return;
+  }
+
+  const startTime = new Date(session.start_time).toLocaleString();
+  
+  activeSessionContainer.innerHTML = `
+    <div class="session-card">
+      <h3>${session.game_title}</h3>
+      <p>Borrowed by: ${session.borrower_name}</p>
+      <p>Started: ${startTime}</p>
+    </div>
+  `;
 } 

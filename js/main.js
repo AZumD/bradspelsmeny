@@ -176,6 +176,12 @@ function setupEventListeners() {
       table_id: formData.get("table_id")
     };
 
+    // Add party_id to payload if selected
+    const partyId = formData.get("party_id");
+    if (partyId) {
+      payload.party_id = partyId;
+    }
+
     try {
       const res = await fetchWithAuth(`${API_BASE}/order-game`, {
         method: 'POST',
@@ -201,7 +207,7 @@ function setupEventListeners() {
 function bindOrderButtons() {
   const buttons = document.querySelectorAll(".order-button");
   buttons.forEach(button => {
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", async (e) => {
       const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
       const gameId = gameCard.dataset.gameId;
@@ -210,6 +216,8 @@ function bindOrderButtons() {
       const userFields = document.getElementById("userFields");
       const notice = document.getElementById("loggedInNotice");
       const orderForm = document.getElementById("orderForm");
+      const partySelection = document.getElementById("partySelection");
+      const partySelect = document.getElementById("partySelect");
 
       orderForm.reset();
       modal.dataset.gameId = gameId;
@@ -222,6 +230,24 @@ function bindOrderButtons() {
           inputs.forEach(input => input.disabled = true);
         }
         if (notice) notice.style.display = "block";
+        
+        // Show party selection and fetch parties for logged-in users
+        if (partySelection) {
+          partySelection.style.display = "block";
+          try {
+            const res = await fetch(`${API_BASE}/my-parties`, {
+              headers: { Authorization: `Bearer ${getAccessToken()}` }
+            });
+            if (!res.ok) throw new Error("Failed to fetch parties");
+            
+            const parties = await res.json();
+            partySelect.innerHTML = '<option value="">--</option>' + 
+              parties.map(party => `<option value="${party.id}">${party.name}</option>`).join('');
+          } catch (err) {
+            console.error("Failed to fetch parties:", err);
+            partySelection.style.display = "none";
+          }
+        }
       } else {
         if (userFields) {
           userFields.style.display = "block";
@@ -230,6 +256,7 @@ function bindOrderButtons() {
           inputs.forEach(input => input.disabled = false);
         }
         if (notice) notice.style.display = "none";
+        if (partySelection) partySelection.style.display = "none";
       }
 
       modal.style.display = "flex";

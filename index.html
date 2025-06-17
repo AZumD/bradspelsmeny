@@ -607,6 +607,12 @@
             Table Number:<br />
             <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
           </label><br />
+          <div id="partySelection" style="display: none;">
+            <label for="partySelect">Borrow as a party?</label><br />
+            <select id="partySelect" name="party_id">
+              <option value="">--</option>
+            </select>
+          </div><br />
           <button type="submit">Order</button>
           <button type="button" id="closeModal">Cancel</button>
         </form>

@@ -1,6 +1,6 @@
 import { initPixelNav, updateNotificationIcon } from '../shared/shared-ui.js';
-import { fetchPartyData, fetchPartyMembers, fetchMessages, loadAllGames } from '../modules/party-api.js';
-import { updatePartyUI, renderMemberList } from '../modules/party-ui.js';
+import { fetchPartyData, fetchPartyMembers, fetchMessages, loadAllGames, fetchPartySessions } from '../modules/party-api.js';
+import { updatePartyUI, renderMemberList, renderActiveSession } from '../modules/party-ui.js';
 import { setAllGames, renderMessage, clearChat } from '../modules/party-chat.js';
 import { setupMessageInput, setupInviteModal, setupGameModals, setupAutocomplete } from '../modules/party-events.js';
 
@@ -33,6 +33,10 @@ async function initPartyPage() {
     const messages = await fetchMessages(partyId);
     clearChat();
     messages.forEach(renderMessage);
+
+    // Load active session
+    const sessions = await fetchPartySessions(partyId);
+    renderActiveSession(sessions.active);
 
     // Setup event handlers
     setupMessageInput(partyId);
