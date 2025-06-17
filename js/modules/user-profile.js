@@ -21,14 +21,19 @@ function renderPartyList(parties) {
     partyList.innerHTML = '';
     parties.forEach(party => {
       const partyEl = document.createElement('div');
-      partyEl.className = 'party-entry';
-      partyEl.innerHTML = `
-        <img src="${party.avatar || `${FRONTEND_BASE}/img/avatar-party-default.webp`}" alt="${party.name}" class="party-avatar">
-        <div class="party-info">
-          <h3>${party.emoji || '🎲'} ${party.name}</h3>
-          <p>Invite code: ${party.invite_code}</p>
-        </div>
-      `;
+      partyEl.className = 'party-avatar';
+      partyEl.style.cursor = 'pointer';
+      partyEl.onclick = () => window.location.href = `/bradspelsmeny/pages/party.html?id=${party.id}`;
+      
+      const img = document.createElement('img');
+      img.src = party.avatar || `${FRONTEND_BASE}/img/avatar-party-placeholder.webp`;
+      img.alt = party.name;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.borderRadius = '50%';
+      
+      partyEl.appendChild(img);
       partyList.appendChild(partyEl);
     });
   } else {
