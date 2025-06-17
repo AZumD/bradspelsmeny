@@ -5,6 +5,7 @@ import { fetchGameLog } from '../js/modules/borrow-log.js';
 import { fetchFavoritesAndWishlist, createGameCard } from '../js/modules/favorites.js';
 import { fetchBadges } from '../js/modules/badges.js';
 import { fetchUserParties, openCreatePartyModal, closeCreatePartyModal, submitCreateParty } from '../js/modules/parties.js';
+import { initPixelNav } from '../js/shared/shared-ui.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
