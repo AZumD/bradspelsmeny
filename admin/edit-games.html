@@ -118,6 +118,19 @@
             display: flex;
             gap: 0.5rem;
         }
+        .inline-game-form input,
+        .inline-game-form textarea,
+        .inline-game-form select {
+         width: 100%;
+         margin-bottom: 0.5rem;
+        font-family: inherit;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
 
         .admin-menu {
             display: none;
@@ -148,103 +161,6 @@
         <div id="gameList"></div>
     </main>
 
-    <div id="gameModal" class="modal" role="dialog" aria-labelledby="formTitle">
-        <div class="modal-content">
-            <button class="close-btn" onclick="document.getElementById('gameModal').style.display='none'">&times;</button>
-            <h2 id="formTitle">Lägg till nytt spel</h2>
-            <form id="gameForm">
-                <input type="hidden" id="editingIndex" />
-
-                <div class="form-group">
-                    <label for="title">Titel</label>
-                    <input type="text" id="title" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="descSv">Beskrivning (sv)</label>
-                    <textarea id="descSv" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="descEn">Beskrivning (en)</label>
-                    <textarea id="descEn" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="minPlayers">Min spelare</label>
-                    <input type="number" id="minPlayers" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="maxPlayers">Max spelare</label>
-                    <input type="number" id="maxPlayers" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="time">Speltid (min)</label>
-                    <input type="number" id="time" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="age">Ålder</label>
-                    <input type="number" id="age" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="tags">Taggar (kommaseparerade)</label>
-                    <input type="text" id="tags" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="img">Bild-URL</label>
-                    <input type="text" id="img" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="rules">Regellänk</label>
-                    <input type="text" id="rules">
-                </div>
-
-                <div class="form-group checkbox">
-                    <label>
-                        <input type="checkbox" id="slowDayOnly">
-                        Endast för lugna dagar
-                    </label>
-                </div>
-
-                <div class="form-group checkbox">
-                    <label>
-                        <input type="checkbox" id="trustedOnly">
-                        Endast för betrodda gäster
-                    </label>
-                </div>
-
-                <div class="form-group checkbox">
-                    <label>
-                        <input type="checkbox" id="membersOnly">
-                        Endast för medlemmar
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Skick (1–5):</label>
-                    <div class="star-rating" role="radiogroup">
-                        <span class="star" data-value="1" role="radio" aria-label="1 stjärna">★</span>
-                        <span class="star" data-value="2" role="radio" aria-label="2 stjärnor">★</span>
-                        <span class="star" data-value="3" role="radio" aria-label="3 stjärnor">★</span>
-                        <span class="star" data-value="4" role="radio" aria-label="4 stjärnor">★</span>
-                        <span class="star" data-value="5" role="radio" aria-label="5 stjärnor">★</span>
-                    </div>
-                    <input type="hidden" id="conditionRatingValue" value="0">
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit">Spara</button>
-                    <button type="button" onclick="document.getElementById('gameModal').style.display='none'">Avbryt</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Notifications -->
     <div class="notification-container">

@@ -4,6 +4,8 @@ import { isFavorite, isWishlisted, toggleFavorite, toggleWishlist } from './user
 import { showError } from './ui.js';
 import { API_ENDPOINTS } from './config.js';
 import { fetchWithAuth } from './auth.js';
+import { createEditableGameForm } from './game-form.js';
+
 
 export function renderCategories() {
     const categoryBadges = document.getElementById('categoryBadges');
@@ -34,6 +36,66 @@ export function renderIntro() {
     if (!intro) return;
     intro.textContent = getTranslation('intro');
 }
+
+
+export function renderGameList(games, onSave, onDelete) {
+  const container = document.getElementById('gameList');
+  container.innerHTML = '';
+
+  games.forEach(game => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'game-item';
+
+    const header = document.createElement('div');
+    header.className = 'game-header';
+    header.textContent = game.title_sv || game.title_en || 'Untitled Game';
+    wrapper.appendChild(header);
+
+    const content = document.createElement('div');
+    content.className = 'game-content';
+    wrapper.appendChild(content);
+
+    let isExpanded = false;
+
+    header.onclick = () => {
+      if (isExpanded) {
+        content.innerHTML = '';
+        content.style.display = 'none';
+        isExpanded = false;
+      } else {
+        const form = createEditableGameForm(game, async (updatedGame) => {
+          await onSave(updatedGame);
+          header.textContent = updatedGame.title_sv || updatedGame.title_en || 'Untitled Game';
+          content.innerHTML = '';
+          content.style.display = 'none';
+          isExpanded = false;
+        }, () => {
+          content.innerHTML = '';
+          content.style.display = 'none';
+          isExpanded = false;
+        });
+
+        content.appendChild(form);
+        content.style.display = 'block';
+        isExpanded = true;
+      }
+    };
+
+    if (onDelete) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-button';
+      deleteBtn.textContent = '🗑️';
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        onDelete(game.id);
+      };
+      wrapper.appendChild(deleteBtn);
+    }
+
+    container.appendChild(wrapper);
+  });
+}
+
 
 export async function renderGames() {
     const gameList = document.getElementById('gameList');
@@ -111,8 +173,8 @@ function createGameCard(game) {
     thumbnailWrapper.className = 'game-thumbnail-wrapper';
 
     const img = document.createElement('img');
-    img.src = game.image_url || game.img || 'img/placeholder.webp';
-    img.alt = game.name || game.title_en || 'Game';
+    img.src = game.image_url || 'img/placeholder.webp';
+    img.alt = game.title_sv || game.title_en || 'Game';
     thumbnailWrapper.appendChild(img);
 
     const icons = document.createElement('div');
@@ -148,24 +210,24 @@ function createGameCard(game) {
     info.className = 'game-info';
 
     const title = document.createElement('h3');
-    title.textContent = game.name || game.title_en || 'Untitled Game';
+    title.textContent = game.title_sv || game.title_en || 'Untitled Game';
     info.appendChild(title);
 
     const description = document.createElement('p');
-    description.textContent = game.description || game.description_en || game.description_sv || 'No description available.';
+    description.textContent = game.description_sv || game.description_en || 'No description available.';
     info.appendChild(description);
 
     const details = document.createElement('p');
     details.innerHTML = `
-        ${getTranslation('ui.players')}: ${game.min_players || game.players || '-'}-${game.max_players || game.players || '-'}<br>
+        ${getTranslation('ui.players')}: ${game.min_players || '-'}-${game.max_players || '-'}<br>
         ${getTranslation('ui.play_time')}: ${game.play_time || '-'} min<br>
-        ${getTranslation('ui.age')}: ${game.min_age || game.age || '-'}+
+        ${getTranslation('ui.age')}: ${game.age || '-'}+
     `;
     info.appendChild(details);
 
     const orderBtn = document.createElement('button');
     orderBtn.className = 'order-button';
-    orderBtn.textContent = 'Order to table';
+    orderBtn.textContent = getTranslation('ui.order_to_table');
     orderBtn.onclick = () => showOrderModal(game);
     info.appendChild(orderBtn);
 

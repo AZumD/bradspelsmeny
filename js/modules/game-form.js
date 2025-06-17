@@ -28,6 +28,133 @@ function initConditionRating() {
     });
 }
 
+export function createEditableGameForm(gameData, onSave, onCancel) {
+    const form = document.createElement("form");
+    form.classList.add("edit-form");
+  
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="title_sv">Titel (SV):</label>
+        <input type="text" id="title_sv" name="title_sv" value="${gameData.title_sv || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="title_en">Titel (EN):</label>
+        <input type="text" id="title_en" name="title_en" value="${gameData.title_en || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="description_sv">Beskrivning (SV):</label>
+        <textarea id="description_sv" name="description_sv" required>${gameData.description_sv || ''}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="description_en">Beskrivning (EN):</label>
+        <textarea id="description_en" name="description_en" required>${gameData.description_en || ''}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="min_players">Min spelare:</label>
+        <input type="number" id="min_players" name="min_players" value="${gameData.min_players || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="max_players">Max spelare:</label>
+        <input type="number" id="max_players" name="max_players" value="${gameData.max_players || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="play_time">Speltid (min):</label>
+        <input type="number" id="play_time" name="play_time" value="${gameData.play_time || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="age">Ålder:</label>
+        <input type="number" id="age" name="age" value="${gameData.age || ''}" required>
+      </div>
+      <div class="form-group">
+        <label for="tags">Taggar (kommaseparerade):</label>
+        <input type="text" id="tags" name="tags" value="${gameData.tags || ''}">
+      </div>
+      <div class="form-group">
+        <label for="image_url">Bild URL:</label>
+        <input type="text" id="image_url" name="image_url" value="${gameData.image_url || ''}">
+      </div>
+      <div class="form-group">
+        <label for="rules">Regellänk:</label>
+        <input type="text" id="rules" name="rules" value="${gameData.rules || ''}">
+      </div>
+      <div class="form-group checkbox">
+        <label>
+          <input type="checkbox" id="slow_day_only" name="slow_day_only" ${gameData.slow_day_only ? 'checked' : ''}>
+          Endast för lugna dagar
+        </label>
+      </div>
+      <div class="form-group checkbox">
+        <label>
+          <input type="checkbox" id="trusted_only" name="trusted_only" ${gameData.trusted_only ? 'checked' : ''}>
+          Endast för betrodda gäster
+        </label>
+      </div>
+      <div class="form-group checkbox">
+        <label>
+          <input type="checkbox" id="members_only" name="members_only" ${gameData.members_only ? 'checked' : ''}>
+          Endast för medlemmar
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Skick (1–5):</label>
+        <div class="star-rating" role="radiogroup">
+          <span class="star" data-value="1" role="radio" aria-label="1 stjärna">★</span>
+          <span class="star" data-value="2" role="radio" aria-label="2 stjärnor">★</span>
+          <span class="star" data-value="3" role="radio" aria-label="3 stjärnor">★</span>
+          <span class="star" data-value="4" role="radio" aria-label="4 stjärnor">★</span>
+          <span class="star" data-value="5" role="radio" aria-label="5 stjärnor">★</span>
+        </div>
+        <input type="hidden" id="condition_rating" name="condition_rating" value="${gameData.condition_rating || 0}">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="save-button">Spara ändringar</button>
+        <button type="button" class="cancel-button" onclick="this.closest('form').querySelector('.cancel-btn').click()">Avbryt</button>
+      </div>
+    `;
+  
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const updated = Object.fromEntries(formData.entries());
+      updated.id = gameData.id;
+      
+      // Convert checkbox values to boolean
+      updated.slow_day_only = formData.get('slow_day_only') === 'on';
+      updated.trusted_only = formData.get('trusted_only') === 'on';
+      updated.members_only = formData.get('members_only') === 'on';
+      
+      // Convert numeric values
+      updated.min_players = parseInt(updated.min_players);
+      updated.max_players = parseInt(updated.max_players);
+      updated.play_time = parseInt(updated.play_time);
+      updated.age = parseInt(updated.age);
+      updated.condition_rating = parseInt(updated.condition_rating);
+      
+      await onSave(updated);
+    };
+  
+    // Initialize star rating
+    const stars = form.querySelectorAll('.star');
+    const ratingInput = form.querySelector('#condition_rating');
+    
+    stars.forEach(star => {
+      star.classList.toggle('filled', parseInt(star.dataset.value) <= parseInt(ratingInput.value));
+      
+      star.onclick = () => {
+        const rating = parseInt(star.dataset.value);
+        ratingInput.value = rating;
+        stars.forEach(s => s.classList.toggle('filled', parseInt(s.dataset.value) <= rating));
+      };
+    });
+  
+    form.querySelector('.cancel-btn').onclick = () => {
+      onCancel();
+    };
+  
+    return form;
+  }
+  
+
 export function updateStars(rating) {
     document.querySelectorAll("#conditionRating .star").forEach((star) => {
         const val = parseInt(star.dataset.value);
@@ -50,33 +177,33 @@ export function openModal(index = null) {
         editingIndex.value = index;
         
         // Fill form with game data
-        form.title.value = game.title_sv || "";
-        form.descSv.value = game.description_sv || "";
-        form.descEn.value = game.description_en || "";
-        form.minPlayers.value = game.min_players || "";
-        form.maxPlayers.value = game.max_players || "";
-        form.time.value = game.play_time || "";
+        form.title_sv.value = game.title_sv || "";
+        form.description_sv.value = game.description_sv || "";
+        form.description_en.value = game.description_en || "";
+        form.min_players.value = game.min_players || "";
+        form.max_players.value = game.max_players || "";
+        form.play_time.value = game.play_time || "";
         form.age.value = game.age || "";
         form.tags.value = Array.isArray(game.tags) ? game.tags.join(", ") : (game.tags || "");
-        form.img.value = game.img || "";
+        form.image_url.value = game.image_url || "";
         form.rules.value = game.rules || "";
-        form.slowDayOnly.checked = game.slow_day_only || false;
-        form.trustedOnly.checked = game.trusted_only || false;
-        form.membersOnly.checked = game.members_only || false;
+        form.slow_day_only.checked = game.slow_day_only || false;
+        form.trusted_only.checked = game.trusted_only || false;
+        form.members_only.checked = game.members_only || false;
         
         // Set condition rating
         const rating = game.condition_rating || 0;
         document.querySelectorAll('.star').forEach(star => {
             star.classList.toggle('filled', parseInt(star.dataset.value) <= rating);
         });
-        document.getElementById('conditionRatingValue').value = rating;
+        document.getElementById('condition_rating').value = rating;
     } else {
         // Adding new game
         title.textContent = "Lägg till nytt spel";
         form.reset();
         editingIndex.value = "";
         document.querySelectorAll('.star').forEach(star => star.classList.remove('filled'));
-        document.getElementById('conditionRatingValue').value = "0";
+        document.getElementById('condition_rating').value = "0";
     }
 
     modal.style.display = "flex";
@@ -89,22 +216,21 @@ async function handleFormSubmit(e) {
     e.preventDefault();
 
     const formData = {
-        title_sv: document.getElementById("title").value.trim(),
-        title_en: document.getElementById("title").value.trim(),
-        description_sv: document.getElementById("descSv").value.trim(),
-        description_en: document.getElementById("descEn").value.trim(),
-        min_players: parseInt(document.getElementById("minPlayers").value.trim()),
-        max_players: parseInt(document.getElementById("maxPlayers").value.trim()),
-        play_time: parseInt(document.getElementById("time").value.trim()),
+        title_sv: document.getElementById("title_sv").value.trim(),
+        title_en: document.getElementById("title_en").value.trim(),
+        description_sv: document.getElementById("description_sv").value.trim(),
+        description_en: document.getElementById("description_en").value.trim(),
+        min_players: parseInt(document.getElementById("min_players").value.trim()),
+        max_players: parseInt(document.getElementById("max_players").value.trim()),
+        play_time: parseInt(document.getElementById("play_time").value.trim()),
         age: parseInt(document.getElementById("age").value.trim()),
         tags: document.getElementById("tags").value.trim().split(",").map(tag => tag.trim()),
-        img: document.getElementById("img").value.trim(),
+        image_url: document.getElementById("image_url").value.trim(),
         rules: document.getElementById("rules").value.trim(),
-        slow_day_only: document.getElementById("slowDayOnly").checked,
-        trusted_only: document.getElementById("trustedOnly").checked,
-        members_only: document.getElementById("membersOnly").checked,
-        min_table_size: parseInt(document.getElementById("minTableSize").value.trim()),
-        condition_rating: parseInt(document.getElementById("conditionRatingValue").value),
+        slow_day_only: document.getElementById("slow_day_only").checked,
+        trusted_only: document.getElementById("trusted_only").checked,
+        members_only: document.getElementById("members_only").checked,
+        condition_rating: parseInt(document.getElementById("condition_rating").value),
         staff_picks: document.getElementById("staffPicks").value.trim().split(",").map(pick => pick.trim())
     };
 
