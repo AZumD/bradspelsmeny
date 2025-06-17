@@ -19,6 +19,23 @@ export function goTo(path) {
   window.location.href = window.location.origin + base + path;
 }
 
+// Notification modal toggle
+function initNotificationModal() {
+  const notifBtn = document.getElementById('notificationIcon');
+  const notifModal = document.getElementById('notificationModal');
+  const closeNotifBtn = document.getElementById('closeNotificationBtn');
+
+  if (notifBtn && notifModal && closeNotifBtn) {
+    notifBtn.addEventListener('click', () => {
+      notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
+      fetchNotifications();
+    });
+    closeNotifBtn.addEventListener('click', () => {
+      notifModal.style.display = 'none';
+    });
+  }
+}
+
 // PixelNav Setup
 export function initPixelNav() {
   const nav = document.getElementById('pixelNav');
@@ -56,6 +73,9 @@ export function initPixelNav() {
   } else if (logoutIcon) {
     logoutIcon.style.display = "inline-block";
   }
+
+  // Initialize notification modal
+  initNotificationModal();
 }
 
 // Notifications
@@ -211,21 +231,6 @@ export async function updateNotificationIcon() {
   } catch (err) {
     console.error('❌ Failed to update notification icon:', err);
   }
-}
-
-// Notification modal toggle
-const notifBtn = document.getElementById('notificationIcon');
-const notifModal = document.getElementById('notificationModal');
-const closeNotifBtn = document.getElementById('closeNotificationBtn');
-
-if (notifBtn && notifModal && closeNotifBtn) {
-  notifBtn.addEventListener('click', () => {
-    notifModal.style.display = notifModal.style.display === 'flex' ? 'none' : 'flex';
-    fetchNotifications();
-  });
-  closeNotifBtn.addEventListener('click', () => {
-    notifModal.style.display = 'none';
-  });
 }
 
 // Make functions available globally for onclick handlers
