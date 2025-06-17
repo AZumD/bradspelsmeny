@@ -7,6 +7,15 @@ import { GAME_CATEGORIES } from './modules/config.js';
 import { isTokenExpired, getAccessToken, refreshToken, logout } from './modules/auth.js';
 import { initPixelNav } from './shared/shared-ui.js';
 
+// Make language functions available globally
+window.setLanguage = (lang) => {
+  setCurrentLang(lang);
+  localStorage.setItem('language', lang);
+  renderCategories();
+  renderIntro();
+  renderGames();
+};
+
 // Initialize the page
 async function initialize() {
   const loading = showLoading();
