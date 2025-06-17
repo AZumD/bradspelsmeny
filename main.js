@@ -148,8 +148,8 @@ async function fetchUserLists() {
   userWishlist = wishData.map(g => g.id);
 }
 async function toggleFavorite(gameId) {
-  const btn = document.querySelector(`[data-game-id="${gameId}"] .favorite`);
-  const isActive = btn.classList.contains('active');
+  const btn = document.querySelector(`[data-game-id="${gameId}"] .icon-btn.favorite`);
+  const isActive = btn.classList.contains('icon-fav-on');
   const method = isActive ? 'DELETE' : 'POST';
 
   await fetchWithAuth(`${API_BASE}/favorite`, {
@@ -160,15 +160,13 @@ async function toggleFavorite(gameId) {
     body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("userData")).id, game_id: gameId })
   });
 
-  btn.classList.toggle('active');
   btn.classList.toggle('icon-fav-on');
   btn.classList.toggle('icon-fav-off');
-
 }
 
 async function toggleWishlist(gameId) {
-  const btn = document.querySelector(`[data-game-id="${gameId}"] .wishlist`);
-  const isActive = btn.classList.contains('active');
+  const btn = document.querySelector(`[data-game-id="${gameId}"] .icon-btn.wishlist`);
+  const isActive = btn.classList.contains('icon-wish-on');
   const method = isActive ? 'DELETE' : 'POST';
 
   await fetchWithAuth(`${API_BASE}/wishlist`, {
@@ -179,10 +177,8 @@ async function toggleWishlist(gameId) {
     body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("userData")).id, game_id: gameId })
   });
 
-  btn.classList.toggle('active');
   btn.classList.toggle('icon-wish-on');
   btn.classList.toggle('icon-wish-off');
-
 }
 
 

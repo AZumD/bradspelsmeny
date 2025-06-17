@@ -15,15 +15,16 @@ export async function fetchUserLists() {
             return { favorites: [], wishlist: [] };
         }
 
+        const token = localStorage.getItem('userToken');
         const [favoritesRes, wishlistRes] = await Promise.all([
-            fetch(`${API_ENDPOINTS.FAVORITES(user.id)}`, {
+            fetch(`${API_ENDPOINTS.FAVORITES}?user_id=${user.id}`, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                    'Authorization': `Bearer ${token}`
                 }
             }),
-            fetch(`${API_ENDPOINTS.WISHLIST(user.id)}`, {
+            fetch(`${API_ENDPOINTS.WISHLIST}?user_id=${user.id}`, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                    'Authorization': `Bearer ${token}`
                 }
             })
         ]);
