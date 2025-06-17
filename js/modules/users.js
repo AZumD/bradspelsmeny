@@ -18,12 +18,12 @@ export async function saveUser(userData, token, editingId = null) {
 
     const payload = {
         username: userData.username || null,
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
         phone: userData.phone,
         email: userData.email || null,
         bio: userData.bio || null,
-        membership_status: userData.membershipStatus || null
+        membership_status: userData.membership_status || null
     };
 
     try {

@@ -23,12 +23,12 @@ export function initUserForm(token, onSuccess) {
         const editingId = userForm.dataset.editingId;
         const userData = {
             username: userForm.username.value,
-            firstName: userForm.firstName.value,
-            lastName: userForm.lastName.value,
+            first_name: userForm.firstName.value,
+            last_name: userForm.lastName.value,
             phone: userForm.phone.value,
             email: userForm.email.value,
             bio: userForm.bio?.value || null,
-            membershipStatus: userForm.membershipStatus?.value || null
+            membership_status: userForm.membershipStatus?.value || null
         };
 
         try {
