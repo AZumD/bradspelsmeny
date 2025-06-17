@@ -6,9 +6,9 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 export async function fetchUserParties(viewedUserId = null) {
   const loggedInUserId = getUserIdFromToken();
   const isOwnProfile = !viewedUserId || String(viewedUserId) === String(loggedInUserId);
-  const endpoint = isOwnProfile
-    ? `${API_BASE}/my-parties`
-    : `${API_BASE}/users/${viewedUserId}/parties`;
+
+  // Always use /my-parties for the logged-in user's parties
+  const endpoint = `${API_BASE}/my-parties`;
 
   const partyList = document.getElementById('partyList');
   if (!partyList) return;
@@ -23,6 +23,7 @@ export async function fetchUserParties(viewedUserId = null) {
       partyList.innerHTML = '<div class="placeholder-box">No parties yet.</div>';
       return;
     }
+
     parties.forEach(party => {
       const card = document.createElement('div');
       card.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:60px';
@@ -39,6 +40,7 @@ export async function fetchUserParties(viewedUserId = null) {
       partyList.appendChild(card);
     });
 
+    // Only show add party button on own profile
     if (isOwnProfile) {
       const addPartyBtn = document.createElement('div');
       addPartyBtn.className = 'add-party-circle';
