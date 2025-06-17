@@ -46,8 +46,8 @@ export const API_ENDPOINTS = {
         MARK_READ: (id) => `${API_BASE}/notifications/${id}/read`
     },
     LEND: (gameId) => `${API_BASE}/lend/${gameId}`,
-    FAVORITES: `${API_BASE}/api/v1/favorites`,
-    WISHLIST: `${API_BASE}/api/v1/wishlist`
+    FAVORITES: (userId) => `${API_BASE}/users/${userId}/favorites`,
+    WISHLIST: (userId) => `${API_BASE}/users/${userId}/wishlist`
 };
 
 // Game Categories

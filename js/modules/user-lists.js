@@ -16,12 +16,12 @@ export async function fetchUserLists() {
         }
 
         const [favoritesRes, wishlistRes] = await Promise.all([
-            fetch(`${API_ENDPOINTS.FAVORITES}`, {
+            fetch(`${API_ENDPOINTS.FAVORITES(user.id)}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                 }
             }),
-            fetch(`${API_ENDPOINTS.WISHLIST}`, {
+            fetch(`${API_ENDPOINTS.WISHLIST(user.id)}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                 }
@@ -67,13 +67,13 @@ export async function toggleFavorite(gameId, isFavorite) {
         }
 
         const method = isFavorite ? 'DELETE' : 'POST';
-        const response = await fetch(`${API_ENDPOINTS.FAVORITES}`, {
+        const response = await fetch(`${API_ENDPOINTS.FAVORITES(user.id)}`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             },
-            body: JSON.stringify({ user_id: user.id, game_id: gameId })
+            body: JSON.stringify({ game_id: gameId })
         });
 
         if (!response.ok) {
@@ -108,13 +108,13 @@ export async function toggleWishlist(gameId, isWishlisted) {
         }
 
         const method = isWishlisted ? 'DELETE' : 'POST';
-        const response = await fetch(`${API_ENDPOINTS.WISHLIST}`, {
+        const response = await fetch(`${API_ENDPOINTS.WISHLIST(user.id)}`, {
             method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             },
-            body: JSON.stringify({ user_id: user.id, game_id: gameId })
+            body: JSON.stringify({ game_id: gameId })
         });
 
         if (!response.ok) {
