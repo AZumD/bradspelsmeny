@@ -3,7 +3,6 @@ import { getCurrentLocation } from './location.js';
 import { isFavorite, isWishlisted, toggleFavorite, toggleWishlist } from './user-lists.js';
 import { showError } from './ui.js';
 import { API_ENDPOINTS } from './config.js';
-import { fetchWithAuth } from './auth.js';
 import { createEditableGameForm } from './game-form.js';
 
 
@@ -113,9 +112,16 @@ export async function renderGames() {
         const location = getCurrentLocation();
 
         // Use public endpoint for non-logged-in users
-        const userToken = localStorage.getItem('accessToken');
+        const userToken = localStorage.getItem('userToken');
         const endpoint = userToken ? API_ENDPOINTS.GAMES : API_ENDPOINTS.GAMES_PUBLIC;
-        const response = await fetch(`${endpoint}?location=${location}`);
+        
+        // Don't use fetchWithAuth for public endpoint
+        const response = await fetch(`${endpoint}?location=${location}`, {
+            headers: userToken ? {
+                'Authorization': `Bearer ${userToken}`
+            } : {}
+        });
+        
         if (!response.ok) throw new Error('Failed to fetch games');
 
         const games = await response.json();
