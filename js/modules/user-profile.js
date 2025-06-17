@@ -1,5 +1,5 @@
 import { getUserIdFromToken, fetchWithAuth } from './api.js';
-import { loadFriends } from './friends.js';
+import { loadFriends, maybeShowAddFriendButton } from './friends.js';
 import { fetchGameLog } from './borrow-log.js';
 import { fetchFavoritesAndWishlist } from './favorites.js';
 import { fetchBadges } from './badges.js';
