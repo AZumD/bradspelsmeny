@@ -169,7 +169,7 @@ function createGameCard(game) {
     thumbnailWrapper.className = 'game-thumbnail-wrapper';
 
     const img = document.createElement('img');
-    img.src = game.image_url || 'img/placeholder.webp';
+    img.src = game.img || 'img/placeholder.webp';
     img.alt = game.title_sv || game.title_en || 'Game';
     thumbnailWrapper.appendChild(img);
 

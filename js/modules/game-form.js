@@ -70,8 +70,8 @@ export function createEditableGameForm(gameData, onSave, onCancel, onDelete) {
         <input type="text" id="tags" name="tags" value="${gameData.tags || ''}">
       </div>
       <div class="form-group">
-        <label for="image_url">Bild URL:</label>
-        <input type="text" id="image_url" name="image_url" value="${gameData.image_url || ''}">
+        <label for="img">Bild URL:</label>
+        <input type="text" id="img" name="img" value="${gameData.img || ''}">
       </div>
       <div class="form-group">
         <label for="rules">Regellänk:</label>
@@ -194,7 +194,7 @@ export function openModal(index = null) {
         form.play_time.value = game.play_time || "";
         form.age.value = game.age || "";
         form.tags.value = Array.isArray(game.tags) ? game.tags.join(", ") : (game.tags || "");
-        form.image_url.value = game.image_url || "";
+        form.img.value = game.img || "";
         form.rules.value = game.rules || "";
         form.slow_day_only.checked = game.slow_day_only || false;
         form.trusted_only.checked = game.trusted_only || false;
@@ -234,7 +234,7 @@ async function handleFormSubmit(e) {
         play_time: parseInt(document.getElementById("play_time").value.trim()),
         age: parseInt(document.getElementById("age").value.trim()),
         tags: document.getElementById("tags").value.trim().split(",").map(tag => tag.trim()),
-        image_url: document.getElementById("image_url").value.trim(),
+        img: document.getElementById("img").value.trim(),
         rules: document.getElementById("rules").value.trim(),
         slow_day_only: document.getElementById("slow_day_only").checked,
         trusted_only: document.getElementById("trusted_only").checked,
