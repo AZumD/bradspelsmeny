@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Redirect based on admin status
       if (data.user.is_admin) {
         alert(`🛠️ Logged in as admin: ${data.user.first_name}`);
-        window.location.href = "/bradspelsmeny/admin/index.html"; // Admin dashboard
+        window.location.href = "/bradspelsmeny/admin/admin.html"; // Admin dashboard
       } else {
         alert(`👋 Welcome back, ${data.user.first_name}!`);
         window.location.href = "/bradspelsmeny/index.html"; // Guest/member homepage
