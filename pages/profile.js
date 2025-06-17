@@ -5,23 +5,14 @@ import { fetchGameLog } from '../js/modules/borrow-log.js';
 import { fetchFavoritesAndWishlist, createGameCard } from '../js/modules/favorites.js';
 import { fetchBadges } from '../js/modules/badges.js';
 import { fetchUserParties, openCreatePartyModal, closeCreatePartyModal, submitCreateParty } from '../js/modules/parties.js';
-import { initPixelNav } from '../js/shared/shared-ui.js';
+import { initPixelNav, updateNotificationIcon } from '../js/shared/shared-ui.js';
+import { getUserRole } from '../js/modules/auth.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
 // ------------ AUTH & TOKENS ------------
 
-function getUserRole() {
-  const token = localStorage.getItem('userToken');
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.role || null;
-  } catch {
-    return null;
-  }
-}
 const isAdmin = getUserRole() === 'admin';
 
 function getUserIdFromUrl() {
