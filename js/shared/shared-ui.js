@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from '../modules/config.js';
 import { getAccessToken, isTokenExpired, getUserRole } from '../modules/auth.js';
+import { closeGameModal } from '../modules/party-ui.js';
 
 // Navigation
 export function goTo(path) {
