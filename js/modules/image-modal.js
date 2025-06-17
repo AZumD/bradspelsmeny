@@ -27,15 +27,38 @@ export function openGameModal(modalId, game) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
-  const titleElem = modal.querySelector('.modal-title');
-  const descElem = modal.querySelector('.modal-description');
-  const imgElem = modal.querySelector('.modal-image');
+  const img = document.getElementById(`${modalId}Img`);
+  const title = document.getElementById(`${modalId}Title`);
+  const desc = document.getElementById(`${modalId}Description`);
+  const details = document.getElementById(`${modalId}Details`);
+  const disclaimer = document.getElementById(`${modalId}Disclaimer`);
 
-  if (titleElem) titleElem.textContent = game.title || game.name || 'Untitled';
-  if (descElem) descElem.textContent = game.description || 'No description available.';
-  if (imgElem) {
-    imgElem.src = game.thumbnail_url || game.img || '/bradspelsmeny/img/game-placeholder.webp';
-    imgElem.alt = game.title || game.name || 'Game';
+  const gameTitle = game.title || game.title_en || game.title_sv || game.name || 'Untitled';
+  let imageUrl = game.img || game.thumbnail_url || '/bradspelsmeny/img/default-thumb.webp';
+  if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `../${imageUrl}`;
+  }
+
+  if (img) {
+    img.src = imageUrl;
+    img.alt = gameTitle;
+  }
+  if (title) title.textContent = gameTitle;
+  if (desc) desc.textContent = game.description || game.description_en || game.description_sv || game.desc || 'No description available.';
+
+  // Playtime, player count
+  const playtime = game.play_time ? `${game.play_time} min` : null;
+  const players = game.min_players && game.max_players
+    ? `Players: ${game.min_players}–${game.max_players}`
+    : null;
+
+  if (details) {
+    details.textContent = [players, playtime].filter(Boolean).join(' · ');
+  }
+
+  // Trusted only disclaimer
+  if (disclaimer) {
+    disclaimer.textContent = game.trusted_only ? '⚠️ This game can only be borrowed by trusted members.' : '';
   }
 
   modal.style.display = 'flex';
