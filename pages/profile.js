@@ -40,52 +40,7 @@ function clearTokens() {
   localStorage.removeItem('refreshToken');
 }
 
-async function fetchWithAuth(url, options = {}) {
-  let accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-  if (!accessToken || !refreshToken) {
-    throw new Error('User not authenticated');
-  }
-
-  options.headers = {
-    ...(options.headers || {}),
-    Authorization: `Bearer ${accessToken}`
-  };
-
-  let response = await fetch(url, options);
-  if (response.status === 401 || response.status === 403) {
-    const refreshResponse = await fetch(`${API_BASE}/refresh-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
-    });
-    if (!refreshResponse.ok) {
-      clearTokens();
-      window.location.href = `${FRONTEND_BASE}/pages/login.html`;
-      throw new Error('Session expired. Please log in again.');
-    }
-    const data = await refreshResponse.json();
-    const newToken = data.token || data.accessToken;
-    setAccessToken(newToken);
-    options.headers.Authorization = `Bearer ${newToken}`;
-    response = await fetch(url, options);
-  }
-  return response;
-}
-
-function getUserIdFromToken() {
-  const token = getAccessToken();
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.id;
-  } catch {
-    return null;
-  }
-}
-
 // ------------ GAMELOG ------------
-
 
 async function fetchGameLog(userId) {
   try {
@@ -125,6 +80,7 @@ async function fetchGameLog(userId) {
       </td></tr>`;
   }
 }
+
 // ------------ PARTIES & PROFILE ------------
 
 async function fetchUserParties(viewedUserId = null) {
@@ -386,7 +342,6 @@ async function maybeShowAddFriendButton(currentUserId, profileId) {
   } catch {}
 }
 
-
 async function checkFriendStatus(viewedUserId) {
   const myId = getUserIdFromToken();
   if (!viewedUserId || !myId || viewedUserId === myId) return;
@@ -446,7 +401,6 @@ async function submitCreateParty() {
     alert('Error creating party. See console for details.');
   }
 }
-
 
 // ------------ INITIAL LOAD ------------
 
@@ -534,8 +488,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
-
- 
 
   // Close modals on background click
   window.addEventListener('click', (e) => {
