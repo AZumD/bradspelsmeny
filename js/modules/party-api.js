@@ -69,7 +69,9 @@ export async function fetchMessages(partyId) {
       'Authorization': `Bearer ${getAccessToken()}`
     }
   });
-  return res.json();
+  const data = await res.json();
+  console.log('Fetched messages:', data);
+  return data;
 }
 
 export async function sendMessage(partyId, text) {

@@ -28,6 +28,8 @@ export function renderMessage(message) {
   if (loadedMessageIds.has(message.id)) return;
   loadedMessageIds.add(message.id);
 
+  console.log('Rendering message:', message);
+
   const chatBox = document.getElementById('chatBox');
   const messageEl = document.createElement('div');
   messageEl.className = 'chat-message';
@@ -44,16 +46,21 @@ export function renderMessage(message) {
   header.style.gap = '8px';
   header.style.marginBottom = '4px';
 
-  const avatar = document.createElement('img');
-  avatar.src = message.user.avatar || '../img/avatar-placeholder.webp';
-  avatar.alt = `${message.user.first_name} ${message.user.last_name}`;
-  avatar.style.width = '24px';
-  avatar.style.height = '24px';
-  avatar.style.borderRadius = '50%';
-  avatar.style.border = '2px solid #c9a04e';
+  const user = message.user || {};
+  const firstName = user.first_name || 'Unknown';
+  const lastName = user.last_name || 'User';
+  const avatar = user.avatar || '../img/avatar-placeholder.webp';
+
+  const avatarEl = document.createElement('img');
+  avatarEl.src = avatar;
+  avatarEl.alt = `${firstName} ${lastName}`;
+  avatarEl.style.width = '24px';
+  avatarEl.style.height = '24px';
+  avatarEl.style.borderRadius = '50%';
+  avatarEl.style.border = '2px solid #c9a04e';
 
   const name = document.createElement('span');
-  name.textContent = `${message.user.first_name} ${message.user.last_name}`;
+  name.textContent = `${firstName} ${lastName}`;
   name.style.fontWeight = 'bold';
   name.style.color = '#3c2415';
 
@@ -62,7 +69,7 @@ export function renderMessage(message) {
   timeEl.style.fontSize = '0.8rem';
   timeEl.style.color = '#666';
 
-  header.appendChild(avatar);
+  header.appendChild(avatarEl);
   header.appendChild(name);
   header.appendChild(timeEl);
 
