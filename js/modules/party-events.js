@@ -39,30 +39,31 @@ async function handleSendMessage(partyId) {
 }
 
 export function setupInviteModal(partyId) {
-  const inviteModal = document.getElementById('inviteModal');
-  const inviteButton = document.getElementById('inviteButton');
-  const closeInviteModal = document.getElementById('closeInviteModal');
-  const inviteForm = document.getElementById('inviteForm');
+  const inviteModal = document.getElementById('inviteToPartyModal');
+  const inviteButton = document.getElementById('submitPartyInvite');
+  const closeInviteModal = document.getElementById('closeInviteToPartyModal');
+  const inviteUserId = document.getElementById('inviteUserId');
 
-  inviteButton.addEventListener('click', () => {
-    inviteModal.style.display = 'flex';
-  });
+  if (!inviteModal || !inviteButton || !closeInviteModal || !inviteUserId) {
+    console.error('Invite modal elements not found');
+    return;
+  }
 
-  closeInviteModal.addEventListener('click', () => {
-    inviteModal.style.display = 'none';
-  });
-
-  inviteForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const userId = document.getElementById('inviteUserId').value;
+  inviteButton.addEventListener('click', async () => {
+    const userId = inviteUserId.value;
+    if (!userId) return;
     
     try {
       await inviteUser(partyId, userId);
       inviteModal.style.display = 'none';
-      inviteForm.reset();
+      inviteUserId.value = '';
     } catch (err) {
       console.error('Error inviting user:', err);
     }
+  });
+
+  closeInviteModal.addEventListener('click', () => {
+    inviteModal.style.display = 'none';
   });
 }
 
