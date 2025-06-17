@@ -26,6 +26,8 @@ export async function saveUser(userData, token, editingId = null) {
         membership_status: userData.membership_status || null
     };
 
+    console.log('Sending payload:', payload);
+
     try {
         const res = await fetch(url, {
             method,
@@ -38,6 +40,7 @@ export async function saveUser(userData, token, editingId = null) {
 
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
+            console.error('Server response:', errorData);
             throw new Error(errorData.error || `Failed to save user: ${res.status} ${res.statusText}`);
         }
         return res.json();

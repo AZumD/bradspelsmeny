@@ -223,13 +223,13 @@ function createGameCard(game) {
     details.innerHTML = `
         ${getTranslation('ui.players')}: ${game.min_players || '-'}-${game.max_players || '-'}<br>
         ${getTranslation('ui.play_time')}: ${game.play_time || '-'} min<br>
-        ${getTranslation('ui.age')}: ${game.age || '-'}+
+        ${getTranslation('ui.age')}: ${game.age || '-'}
     `;
     info.appendChild(details);
 
     const orderBtn = document.createElement('button');
     orderBtn.className = 'order-button';
-    orderBtn.textContent = getTranslation('ui.order_to_table');
+    orderBtn.textContent = getTranslation('Order to table');
     orderBtn.onclick = () => showOrderModal(game);
     info.appendChild(orderBtn);
 

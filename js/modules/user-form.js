@@ -31,6 +31,8 @@ export function initUserForm(token, onSuccess) {
             membership_status: userForm.membershipStatus?.value || null
         };
 
+        console.log('Form data collected:', userData);
+
         try {
             await saveUser(userData, token, editingId);
             userModal.style.display = "none";
