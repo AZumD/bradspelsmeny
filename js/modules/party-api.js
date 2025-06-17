@@ -1,4 +1,4 @@
-import { getAccessToken } from '../shared/shared-ui.js';
+import { getAccessToken } from '../modules/auth.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 
