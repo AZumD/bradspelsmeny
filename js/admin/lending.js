@@ -6,58 +6,6 @@ import { renderGameLists, returnGame, toggleSection } from '/bradspelsmeny/js/mo
 import { initHistoryModal } from '/bradspelsmeny/js/modules/history.js';
 import { initImageModal } from '/bradspelsmeny/js/modules/image-modal.js';
 
-// Initialize the lending page
-document.addEventListener("DOMContentLoaded", async () => {
-    // Check authentication first
-    if (!await checkAuth()) return;
-
-    // Initialize shared UI components
-    initPixelNav();
-    updateNotificationIcon();
-    setInterval(updateNotificationIcon, 60000);
-
-    // Initialize lend form
-    const lendForm = initLendForm();
-
-    // Initialize game list
-    const gameList = document.getElementById('gameList');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-
-    try {
-        loadingSpinner.style.display = 'block';
-        const games = await fetchGames();
-        
-        if (!games.length) {
-            gameList.innerHTML = '<p class="no-games">No games available</p>';
-            return;
-        }
-
-        games.forEach(game => {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.innerHTML = `
-                <img src="${game.image_url || game.img || '../img/placeholder.webp'}" alt="${game.name || game.title_en || 'Game'}">
-                <h3>${game.name || game.title_en || 'Untitled Game'}</h3>
-                <button class="lend-button" data-game-id="${game.id}">Lend Game</button>
-            `;
-            gameList.appendChild(card);
-        });
-
-        // Bind lend buttons
-        document.querySelectorAll('.lend-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const gameId = button.dataset.gameId;
-                lendForm.openModal(gameId);
-            });
-        });
-    } catch (err) {
-        console.error('Failed to load games:', err);
-        gameList.innerHTML = '<p class="error">Failed to load games</p>';
-    } finally {
-        loadingSpinner.style.display = 'none';
-    }
-});
-
 // Initialize the page
 document.addEventListener('DOMContentLoaded', async () => {
   // Check authentication
@@ -78,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const searchInput = document.getElementById('searchInput');
   const availableContainer = document.getElementById('availableGames');
   const lentOutContainer = document.getElementById('lentOutGames');
+  const loadingSpinner = document.getElementById('loadingSpinner');
 
   // Set up event listeners
   searchInput.addEventListener('input', () => renderGameLists(searchInput.value, availableContainer, lentOutContainer, token));
@@ -131,10 +80,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load initial data
   try {
+    loadingSpinner.style.display = 'block';
     await fetchGames(token);
     renderGameLists('', availableContainer, lentOutContainer, token);
   } catch (err) {
     console.error('Error initializing page:', err);
     alert('Failed to load games. Please refresh the page.');
+  } finally {
+    loadingSpinner.style.display = 'none';
   }
 }); 
