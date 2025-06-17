@@ -9,7 +9,14 @@
     <link rel="stylesheet" href="/bradspelsmeny/css/main.css">
     <link rel="stylesheet" href="/bradspelsmeny/css/shared-ui.css">
     <style>
+        #gameList {
+            display: block;
+            width: 100%;
+        }
+
         .game-item {
+            display: block;
+            width: 100%;
             margin-bottom: 1rem;
             border: 2px solid #d9b370;
             border-radius: 4px;
@@ -24,6 +31,7 @@
             background: #fffdf7;
             cursor: pointer;
             transition: background-color 0.2s ease;
+            width: 100%;
         }
 
         .game-header:hover {
@@ -38,10 +46,12 @@
             display: none;
             padding: 1rem;
             background: #fffdf7;
+            width: 100%;
         }
 
         .game-details {
             margin-bottom: 1rem;
+            width: 100%;
         }
 
         .game-detail {
@@ -55,6 +65,7 @@
         .game-actions {
             display: flex;
             gap: 1rem;
+            width: 100%;
         }
 
         .delete-button {
@@ -97,6 +108,36 @@
             font-size: 0.6rem;
             list-style: none;
             z-index: 999;
+        }
+
+        .edit-form {
+            width: 100%;
+        }
+
+        .form-group {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d9b370;
+            border-radius: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 1rem;
         }
     </style>
 </head>
