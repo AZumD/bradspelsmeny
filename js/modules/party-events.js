@@ -3,8 +3,13 @@ import { closeGameModal } from './party-ui.js';
 import { scrollToBottom } from './party-chat.js';
 
 export function setupMessageInput(partyId) {
-  const messageInput = document.getElementById('messageInput');
-  const sendButton = document.getElementById('sendButton');
+  const messageInput = document.getElementById('chatInput');
+  const sendButton = document.getElementById('sendMessage');
+
+  if (!messageInput || !sendButton) {
+    console.error('Message input elements not found');
+    return;
+  }
 
   messageInput.addEventListener('keypress', async (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -19,7 +24,7 @@ export function setupMessageInput(partyId) {
 }
 
 async function handleSendMessage(partyId) {
-  const messageInput = document.getElementById('messageInput');
+  const messageInput = document.getElementById('chatInput');
   const text = messageInput.value.trim();
   
   if (!text) return;
@@ -79,9 +84,14 @@ export function setupGameModals() {
 }
 
 export function setupAutocomplete() {
-  const messageInput = document.getElementById('messageInput');
+  const messageInput = document.getElementById('chatInput');
   const autocompleteBox = document.getElementById('autocompleteBox');
   let selectedIndex = -1;
+
+  if (!messageInput || !autocompleteBox) {
+    console.error('Autocomplete elements not found');
+    return;
+  }
 
   messageInput.addEventListener('input', () => {
     const text = messageInput.value;
@@ -149,7 +159,7 @@ function updateSelectedIndex() {
 }
 
 function insertAutocomplete(index) {
-  const messageInput = document.getElementById('messageInput');
+  const messageInput = document.getElementById('chatInput');
   const items = autocompleteBox.children;
   const selected = items[index].textContent;
   
