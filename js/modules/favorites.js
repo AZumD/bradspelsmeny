@@ -40,24 +40,40 @@ export async function fetchFavoritesAndWishlist(userId) {
   const wishContainer = document.getElementById('wishlistList');
   if (!favContainer || !wishContainer) return;
   try {
+    // Get user's favorites and wishlist
     const [favRes, wishRes] = await Promise.all([
       fetchWithAuth(`${API_BASE}/users/${userId}/favorites`).catch(() => null),
       fetchWithAuth(`${API_BASE}/users/${userId}/wishlist`).catch(() => null)
     ]);
+
     let favorites = [], wishlist = [];
-    if (favRes && favRes.ok) favorites = await favRes.json(); else favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
-    if (wishRes && wishRes.ok) wishlist = await wishRes.json(); else wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+    if (favRes && favRes.ok) {
+      favorites = await favRes.json();
+    } else {
+      favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
+    }
+
+    if (wishRes && wishRes.ok) {
+      wishlist = await wishRes.json();
+    } else {
+      wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
+    }
 
     if (favorites.length) {
       favContainer.innerHTML = '';
       favorites.forEach(g => favContainer.appendChild(createGameCard(g, true)));
-    } else if (favRes && favRes.ok) favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
+    } else if (favRes && favRes.ok) {
+      favContainer.innerHTML = '<div class="placeholder-box">No favorites yet.</div>';
+    }
 
     if (wishlist.length) {
       wishContainer.innerHTML = '';
       wishlist.forEach(g => wishContainer.appendChild(createGameCard(g)));
-    } else if (wishRes && wishRes.ok) wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
-  } catch {
+    } else if (wishRes && wishRes.ok) {
+      wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
+    }
+  } catch (err) {
+    console.error('Error fetching favorites and wishlist:', err);
     favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';
     wishContainer.innerHTML = '<div class="placeholder-box">Failed to load wishlist.</div>';
   }
