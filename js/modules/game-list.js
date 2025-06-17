@@ -54,7 +54,10 @@ export async function renderGames() {
         const category = getCurrentCategory();
         const location = getCurrentLocation();
 
-        const response = await fetchWithAuth(`${API_ENDPOINTS.GAMES}?location=${location}`);
+        // Use public endpoint for non-logged-in users
+        const userToken = localStorage.getItem('accessToken');
+        const endpoint = userToken ? API_ENDPOINTS.GAMES : API_ENDPOINTS.GAMES_PUBLIC;
+        const response = await fetch(`${endpoint}?location=${location}`);
         if (!response.ok) throw new Error('Failed to fetch games');
 
         const games = await response.json();
