@@ -2,7 +2,7 @@ import { getUserIdFromToken, fetchWithAuth } from '../js/modules/api.js';
 import { fetchProfile } from '../js/modules/user-profile.js';
 import { loadFriends, maybeShowAddFriendButton, checkFriendStatus } from '../js/modules/friends.js';
 import { fetchGameLog } from '../js/modules/borrow-log.js';
-import { fetchFavoritesAndWishlist, createGameCard } from '../js/modules/favorites.js';
+import { fetchFavoritesAndWishlist, createGameCard, } from '../js/modules/favorites.js';
 import { fetchBadges } from '../js/modules/badges.js';
 import { fetchUserParties, openCreatePartyModal, closeCreatePartyModal, submitCreateParty } from '../js/modules/parties.js';
 import { initPixelNav, updateNotificationIcon } from '../js/shared/shared-ui.js';

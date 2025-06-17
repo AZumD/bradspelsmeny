@@ -58,12 +58,15 @@
   object-fit: contain;
   image-rendering: pixelated;
   cursor: pointer;
+  border-radius: 8px; 
   transition: transform 0.2s ease;
 }
 
 .badges-grid img:hover {
   transform: scale(1.1);
 }
+
+
 
 .party-avatar {
   width:48px;
@@ -353,10 +356,11 @@ tbody tr:last-child td {
   
   <body>
     <div class="profile-container">
-      <h1>User Profile</h1>
       <img id="avatar" class="avatar" src="/bradspelsmeny/img/avatar-placeholder.webp" alt="User avatar">
       <div id="username" class="full-name">Loading...</div>
       <div id="bio" class="bio"></div>
+      <div class="section-title">Badges</div>
+      <div id="badgesGrid" class="badges-grid"></div>
       <button id="editProfileBtn" style="display:none">Edit Profile</button>
       <button id="addFriendBtn" style="display:none">Add Friend</button>
 
@@ -366,8 +370,6 @@ tbody tr:last-child td {
       <div class="section-title">Parties</div>
       <div id="partyList" class="parties-grid"></div>
 
-      <div class="section-title">Badges</div>
-      <div id="badgesGrid" class="badges-grid"></div>
 
       <div class="section-title">Favorite Games</div>
       <div id="favoritesGrid" class="favorites-grid"></div>
