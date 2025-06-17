@@ -40,6 +40,8 @@ export function renderIntro() {
 
 export function renderGameList(games, onSave, onDelete) {
   const container = document.getElementById('gameList');
+  if (!container) return;
+  
   container.innerHTML = '';
 
   games.forEach(game => {
@@ -73,6 +75,11 @@ export function renderGameList(games, onSave, onDelete) {
           content.innerHTML = '';
           content.style.display = 'none';
           isExpanded = false;
+        }, async () => {
+          if (onDelete && confirm("Är du säker på att du vill ta bort detta spel?")) {
+            await onDelete(game.id);
+            wrapper.remove();
+          }
         });
 
         content.appendChild(form);
@@ -80,17 +87,6 @@ export function renderGameList(games, onSave, onDelete) {
         isExpanded = true;
       }
     };
-
-    if (onDelete) {
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete-button';
-      deleteBtn.textContent = '🗑️';
-      deleteBtn.onclick = (e) => {
-        e.stopPropagation();
-        onDelete(game.id);
-      };
-      wrapper.appendChild(deleteBtn);
-    }
 
     container.appendChild(wrapper);
   });

@@ -28,7 +28,7 @@ function initConditionRating() {
     });
 }
 
-export function createEditableGameForm(gameData, onSave, onCancel) {
+export function createEditableGameForm(gameData, onSave, onCancel, onDelete) {
     const form = document.createElement("form");
     form.classList.add("edit-form");
   
@@ -108,7 +108,8 @@ export function createEditableGameForm(gameData, onSave, onCancel) {
       </div>
       <div class="form-actions">
         <button type="submit" class="save-button">Spara ändringar</button>
-        <button type="button" class="cancel-button" onclick="this.closest('form').querySelector('.cancel-btn').click()">Avbryt</button>
+        <button type="button" class="cancel-button">Avbryt</button>
+        ${onDelete ? `<button type="button" class="delete-button">Ta bort spel</button>` : ''}
       </div>
     `;
   
@@ -147,9 +148,17 @@ export function createEditableGameForm(gameData, onSave, onCancel) {
       };
     });
   
-    form.querySelector('.cancel-btn').onclick = () => {
+    // Set up cancel button
+    form.querySelector('.cancel-button').onclick = () => {
       onCancel();
     };
+
+    // Set up delete button if provided
+    if (onDelete) {
+      form.querySelector('.delete-button').onclick = () => {
+        onDelete();
+      };
+    }
   
     return form;
   }

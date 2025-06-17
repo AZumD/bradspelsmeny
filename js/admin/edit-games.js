@@ -13,24 +13,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchBar = document.getElementById('searchBar');
   const gameListContainer = document.getElementById('gameList');
   const loadingSpinner = document.getElementById('loadingSpinner');
-
   let allGames = [];
 
   const refreshGames = async () => {
     loadingSpinner.style.display = 'block';
     try {
       allGames = await fetchGames();
-      renderGameList(allGames, async (updatedGame) => {
-        await updateGame(updatedGame.id, updatedGame);
-        allGames = await fetchGames(); // re-fetch to ensure data is synced
-        renderGameList(allGames, async (g) => await updateGame(g.id, g)); // recursive callback
-      }, async (gameId) => {
-        if (confirm("Är du säker på att du vill ta bort detta spel?")) {
-          await deleteGame(gameId);
-          allGames = await fetchGames();
-          renderGameList(allGames, async (g) => await updateGame(g.id, g));
+      renderGameList(
+        allGames,
+        async (updatedGame) => {
+          await updateGame(updatedGame.id, updatedGame);
+          await refreshGames();
+        },
+        async (gameId) => {
+          if (confirm("Är du säker på att du vill ta bort detta spel?")) {
+            await deleteGame(gameId);
+            await refreshGames();
+          }
         }
-      });
+      );
     } catch (err) {
       console.error("❌ Failed to fetch or render games:", err);
       gameListContainer.innerHTML = "<p style='color:red;'>Fel vid laddning av spel.</p>";
