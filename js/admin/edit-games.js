@@ -1,8 +1,8 @@
-import { initPixelNav, updateNotificationIcon, goTo } from '../js/shared/shared-ui.js';
-import { fetchGames } from '../js/modules/games.js';
-import { initGameForm } from '../js/modules/game-form.js';
-import { initGameList } from '../js/modules/game-list.js';
-import { checkAuth } from '../js/modules/auth.js';
+import { initPixelNav, updateNotificationIcon, goTo } from '/bradspelsmeny/js/shared/shared-ui.js';
+import { fetchGames } from '/bradspelsmeny/js/modules/games.js';
+import { initGameForm } from '/bradspelsmeny/js/modules/game-form.js';
+import { initGameList } from '/bradspelsmeny/js/modules/game-list.js';
+import { checkAuth } from '/bradspelsmeny/js/modules/auth.js';
 
 // Initialize the edit games page
 document.addEventListener("DOMContentLoaded", async () => {

@@ -1,9 +1,9 @@
-import { initPixelNav, updateNotificationIcon } from '../js/shared/shared-ui.js';
-import { fetchUsers } from '../js/modules/users.js';
-import { initUserForm } from '../js/modules/user-form.js';
-import { initUserList } from '../js/modules/user-list.js';
-import { initBadgeForm } from '../js/modules/badge-form.js';
-import { checkAuth } from '../js/modules/auth.js';
+import { initPixelNav, updateNotificationIcon } from '/bradspelsmeny/js/shared/shared-ui.js';
+import { fetchUsers } from '/bradspelsmeny/js/modules/users.js';
+import { initUserForm } from '/bradspelsmeny/js/modules/user-form.js';
+import { initUserList } from '/bradspelsmeny/js/modules/user-list.js';
+import { initBadgeForm } from '/bradspelsmeny/js/modules/badge-form.js';
+import { checkAuth } from '/bradspelsmeny/js/modules/auth.js';
 
 // Initialize the user database page
 document.addEventListener("DOMContentLoaded", async () => {
