@@ -235,3 +235,9 @@ export async function updateNotificationIcon() {
 
 // Make functions available globally for onclick handlers
 window.goTo = goTo;
+window.logout = logout;
+window.initPixelNav = initPixelNav;
+window.initNotificationModal = initNotificationModal;
+window.fetchNotifications = fetchNotifications;
+window.updateNotificationIcon = updateNotificationIcon;
+window.closeGameModal = closeGameModal;
