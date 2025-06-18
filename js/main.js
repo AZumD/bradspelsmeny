@@ -1,5 +1,5 @@
 import { fetchUserLists, isFavorite, isWishlisted } from './modules/user-lists.js';
-import { renderCategories, renderIntro, renderGames, getGames } from './modules/game-list.js';
+import { renderCategories, renderIntro, renderGames } from './modules/game-list.js';
 import { getCurrentLang, setCurrentLang, getCurrentCategory, setCurrentCategory } from './modules/i18n.js';
 import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
