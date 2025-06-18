@@ -267,12 +267,6 @@ async function clearAllOrders() {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🟢 Admin dashboard loading...");
   
-  initPixelNav(); // 🧩 From shared-ui.js
-  console.log("🧩 Navigation initialized");
-  
-  updateNotificationIcon(); // 🔔 Just update icon on load  
-  console.log("🔔 Notification icon updated");
-  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
   
   fetchStats();
   fetchOrders();

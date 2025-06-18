@@ -214,66 +214,12 @@
         </div>
     </div>
 
-    <!-- Notifications -->
-    <div class="notification-container">
-        <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifieringar" width="58" height="58" />
-        <span id="notificationDot"></span>
-        <div id="notificationModal" class="modal" role="dialog" aria-labelledby="notificationTitle">
-            <div class="modal-content">
-                <span class="close-btn" id="closeNotificationBtn" aria-label="Stäng">&times;</span>
-                <h3 id="notificationTitle">Notifieringar</h3>
-                <div id="notificationList" class="notification-list">
-                    <div class="placeholder-box">Laddar...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav id="pixelNav" role="navigation" aria-label="Huvudnavigation">
-        <img src="../img/icons/icon-home.webp" alt="Hem" class="nav-icon" onclick="goTo('/')">
-        <img src="../img/icons/icon-profile.webp" alt="Profil" class="nav-icon" onclick="goTo('/pages/profile.html')">
-        <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logga ut" class="nav-icon" onclick="logout()">
-        <button id="adminMenuToggle" class="nav-icon" aria-label="Admin-meny" aria-expanded="false">
-            <img src="../img/icons/icon-admintools.webp" alt="Admin-verktyg" width="32" height="32" />
-        </button>
-    </nav>
-
-    <ul id="adminMenuDropdown" class="admin-dropdown" role="menu" aria-label="Admin-meny">
-        <li role="none">
-            <a href="/bradspelsmeny/admin/index.html" role="menuitem">
-                <img src="../img/icons/icon-admin.webp" alt="Admin-panel" width="48" height="48" />
-            </a>
-        </li>
-        <li role="none">
-            <a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
-                <img src="../img/icons/icon-editgames.webp" alt="Redigera spel" width="48" height="48" />
-            </a>
-        </li>
-        <li role="none">
-            <a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
-                <img src="../img/icons/icon-friends.webp" alt="Användardatabas" width="48" height="48" />
-            </a>
-        </li>
-        <li role="none">
-            <a href="/bradspelsmeny/admin/lending.html" role="menuitem">
-                <img src="../img/icons/icon-lending.webp" alt="Utlåning" width="48" height="48" />
-            </a>
-        </li>
-        <li role="none">
-            <a href="#" onclick="logout()" role="menuitem">
-                <img src="../img/icons/icon-logout.webp" alt="Logga ut" width="48" height="48" />
-            </a>
-        </li>
-    </ul>
-
     <!-- Spacing for navigation -->
     <div class="nav-spacing"></div>
 
     <!-- Scripts -->
-    <link rel="stylesheet" href="../css/shared-ui.css">
     <link rel="stylesheet" href="../css/main.css">
+    <script type="module" src="../js/ui-bundle.js"></script>
     <script type="module" src="user-db.js" defer></script>
-    <script type="module" src="../js/shared/shared-ui.js"></script>
 </body>
 </html>

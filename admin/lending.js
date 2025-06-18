@@ -265,9 +265,7 @@ window.onload = async () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  initPixelNav(); // 🧩 From shared-ui.js
-  updateNotificationIcon(); // 🔔 Just update icon on load
-  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
+
   const myId = getUserIdFromToken();
   const viewedId = getUserIdFromUrl() || myId;
   const profileUserId = viewedId;
