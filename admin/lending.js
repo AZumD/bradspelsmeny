@@ -1,34 +1,18 @@
+import {
+  getAccessToken,
+  getRefreshToken,
+  getUserIdFromToken,
+  refreshToken,
+  fetchWithAuth
+} from '../js/modules/auth.js';
+
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 let USER_TOKEN = null;
 
-async function refreshUserToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) return false;
-
-  try {
-    const res = await fetch(`${API_BASE}/refresh-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (!res.ok) return false;
-
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("userToken", data.token);
-      USER_TOKEN = data.token;
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
 async function guardAdminSession() {
-  const token = localStorage.getItem("userToken");
-  const refreshToken = localStorage.getItem("refreshToken");
+  const token = getAccessToken();
+  const refreshToken = getRefreshToken();
 
   if (!token && !refreshToken) {
     window.location.href = "login.html";
@@ -36,7 +20,7 @@ async function guardAdminSession() {
   }
 
   if (!token && refreshToken) {
-    const refreshed = await refreshUserToken();
+    const refreshed = await refreshToken();
     if (!refreshed) {
       window.location.href = "login.html";
       return false;
@@ -61,22 +45,9 @@ function getUserIdFromUrl() {
   return new URLSearchParams(window.location.search).get('id');
 }
 
-function getUserIdFromToken() {
-  const token = getAccessToken();
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.id;
-  } catch {
-    return null;
-  }
-}
-
 async function fetchGames() {
   try {
-    const res = await fetch(`${API_BASE}/games`, {
-      headers: { Authorization: `Bearer ${USER_TOKEN}` }
-    });
+    const res = await fetchWithAuth(`${API_BASE}/games`);
     if (!res.ok) throw new Error(`Failed to fetch games: ${res.status}`);
     allGames = await res.json();
     await renderGameLists();
@@ -110,9 +81,7 @@ async function createGameCard(game) {
 
   if (game.lent_out) {
     try {
-      const res = await fetch(`${API_BASE}/games/${game.id}/current-lend`, {
-        headers: { Authorization: `Bearer ${USER_TOKEN}` }
-      });
+      const res = await fetchWithAuth(`${API_BASE}/games/${game.id}/current-lend`);
       if (res.ok) {
         const data = await res.json();
         extra = `<br><small style="font-size: 0.5rem;">
@@ -139,9 +108,7 @@ async function createGameCard(game) {
 }
 
 async function openLendModal(gameId) {
-  const res = await fetch(`${API_BASE}/users`, {
-    headers: { Authorization: `Bearer ${USER_TOKEN}` }
-  });
+  const res = await fetchWithAuth(`${API_BASE}/users`);
   const users = await res.json();
 
   if (!Array.isArray(users)) {
@@ -170,14 +137,15 @@ async function openLendModal(gameId) {
 function closeLendModal() {
   document.getElementById('lendModal').style.display = 'none';
 }
-function toggleSection(id, button) {
-    const section = document.getElementById(id);
-    const caret = button.querySelector('.caret');
-    const isOpen = section.style.display === 'flex';
 
-    section.style.display = isOpen ? 'none' : 'flex';
-    caret.textContent = isOpen ? '▼' : '▲';
-  }
+function toggleSection(id, button) {
+  const section = document.getElementById(id);
+  const caret = button.querySelector('.caret');
+  const isOpen = section.style.display === 'flex';
+
+  section.style.display = isOpen ? 'none' : 'flex';
+  caret.textContent = isOpen ? '▼' : '▲';
+}
 
 async function confirmLend() {
   const gameId = document.getElementById('lendGameId').value;
@@ -189,11 +157,10 @@ async function confirmLend() {
     return;
   }
 
-  await fetch(`${API_BASE}/lend/${gameId}`, {
+  await fetchWithAuth(`${API_BASE}/lend/${gameId}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${USER_TOKEN}`
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
   });
@@ -203,11 +170,10 @@ async function confirmLend() {
 }
 
 async function returnGame(gameId) {
-  await fetch(`${API_BASE}/return/${gameId}`, {
+  await fetchWithAuth(`${API_BASE}/return/${gameId}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${USER_TOKEN}`
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({})
   });
@@ -228,9 +194,7 @@ function closeImageModal() {
 async function openHistoryModal(gameId) {
   const modal = document.getElementById('historyModal');
   const historyList = document.getElementById('historyList');
-  const res = await fetch(`${API_BASE}/history/${gameId}`, {
-    headers: { Authorization: `Bearer ${USER_TOKEN}` }
-  });
+  const res = await fetchWithAuth(`${API_BASE}/history/${gameId}`);
   const logs = await res.json();
 
   historyList.innerHTML = logs.map(log =>
