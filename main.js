@@ -471,3 +471,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+window.toggleFavorite = toggleFavorite;
+window.toggleWishlist = toggleWishlist;

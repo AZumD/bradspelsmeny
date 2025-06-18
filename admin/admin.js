@@ -24,35 +24,6 @@ function parseJwt(token) {
   }
 }
 
-// 🔄 Refresh token
-async function refreshToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) return false;
-
-  try {
-    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/refresh-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    if (!res.ok) {
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("refreshToken");
-      return false;
-    }
-
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("userToken", data.token);
-      return true;
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
-}
 
 // 📦 Auth wrapper
 async function fetchWithAuth(url, options = {}, retry = true) {
