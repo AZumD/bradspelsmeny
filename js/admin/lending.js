@@ -53,24 +53,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const gameId = button.dataset.gameId;
     const imageUrl = button.dataset.image;
 
+    if (!action) return;
+
     switch (action) {
       case 'lend':
         lendForm.openModal(gameId);
         break;
       case 'return':
+        if (!gameId) {
+          console.error('No game ID found for return action');
+          return;
+        }
+        console.log('[Returning game]', gameId);
         try {
           await returnGame(gameId);
-          renderGameLists(searchInput.value, availableContainer, lentOutContainer);
+          await renderGameLists(searchInput.value, availableContainer, lentOutContainer);
         } catch (err) {
           console.error('Error returning game:', err);
           alert('Kunde inte återlämna spelet. Försök igen.');
         }
         break;
       case 'image':
-        imageModal.openModal(imageUrl);
+        if (imageUrl) {
+          imageModal.openModal(imageUrl);
+        }
         break;
       case 'history':
-        historyModal.openModal(gameId);
+        if (gameId) {
+          historyModal.openModal(gameId);
+        }
         break;
     }
   });
