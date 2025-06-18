@@ -101,3 +101,7 @@ export function getAccessToken() {
     clearTokens();
     window.location.href = "/bradspelsmeny/pages/login.html";
   }
+
+  export function setAccessToken(token) {
+    localStorage.setItem("userToken", token);
+  }
