@@ -132,11 +132,11 @@ document.head.appendChild(styleTag);
 
 const navHTML = `
   <nav id="pixelNav">
-    <img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
-    <img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
-    <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout" class="nav-icon">
+    <img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+    <img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-profile.webp" alt="Profile" class="nav-icon" onclick="goTo('/pages/profile.html')">
+    <img id="logoutIcon" src="https://azumd.github.io/bradspelsmeny/img/icons/icon-logout.webp" alt="Logout" class="nav-icon">
     <button id="adminMenuToggle" class="nav-icon" style="display: none;">
-      <img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32" height="32" />
+      <img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admintools.webp" alt="Admin Menu" width="32" height="32" />
     </button>
   </nav>
 
@@ -300,7 +300,7 @@ async function fetchNotifications() {
             });
             if (res.ok) {
               div.innerHTML = `✅ Friend request accepted<br><small>${new Date().toLocaleString()}</small>`;
-              icon.src = "../img/icons/icon-notif-off.webp";
+              icon.src = "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-off.webp";
             }
           };
   
@@ -323,7 +323,7 @@ async function fetchNotifications() {
             await fetchWithAuth(`${API_BASE}/notifications/${n.id}/read`, { method: 'POST' });
             div.classList.remove('unread');
             const updated = list.querySelectorAll('.notification-item.unread');
-            if (updated.length === 0) icon.src = "../img/icons/icon-notif-off.webp";
+            if (updated.length === 0) icon.src = "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-off.webp";
   
             if (n.type === 'badge_awarded' && n.data?.name && n.data?.icon_url) {
               showBadgePopup(n.data.name, n.data.icon_url, time);
@@ -381,8 +381,8 @@ async function fetchNotifications() {
       const icon = document.getElementById("notificationIcon");
       if (icon) {
         icon.src = hasUnread
-          ? "../img/icons/icon-notif-on.webp"
-          : "../img/icons/icon-notif-off.webp";
+          ? "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-on.webp"
+          : "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-off.webp";
       }
     } catch (err) {
       console.error('❌ Failed to update notification icon:', err);
