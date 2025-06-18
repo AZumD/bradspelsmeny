@@ -324,7 +324,7 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const userToken = localStorage.getItem('userToken');
-  const refreshToken = localStorage.getItem('refreshToken');
+  const storedRefreshToken = localStorage.getItem('refreshToken');
   const isGuest = localStorage.getItem("guestUser");
   const nav = document.getElementById('pixelNav');
   if (nav && userToken && !isTokenExpired(userToken)) {
@@ -333,8 +333,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Refresh token if expired
   if (userToken && isTokenExpired(userToken)) {
-    if (refreshToken) {
-      const refreshed = await refreshToken();
+    if (storedRefreshToken) {
+      const refreshed = await refreshToken(); // <- this now correctly refers to the imported function
       if (!refreshed) {
         logout();
         return;
@@ -344,6 +344,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
   }
+  
 
   const spinner = document.getElementById("loadingSpinner");
   const gameList = document.getElementById("gameList");
