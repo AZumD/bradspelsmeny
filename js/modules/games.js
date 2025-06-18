@@ -157,12 +157,16 @@ export async function returnGame(gameId) {
       throw new Error(errorData.message || 'Failed to return game');
     }
 
-    const updatedGame = await res.json();
-    
-    // Update the game in our local array
+    // Update the game in our local array to mark it as not lent out
     const gameIndex = allGames.findIndex(g => g.id === gameId);
     if (gameIndex !== -1) {
-      allGames[gameIndex] = updatedGame;
+      allGames[gameIndex] = {
+        ...allGames[gameIndex],
+        lent_out: false,
+        lent_to_name: null,
+        lent_to_table: null,
+        lent_at: null
+      };
     }
 
     // Re-render the game lists
@@ -172,7 +176,7 @@ export async function returnGame(gameId) {
       await renderGameLists('', availableContainer, lentOutContainer);
     }
     
-    return updatedGame;
+    return { message: 'Game returned successfully' };
   } catch (err) {
     console.error('Error returning game:', err);
     throw new Error(err.message || 'Failed to return game. Please try again.');
