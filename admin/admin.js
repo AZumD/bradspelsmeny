@@ -143,33 +143,21 @@ async function fetchOrders() {
 // ✅ Complete order
 async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
   try {
-    const usersRes = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/users");
-    if (!usersRes.ok) {
-      alert("❌ Failed to fetch users.");
+    const orderRes = await fetchWithAuth(`${API_BASE}/order-game/${orderId}`);
+    if (!orderRes.ok) {
+      alert("❌ Failed to fetch order details.");
       return;
     }
-    const users = await usersRes.json();
-    let user = users.find(u => u.phone === phone);
+    const order = await orderRes.json();
 
-    if (!user) {
-      const userRes = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
-      });
-
-      if (!userRes.ok) {
-        alert("❌ Failed to create user.");
-        return;
-      }
-
-      user = await userRes.json();
-    }
-
-    const lendRes = await fetchWithAuth(`https://bradspelsmeny-backend-production.up.railway.app/lend/${gameId}`, {
+    const lendRes = await fetchWithAuth(`${API_BASE}/lend/${gameId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, note: `Table ${tableId}` })
+      body: JSON.stringify({
+        userId: order.user_id,
+        note: `Table ${order.table_id}`,
+        partyId: order.party_id || null
+      })
     });
 
     if (!lendRes.ok) {
@@ -177,7 +165,7 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
       return;
     }
 
-    const deleteOrderRes = await fetchWithAuth(`https://bradspelsmeny-backend-production.up.railway.app/order-game/${orderId}`, {
+    const deleteOrderRes = await fetchWithAuth(`${API_BASE}/order-game/${orderId}`, {
       method: "DELETE"
     });
 
