@@ -253,7 +253,10 @@ function getAccessToken() {
   }
   window.goTo = goTo;
   
-  
+  function clearTokens() {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("refreshToken");
+  }
   function logout() {
     clearTokens();
     window.location.href = '/bradspelsmeny/pages/login.html';
