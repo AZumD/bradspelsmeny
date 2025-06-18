@@ -7,6 +7,7 @@ import {
   getUserIdFromToken,
   fetchWithAuth
 } from '../js/modules/auth.js';
+import { fetchAllGames } from '../js/modules/api.js';
 
 let loadedMessageIds = new Set();
 let allGames = [];

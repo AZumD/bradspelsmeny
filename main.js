@@ -12,6 +12,11 @@ import {
   logout
 } from './js/modules/auth.js';
 
+import {
+  fetchPublicGames,
+  fetchAllGames
+} from './js/modules/api.js';
+
 const translations = {
   sv: {
     intro:
@@ -76,64 +81,6 @@ function getUserToken() {
 
 function setUserToken(token) {
   localStorage.setItem('userToken', token);
-}
-
-function getRefreshToken() {
-  return localStorage.getItem('refreshToken');
-}
-
-function removeTokens() {
-  localStorage.removeItem('userToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('userData');
-}
-
-function logout() {
-  removeTokens();
-  localStorage.removeItem("userData");
-  localStorage.removeItem("guestUser");
-  goTo('/pages/login.html'); // or '/' depending on UX
-}
-
-async function refreshToken() {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) return false;
-
-  try {
-    const res = await fetch(`${API_BASE}/refresh-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (!res.ok) return false;
-
-    const data = await res.json();
-    if (data.token) {
-      setUserToken(data.token);
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-async function fetchWithAuth(url, options = {}, retry = true) {
-  if (!options.headers) options.headers = {};
-  options.headers['Authorization'] = `Bearer ${getUserToken()}`;
-
-  let res = await fetch(url, options);
-  if (res.status === 401 && retry) {
-    const refreshed = await refreshToken();
-    if (refreshed) {
-      options.headers['Authorization'] = `Bearer ${getUserToken()}`;
-      res = await fetch(url, options);
-    } else {
-      logout();
-      throw new Error('Unauthorized, please login again.');
-    }
-  }
-  return res;
 }
 
 function goTo(path) {
@@ -206,7 +153,7 @@ function isMemberUser() {
 
 function getGameApiUrl() {
   const token = getAccessToken();
-  return token ? `${API_BASE}/games` : `${API_BASE}/games/public`;
+  return token ? fetchAllGames() : fetchPublicGames();
 }
 
 function renderCategories() {
@@ -293,17 +240,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const res = await fetchWithAuth(getGameApiUrl());
-  const dataText = await res.text();
-  let dataJson;
-  try {
-    dataJson = JSON.parse(dataText);
-  } catch (e) {
-    console.error('Failed to parse /games response as JSON:', dataText);
-    throw new Error('Invalid JSON from server');
-  }
-  games = dataJson;
-
+  const games = await getGameApiUrl();
   const isMember = isMemberUser();
 
   let filtered = currentCategory === 'all'

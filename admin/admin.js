@@ -4,6 +4,11 @@ import {
   refreshToken,
   fetchWithAuth
 } from '../js/modules/auth.js';
+import {
+  fetchOrders,
+  deleteOrder,
+  lendGame
+} from '../js/modules/api.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
@@ -285,4 +290,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+async function loadOrders() {
+  const orders = await fetchOrders();
+  // ... rest of the function
+}
+
+async function handleLend(orderId) {
+  const order = await getOrderById(orderId);
+  await lendGame(order.game_id);
+  // ... rest of the function
+}
+
+async function handleDelete(orderId) {
+  await deleteOrder(orderId);
+  // ... rest of the function
+}
 

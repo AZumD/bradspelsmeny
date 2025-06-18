@@ -5,6 +5,12 @@ import {
   refreshToken,
   fetchWithAuth
 } from '../js/modules/auth.js';
+import { 
+  fetchAllGames,
+  getGameById,
+  lendGame,
+  returnGame
+} from '../js/modules/api.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
@@ -276,5 +282,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+async function loadGames() {
+  const games = await fetchAllGames();
+  // ... rest of the function
+}
+
+async function loadCurrentLend(game) {
+  const currentLend = await getGameById(game.id);
+  // ... rest of the function
+}
+
+async function handleLend(gameId) {
+  await lendGame(gameId);
+  // ... rest of the function
+}
+
+async function handleReturn(gameId) {
+  await returnGame(gameId);
+  // ... rest of the function
+}
 
 
