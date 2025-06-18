@@ -141,14 +141,14 @@ const navHTML = `
   </nav>
 
   <ul id="adminMenuDropdown" style="display:none;position:fixed;bottom:60px;right:35px;background-color:#fffdf7;border:2px dashed #d9b370;padding:10px;font-family:'Press Start 2P',monospace;font-size:0.6rem;list-style:none;z-index:999;">
-    <li><a href="/bradspelsmeny/admin/index.html"><img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
-    <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
-    <li><a href="/bradspelsmeny/admin/user-db.html"><img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
-    <li><a href="/bradspelsmeny/admin/lending.html"><img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48" /></a></li>
-    <li><a href="#" id="adminLogout"><img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48" /></a></li>
+    <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
+    <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
+    <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
+    <li><a href="/bradspelsmeny/admin/lending.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-lending.webp" alt="Lending" width="48" height="48" /></a></li>
+    <li><a href="#" id="adminLogout"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-logout.webp" alt="Logout" width="48" height="48" /></a></li>
   </ul>
 
-  <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications" title="Notifications" width="58" height="58" />
+  <img id="notificationIcon" src="https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-off.webp" alt="Notifications" title="Notifications" width="58" height="58" />
   <span id="notificationDot"></span>
 
   <div id="badgeInfoModal" class="modal" style="display:none;"><div class="modal-content"><span class="close-btn" id="closeBadgeInfoBtn">&times;</span><img id="badgeIcon" src="" alt="Badge Icon" style="width:64px;height:64px;margin-bottom:1rem;"><h3 id="badgeName" style="margin-bottom:0.5rem;"></h3><p id="badgeDescription" style="font-size:0.9rem;"></p></div></div>
@@ -271,8 +271,8 @@ async function fetchNotifications() {
       const icon = document.getElementById("notificationIcon");
       if (icon) {
         icon.src = hasUnread
-          ? "../img/icons/icon-notif-on.webp"
-          : "../img/icons/icon-notif-off.webp";
+          ? "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-on.webp"
+          : "https://azumd.github.io/bradspelsmeny/img/icons/icon-notif-off.webp";
       }
   
       if (!notifications.length) {
