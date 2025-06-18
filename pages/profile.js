@@ -379,9 +379,6 @@ async function submitCreateParty() {
 // ------------ INITIAL LOAD ------------
 
 document.addEventListener('DOMContentLoaded', async () => {
-  updateNotificationIcon(); // 🔔 Just update icon on load
-  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
-
   try {
     await fetchProfile(); // Page-specific
   } catch (err) {
