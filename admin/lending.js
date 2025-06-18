@@ -3,7 +3,9 @@ import {
   getRefreshToken,
   getUserIdFromToken,
   refreshToken,
-  fetchWithAuth
+  fetchWithAuth,
+  clearTokens,
+  logout
 } from '../js/modules/auth.js';
 import { 
   fetchAllGames,

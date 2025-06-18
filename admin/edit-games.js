@@ -3,7 +3,9 @@ import {
   getRefreshToken,
   getUserIdFromToken,
   refreshToken,
-  fetchWithAuth
+  fetchWithAuth,
+  clearTokens,
+  logout
 } from '../js/modules/auth.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';

@@ -4,7 +4,9 @@ import {
   getAccessToken, 
   getRefreshToken, 
   refreshToken,
-  fetchWithAuth
+  fetchWithAuth,
+  clearTokens,
+  logout
 } from '../js/modules/auth.js';
 
 async function guardAdminSession() {

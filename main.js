@@ -8,7 +8,7 @@ import {
   getRefreshToken, 
   refreshToken, 
   fetchWithAuth,
-  removeTokens,
+  clearTokens,
   logout
 } from './js/modules/auth.js';
 

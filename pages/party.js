@@ -5,7 +5,9 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 import { 
   getAccessToken, 
   getUserIdFromToken,
-  fetchWithAuth
+  fetchWithAuth,
+  clearTokens,
+  logout
 } from '../js/modules/auth.js';
 import { fetchAllGames } from '../js/modules/api.js';
 

@@ -2,7 +2,9 @@ import {
   getAccessToken,
   getUserRole,
   refreshToken,
-  fetchWithAuth
+  fetchWithAuth,
+  clearTokens,
+  logout
 } from '../js/modules/auth.js';
 import {
   fetchOrders,
