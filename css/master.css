@@ -38,6 +38,24 @@ body {
     text-transform: uppercase;
     font-family: 'Press Start 2P', monospace;
   }
+
+  .dashboard .section-title h2 {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboard .section-title .value {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'VT323', monospace;
+  }
+  
+  .dashboard .section-title.large .value {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   
   .placeholder-box,
   .bio,
@@ -59,6 +77,7 @@ body {
     color: #a07d3b;
     font-style: italic;
   }
+  
   
  /* ========== GRIDS & MEMBERS ========== */
 .member-list {
@@ -269,6 +288,32 @@ body {
     box-shadow: 2px 2px 0 #3f1f00;
     color: #3f1f00;
   }
+
+
+/* ========== WIDGET STYLES ========== */
+#orderFeed {
+    background: #fff9e8;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    font-family: 'VT323', monospace;
+    font-size: 0.6rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 2px dashed #d9b370;
+    border-radius: 6px;
+  }
+
+  /* ========== SHARED UTILITY ========== */
+.placeholder-box,
+.modal-content,
+#chatBox,
+input,
+select,
+textarea {
+  font-family: 'VT323', monospace;
+}
   
   /* ========== TABLE ========== */
   table {
