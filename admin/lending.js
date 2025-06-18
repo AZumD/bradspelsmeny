@@ -8,7 +8,6 @@ import {
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
-let USER_TOKEN = null;
 
 async function guardAdminSession() {
   const token = getAccessToken();
@@ -25,8 +24,6 @@ async function guardAdminSession() {
       window.location.href = "login.html";
       return false;
     }
-  } else {
-    USER_TOKEN = token;
   }
 
   return true;
@@ -221,11 +218,10 @@ if (newUserForm) {
     const lastName = document.getElementById('newLastName').value;
     const phone = document.getElementById('newPhone').value;
 
-    const res = await fetch(`${API_BASE}/users`, {
+    const res = await fetchWithAuth(`${API_BASE}/users`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${USER_TOKEN}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
     });
