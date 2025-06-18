@@ -223,11 +223,13 @@ function getAccessToken() {
     if (adminToggle && adminDropdown) {
         adminToggle.addEventListener("click", () => {
             const rect = adminToggle.getBoundingClientRect();
-            adminDropdown.style.position = "absolute";
-            adminDropdown.style.top = `${rect.bottom + window.scrollY}px`;
-            adminDropdown.style.left = `${rect.left + window.scrollX}px`;
+          
+            adminDropdown.style.position = "fixed"; // fixed instead of absolute
+            adminDropdown.style.top = `${rect.bottom}px`;  // no scrollY
+            adminDropdown.style.left = `${rect.left}px`;
+          
             adminDropdown.style.display =
-            adminDropdown.style.display === "none" ? "block" : "none";
+              adminDropdown.style.display === "none" ? "block" : "none";
           });
           
   
