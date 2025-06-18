@@ -154,7 +154,7 @@ const navHTML = `
     </button>
   </nav>
 
-  <ul id="adminMenuDropdown" style="display:none;position:fixed;bottom:60px;right:35px;background-color:#fffdf7;border:2px dashed #d9b370;padding:10px;font-family:'Press Start 2P',monospace;font-size:0.6rem;list-style:none;z-index:999;">
+  <ul id="adminMenuDropdown" style="display:none;position:absolute;bottom:60px;right:35px;background-color:#fffdf7;border:2px dashed #d9b370;padding:10px;font-family:'Press Start 2P',monospace;font-size:0.6rem;list-style:none;z-index:999;">
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
@@ -221,10 +221,15 @@ function getAccessToken() {
   
     // ✅ Always bind toggle logic if elements exist
     if (adminToggle && adminDropdown) {
-      adminToggle.addEventListener("click", () => {
-        adminDropdown.style.display =
-          adminDropdown.style.display === "none" ? "block" : "none";
-      });
+        adminToggle.addEventListener("click", () => {
+            const rect = adminToggle.getBoundingClientRect();
+            adminDropdown.style.position = "absolute";
+            adminDropdown.style.top = `${rect.bottom + window.scrollY}px`;
+            adminDropdown.style.left = `${rect.left + window.scrollX}px`;
+            adminDropdown.style.display =
+            adminDropdown.style.display === "none" ? "block" : "none";
+          });
+          
   
       document.addEventListener("click", (e) => {
         if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
