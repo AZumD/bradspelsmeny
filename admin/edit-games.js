@@ -12,7 +12,6 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 (() => {
   let games = [];
   let editingIndex = null;
-  let USER_TOKEN = null;
 
   async function guardAdminSession() {
     const token = getAccessToken();
@@ -29,8 +28,6 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
         window.location.href = "login.html";
         return false;
       }
-    } else {
-      USER_TOKEN = token;
     }
 
     return true;
@@ -93,11 +90,7 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
         gameList.innerHTML = "";
         if (loadingSpinner) loadingSpinner.style.display = "block";
 
-        const res = await fetch(`${API_BASE}/games`, {
-          headers: {
-            Authorization: `Bearer ${USER_TOKEN}`,
-          },
-        });
+        const res = await fetchWithAuth(`${API_BASE}/games`);
 
         if (!res || !res.ok) throw new Error("Failed to fetch games");
 
@@ -154,11 +147,8 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
       const id = games[index].id;
       if (!confirm("Vill du verkligen ta bort spelet?")) return;
       try {
-        const res = await fetch(`${API_BASE}/games/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${USER_TOKEN}`,
-          },
+        const res = await fetchWithAuth(`${API_BASE}/games/${id}`, {
+          method: "DELETE"
         });
         if (!res.ok) throw new Error("Delete failed");
         await fetchGames();
@@ -251,31 +241,30 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
         }
 
         const min_table_size_val = minTableSize.value;
-        if (min_table_size_val !== "") {
+        if (min_table_size_val !== "" && !isNaN(min_table_size_val)) {
           formData.append("min_table_size", parseInt(min_table_size_val));
         }
 
-        const id = document.getElementById("editingIndex").value;
-        const url = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`;
-        const method = id ? "PUT" : "POST";
+        const editingId = document.getElementById("editingIndex").value;
+        const url = editingId ? `${API_BASE}/games/${editingId}` : `${API_BASE}/games`;
+        const method = editingId ? "PUT" : "POST";
 
         try {
-          const res = await fetch(url, {
+          const res = await fetchWithAuth(url, {
             method,
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Bearer ${USER_TOKEN}`,
+              "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: formData.toString(),
+            body: formData.toString()
           });
 
           if (!res.ok) throw new Error("Failed to save game");
 
+          await fetchGames();
           gameModal.style.display = "none";
-          fetchGames();
         } catch (err) {
-          console.error("❌ Save game error:", err);
-          alert("Kunde inte spara spel.");
+          alert("Kunde inte spara spelet.");
+          console.error(err);
         }
       };
     }
@@ -289,11 +278,9 @@ const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
       });
     }
 
-    (async () => {
-      if (await guardAdminSession()) {
-        await fetchGames();
-      }
-    })();
+    guardAdminSession().then(ok => {
+      if (ok) fetchGames();
+    });
   });
 })();
 
