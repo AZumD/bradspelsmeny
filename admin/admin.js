@@ -1,6 +1,12 @@
+import {
+  getAccessToken,
+  getUserRole,
+  refreshToken,
+  fetchWithAuth
+} from '../js/modules/auth.js';
+
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
-
 
 // 🔍 Helper: parse JWT
 function parseJwt(token) {
@@ -10,6 +16,7 @@ function parseJwt(token) {
     return null;
   }
 }
+
 // 🔄 Refresh token
 async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
@@ -67,10 +74,10 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   return res;
 }
 
-    function goTo(path) {
-      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-      window.location.href = base + path;
-    }
+function goTo(path) {
+  const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+  window.location.href = base + path;
+}
 
 // 📊 Fetch stats
 async function fetchStats() {
@@ -222,7 +229,7 @@ async function clearAllOrders() {
 
 // 🔒 Immediately check token and role
 (async function () {
-  const token = localStorage.getItem("userToken");
+  const token = getAccessToken();
   
   if (!token) {
     console.log("🔒 No token found, redirecting to login");
@@ -230,17 +237,18 @@ async function clearAllOrders() {
     return;
   }
   
-  const decoded = parseJwt(token);
-  console.log("🔑 Token parsed:", { role: decoded?.role, exp: decoded?.exp });
+  const role = getUserRole();
+  console.log("🔑 Token parsed:", { role });
   
-  if (!decoded || decoded.role !== "admin") {
+  if (!role || role !== "admin") {
     console.log("🚫 Invalid or non-admin token, redirecting to login");
     window.location.href = "/bradspelsmeny/pages/login.html";
     return;
   }
   
   // Optional: Check token expiration
-  if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+  const decoded = parseJwt(token);
+  if (decoded?.exp && Date.now() >= decoded.exp * 1000) {
     console.log("⏰ Token expired, redirecting to login");
     localStorage.removeItem("userToken");
     window.location.href = "/bradspelsmeny/pages/login.html";
@@ -248,25 +256,26 @@ async function clearAllOrders() {
   }
 })();
 
-  // Continue only if valid admin
- document.addEventListener("DOMContentLoaded", () => {
-    console.log("🟢 Admin dashboard loading...");
-    
-    initPixelNav(); // 🧩 From shared-ui.js
-    console.log("🧩 Navigation initialized");
-    
-    updateNotificationIcon(); // 🔔 Just update icon on load  
-    console.log("🔔 Notification icon updated");
-    setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
-    fetchStats();
-    fetchOrders();
-    setInterval(fetchOrders, 5000);
-    console.log("✅ Admin dashboard loaded.");
-    
-    const adminToggle = document.getElementById("adminMenuToggle");
-    const adminDropdown = document.getElementById("adminMenuDropdown");
-    const logoutIcon = document.getElementById("logoutIcon");
-   
+// Continue only if valid admin
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🟢 Admin dashboard loading...");
+  
+  initPixelNav(); // 🧩 From shared-ui.js
+  console.log("🧩 Navigation initialized");
+  
+  updateNotificationIcon(); // 🔔 Just update icon on load  
+  console.log("🔔 Notification icon updated");
+  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
+  
+  fetchStats();
+  fetchOrders();
+  setInterval(fetchOrders, 5000);
+  console.log("✅ Admin dashboard loaded.");
+  
+  const adminToggle = document.getElementById("adminMenuToggle");
+  const adminDropdown = document.getElementById("adminMenuDropdown");
+  const logoutIcon = document.getElementById("logoutIcon");
+  
   // Modal click-to-close functionality
   window.addEventListener('click', (e) => {
     document.querySelectorAll('.modal').forEach((modal) => {
