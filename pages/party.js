@@ -562,9 +562,6 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  initPixelNav(); // 🧩 From shared-ui.js
-  updateNotificationIcon(); // 🔔 Just update icon on load
-  setInterval(updateNotificationIcon, 60000); // 🔁 Refresh every minute
   fetchPartyData();
   loadMessages();
   loadAllGames();
