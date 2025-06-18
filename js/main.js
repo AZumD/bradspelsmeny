@@ -155,8 +155,7 @@ function setupEventListeners() {
     }
 
     const gameId = orderModal.dataset.gameId;
-    const games = getGames();
-    const game = games.find(g => g.id == gameId);
+    const gameTitle = orderModal.dataset.gameTitle;
     const formData = new FormData(orderForm);
 
     let firstName, lastName, phone;
@@ -174,7 +173,7 @@ function setupEventListeners() {
 
     const payload = {
       game_id: gameId,
-      game_title: game?.title_en || "Unknown",
+      game_title: gameTitle || "Unknown",
       first_name: firstName,
       last_name: lastName,
       phone: phone,
@@ -216,6 +215,7 @@ function bindOrderButtons() {
       const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
       const gameId = gameCard.dataset.gameId;
+      const gameTitle = gameCard.querySelector('.game-title')?.textContent || '';
 
       const modal = document.getElementById("orderModal");
       const userFields = document.getElementById("userFields");
@@ -226,6 +226,7 @@ function bindOrderButtons() {
 
       orderForm.reset();
       modal.dataset.gameId = gameId;
+      modal.dataset.gameTitle = gameTitle;
 
       if (userData) {
         if (userFields) {
