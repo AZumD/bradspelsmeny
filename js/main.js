@@ -144,8 +144,7 @@ function setupEventListeners() {
   
     // 🔍 Find the game title from the global games array
     const selectedGame = window.games?.find(g => g.id == gameId);
-    const gameTitle = selectedGame?.title || "Unknown";
-  
+    const gameTitle = selectedGame?.title_sv || selectedGame?.title_en || "Unknown";
     const payload = {
       game_id: gameId,
       game_title: gameTitle,
