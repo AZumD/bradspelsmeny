@@ -1,3 +1,5 @@
+import { setAccessToken } from '../js/modules/auth.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
 
@@ -39,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      localStorage.setItem("userToken", data.token);
+      setAccessToken(data.token);
       localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
       localStorage.setItem("userData", JSON.stringify(data.user)); // 👈 Make sure to save full user data
 
