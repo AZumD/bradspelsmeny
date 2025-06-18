@@ -42,6 +42,7 @@ body {
   .placeholder-box,
   .bio,
   .modal-content,
+  #chatBox,
   table,
   input,
   select,
@@ -59,7 +60,27 @@ body {
     font-style: italic;
   }
   
-  /* ========== GRIDS & AVATARS ========== */
+ /* ========== GRIDS & MEMBERS ========== */
+.member-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .session-card {
+    padding: 10px;
+    border: 1px dashed #d9b370;
+    background-color: #f9f6f2;
+    border-radius: 8px;
+  }
   .favorites-grid, .wishlist-grid, .friends-grid, .parties-grid {
     display: flex;
     flex-wrap: wrap;
@@ -133,6 +154,77 @@ body {
     margin-bottom: 20px;
   }
   
+/* ========== CHAT ========== */
+#chatInputContainer {
+    display: flex;
+    gap: 8px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    margin-top: 10px;
+  }
+  
+  #chatInput {
+    flex: 1;
+    padding: 8px;
+    border: 1px dashed #d9b370;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  
+  #sendMessage {
+    background-color: #d9b370;
+    color: #5a2a0c;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  
+  #chatBox p {
+    margin: 4px 0;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+  
+  /* ========== VISUAL EFFECTS ========== */
+  .game-mention {
+    color: #d17d1e;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline dashed;
+  }
+  
+  .game-mention:hover {
+    text-decoration: underline solid;
+  }
+  
+  .fade-in {
+    animation: fadeInChat 0.3s ease-in-out;
+  }
+  
+  .new-glow {
+    animation: pulseGlow 1s ease-out;
+    box-shadow: 0 0 10px 2px #d9b37088;
+  }
+  
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 0px 0px #d9b37000; }
+    50% { box-shadow: 0 0 10px 4px #d9b37088; }
+    100% { box-shadow: 0 0 0px 0px #d9b37000; }
+  }
+  
+  @keyframes fadeInChat {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+
   /* ========== BUTTONS ========== */
   button, .add-friend-btn {
     font-family: 'Press Start 2P', monospace;
@@ -154,10 +246,28 @@ body {
   }
   
   #editProfileBtn {
-    display: none;
+    display: block;
     margin-top: 25px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.75rem;
+    padding: 12px 0;
     width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #d9b370;
+    color: #5a2a0c;
+    box-shadow: 2px 2px 0 #6b3e0a;
     text-align: center;
+    user-select: none;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+  
+  #editProfileBtn:hover {
+    background-color: #c9a04e;
+    box-shadow: 2px 2px 0 #3f1f00;
+    color: #3f1f00;
   }
   
   /* ========== TABLE ========== */
