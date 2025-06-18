@@ -249,28 +249,6 @@ function toggleAdminMenu() {
   const dropdown = document.getElementById("adminMenuDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const adminToggle = document.getElementById("adminMenuToggle");
-  const isAdmin = (() => {
-    const token = localStorage.getItem("userToken");
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role === "admin";
-    } catch { return false; }
-  })();
-  if (isAdmin && adminToggle) {
-    adminToggle.style.display = "inline-block";
-    adminToggle.addEventListener("click", toggleAdminMenu);
-  }
-  document.getElementById("logoutIcon")?.addEventListener("click", logout);
-  document.getElementById("adminLogout")?.addEventListener("click", logout);
-  const notifIcon = document.getElementById("notificationIcon");
-  notifIcon.addEventListener("click", () => {
-    document.getElementById("badgePopup").style.display = "none";
-    document.getElementById("badgeInfoModal").style.display = "none";
-  });
-});
 
 async function fetchNotifications() {
     try {
@@ -420,3 +398,16 @@ async function fetchNotifications() {
       });
     }
   
+
+
+// 🧷 Final bindings for modals & logout
+const notifIcon = document.getElementById("notificationIcon");
+if (notifIcon) {
+  notifIcon.addEventListener("click", () => {
+    document.getElementById("badgePopup").style.display = "none";
+    document.getElementById("badgeInfoModal").style.display = "none";
+  });
+}
+
+document.getElementById("logoutIcon")?.addEventListener("click", logout);
+document.getElementById("adminLogout")?.addEventListener("click", logout);
