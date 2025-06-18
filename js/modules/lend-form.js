@@ -47,7 +47,18 @@ export function initLendForm(token, onLendSuccess) {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to lend game');
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to lend game');
+      }
+
+      const updatedGame = await res.json();
+      
+      // Update the game in our local array
+      const { getGames } = await import('./games.js');
+      const allGames = getGames();
+      const gameIndex = allGames.findIndex(g => g.id === gameId);
+      if (gameIndex !== -1) {
+        allGames[gameIndex] = updatedGame;
       }
 
       closeModal();
@@ -66,7 +77,7 @@ export function initLendForm(token, onLendSuccess) {
       }
     } catch (err) {
       console.error('Error lending game:', err);
-      alert('Failed to lend game. Please try again.');
+      alert(err.message || 'Failed to lend game. Please try again.');
     }
   });
 

@@ -153,12 +153,18 @@ export async function returnGame(gameId) {
     });
 
     if (!res.ok) {
-      throw new Error('Failed to return game');
+      const errorData = await res.json();
+      throw new Error(errorData.message || 'Failed to return game');
     }
 
-    // Refresh the games list
-    await fetchGames();
+    const updatedGame = await res.json();
     
+    // Update the game in our local array
+    const gameIndex = allGames.findIndex(g => g.id === gameId);
+    if (gameIndex !== -1) {
+      allGames[gameIndex] = updatedGame;
+    }
+
     // Re-render the game lists
     const availableContainer = document.getElementById('availableGames');
     const lentOutContainer = document.getElementById('lentOutGames');
@@ -166,10 +172,10 @@ export async function returnGame(gameId) {
       await renderGameLists('', availableContainer, lentOutContainer);
     }
     
-    return res.json();
+    return updatedGame;
   } catch (err) {
     console.error('Error returning game:', err);
-    throw new Error('Failed to return game. Please try again.');
+    throw new Error(err.message || 'Failed to return game. Please try again.');
   }
 }
 
