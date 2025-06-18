@@ -88,3 +88,12 @@ export function getAccessToken() {
   
     return res;
   }
+
+  export function clearTokens() {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("refreshToken");
+  }
+  export function logout() {
+    clearTokens();
+    window.location.href = "/bradspelsmeny/pages/login.html";
+  }
