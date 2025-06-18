@@ -21,8 +21,8 @@ export const API_ENDPOINTS = {
     ORDERS: {
         CREATE: `${API_BASE}/order-game`,
         LATEST: `${API_BASE}/order-game/latest`,
-        DELETE: `${API_BASE}/order-game` 
-        COMPLETE: (id) => `${API_BASE}/order-game/${id}/complete`, // 👈 ADD THIS
+        DELETE: `${API_BASE}/order-game`,
+        COMPLETE: (id) => `${API_BASE}/order-game/${id}/complete` // 👈 ADD THIS
     },
     USERS: {
         BASE: `${API_BASE}/users`,
