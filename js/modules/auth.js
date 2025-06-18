@@ -34,6 +34,10 @@ export function getAccessToken() {
     return payload?.role || null;
   }
   
+  export function setRefreshToken(token) {
+    localStorage.setItem("refreshToken", token);
+  }
+  
   export async function refreshToken() {
     const refreshToken = getRefreshToken();
     if (!refreshToken) return false;
