@@ -4,7 +4,7 @@ import { getCurrentLang, setCurrentLang, getCurrentCategory, setCurrentCategory 
 import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
 import { GAME_CATEGORIES, API_BASE } from './modules/config.js';
-import { isTokenExpired, getAccessToken, refreshToken, logout } from './modules/auth.js';
+import { isTokenExpired, getAccessToken, refreshToken, logout, getUserRole } from './modules/auth.js';
 import { initPixelNav, initNotificationModal } from './shared/shared-ui.js';
 
 // Make language functions available globally
@@ -127,28 +127,31 @@ function setupEventListeners() {
       return;
     }
 
-    const getCurrentPosition = () =>
-      new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-      });
+    // Skip location check for admin users
+    if (getUserRole() !== 'admin') {
+      const getCurrentPosition = () =>
+        new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
 
-    try {
-      const position = await getCurrentPosition();
-      const distance = getDistanceFromLatLonInMeters(
-        RESTAURANT_LAT,
-        RESTAURANT_LNG,
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      if (distance > ALLOWED_RADIUS_METERS) {
-        alert("🚫 You are too far from the restaurant to place an order.");
+      try {
+        const position = await getCurrentPosition();
+        const distance = getDistanceFromLatLonInMeters(
+          RESTAURANT_LAT,
+          RESTAURANT_LNG,
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        if (distance > ALLOWED_RADIUS_METERS) {
+          alert("🚫 You are too far from the restaurant to place an order.");
+          submitButton.disabled = false;
+          return;
+        }
+      } catch (error) {
+        alert("🚫 Unable to verify your location. Please allow location access and try again.");
         submitButton.disabled = false;
         return;
       }
-    } catch (error) {
-      alert("🚫 Unable to verify your location. Please allow location access and try again.");
-      submitButton.disabled = false;
-      return;
     }
 
     const gameId = orderModal.dataset.gameId;
