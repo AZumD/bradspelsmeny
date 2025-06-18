@@ -128,7 +128,7 @@ export async function renderGames() {
         if (!Array.isArray(games)) {
             throw new Error('Invalid games data received');
         }
-        
+        window.games = games;
         // Filter games based on search and category
         const filteredGames = games.filter(game => {
             if (!game || typeof game !== 'object') return false;
