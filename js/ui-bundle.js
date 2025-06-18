@@ -161,6 +161,8 @@ const navHTML = `
 </div>`;
 
 document.body.insertAdjacentHTML('beforeend', navHTML);
+initPixelNav(); // <--- Make sure this runs right after injecting nav
+
 
 function getAccessToken() {
     return localStorage.getItem('userToken');
@@ -186,16 +188,8 @@ function getAccessToken() {
     }
   }
   
-  async function fetchWithAuth(url, options = {}) {
-    const token = getAccessToken();
-    if (!token) throw new Error("No token");
-  
-    options.headers = options.headers || {};
-    options.headers['Authorization'] = `Bearer ${token}`;
-    return fetch(url, options);
-  }
 
-function initPixelNav() {
+  function initPixelNav() {
     const nav = document.getElementById('pixelNav');
     if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
       nav.style.display = 'flex';
@@ -222,17 +216,31 @@ function initPixelNav() {
     }
   }
 
+
+  async function fetchWithAuth(url, options = {}) {
+    const token = getAccessToken();
+    if (!token) throw new Error("No token");
+  
+    options.headers = options.headers || {};
+    options.headers['Authorization'] = `Bearer ${token}`;
+    return fetch(url, options);
+  }
+
+
   function goTo(path) {
     const base = window.location.hostname === 'localhost'
       ? ''
       : '/bradspelsmeny';
     window.location.href = window.location.origin + base + path;
   }
+  window.goTo = goTo;
+  
+  
   function logout() {
     clearTokens();
     window.location.href = '/bradspelsmeny/pages/login.html';
   }
-  
+
 function toggleAdminMenu() {
   const dropdown = document.getElementById("adminMenuDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
