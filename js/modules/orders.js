@@ -7,6 +7,8 @@ export async function fetchOrders() {
         if (!res.ok) throw new Error("Failed to fetch orders");
 
         const orders = await res.json();
+        console.log('📦 Orders from backend:', orders);  // Debug log
+
         const container = document.getElementById("orderFeed");
 
         if (!orders.length) {
@@ -14,13 +16,23 @@ export async function fetchOrders() {
             return;
         }
 
-        container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => `
-            <div style="margin:10px 0; border-bottom:1px dashed #999;">
-                <strong>${order.game_title}</strong> ➔ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
-                <small>${new Date(order.created_at).toLocaleString()}</small><br>
-                <button onclick="completeOrder(${order.id}, ${order.game_id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
-            </div>
-        `).join("");
+        container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => {
+            console.log('🎲 Order details:', {  // Debug log
+                id: order.id,
+                game_id: order.game_id,
+                game_title: order.game_title,
+                first_name: order.first_name,
+                last_name: order.last_name,
+                table_id: order.table_id
+            });
+            return `
+                <div style="margin:10px 0; border-bottom:1px dashed #999;">
+                    <strong>${order.game_title || 'Unknown Game'}</strong> ➔ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
+                    <small>${new Date(order.created_at).toLocaleString()}</small><br>
+                    <button onclick="completeOrder(${order.id}, ${order.game_id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
+                </div>
+            `;
+        }).join("");
 
         const clearBtnId = "clearAllOrdersButton";
         if (!document.getElementById(clearBtnId)) {
