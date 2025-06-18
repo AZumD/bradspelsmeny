@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redigera Spel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    #searchBar {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.6rem;
+      margin-bottom: 1rem;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+}
+
+
+    .edit-button, .delete-button {
+      font-size: 0.5rem;
+      padding: 0.2rem 0.4rem;
+      background: #e6b35c;
+      color: #3c2415;
+      border: 2px solid #3c2415;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #gameModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+      width: 100%;
+      margin-bottom: 0.5rem;
+      font-size: 0.5rem;
+      font-family: 'Press Start 2P', monospace;
+      padding: 0.4rem;
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 0.3rem;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    .star-rating .star.filled {
+      color: gold;
+    }
+
+    #loadingSpinner {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .game-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+  </style>
+</head>
+<body>
+  <main class="dashboard">
+    <h1>Redigera Spel</h1>
+    <div class="maincontain">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <button id="addGameButton">➕ Lägg till spel</button>
+      </div>
+      <input id="searchBar" type="text" placeholder="Sök efter spel..." />
+      <div id="loadingSpinner">🔄 Laddar spel...</div>
+      <div id="gameList"></div>
+    </div>
+  </main>
+
+  <div id="gameModal">
+    <div class="modal-content">
+      <h2 id="formTitle">Redigera spel</h2>
+     <form id="gameForm" enctype="multipart/form-data">
+  <input type="hidden" id="editingIndex" />
+
+  <input id="title" placeholder="Title" required />
+  <textarea id="descSv" placeholder="Beskrivning (sv)"></textarea>
+  <textarea id="descEn" placeholder="Description (en)"></textarea>
+
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+    <input id="minPlayers" placeholder="Min spelare" style="flex: 1;" />
+    <input id="maxPlayers" placeholder="Max spelare" style="flex: 1;" />
+  </div>
+
+  <input id="time" placeholder="Tid" />
+  <input id="age" placeholder="Ålder" />
+  <input id="tags" placeholder="Taggar (kommaseparerade)" />
+
+  <input id="img" placeholder="Bild-URL" />
+  <label for="imgFile">📷 Eller ladda upp en bild:</label>
+  <input type="file" id="imgFile" accept="image/*" />
+
+  <input id="rules" placeholder="Regellänk (valfritt)" />
+  <label for="rulesFile">📄 Eller ladda upp regler (PDF):</label>
+  <input type="file" id="rulesFile" accept=".pdf" />
+
+  <label>
+    <span>Endast för lugna dagar</span>
+    <input type="checkbox" id="slowDayOnly">
+  </label>
+  <label>
+    <span>Endast för betrodda gäster</span>
+    <input type="checkbox" id="trustedOnly">
+  </label>
+  <label>
+  <span>Endast för medlemmar</span>
+  <input type="checkbox" id="membersOnly">
+</label>
+
+
+  <label for="minTableSize">Minsta bordstorlek:</label>
+  <select id="minTableSize">
+    <option value="">Valfri</option>
+    <option value="1-2">1–2</option>
+    <option value="3-4">3–4</option>
+    <option value="5-6">5–6</option>
+    <option value="7+">7+</option>
+  </select>
+
+  <div class="condition-label">
+    <span>Skick (1–5):</span>
+    <div id="conditionRating" class="star-rating">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+  </div>
+  <input type="hidden" id="conditionRatingValue" name="conditionRating" />
+
+  <input id="staffPicks" placeholder="Staff picks (kommaseparerat)" />
+
+  <button type="submit">💾 Spara</button>
+  <button type="button" id="closeModal">❌ Avbryt</button>
+</form>
+ </div>
+  </div>
+<!--NOTIFICATIONS----------------------------------------------------------------------------->
+	
+<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
+title="Notifications" width="58" height="58" />
+<span id="notificationDot">
+</span>
+<div id="notificationModal" class="modal" style="display:none;">
+	<div class="modal-content">
+		<span class="close-btn" id="closeNotificationBtn">
+			&times;
+		</span>
+		<h3>
+			Notifications
+		</h3>
+		<div id="notificationList" class="notification-list">
+			<div class="placeholder-box">
+				Loading...
+			</div>
+		</div>
+	</div>
+</div>
+<!----------------------------------------------------------------------------/NOTIFICATIONS-->
+<!---PIXELNAV--------------------------------------------------------------------------------->
+	
+<nav id="pixelNav">
+	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+	onclick="goTo('/pages/profile.html')">
+	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+	class="nav-icon" onclick="logout()">
+	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
+		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+		height="32" />
+	</button>
+</nav>
+<ul id="adminMenuDropdown" style="
+display: none;
+position: fixed;
+bottom: 60px;
+right: 35px;
+background-color: #fffdf7;
+border: 2px dashed #d9b370;
+padding: 10px;
+font-family: 'Press Start 2P', monospace;
+font-size: 0.6rem;
+list-style: none;
+z-index: 999;
+">
+	<li>
+		<a href="/bradspelsmeny/admin/index.html">
+			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/edit-games.html">
+			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+			height="48" />
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/user-db.html">
+			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/lending.html">
+			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="#" onclick="logout()">
+			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+</ul>
+<!---------------------------------------------------------------------------------/PIXELNAV-->
+<!--SPACING----------------------------------------------------------------------------------->
+	
+<div style="height: 60px;">
+<!----------------------------------------------------------------------------------/SPACING-->
+  <link rel="stylesheet" href="../css/shared-ui.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/shared/shared-ui.js"></script>
+  <script defer src="edit-games.js"></script>
+</body>
+</html>

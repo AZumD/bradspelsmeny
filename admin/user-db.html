@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Hantera användare i Bradspelsmeny" />
+    <title>Användardatabas - Bradspelsmeny</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/bradspelsmeny/css/main.css">
+    <link rel="stylesheet" href="/bradspelsmeny/css/shared-ui.css">
+    <link rel="stylesheet" href="/bradspelsmeny/admin/css/admin.css">
+    <style>
+       
+
+        .dashboard-title {
+            color: #fff4d9;
+            font-size: 1rem;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .add-button-wrapper {
+            margin: 1rem 0;
+        }
+
+        .add-button {
+            font-size: 0.6rem;
+            background-color: #e6b35c;
+            border: 2px solid #3c2415;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #c19761;
+            color: #3c2415;
+        }
+
+        .form-container,
+        .user-list {
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+
+        .user-card {
+            background-color: #fffaf0;
+            border: 2px solid #3c2415;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #c19761;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-title {
+            font-size: 0.65rem;
+        }
+
+        .edit-button,
+        .delete-button {
+            font-size: 0.6rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        label {
+            font-size: 0.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="file"] {
+            font-family: 'Press Start 2P', monospace;
+            padding: 0.5rem;
+            font-size: 0.6rem;
+            border: 2px solid #3c2415;
+            border-radius: 4px;
+            background-color: #fffaf0;
+            color: #3c2415;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            background: #e6b35c;
+            color: #3c2415;
+            border: 2px solid #3c2415;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #c19761;
+            align-self: center;
+        }
+
+        #userModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+      
+    </style>
+</head>
+<body>
+    <main class="dashboard">
+        <h1>Användardatabas</h1>
+        <div class="maincontain">
+            <div class="button-container">
+                <button id="addUserButton" class="pixel-button">➕ Lägg till medlem</button>
+            </div>
+            <div id="loadingSpinner" class="loading-spinner" aria-live="polite">🔄 Laddar användare...</div>
+            <div id="userList" class="user-list"></div>
+            <div id="errorMessage" class="error-message" role="alert" aria-live="assertive"></div>
+        </div>
+    </main>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal" role="dialog" aria-labelledby="userFormTitle">
+        <div class="modal-content">
+            <h2 id="userFormTitle">📂 Lägg till användare</h2>
+            <form id="userForm" class="form-container">
+                <input type="hidden" id="editingId" name="editingId" />
+
+                <div class="form-group">
+                    <label for="username">Användarnamn (valfritt)</label>
+                    <input type="text" id="username" name="username" aria-label="Användarnamn" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Lösenord (valfritt)</label>
+                    <input type="password" id="password" name="password" aria-label="Lösenord" />
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">Förnamn</label>
+                    <input type="text" id="firstName" name="firstName" required aria-label="Förnamn" />
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Efternamn</label>
+                    <input type="text" id="lastName" name="lastName" required aria-label="Efternamn" />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Telefonnummer</label>
+                    <input type="tel" id="phone" name="phone" required aria-label="Telefonnummer" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-post (valfritt)</label>
+                    <input type="email" id="email" name="email" aria-label="E-postadress" />
+                </div>
+
+                <div class="form-group">
+                    <label for="idNumber">Personnummer (valfritt)</label>
+                    <input type="text" id="idNumber" name="idNumber" aria-label="Personnummer" />
+                </div>
+
+                <div class="form-group">
+                    <label for="idImage">ID-bild (valfritt)</label>
+                    <input type="file" id="idImage" name="idImage" accept="image/*" aria-label="Välj ID-bild" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="pixel-button">💾 Spara användare</button>
+                    <button type="button" id="closeUserModal" class="pixel-button">❌ Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Badge Modal -->
+    <div id="badgeModal" class="modal" role="dialog" aria-labelledby="badgeFormTitle">
+        <div class="modal-content">
+            <h2 id="badgeFormTitle">🎖️ Tilldela märke</h2>
+            <form id="badgeForm" class="form-container">
+                <input type="hidden" id="badgeUserId" />
+                
+                <div class="form-group">
+                    <label for="badgeSelect">Välj ett märke:</label>
+                    <select id="badgeSelect" required aria-label="Välj märke"></select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="pixel-button">✅ Tilldela</button>
+                    <button type="button" id="closeBadgeModal" class="pixel-button">❌ Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification-container">
+        <img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifieringar" width="58" height="58" />
+        <span id="notificationDot"></span>
+        <div id="notificationModal" class="modal" role="dialog" aria-labelledby="notificationTitle">
+            <div class="modal-content">
+                <span class="close-btn" id="closeNotificationBtn" aria-label="Stäng">&times;</span>
+                <h3 id="notificationTitle">Notifieringar</h3>
+                <div id="notificationList" class="notification-list">
+                    <div class="placeholder-box">Laddar...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="pixelNav" role="navigation" aria-label="Huvudnavigation">
+        <img src="../img/icons/icon-home.webp" alt="Hem" class="nav-icon" onclick="goTo('/')">
+        <img src="../img/icons/icon-profile.webp" alt="Profil" class="nav-icon" onclick="goTo('/pages/profile.html')">
+        <img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logga ut" class="nav-icon" onclick="logout()">
+        <button id="adminMenuToggle" class="nav-icon" aria-label="Admin-meny" aria-expanded="false">
+            <img src="../img/icons/icon-admintools.webp" alt="Admin-verktyg" width="32" height="32" />
+        </button>
+    </nav>
+
+    <ul id="adminMenuDropdown" class="admin-dropdown" role="menu" aria-label="Admin-meny">
+        <li role="none">
+            <a href="/bradspelsmeny/admin/index.html" role="menuitem">
+                <img src="../img/icons/icon-admin.webp" alt="Admin-panel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/edit-games.html" role="menuitem">
+                <img src="../img/icons/icon-editgames.webp" alt="Redigera spel" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/user-db.html" role="menuitem">
+                <img src="../img/icons/icon-friends.webp" alt="Användardatabas" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="/bradspelsmeny/admin/lending.html" role="menuitem">
+                <img src="../img/icons/icon-lending.webp" alt="Utlåning" width="48" height="48" />
+            </a>
+        </li>
+        <li role="none">
+            <a href="#" onclick="logout()" role="menuitem">
+                <img src="../img/icons/icon-logout.webp" alt="Logga ut" width="48" height="48" />
+            </a>
+        </li>
+    </ul>
+
+    <!-- Spacing for navigation -->
+    <div class="nav-spacing"></div>
+
+    <!-- Scripts -->
+    <link rel="stylesheet" href="../css/shared-ui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="user-db.js" defer></script>
+    <script src="../js/shared/shared-ui.js"></script>
+</body>
+</html>
