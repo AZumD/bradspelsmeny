@@ -61,45 +61,6 @@ async function fetchStats() {
   }
 }
 
-// 🧾 Fetch orders
-async function fetchOrders() {
-  console.log("📥 Fetching latest orders...");
-  try {
-    const res = await fetchWithAuth("https://bradspelsmeny-backend-production.up.railway.app/order-game/latest");
-    if (!res.ok) throw new Error("Failed to fetch orders");
-
-    const orders = await res.json();
-    console.log("✅ Orders fetched:", orders);
-
-    const container = document.getElementById("orderFeed");
-
-    if (!orders.length) {
-      console.log("📭 No game orders found");
-      container.innerHTML = "<p style='padding:20px; font-style:italic;'>📭 No current game orders.</p>";
-      return;
-    }
-
-    container.innerHTML = "<h3>📦 Latest Game Orders:</h3>" + orders.map(order => `
-      <div style="margin:10px 0; border-bottom:1px dashed #999;">
-        <strong>${order.game_title}</strong> ➔ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
-        <small>${new Date(order.created_at).toLocaleString()}</small><br>
-        <button onclick="completeOrder(${order.id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
-      </div>
-    `).join("");
-
-    const clearBtnId = "clearAllOrdersButton";
-    if (!document.getElementById(clearBtnId)) {
-      const btn = document.createElement("button");
-      btn.id = clearBtnId;
-      btn.textContent = "🪩 Clear All Orders";
-      btn.onclick = clearAllOrders;
-      container.appendChild(btn);
-    }
-
-  } catch (err) {
-    console.error("❌ Failed to fetch game orders:", err);
-  }
-}
 
 // ✅ Complete order
 async function completeOrder(orderId, firstName, lastName, phone, tableId) {
