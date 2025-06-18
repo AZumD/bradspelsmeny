@@ -119,13 +119,38 @@ async function createGameCard(game) {
   let extra = '';
 
   if (game.lent_out) {
-    const userName = game.lent_to_name ? game.lent_to_name.trim() : 'Okänd';
-    const tableNumber = game.lent_to_table ? game.lent_to_table.trim() : 'okänt bord';
-    const timestamp = game.lent_at ? new Date(game.lent_at).toLocaleString('sv-SE') : 'okänt datum';
-    
-    extra = `<br><small style="font-size: 0.5rem;">
-      Lånad ut till ${userName} (${tableNumber}) – ${timestamp}
-    </small>`;
+    try {
+      const token = localStorage.getItem('userToken');
+      if (!token) throw new Error('No authentication token');
+
+      const res = await fetch(`${API_BASE}/games/${game.id}/current-lend`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch lending info');
+      }
+
+      const lendingInfo = await res.json();
+      const userName = lendingInfo.first_name && lendingInfo.last_name 
+        ? `${lendingInfo.first_name} ${lendingInfo.last_name}`
+        : 'Okänd';
+      const tableNumber = lendingInfo.table_id ? `bord ${lendingInfo.table_id}` : 'okänt bord';
+      const timestamp = lendingInfo.timestamp 
+        ? new Date(lendingInfo.timestamp).toLocaleString('sv-SE')
+        : 'okänt datum';
+      
+      extra = `<br><small style="font-size: 0.5rem;">
+        Lånad ut till ${userName} (${tableNumber}) – ${timestamp}
+      </small>`;
+    } catch (err) {
+      console.error('Error fetching lending info:', err);
+      extra = `<br><small style="font-size: 0.5rem;">
+        Lånad ut till Okänd (okänt bord) – okänt datum
+      </small>`;
+    }
   }
 
   card.className = 'section-title';
@@ -170,10 +195,7 @@ export async function returnGame(gameId) {
     if (gameIndex !== -1) {
       allGames[gameIndex] = {
         ...allGames[gameIndex],
-        lent_out: false,
-        lent_to_name: null,
-        lent_to_table: null,
-        lent_at: null
+        lent_out: false
       };
     }
 
