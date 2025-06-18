@@ -142,9 +142,10 @@ function setupEventListeners() {
       phone = `${formData.get("country_code")}${formData.get("phone")}`;
     }
   
-    // 🔍 Find the game title from the global games array
-    const selectedGame = window.games?.find(g => g.id == gameId);
-    const gameTitle = selectedGame?.title_sv || selectedGame?.title_en || "Unknown";
+    // Get the game title from the game card
+    const gameCard = document.querySelector(`.game-card[data-game-id="${gameId}"]`);
+    const gameTitle = gameCard?.querySelector('.game-title')?.textContent || "Unknown";
+    
     const payload = {
       game_id: gameId,
       game_title: gameTitle,

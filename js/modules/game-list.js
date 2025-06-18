@@ -179,6 +179,11 @@ function createGameCard(game) {
     img.alt = game.title_sv || game.title_en || 'Game';
     thumbnailWrapper.appendChild(img);
 
+    const title = document.createElement('div');
+    title.className = 'game-title';
+    title.textContent = game.title_sv || game.title_en || 'Untitled Game';
+    card.appendChild(title);
+
     const icons = document.createElement('div');
     icons.className = 'game-card-icons';
 
@@ -210,10 +215,6 @@ function createGameCard(game) {
 
     const info = document.createElement('div');
     info.className = 'game-info';
-
-    const title = document.createElement('h3');
-    title.textContent = game.title_sv || game.title_en || 'Untitled Game';
-    info.appendChild(title);
 
     const description = document.createElement('p');
     description.textContent = game.description_sv || game.description_en || 'No description available.';
