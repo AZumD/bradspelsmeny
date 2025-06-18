@@ -119,8 +119,12 @@ async function createGameCard(game) {
   let extra = '';
 
   if (game.lent_out) {
+    const userName = game.lent_to_name ? game.lent_to_name.trim() : 'Okänd';
+    const tableNumber = game.lent_to_table ? game.lent_to_table.trim() : 'okänt bord';
+    const timestamp = game.lent_at ? new Date(game.lent_at).toLocaleString('sv-SE') : 'okänt datum';
+    
     extra = `<br><small style="font-size: 0.5rem;">
-      Lånad ut till ${game.lent_to_name || 'Okänd'} (${game.lent_to_table || 'okänt bord'}) – ${new Date(game.lent_at).toLocaleString('sv-SE')}
+      Lånad ut till ${userName} (${tableNumber}) – ${timestamp}
     </small>`;
   }
 
@@ -154,8 +158,12 @@ export async function returnGame(gameId) {
 
     if (!res.ok) {
       const errorData = await res.json();
+      console.error('❌ Backend error:', errorData);
       throw new Error(errorData.message || 'Failed to return game');
     }
+
+    const responseData = await res.json();
+    console.log('✅ Return response:', responseData);
 
     // Update the game in our local array to mark it as not lent out
     const gameIndex = allGames.findIndex(g => g.id === gameId);
@@ -176,7 +184,7 @@ export async function returnGame(gameId) {
       await renderGameLists('', availableContainer, lentOutContainer);
     }
     
-    return { message: 'Game returned successfully' };
+    return responseData;
   } catch (err) {
     console.error('Error returning game:', err);
     throw new Error(err.message || 'Failed to return game. Please try again.');
