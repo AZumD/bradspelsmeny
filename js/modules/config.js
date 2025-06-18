@@ -20,7 +20,8 @@ export const API_ENDPOINTS = {
     },
     ORDERS: {
         CREATE: `${API_BASE}/order-game`,
-        LATEST: `${API_BASE}/order-game/latest`
+        LATEST: `${API_BASE}/order-game/latest`,
+        DELETE: `${API_BASE}/order-game`  // 👈 ADD THIS
     },
     USERS: {
         BASE: `${API_BASE}/users`,
