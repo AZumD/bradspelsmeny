@@ -1,3 +1,5 @@
+import { setAccessToken, setRefreshToken } from '../js/modules/auth.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
 
@@ -25,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Store access token, refresh token, and user data
-      localStorage.setItem("userToken", data.token);
-      localStorage.setItem("refreshToken", data.refreshToken);
+      setAccessToken(data.token);
+      setRefreshToken(data.refreshToken);
       localStorage.setItem("userData", JSON.stringify(data.user));
       localStorage.setItem("userId", data.user.id);
 
