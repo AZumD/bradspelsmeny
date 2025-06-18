@@ -1,0 +1,254 @@
+<!--/pages/party.html-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Party Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+.game-mention {
+	color:#d17d1e;
+	cursor:pointer;
+	font-weight:bold;
+	text-decoration:underline dashed;
+}
+.game-mention:hover {
+	text-decoration:underline solid;
+}
+.fade-in {
+	animation:fadeInChat 0.3s ease-in-out;
+}
+.new-glow {
+	animation:pulseGlow 1s ease-out;
+	box-shadow:0 0 10px 2px #d9b37088;
+}
+#chatInputContainer {
+	display:flex;
+	gap:8px;
+	padding:0 10px;
+	box-sizing:border-box;
+	max-width:100%;
+	margin-top:10px;
+}
+#chatInput {
+	flex:1;
+	padding:8px;
+	border:1px dashed #d9b370;
+	border-radius:6px;
+	font-size:0.9rem;
+}
+#sendMessage {
+	background-color:#d9b370;
+	color:#5a2a0c;
+	border:none;
+	padding:8px 12px;
+	border-radius:6px;
+	font-size:0.9rem;
+}
+@keyframes pulseGlow {
+	0% {
+	box-shadow:0 0 0px 0px #d9b37000;
+}
+50% {
+	box-shadow:0 0 10px 4px #d9b37088;
+}
+100% {
+	box-shadow:0 0 0px 0px #d9b37000;
+}
+}@keyframes fadeInChat {
+	from {
+	opacity:0;
+	transform:translateY(4px);
+}
+to {
+	opacity:1;
+	transform:translateY(0);
+}
+}.member-list {
+	display:flex;
+	flex-wrap:wrap;
+	gap:10px;
+	align-items:center;
+	justify-content:center;
+}
+.session-list {
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+}
+.session-card {
+	padding:10px;
+	border:1px dashed #d9b370;
+	background-color:#f9f6f2;
+	border-radius:8px;
+}
+#chatBox p {
+	margin:4px 0;
+	font-size:0.85rem;
+	text-align:left;
+}
+#chatBox {
+	padding:0 10px;
+	box-sizing:border-box;
+}
+
+  </style>
+</head>
+<body>
+      <img id="partyAvatar" class="avatar" src="../img/avatar-party-placeholder.webp" alt="Party Avatar" />
+
+  <div class="maincontain">
+    <h1 id="partyName">Loading...</h1>
+     <div>
+  <div class="section-title">Party Chat</div>
+  <div id="chatBox" class="placeholder-box" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+  </div>
+  <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Write a message..." />
+    <button id="sendMessage">Send</button>
+  </div>
+</div>
+      <div class="section-title">Members</div>
+      <div id="memberList" class="member-list">
+  <div class="placeholder-box">Loading party members…</div>
+</div>
+
+    <div>
+      <div class="section-title">Active Session</div>
+      <div class="placeholder-box">No active session currently</div>
+    </div>
+
+    <div>
+      <div class="section-title">Past Sessions</div>
+      <div id="sessionList" class="session-list">
+        <div class="placeholder-box">No sessions yet</div>
+      </div>
+    </div>
+        <div class="section-title">Invite Code</div>
+      <div class="placeholder-box" id="inviteCodeBox">Loading invite code...</div>
+</div>
+<!--NOTIFICATIONS----------------------------------------------------------------------------->
+	
+<img id="notificationIcon" src="../img/icons/icon-notif-off.webp" alt="Notifications"
+title="Notifications" width="58" height="58" />
+<span id="notificationDot">
+</span>
+<div id="notificationModal" class="modal" style="display:none;">
+	<div class="modal-content">
+		<span class="close-btn" id="closeNotificationBtn">
+			&times;
+		</span>
+		<h3>
+			Notifications
+		</h3>
+		<div id="notificationList" class="notification-list">
+			<div class="placeholder-box">
+				Loading...
+			</div>
+		</div>
+	</div>
+</div>
+<!----------------------------------------------------------------------------/NOTIFICATIONS-->
+<!---PIXELNAV--------------------------------------------------------------------------------->
+	
+<nav id="pixelNav">
+	<img src="../img/icons/icon-home.webp" alt="Home" class="nav-icon" onclick="goTo('/')">
+	<img src="../img/icons/icon-profile.webp" alt="Profile" class="nav-icon"
+	onclick="goTo('/pages/profile.html')">
+	<img id="logoutIcon" src="../img/icons/icon-logout.webp" alt="Logout"
+	class="nav-icon" onclick="logout()">
+	<button id="adminMenuToggle" class="nav-icon" style="display: none;">
+		<img src="../img/icons/icon-admintools.webp" alt="Admin Menu" width="32"
+		height="32" />
+	</button>
+</nav>
+<ul id="adminMenuDropdown" style="
+display: none;
+position: fixed;
+bottom: 60px;
+right: 35px;
+background-color: #fffdf7;
+border: 2px dashed #d9b370;
+padding: 10px;
+font-family: 'Press Start 2P', monospace;
+font-size: 0.6rem;
+list-style: none;
+z-index: 999;
+">
+	<li>
+		<a href="/bradspelsmeny/admin/index.html">
+			<img src="../img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/edit-games.html">
+			<img src="../img/icons/icon-editgames.webp" alt="Edit Games" width="48"
+			height="48" />
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/user-db.html">
+			<img src="../img/icons/icon-friends.webp" alt="User DB" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="/bradspelsmeny/admin/lending.html">
+			<img src="../img/icons/icon-lending.webp" alt="Lending" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+	<li>
+		<a href="#" onclick="logout()">
+			<img src="../img/icons/icon-logout.webp" alt="Logout" width="48" height="48"
+			/>
+			</button>
+		</a>
+	</li>
+</ul>
+<!---------------------------------------------------------------------------------/PIXELNAV-->
+<!--SPACING----------------------------------------------------------------------------------->
+	
+<div style="height: 60px;">
+<!----------------------------------------------------------------------------------/SPACING-->
+<div id="inviteToPartyModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn" id="closeInviteToPartyModal">&times;</span>
+    <h3>Invite a Friend to This Party</h3>
+    <p>Enter their User ID:</p>
+    <input type="number" id="inviteUserId" placeholder="User ID" />
+    <button id="submitPartyInvite" class="add-friend-btn" style="margin-top: 10px;">Send Invite</button>
+  </div>
+</div>
+<div id="favoriteGameModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeGameModal('favoriteGameModal')">&times;</span>
+    <img id="favoriteGameModalImg" src="" alt="" style="
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 2px solid #c9a04e;
+    " />
+    <h3 id="favoriteGameModalTitle"></h3>
+<p id="favoriteGameModalDetails" style="font-size: 0.8rem; margin-top: -8px; color: #7a5a30;"></p>
+<p id="favoriteGameModalDescription" style="font-size: 0.85rem;"></p>
+<p id="favoriteGameModalDisclaimer" style="color: red; font-size: 0.75rem; margin-top: 8px;"></p>
+
+  </div>
+</div>
+</div>
+  <link rel="stylesheet" href="../css/shared-ui.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/shared/shared-ui.js"></script>
+  <script src="party.js" defer></script>
+</body>
+</html>
