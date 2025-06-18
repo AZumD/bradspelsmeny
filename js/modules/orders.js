@@ -1,9 +1,6 @@
 import { API_ENDPOINTS } from './config.js';
 import { fetchWithAuth } from './api.js';
 
-import { fetchWithAuth } from './auth.js';
-import { API_ENDPOINTS } from './config.js';
-import { clearAllOrders, completeOrder } from './orders.js';
 
 let cachedGames = [];
 
