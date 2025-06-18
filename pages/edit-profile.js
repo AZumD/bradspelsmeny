@@ -1,5 +1,14 @@
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app'; // Your backend URL
 
+import { 
+  getAccessToken, 
+  getRefreshToken, 
+  getUserIdFromToken,
+  refreshToken,
+  fetchWithAuth,
+  removeTokens
+} from '../js/modules/auth.js';
+
 function getAccessToken() {
   return localStorage.getItem('userToken');
 }
@@ -74,21 +83,11 @@ if (!token) {
 
 let currentAvatarUrl = null;
 
-// Decode user ID from JWT token
-function getUserIdFromToken() {
-  try {
-    const payload = JSON.parse(atob(getAccessToken().split('.')[1]));
-    return payload.id;
-  } catch {
-    return null;
-  }
-}
-
 async function fetchProfile() {
   const userId = getUserIdFromToken();
   if (!userId) {
     alert('Invalid token, please log in again.');
-    clearTokens();
+    removeTokens();
     window.location.href = '/login.html'; // Use absolute path here too
     return;
   }
