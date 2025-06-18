@@ -122,7 +122,7 @@ async function fetchOrders() {
       <div style="margin:10px 0; border-bottom:1px dashed #999;">
         <strong>${order.game_title}</strong> ➔ Table <strong>${order.table_id}</strong> by <strong>${order.first_name}</strong><br>
         <small>${new Date(order.created_at).toLocaleString()}</small><br>
-        <button onclick="completeOrder(${order.id}, '${order.game_id}', '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
+        <button onclick="completeOrder(${order.id}, '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">✅ Complete Order</button>
       </div>
     `).join("");
 
@@ -141,7 +141,7 @@ async function fetchOrders() {
 }
 
 // ✅ Complete order
-async function completeOrder(orderId, gameId, firstName, lastName, phone, tableId) {
+async function completeOrder(orderId, firstName, lastName, phone, tableId) {
   try {
     const orderRes = await fetchWithAuth(`${API_BASE}/order-game/${orderId}`);
     if (!orderRes.ok) {
@@ -150,7 +150,7 @@ async function completeOrder(orderId, gameId, firstName, lastName, phone, tableI
     }
     const order = await orderRes.json();
 
-    const lendRes = await fetchWithAuth(`${API_BASE}/lend/${gameId}`, {
+    const lendRes = await fetchWithAuth(`${API_BASE}/lend/${order.game_id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
