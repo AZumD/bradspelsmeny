@@ -1,5 +1,7 @@
 
 // ui-bundle.js
+
+const API_BASE = "https://bradspelsmeny-backend-production.up.railway.app";
 const css = `
 
 #pixelNav {
@@ -105,13 +107,13 @@ const css = `
   color:white;
   padding:10px;
   border-radius:50%;
-  background:transperant;
+  background:transparent;
   cursor:pointer;
   z-index:1000;
   transition:background-color 0.3s ease,transform 0.2s ease;
 }
 #notificationIcon:hover {
-  background:transperant;
+  background:transparent;
   transform:scale(1.05);
 }
 .notification-item button {
@@ -151,9 +153,47 @@ const navHTML = `
 
   <div id="badgeInfoModal" class="modal" style="display:none;"><div class="modal-content"><span class="close-btn" id="closeBadgeInfoBtn">&times;</span><img id="badgeIcon" src="" alt="Badge Icon" style="width:64px;height:64px;margin-bottom:1rem;"><h3 id="badgeName" style="margin-bottom:0.5rem;"></h3><p id="badgeDescription" style="font-size:0.9rem;"></p></div></div>
   <div id="badgePopup" class="modal" style="display:none;"><div class="modal-content"><span class="close-btn" id="closeBadgePopup">&times;</span><h3 style="margin-bottom:8px;">🏅 Badge Unlocked!</h3><img id="badgePopupImage" src="" alt="Badge" style="width:64px;height:64px;border:2px solid #c9a04e;border-radius:8px;margin-bottom:10px;"><div id="badgePopupName" style="font-weight:bold;font-size:1rem;margin-bottom:4px;"></div><div id="badgePopupTime" style="font-size:0.75rem;color:#a07d3b;"></div></div></div>
-`;
+<div id="notificationModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn" id="closeNotificationBtn">&times;</span>
+    <div id="notificationList" class="notification-list"></div>
+  </div>
+</div>`;
 
 document.body.insertAdjacentHTML('beforeend', navHTML);
+
+function getAccessToken() {
+    return localStorage.getItem('userToken');
+  }
+  
+  function isTokenExpired(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  }
+  
+  function getUserRole() {
+    const token = getAccessToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    } catch {
+      return null;
+    }
+  }
+  
+  async function fetchWithAuth(url, options = {}) {
+    const token = getAccessToken();
+    if (!token) throw new Error("No token");
+  
+    options.headers = options.headers || {};
+    options.headers['Authorization'] = `Bearer ${token}`;
+    return fetch(url, options);
+  }
 
 function initPixelNav() {
     const nav = document.getElementById('pixelNav');
