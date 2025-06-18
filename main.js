@@ -3,6 +3,15 @@ const RESTAURANT_LAT = 57.693624;
 const RESTAURANT_LNG = 11.951328;
 const ALLOWED_RADIUS_METERS = 300;
 
+import { 
+  getAccessToken, 
+  getRefreshToken, 
+  refreshToken, 
+  fetchWithAuth,
+  removeTokens,
+  logout
+} from './js/modules/auth.js';
+
 const translations = {
   sv: {
     intro:
@@ -52,7 +61,6 @@ let currentCategory = 'all';
 let userFavorites = [];
 let userWishlist = [];
 
-
 function isTokenExpired(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -63,14 +71,17 @@ function isTokenExpired(token) {
 }
 
 function getUserToken() {
-  return localStorage.getItem('userToken');
+  return getAccessToken();
 }
+
 function setUserToken(token) {
   localStorage.setItem('userToken', token);
 }
+
 function getRefreshToken() {
   return localStorage.getItem('refreshToken');
 }
+
 function removeTokens() {
   localStorage.removeItem('userToken');
   localStorage.removeItem('refreshToken');
@@ -83,7 +94,6 @@ function logout() {
   localStorage.removeItem("guestUser");
   goTo('/pages/login.html'); // or '/' depending on UX
 }
-
 
 async function refreshToken() {
   const refreshToken = getRefreshToken();
@@ -125,16 +135,17 @@ async function fetchWithAuth(url, options = {}, retry = true) {
   }
   return res;
 }
-    function goTo(path) {
-      const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
-      window.location.href = base + path;
-    }
-    
+
+function goTo(path) {
+  const base = window.location.origin + (window.location.hostname === 'localhost' ? '' : '/bradspelsmeny');
+  window.location.href = base + path;
+}
+
 async function fetchUserLists() {
   const userId = JSON.parse(localStorage.getItem("userData"))?.id;
   if (!userId) return;
 
-  const headers = { Authorization: `Bearer ${getUserToken()}` };
+  const headers = { Authorization: `Bearer ${getAccessToken()}` };
 
   const [favRes, wishRes] = await Promise.all([
     fetch(`${API_BASE}/users/${userId}/favorites`, { headers }),
@@ -147,6 +158,7 @@ async function fetchUserLists() {
   userFavorites = favData.map(g => g.id);
   userWishlist = wishData.map(g => g.id);
 }
+
 async function toggleFavorite(gameId) {
   const btn = document.querySelector(`[data-game-id="${gameId}"] .favorite`);
   const isActive = btn.classList.contains('active');
@@ -163,7 +175,6 @@ async function toggleFavorite(gameId) {
   btn.classList.toggle('active');
   btn.classList.toggle('icon-fav-on');
   btn.classList.toggle('icon-fav-off');
-
 }
 
 async function toggleWishlist(gameId) {
@@ -182,10 +193,7 @@ async function toggleWishlist(gameId) {
   btn.classList.toggle('active');
   btn.classList.toggle('icon-wish-on');
   btn.classList.toggle('icon-wish-off');
-
 }
-
-
 
 function isMemberUser() {
   try {
@@ -197,7 +205,7 @@ function isMemberUser() {
 }
 
 function getGameApiUrl() {
-  const token = localStorage.getItem("userToken");
+  const token = getAccessToken();
   return token ? `${API_BASE}/games` : `${API_BASE}/games/public`;
 }
 
@@ -265,7 +273,6 @@ function continueAsGuest() {
 }
 window.continueAsGuest = continueAsGuest;
 
-
 async function setLanguage(lang) {
   currentLang = lang;
   currentCategory = 'all';
@@ -278,9 +285,7 @@ function renderIntro() {
   document.getElementById('intro').textContent = translations[currentLang].intro;
 }
 
-
 window.setLanguage = setLanguage;
-
 
 async function renderGames() {
   const container = document.getElementById('gameList');
@@ -359,15 +364,10 @@ async function renderGames() {
   </div>
 `;
 
-
-
     container.appendChild(card);
   });
   bindOrderButtons();
 }
-
-
-
 
 // Distance helper for geolocation
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
@@ -385,20 +385,14 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function getAccessToken() {
-  return localStorage.getItem('userToken');
-}
-
-
 document.addEventListener("DOMContentLoaded", async () => {
   const userToken = localStorage.getItem('userToken');
   const refreshToken = localStorage.getItem('refreshToken');
   const isGuest = localStorage.getItem("guestUser");
   const nav = document.getElementById('pixelNav');
-if (nav && userToken && !isTokenExpired(userToken)) {
-  nav.style.display = 'flex';
-}
-
+  if (nav && userToken && !isTokenExpired(userToken)) {
+    nav.style.display = 'flex';
+  }
 
   // Refresh token if expired
   if (userToken && isTokenExpired(userToken)) {
