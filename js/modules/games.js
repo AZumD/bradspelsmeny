@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from './config.js';
+import { API_ENDPOINTS, API_BASE } from './config.js';
 
 let allGames = [];
 
@@ -144,18 +144,18 @@ export async function returnGame(gameId) {
     const token = localStorage.getItem('userToken');
     if (!token) throw new Error('No authentication token');
 
-    const res = await fetch(`${API_ENDPOINTS.GAMES}/return/${gameId}`, {
+    const res = await fetch(`${API_BASE}/return/${gameId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       }
     });
-    
+
     if (!res.ok) {
       throw new Error('Failed to return game');
     }
-    
+
     // Refresh the games list
     await fetchGames();
     return res.json();

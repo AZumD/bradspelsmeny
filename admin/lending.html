@@ -199,6 +199,14 @@
           <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" required aria-label="Bordsnummer" />
         </div>
 
+        <!-- Party Selection -->
+        <div id="partySelection" class="form-group" style="display: none;">
+          <label for="partySelect">Låna ut som parti?</label>
+          <select id="partySelect" name="party_id">
+            <option value="">--</option>
+          </select>
+        </div>
+
         <div class="form-actions">
           <button type="submit" class="pixel-button">✅ Bekräfta utlåning</button>
           <button type="button" class="pixel-button" data-action="close">❌ Avbryt</button>
