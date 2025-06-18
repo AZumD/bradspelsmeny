@@ -144,7 +144,7 @@ export async function returnGame(gameId) {
     const token = localStorage.getItem('userToken');
     if (!token) throw new Error('No authentication token');
 
-    const res = await fetch(`${API_BASE}/return/${gameId}`, {
+    const res = await fetch(API_ENDPOINTS.RETURN(gameId), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
