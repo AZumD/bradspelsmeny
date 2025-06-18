@@ -199,10 +199,14 @@ function getAccessToken() {
     const adminDropdown = document.getElementById("adminMenuDropdown");
     const logoutIcon = document.getElementById("logoutIcon");
   
-    if (getUserRole() === "admin" && adminToggle && adminDropdown) {
-      adminToggle.style.display = "inline-block";
+    // ✅ Show/hide elements based on role
+    if (getUserRole() === "admin") {
+      if (adminToggle) adminToggle.style.display = "inline-block";
       if (logoutIcon) logoutIcon.style.display = "none";
+    }
   
+    // ✅ Always bind toggle logic if elements exist
+    if (adminToggle && adminDropdown) {
       adminToggle.addEventListener("click", () => {
         adminDropdown.style.display =
           adminDropdown.style.display === "none" ? "block" : "none";
