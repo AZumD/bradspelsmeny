@@ -58,7 +58,13 @@ export function initLendForm(token, onLendSuccess) {
       const allGames = getGames();
       const gameIndex = allGames.findIndex(g => g.id === gameId);
       if (gameIndex !== -1) {
-        allGames[gameIndex] = updatedGame;
+        allGames[gameIndex] = {
+          ...allGames[gameIndex],
+          lent_out: true,
+          lent_to_name: userSelect.options[userSelect.selectedIndex].text.split(',')[0],
+          lent_to_table: tableNumber,
+          lent_at: new Date().toISOString()
+        };
       }
 
       closeModal();

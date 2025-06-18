@@ -3,8 +3,8 @@ import { renderCategories, renderIntro, renderGames } from './modules/game-list.
 import { getCurrentLang, setCurrentLang, getCurrentCategory, setCurrentCategory } from './modules/i18n.js';
 import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
-import { GAME_CATEGORIES, API_BASE } from './modules/config.js';
-import { isTokenExpired, getAccessToken, refreshToken, logout, getUserRole, fetchWithAuth } from './modules/auth.js';
+import { GAME_CATEGORIES } from './modules/config.js';
+import { isTokenExpired, getAccessToken, refreshToken, logout } from './modules/auth.js';
 import { initPixelNav, initNotificationModal } from './shared/shared-ui.js';
 
 // Make language functions available globally
@@ -74,7 +74,6 @@ async function initialize() {
     renderCategories();
     renderIntro();
     await renderGames();
-    bindOrderButtons();
 
     // Set up event listeners
     setupEventListeners();
@@ -117,49 +116,21 @@ function setupEventListeners() {
     const userData = localStorage.getItem("userData");
     const submitButton = orderForm.querySelector('button[type="submit"]');
     submitButton.disabled = true;
-
+  
     const tableInput = orderForm.querySelector('input[name="table_id"]');
     const tableValue = tableInput.value.trim();
-
+  
     if (/^\d{4}$/.test(tableValue)) {
       alert("🚫 Table number cannot be four digits. You've probably entered your table code instead of your table number.");
       submitButton.disabled = false;
       return;
     }
-
-    // Skip location check for admin users
-    if (getUserRole() !== 'admin') {
-      const getCurrentPosition = () =>
-        new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-        });
-
-      try {
-        const position = await getCurrentPosition();
-        const distance = getDistanceFromLatLonInMeters(
-          RESTAURANT_LAT,
-          RESTAURANT_LNG,
-          position.coords.latitude,
-          position.coords.longitude
-        );
-        if (distance > ALLOWED_RADIUS_METERS) {
-          alert("🚫 You are too far from the restaurant to place an order.");
-          submitButton.disabled = false;
-          return;
-        }
-      } catch (error) {
-        alert("🚫 Unable to verify your location. Please allow location access and try again.");
-        submitButton.disabled = false;
-        return;
-      }
-    }
-
+  
     const gameId = orderModal.dataset.gameId;
-    const gameTitle = orderModal.dataset.gameTitle;
     const formData = new FormData(orderForm);
-
+  
     let firstName, lastName, phone;
-
+  
     if (userData) {
       const user = JSON.parse(userData);
       firstName = user.first_name;
@@ -170,33 +141,34 @@ function setupEventListeners() {
       lastName = formData.get("last_name");
       phone = `${formData.get("country_code")}${formData.get("phone")}`;
     }
-
+  
+    // 🔍 Find the game title from the global games array
+    const selectedGame = window.games?.find(g => g.id == gameId);
+    const gameTitle = selectedGame?.title || "Unknown";
+  
     const payload = {
       game_id: gameId,
-      game_title: gameTitle || "Unknown",
+      game_title: gameTitle,
       first_name: firstName,
       last_name: lastName,
       phone: phone,
       table_id: formData.get("table_id")
     };
-
-    // Add party_id to payload if selected
+  
     const partyId = formData.get("party_id");
-    if (partyId) {
-      payload.party_id = partyId;
-    }
-
+    if (partyId) payload.party_id = partyId;
+  
     try {
       const res = await fetchWithAuth(`${API_BASE}/order-game`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
+  
       if (!res.ok) throw new Error("Failed to order game");
-
+  
       alert("🎉 Your game order was placed successfully! Have patience and we'll come out to you with it as soon as we can!");
-
+  
       orderModal.style.display = "none";
       orderForm.reset();
     } catch (err) {
@@ -206,27 +178,25 @@ function setupEventListeners() {
       submitButton.disabled = false;
     }
   });
+  
+  
 }
 
 function bindOrderButtons() {
   const buttons = document.querySelectorAll(".order-button");
   buttons.forEach(button => {
-    button.addEventListener("click", async (e) => {
+    button.addEventListener("click", (e) => {
       const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
       const gameId = gameCard.dataset.gameId;
-      const gameTitle = gameCard.querySelector('.game-title')?.textContent || '';
 
       const modal = document.getElementById("orderModal");
       const userFields = document.getElementById("userFields");
       const notice = document.getElementById("loggedInNotice");
       const orderForm = document.getElementById("orderForm");
-      const partySelection = document.getElementById("partySelection");
-      const partySelect = document.getElementById("partySelect");
 
       orderForm.reset();
       modal.dataset.gameId = gameId;
-      modal.dataset.gameTitle = gameTitle;
 
       if (userData) {
         if (userFields) {
@@ -236,24 +206,6 @@ function bindOrderButtons() {
           inputs.forEach(input => input.disabled = true);
         }
         if (notice) notice.style.display = "block";
-        
-        // Show party selection and fetch parties for logged-in users
-        if (partySelection) {
-          partySelection.style.display = "block";
-          try {
-            const res = await fetch(`${API_BASE}/my-parties`, {
-              headers: { Authorization: `Bearer ${getAccessToken()}` }
-            });
-            if (!res.ok) throw new Error("Failed to fetch parties");
-            
-            const parties = await res.json();
-            partySelect.innerHTML = '<option value="">--</option>' + 
-              parties.map(party => `<option value="${party.id}">${party.name}</option>`).join('');
-          } catch (err) {
-            console.error("Failed to fetch parties:", err);
-            partySelection.style.display = "none";
-          }
-        }
       } else {
         if (userFields) {
           userFields.style.display = "block";
@@ -262,7 +214,6 @@ function bindOrderButtons() {
           inputs.forEach(input => input.disabled = false);
         }
         if (notice) notice.style.display = "none";
-        if (partySelection) partySelection.style.display = "none";
       }
 
       modal.style.display = "flex";
