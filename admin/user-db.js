@@ -1,33 +1,15 @@
 const API_URL = "https://bradspelsmeny-backend-production.up.railway.app/users";
-let USER_TOKEN = null;
 
-async function refreshUserToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) return false;
-
-  try {
-    const res = await fetch("https://bradspelsmeny-backend-production.up.railway.app/refresh-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (!res.ok) return false;
-
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("userToken", data.token);
-      USER_TOKEN = data.token;
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
+import { 
+  getAccessToken, 
+  getRefreshToken, 
+  refreshToken,
+  fetchWithAuth
+} from '../js/modules/auth.js';
 
 async function guardAdminSession() {
-  const token = localStorage.getItem("userToken");
-  const refreshToken = localStorage.getItem("refreshToken");
+  const token = getAccessToken();
+  const refreshToken = getRefreshToken();
 
   if (!token && !refreshToken) {
     window.location.href = "login.html";
@@ -35,13 +17,11 @@ async function guardAdminSession() {
   }
 
   if (!token && refreshToken) {
-    const refreshed = await refreshUserToken();
+    const refreshed = await refreshToken();
     if (!refreshed) {
       window.location.href = "login.html";
       return false;
     }
-  } else {
-    USER_TOKEN = token;
   }
 
   return true;
@@ -90,11 +70,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     formData.append("id_number", userForm.idNumber.value);
 
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithAuth(url, {
         method,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${USER_TOKEN}`
+          "Content-Type": "application/x-www-form-urlencoded"
         },
         body: formData.toString()
       });
@@ -117,11 +96,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const badgeId = badgeSelect.value;
 
     try {
-      const res = await fetch(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
+      const res = await fetchWithAuth(`https://bradspelsmeny-backend-production.up.railway.app/users/${userId}/badges`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${USER_TOKEN}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ badge_id: badgeId })
       });
@@ -151,9 +129,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!confirm("Är du säker på att du vill radera den här användaren?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${USER_TOKEN}` }
+      const res = await fetchWithAuth(`${API_URL}/${id}`, {
+        method: "DELETE"
       });
 
       if (res.ok) {
@@ -161,9 +138,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         const data = await res.json();
         if (confirm(`${data.error || "Kunde inte radera användaren."} Vill du arkivera istället?`)) {
-          const archiveRes = await fetch(`${API_URL}/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${USER_TOKEN}` }
+          const archiveRes = await fetchWithAuth(`${API_URL}/${id}`, {
+            method: "DELETE"
           });
           if (archiveRes.ok) {
             alert("✅ Användare arkiverad.");
@@ -181,9 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadUsers() {
     try {
-      const res = await fetch(API_URL, {
-        headers: { Authorization: `Bearer ${USER_TOKEN}` }
-      });
+      const res = await fetchWithAuth(API_URL);
 
       if (!res.ok) throw new Error("Failed to fetch");
 
@@ -274,6 +248,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Initial load
+  // Initialize
   loadUsers();
 });
