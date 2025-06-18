@@ -4,7 +4,7 @@ import { getCurrentLang, setCurrentLang, getCurrentCategory, setCurrentCategory 
 import { getCurrentLocation, setCurrentLocation } from './modules/location.js';
 import { showError, showLoading, hideLoading } from './modules/ui.js';
 import { GAME_CATEGORIES, API_BASE } from './modules/config.js';
-import { isTokenExpired, getAccessToken, refreshToken, logout, getUserRole } from './modules/auth.js';
+import { isTokenExpired, getAccessToken, refreshToken, logout, getUserRole, fetchWithAuth } from './modules/auth.js';
 import { initPixelNav, initNotificationModal } from './shared/shared-ui.js';
 
 // Make language functions available globally
