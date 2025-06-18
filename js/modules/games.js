@@ -158,6 +158,14 @@ export async function returnGame(gameId) {
 
     // Refresh the games list
     await fetchGames();
+    
+    // Re-render the game lists
+    const availableContainer = document.getElementById('availableGames');
+    const lentOutContainer = document.getElementById('lentOutGames');
+    if (availableContainer && lentOutContainer) {
+      await renderGameLists('', availableContainer, lentOutContainer);
+    }
+    
     return res.json();
   } catch (err) {
     console.error('Error returning game:', err);

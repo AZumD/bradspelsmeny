@@ -51,7 +51,19 @@ export function initLendForm(token, onLendSuccess) {
       }
 
       closeModal();
-      onLendSuccess();
+      
+      // Call the success callback
+      if (onLendSuccess) {
+        await onLendSuccess();
+      }
+      
+      // Re-render the game lists
+      const availableContainer = document.getElementById('availableGames');
+      const lentOutContainer = document.getElementById('lentOutGames');
+      if (availableContainer && lentOutContainer) {
+        const { renderGameLists } = await import('./games.js');
+        await renderGameLists('', availableContainer, lentOutContainer);
+      }
     } catch (err) {
       console.error('Error lending game:', err);
       alert('Failed to lend game. Please try again.');
