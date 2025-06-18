@@ -23,6 +23,20 @@ const css = `
   padding:0;
   cursor:pointer;
 }
+.notifModal {
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+
 .nav-icon {
   width:32px;
   height:32px;
@@ -153,7 +167,7 @@ const navHTML = `
 
   <div id="badgeInfoModal" class="modal" style="display:none;"><div class="modal-content"><span class="close-btn" id="closeBadgeInfoBtn">&times;</span><img id="badgeIcon" src="" alt="Badge Icon" style="width:64px;height:64px;margin-bottom:1rem;"><h3 id="badgeName" style="margin-bottom:0.5rem;"></h3><p id="badgeDescription" style="font-size:0.9rem;"></p></div></div>
   <div id="badgePopup" class="modal" style="display:none;"><div class="modal-content"><span class="close-btn" id="closeBadgePopup">&times;</span><h3 style="margin-bottom:8px;">🏅 Badge Unlocked!</h3><img id="badgePopupImage" src="" alt="Badge" style="width:64px;height:64px;border:2px solid #c9a04e;border-radius:8px;margin-bottom:10px;"><div id="badgePopupName" style="font-weight:bold;font-size:1rem;margin-bottom:4px;"></div><div id="badgePopupTime" style="font-size:0.75rem;color:#a07d3b;"></div></div></div>
-<div id="notificationModal" class="modal" style="display: none;">
+<div id="notificationModal" class="notifModal" style="display: none;">
   <div class="modal-content">
     <span class="close-btn" id="closeNotificationBtn">&times;</span>
     <div id="notificationList" class="notification-list"></div>
