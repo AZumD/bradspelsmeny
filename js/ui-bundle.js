@@ -222,13 +222,17 @@ function initPixelNav() {
     }
   }
 
-function goTo(url) {
-  window.location.href = url;
-}
-function logout() {
-  localStorage.clear();
-  window.location.href = "/";
-}
+  function goTo(path) {
+    const base = window.location.hostname === 'localhost'
+      ? ''
+      : '/bradspelsmeny';
+    window.location.href = window.location.origin + base + path;
+  }
+  function logout() {
+    clearTokens();
+    window.location.href = '/bradspelsmeny/pages/login.html';
+  }
+  
 function toggleAdminMenu() {
   const dropdown = document.getElementById("adminMenuDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
