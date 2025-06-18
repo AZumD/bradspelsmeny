@@ -190,7 +190,8 @@ async function completeOrder(orderId, firstName, lastName, phone, tableId) {
     console.log("🧼 Order deleted successfully");
 
     alert("✅ Order completed and game lent out.");
-    fetchOrders();
+    setTimeout(fetchOrders, 300);
+    
 
   } catch (err) {
     console.error("❌ Detailed error in completeOrder:", err);
