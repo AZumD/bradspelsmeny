@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Refresh token if expired
   if (userToken && isTokenExpired(userToken)) {
     if (storedRefreshToken) {
-      const refreshed = await refreshToken(); // <- this now correctly refers to the imported function
+      const refreshed = await refreshToken(); // attempt to refresh the access token
       if (!refreshed) {
         logout();
         return;
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     spinner.style.display = "flex";
     gameList.style.display = "none";
 
-    // 🆕 Fetch favorites/wishlist if user is logged in
+    // Fetch favorites/wishlist if user is logged in
     if (userToken && !isGuest) {
       await fetchUserLists();
     }
