@@ -3,109 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Utlåning</title>
   <link rel="stylesheet" href="../css/master.css" />
-  <title>Lending</title>
-  <style>
-    .form-container {
-      width: 100%;
-      max-width: 700px;
-      padding: 2rem 1rem;
-      box-sizing: border-box;
-    }
-
-    .search-bar {
-      margin-bottom: 1.5rem;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.6rem;
-      font-size: 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      border: 2px solid #3c2415;
-      border-radius: 6px;
-      background-color: #fffaf0;
-      color: #3c2415;
-      box-sizing: border-box;
-    }
-
-    .collapsible-section {
-      width: 100%;
-      border-radius:10px;
-      max-width: 700px;
-      margin-bottom: 1rem;
-    }
-
-    .collapsible-header {
-      color:#5a2a0c;
-      background-color: #fffdf7;
-      border:2px dashed #d9b370;
-      padding: 1rem;
-      cursor: pointer;
-      font-size: 0.75rem;
-      font-family: 'Press Start 2P', monospace;
-      border: none;
-      width: 100%;
-      text-align: left;
-    }
-
-    .collapsible-content {
-      display: none;
-      flex-direction: column;
-      gap: 1rem;
-      padding: 1rem;
-    }
-    .game-card small {
-      display: block;
-      margin-top: 0.5rem;
-      font-size: 0.5rem;
-      color: #5b3e2a;
-    }
-
-    .buttons {
-      margin-top: 1rem;
-      display: flex;
-      gap: 0.5rem;
-    }
-    .caret {
-      float: right;
-      font-size: 0.75rem;
-    }
-
-    #tableStep {
-      margin-top: 1rem;
-    }
-  </style>
 </head>
 <body>
   <div class="maincontain">
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="🔍 Sök spel...">
+      <input type="text" id="searchInput" placeholder="🔍 Sök spel..." />
     </div>
 
     <div class="collapsible-section">
-  <button class="collapsible-header" onclick="toggleSection('lentOutGames', this)">Utlånade spel <span class="caret">▼</span></button>
-  <div id="lentOutGames" class="collapsible-content"></div>
-</div>
+      <button class="collapsible-header" onclick="toggleSection('lentOutGames', this)">
+        Utlånade spel <span class="caret">▼</span>
+      </button>
+      <div id="lentOutGames" class="collapsible-content"></div>
+    </div>
 
-<div class="collapsible-section">
-  <button class="collapsible-header" onclick="toggleSection('availableGames', this)">Tillgängliga spel <span class="caret">▼</span></button>
-  <div id="availableGames" class="collapsible-content"></div>
-</div>
+    <div class="collapsible-section">
+      <button class="collapsible-header" onclick="toggleSection('availableGames', this)">
+        Tillgängliga spel <span class="caret">▼</span>
+      </button>
+      <div id="availableGames" class="collapsible-content"></div>
+    </div>
   </div>
 
-<!--SPACING----------------------------------------------------------------------------------->
-	
-<div style="height: 60px;">
-<!----------------------------------------------------------------------------------/SPACING-->
+  <div style="height: 60px;"></div>
 
-  <!-- Image Preview Modal -->
+  <!-- Image Modal -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
       <img id="modalImage" style="max-width: 100%;" />
       <div style="margin-top: 1rem;">
-        <button onclick="closeImageModal()">Stäng</button>
+        <button onclick="closeImageModal()" class="pixel-button">Stäng</button>
       </div>
     </div>
   </div>
@@ -116,7 +45,7 @@
       <h3>Historik</h3>
       <ul id="historyList"></ul>
       <div style="margin-top: 1rem;">
-        <button onclick="closeHistoryModal()">Stäng</button>
+        <button onclick="closeHistoryModal()" class="pixel-button">Stäng</button>
       </div>
     </div>
   </div>
@@ -129,20 +58,19 @@
       <label for="userSelect">Välj användare:</label>
       <select id="userSelect"></select>
       <div style="margin-top: 0.5rem;">
-        <button id="addUserButton">➕ Ny användare</button>
+        <button id="addUserButton" class="pixel-button">➕ Ny användare</button>
       </div>
 
-      <!-- Step 2: Show after user is selected or added -->
-      <div id="tableStep" style="display: none;">
+      <div id="tableStep" style="display: none; margin-top: 1rem;">
         <label for="tableNumber">Bordsnummer:</label>
-        <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" style="width: 100%; font-family: monospace;" />
+        <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" />
         <div style="margin-top: 1rem;">
-          <button onclick="confirmLend()">✅ Bekräfta utlåning</button>
+          <button onclick="confirmLend()" class="pixel-button">✅ Bekräfta utlåning</button>
         </div>
       </div>
 
       <div style="margin-top: 1rem;">
-        <button onclick="closeLendModal()">❌ Avbryt</button>
+        <button onclick="closeLendModal()" class="pixel-button">❌ Avbryt</button>
       </div>
     </div>
   </div>
@@ -153,20 +81,20 @@
       <h3>Ny användare</h3>
       <form id="newUserForm">
         <label for="newFirstName">Förnamn:</label>
-        <input type="text" id="newFirstName" required style="width: 100%; font-family: monospace;" />
+        <input type="text" id="newFirstName" required />
         <label for="newLastName">Efternamn:</label>
-        <input type="text" id="newLastName" required style="width: 100%; font-family: monospace;" />
+        <input type="text" id="newLastName" required />
         <label for="newPhone">Telefonnummer:</label>
-        <input type="text" id="newPhone" style="width: 100%; font-family: monospace;" />
+        <input type="text" id="newPhone" />
         <div style="margin-top: 1rem;">
-          <button type="submit">Skapa användare</button>
-          <button type="button" onclick="closeNewUserModal()">Avbryt</button>
+          <button type="submit" class="pixel-button">Skapa användare</button>
+          <button type="button" onclick="closeNewUserModal()" class="pixel-button">Avbryt</button>
         </div>
       </form>
     </div>
   </div>
 
-  <link rel="stylesheet" href="../css/master.css">
+  <!-- Scripts -->
   <script type="module" src="../js/ui-bundle.js"></script>
   <script type="module" src="lending.js" defer></script>
 </body>
