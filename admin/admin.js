@@ -61,6 +61,39 @@ async function fetchStats() {
   }
 }
 
+// 📋 Render orders
+async function renderOrders() {
+  try {
+    const orders = await fetchOrders();
+    const orderFeed = document.getElementById("orderFeed");
+    orderFeed.innerHTML = "";
+
+    if (!orders || orders.length === 0) {
+      orderFeed.innerHTML = "<div class='placeholder-box'>Inga beställningar</div>";
+      return;
+    }
+
+    orders.forEach(order => {
+      const card = document.createElement("div");
+      card.className = "placeholder-box fade-in";
+      card.innerHTML = `
+        <strong>${order.game_title}</strong><br />
+        Beställt av: ${order.first_name || "Gäst"} ${order.last_name || ""}<br />
+        📱 ${order.phone || "okänt nummer"}<br />
+        🪑 Bord: ${order.table_id}<br />
+        <button onclick="completeOrder('${order.id}', '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">
+          ✅ Utför
+        </button>
+      `;
+      orderFeed.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("❌ Failed to render orders:", err);
+    document.getElementById("orderFeed").innerHTML =
+      "<div class='placeholder-box'>❌ Kunde inte hämta beställningar</div>";
+  }
+}
 
 // ✅ Complete order
 async function completeOrder(orderId, firstName, lastName, phone, tableId) {
@@ -105,7 +138,7 @@ async function completeOrder(orderId, firstName, lastName, phone, tableId) {
     console.log("🧼 Order deleted successfully");
 
     alert("✅ Order completed and game lent out.");
-    setTimeout(fetchOrders, 300);
+    setTimeout(renderOrders, 300);
     
 
   } catch (err) {
@@ -129,7 +162,7 @@ async function clearAllOrders() {
     }
 
     console.log("🧼 All orders cleared successfully");
-    fetchOrders();
+    renderOrders();
   } catch (err) {
     console.error("❌ Failed to clear orders:", err);
   }
@@ -170,8 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
   
   
   fetchStats();
-  fetchOrders();
-  setInterval(fetchOrders, 5000);
+  renderOrders();
+  setInterval(renderOrders, 5000);
   console.log("✅ Admin dashboard loaded.");
   
   const adminToggle = document.getElementById("adminMenuToggle");
