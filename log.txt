@@ -1,4 +1,14 @@
 🦉 2024-03-21 - Claude
+Sorry about the token mess, Tova! Just fixed up party.js to handle auth properly:
+- Added token validation right at the start (redirects to login if missing)
+- Fixed all API calls to use fetchWithAuth consistently
+- Added proper array checking before using .reverse() on messages
+- Added better error handling with user-friendly messages
+- Added automatic login redirect if token becomes invalid
+
+No more 403s or trying to .reverse() error pages! Everything's properly authenticated now. 🔐✨
+
+🦉 2024-03-21 - Claude
 Hey Tova! Just updated the session page to use the new response format. Now we're using game_title and img directly from the session response - no more separate game fetching needed! Added a nice "Untitled Game" fallback if the title is missing, and the thumbnail still gracefully falls back to our default if needed. Everything's still animated and styled just like before, and I've double-checked that clicking through from party → session works perfectly. Console's clean as a whistle too! 🎯 all done, boss! 🎮✨
 
 🦉 2024-03-21 - Claude
