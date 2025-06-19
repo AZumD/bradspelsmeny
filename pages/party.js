@@ -281,10 +281,14 @@ async function loadActiveSession(partyId) {
       border: 1px dashed #d9b370;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
     `;
     sessionBox.onmouseover = () => sessionBox.style.backgroundColor = '#fff3d6';
     sessionBox.onmouseout = () => sessionBox.style.backgroundColor = '#f9f6f2';
-    sessionBox.onclick = () => window.location.href = `session.html?id=${session.id}`;
+    sessionBox.onclick = (e) => {
+      e.preventDefault();
+      window.location.href = `session.html?id=${session.id}`;
+    };
 
     // Create thumbnail
     const thumb = document.createElement('img');
@@ -360,10 +364,14 @@ async function loadPastSessions(partyId) {
         font-family: 'VT323', monospace;
         cursor: pointer;
         transition: background-color 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
       `;
       card.onmouseover = () => card.style.backgroundColor = '#fff3d6';
       card.onmouseout = () => card.style.backgroundColor = '#f9f6f2';
-      card.onclick = () => window.location.href = `session.html?id=${s.id}`;
+      card.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = `session.html?id=${s.id}`;
+      };
 
       const thumb = document.createElement("img");
       thumb.src = game.img?.startsWith("http") ? game.img : `../${game.img}`;
