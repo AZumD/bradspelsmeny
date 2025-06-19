@@ -30,8 +30,8 @@
 }
 .admin-popup-menu {
   position:fixed;
-  bottom:3.5rem;
-  right:1rem;
+  top:0;
+  left:0;
   background:#fffdf7;
   border:2px dashed #c9a04e;
   padding:0.8rem;
