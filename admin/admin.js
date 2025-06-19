@@ -76,15 +76,26 @@ async function renderOrders() {
     orders.forEach(order => {
       const card = document.createElement("div");
       card.className = "placeholder-box fade-in";
-      card.innerHTML = `
-        <strong>${order.game_title}</strong><br />
-        Beställt av: ${order.first_name || "Gäst"} ${order.last_name || ""}<br />
-        📱 ${order.phone || "okänt nummer"}<br />
-        🪑 Bord: ${order.table_id}<br />
-        <button onclick="completeOrder('${order.id}', '${order.first_name}', '${order.last_name}', '${order.phone}', '${order.table_id}')">
-          ✅ Utför
-        </button>
-      `;
+
+      const title = document.createElement("strong");
+      title.textContent = order.game_title;
+
+      const name = document.createElement("div");
+      name.innerHTML = `Beställt av: ${order.first_name || "Gäst"} ${order.last_name || ""}`;
+
+      const phone = document.createElement("div");
+      phone.innerHTML = `📱 ${order.phone || "okänt nummer"}`;
+
+      const table = document.createElement("div");
+      table.innerHTML = `🪑 Bord: ${order.table_id}`;
+
+      const button = document.createElement("button");
+      button.textContent = "✅ Utför";
+      button.addEventListener("click", () => {
+        completeOrder(order.id, order.first_name, order.last_name, order.phone, order.table_id);
+      });
+
+      card.append(title, name, phone, table, button);
       orderFeed.appendChild(card);
     });
 
