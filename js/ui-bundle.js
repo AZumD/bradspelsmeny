@@ -47,6 +47,9 @@ const css = `
 }
 .admin-popup-menu {
   position:fixed;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
   background:#fffdf7;
   border:2px dashed #c9a04e;
   padding:0.8rem;
