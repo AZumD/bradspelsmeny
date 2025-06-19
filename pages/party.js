@@ -253,76 +253,86 @@ async function fetchPartyData() {
 async function loadActiveSession(partyId) {
   const sessionBox = document.getElementById("activeSessionBox");
   try {
-    const res = await fetchWithAuth(`${API_BASE}/party-sessions/active/${partyId}`);
-    if (!res.ok) throw new Error("No active session");
-
-    const session = await res.json();
-    const sessionId = session.id;
-    console.log("Session data:", session);
+    const res = await fetchWithAuth(`${API_BASE}/party/${partyId}`);
+    if (!res.ok) throw new Error("Failed to load party");
     
-    const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
-    if (!gameRes.ok) {
-      console.error("Game fetch failed:", await gameRes.text());
-      sessionBox.innerHTML = `Could not fetch game info`;
-      return;
+    const data = await res.json();
+    console.log("Loaded party object:", data);
+
+    if (data && data.active_session_id) {
+      fetch(`${API_BASE}/party-sessions/${data.active_session_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to load active session");
+          return res.json();
+        })
+        .then(session => {
+          renderActiveSession(session);
+        })
+        .catch(err => {
+          console.error("❌ Failed to load active session:", err);
+          document.getElementById("activeSessionBox").textContent = "No active session.";
+        });
+    } else {
+      console.warn("⚠️ No active_session_id found in party object.");
+      document.getElementById("activeSessionBox").textContent = "No active session.";
     }
-
-    const game = await gameRes.json();
-    
-    const start = new Date(session.started_at);
-    const formattedStart = start.toLocaleString("sv-SE", {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-
-    // Clear & prep container
-    sessionBox.innerHTML = '';
-    sessionBox.classList.add('fade-in');
-    sessionBox.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px;
-      background-color: #f9f6f2;
-      border-radius: 8px;
-      border: 1px dashed #d9b370;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    `;
-    sessionBox.onmouseover = () => sessionBox.style.backgroundColor = '#fff3d6';
-    sessionBox.onmouseout = () => sessionBox.style.backgroundColor = '#f9f6f2';
-    sessionBox.onclick = (e) => {
-      e.preventDefault();
-      console.log("Navigating to active session:", sessionId);
-      window.location.href = `session.html?id=${sessionId}`;
-    };
-
-    // Create thumbnail
-    const thumb = document.createElement('img');
-    thumb.src = game.img.startsWith('http') ? game.img : `../${game.img}`;
-    thumb.alt = game.title_en;
-    thumb.title = game.title_en;
-    thumb.className = 'game-thumbnail';
-    thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover';
-    thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
-
-    // Create text
-    const info = document.createElement('div');
-    info.innerHTML = `
-      <div style="font-weight:bold;">${game.title_en}</div>
-      <div style="font-size:0.8rem;color:#7a5a30;">Started: ${formattedStart}</div>
-    `;
-    info.style.textAlign = 'left';
-
-    // Assemble
-    sessionBox.append(thumb, info);
-    
-    console.log("✅ Active session layout updated");
   } catch (err) {
-    console.error("Failed to load active session:", err);
-    sessionBox.innerHTML = `No active session currently.`;
+    console.error("Failed to load party:", err);
+    sessionBox.innerHTML = `Could not fetch party info`;
   }
+}
+
+// Helper function to render active session
+function renderActiveSession(session) {
+  const sessionBox = document.getElementById("activeSessionBox");
+  sessionBox.innerHTML = '';
+  sessionBox.classList.add('fade-in');
+  sessionBox.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background-color: #f9f6f2;
+    border-radius: 8px;
+    border: 1px dashed #d9b370;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  `;
+  sessionBox.onmouseover = () => sessionBox.style.backgroundColor = '#fff3d6';
+  sessionBox.onmouseout = () => sessionBox.style.backgroundColor = '#f9f6f2';
+  sessionBox.onclick = (e) => {
+    e.preventDefault();
+    console.log("Navigating to active session:", session.id);
+    window.location.href = `session.html?id=${session.id}`;
+  };
+
+  // Create thumbnail
+  const thumb = document.createElement('img');
+  thumb.src = session.img || '../img/default-thumb.webp';
+  thumb.alt = session.game_title || 'Game thumbnail';
+  thumb.title = session.game_title || 'Game thumbnail';
+  thumb.className = 'game-thumbnail';
+  thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover';
+  thumb.onerror = () => { thumb.src = '../img/default-thumb.webp'; };
+
+  // Create text
+  const info = document.createElement('div');
+  info.innerHTML = `
+    <div style="font-weight:bold;">${session.game_title || 'Unknown Game'}</div>
+    <div style="font-size:0.8rem;color:#7a5a30;">Started: ${new Date(session.started_at).toLocaleString("sv-SE", {
+      dateStyle: "short",
+      timeStyle: "short"
+    })}</div>
+  `;
+  info.style.textAlign = 'left';
+
+  // Assemble
+  sessionBox.append(thumb, info);
+  
+  console.log("✅ Active session layout updated");
 }
 
 async function loadPastSessions(partyId) {
