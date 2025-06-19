@@ -306,6 +306,20 @@ async function loadActiveSession(partyId) {
 
 async function loadPastSessions(partyId) {
   const container = document.getElementById("sessionList");
+  
+  // Style the container for scrolling
+  container.style.maxHeight = '300px';
+  container.style.overflowY = 'auto';
+  container.style.scrollbarWidth = 'none'; // Firefox
+  container.style.padding = '8px 0';
+  container.style.borderTop = '1px dashed #d9b370';
+  // Hide WebKit scrollbar
+  container.style.cssText += `
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  `;
+  
   container.innerHTML = '';
 
   try {
@@ -328,10 +342,12 @@ async function loadPastSessions(partyId) {
       card.style.display = 'flex';
       card.style.alignItems = 'center';
       card.style.gap = '12px';
-      card.style.marginBottom = '10px';
+      card.style.marginBottom = '8px';
       card.style.backgroundColor = '#f9f6f2';
       card.style.borderRadius = '8px';
       card.style.padding = '10px';
+      card.style.borderBottom = '1px dashed #d9b370';
+      card.style.fontFamily = "'VT323', monospace";
 
       const thumb = document.createElement("img");
       thumb.src = game.img?.startsWith("http") ? game.img : `../${game.img}`;
@@ -355,9 +371,11 @@ async function loadPastSessions(partyId) {
 
       const textBox = document.createElement("div");
       textBox.style.textAlign = "left";
+      textBox.style.fontFamily = "'VT323', monospace";
+      textBox.style.fontSize = "1rem";
       textBox.innerHTML = `
-        <div style="font-weight:bold;font-size:0.9rem;">${game.title_en}</div>
-        <div style="font-size:0.8rem;color:#7a5a30;">
+        <div style="font-weight:bold;font-size:1.1rem;">${game.title_en}</div>
+        <div style="font-size:1rem;color:#7a5a30;">
           Start: ${started}<br>
           Returned: ${ended}
         </div>
@@ -367,7 +385,7 @@ async function loadPastSessions(partyId) {
       container.appendChild(card);
     }
 
-    console.log("✅ Past sessions loaded and rendered");
+    console.log("🎲 Past sessions scroll and font styling applied");
   } catch (err) {
     console.error("Failed to load past sessions:", err);
     container.innerHTML = '<div class="placeholder-box">No past sessions yet</div>';
