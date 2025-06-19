@@ -154,7 +154,7 @@ const navHTML = `
     </button>
   </nav>
 
- <ul id="adminMenuDropdown" style="display:none;position:fixed;top:0;left:0;">
+ <ul id="adminMenuDropdown" style="display:none;position:fixed;top:0;left:0;z-index:9999;">
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
@@ -189,7 +189,7 @@ function getAccessToken() {
     } catch {
       return true;
     }
-  }
+  }adminToggle.
   
   function getUserRole() {
     const token = getAccessToken();
@@ -222,15 +222,21 @@ function getAccessToken() {
     // ✅ Always bind toggle logic if elements exist
     if (adminToggle && adminDropdown) {
         adminToggle.addEventListener("click", (e) => {
-            e.stopPropagation(); // Prevent closing from global click listener
+            e.stopPropagation(); // Prevent immediate close
+            const dropdown = document.getElementById("adminMenuDropdown");
+          
+            if (!dropdown) return;
           
             const rect = adminToggle.getBoundingClientRect();
           
-            adminDropdown.style.position = "fixed";
-            adminDropdown.style.top = `${rect.bottom}px`;
-            adminDropdown.style.left = `${rect.left}px`;
-            adminDropdown.style.display = adminDropdown.style.display === "block" ? "none" : "block";
+            dropdown.style.position = "fixed"; // Viewport anchored
+            dropdown.style.top = `${rect.bottom}px`;
+            dropdown.style.left = `${rect.left}px`;
+          
+            const currentlyVisible = dropdown.style.display === "block";
+            dropdown.style.display = currentlyVisible ? "none" : "block";
           });
+          
           
           
           
