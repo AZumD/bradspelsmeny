@@ -223,6 +223,9 @@ async function fetchPartyData() {
     renderMemberList(members);
 
     document.getElementById('sessionList').innerHTML = '<div class="placeholder-box">No sessions yet</div>';
+    
+    // Load active session
+    await loadActiveSession(partyId);
   } catch (err) {
     console.error('Error loading party:', err);
 
@@ -235,6 +238,29 @@ async function fetchPartyData() {
     if (memberListEl) memberListEl.innerHTML = '<div class="placeholder-box">Could not load members</div>';
     if (codeBoxEl) codeBoxEl.textContent = '—';
     if (avatarEl) avatarEl.src = '../img/avatar-party-placeholder.webp';
+  }
+}
+
+async function loadActiveSession(partyId) {
+  const sessionBox = document.getElementById("activeSessionBox");
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/party-sessions/active/${partyId}`);
+    if (!res.ok) throw new Error("No active session");
+
+    const data = await res.json();
+    const start = new Date(data.started_at);
+    const formattedStart = start.toLocaleString("sv-SE", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+
+    sessionBox.innerHTML = `
+      <strong>${data.game_title}</strong><br />
+      ⏳ Startade: ${formattedStart}
+    `;
+    sessionBox.classList.add('fade-in');
+  } catch (err) {
+    sessionBox.innerHTML = `🚫 No active session currently.`;
   }
 }
 
