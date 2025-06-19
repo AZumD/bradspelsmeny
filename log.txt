@@ -121,3 +121,41 @@ Task: Fix wishlist grid layout and party session text alignment issues
 
 ## RESULT
 Both UI snarls have been resolved! The wishlist now displays in a clean grid layout matching the favorites, and the party session text is properly aligned. The interface feels more cohesive and professional. 🎮✨
+
+✅ COMPLETED: Added Past Sessions Log to Party Page
+
+🎯 TASKS COMPLETED:
+1. ✅ Created loadPastSessions function in party.js
+   - Fetches session history from API endpoint: /party-sessions/history/{partyId}
+   - Handles empty sessions gracefully with placeholder message
+   - Creates session cards with game thumbnails and timestamps
+   - Includes error handling for failed API calls
+
+2. ✅ Integrated loadPastSessions into party page flow
+   - Added function call in fetchPartyData() after loadActiveSession()
+   - Function populates the existing #sessionList container
+   - Maintains consistent styling with active session display
+
+🎨 FEATURES IMPLEMENTED:
+- Session cards display game thumbnails (48x48px with golden border)
+- Clickable thumbnails open game modal for detailed info
+- Swedish date/time formatting (sv-SE locale)
+- Start and return timestamps for each session
+- Fallback to default thumbnail for missing images
+- Graceful error handling with user-friendly messages
+
+🔧 TECHNICAL DETAILS:
+- Uses existing fetchWithAuth for authenticated API calls
+- Leverages existing openGameModal function for game details
+- Consistent styling with active session display
+- Proper error handling with console logging
+- Maintains existing UI patterns and color scheme
+
+📱 UI/UX:
+- Responsive design with flexbox layout
+- Consistent spacing and typography
+- Golden border theme matching existing design
+- Hover effects on clickable elements
+- Clear visual hierarchy with game titles and timestamps
+
+The party page now displays a complete history of past gaming sessions, making it easy for users to reminisce about their previous game nights! 🎲✨

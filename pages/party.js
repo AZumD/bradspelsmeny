@@ -226,6 +226,9 @@ async function fetchPartyData() {
     
     // Load active session
     await loadActiveSession(partyId);
+    
+    // Load past sessions
+    await loadPastSessions(partyId);
   } catch (err) {
     console.error('Error loading party:', err);
 
@@ -298,6 +301,70 @@ async function loadActiveSession(partyId) {
   } catch (err) {
     console.error("❌ loadActiveSession error:", err);
     sessionBox.innerHTML = `🚫 No active session currently.`;
+  }
+}
+
+async function loadPastSessions(partyId) {
+  const container = document.getElementById("sessionList");
+  container.innerHTML = '';
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/party-sessions/history/${partyId}`);
+    if (!res.ok) throw new Error("No sessions");
+
+    const sessions = await res.json();
+
+    if (!sessions.length) {
+      container.innerHTML = `<div class="placeholder-box">No past sessions found</div>`;
+      return;
+    }
+
+    for (const s of sessions) {
+      const gameRes = await fetchWithAuth(`${API_BASE}/games/${s.game_id}`);
+      const game = gameRes.ok ? await gameRes.json() : { title_en: s.game_title || "Unknown", img: "" };
+
+      const card = document.createElement("div");
+      card.className = "session-card";
+      card.style.display = 'flex';
+      card.style.alignItems = 'center';
+      card.style.gap = '12px';
+
+      const thumb = document.createElement("img");
+      thumb.src = game.img?.startsWith("http") ? game.img : `../${game.img}`;
+      thumb.alt = game.title_en;
+      thumb.title = game.title_en;
+      thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;cursor:pointer';
+      thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+      thumb.onclick = () => openGameModal("favoriteGameModal", game);
+
+      const started = new Date(s.started_at).toLocaleString("sv-SE", {
+        dateStyle: "short",
+        timeStyle: "short"
+      });
+
+      const ended = s.returned_at
+        ? new Date(s.returned_at).toLocaleString("sv-SE", {
+            dateStyle: "short",
+            timeStyle: "short"
+          })
+        : "–";
+
+      const textBox = document.createElement("div");
+      textBox.style.textAlign = "left";
+      textBox.innerHTML = `
+        <div style="font-weight:bold;">${game.title_en}</div>
+        <div style="font-size:0.8rem;color:#7a5a30;">
+          Start: ${started}<br>
+          Returned: ${ended}
+        </div>
+      `;
+
+      card.append(thumb, textBox);
+      container.appendChild(card);
+    }
+  } catch (err) {
+    console.error("❌ Failed to load past sessions:", err);
+    container.innerHTML = `<div class="placeholder-box">❌ Could not load past sessions</div>`;
   }
 }
 
