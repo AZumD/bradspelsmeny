@@ -178,7 +178,16 @@ function renderCategories() {
 
 async function bindOrderButtons() {
   const buttons = document.querySelectorAll(".order-button");
+  
+  // Remove existing event listeners to prevent duplicates
   buttons.forEach(button => {
+    button.replaceWith(button.cloneNode(true));
+  });
+  
+  // Re-select buttons after cloning
+  const newButtons = document.querySelectorAll(".order-button");
+  
+  newButtons.forEach(button => {
     button.addEventListener("click", async (e) => {
       const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
@@ -188,6 +197,7 @@ async function bindOrderButtons() {
       const userFields = document.getElementById("userFields");
       const notice = document.getElementById("loggedInNotice");
       const orderForm = document.getElementById("orderForm");
+      const partySelectWrapper = document.getElementById("partySelectWrapper");
 
       orderForm.reset();
       modal.dataset.gameId = gameId;
@@ -210,6 +220,10 @@ async function bindOrderButtons() {
           inputs.forEach(input => input.disabled = false);
         }
         if (notice) notice.style.display = "none";
+        // Hide party dropdown for non-logged-in users
+        if (partySelectWrapper) {
+          partySelectWrapper.style.display = "none";
+        }
       }
 
       modal.style.display = "flex";
@@ -222,16 +236,31 @@ async function populatePartyDropdown() {
   const partySelectWrapper = document.getElementById("partySelectWrapper");
   const partySelect = document.getElementById("partySelect");
   
+  console.log("populatePartyDropdown called, userData:", userData ? "exists" : "none");
+  
   if (!userData) {
-    partySelectWrapper.style.display = "none";
+    console.log("No user data, hiding party dropdown");
+    if (partySelectWrapper) {
+      partySelectWrapper.style.display = "none";
+    }
+    return;
+  }
+  
+  if (!partySelectWrapper || !partySelect) {
+    console.error("Party dropdown elements not found");
     return;
   }
   
   try {
     const user = JSON.parse(userData);
+    console.log("Fetching user profile for user ID:", user.id);
+    
     const userProfile = await getUserProfile(user.id);
+    console.log("User profile received:", userProfile);
+    console.log("User parties:", userProfile.parties);
     
     if (userProfile.parties && userProfile.parties.length > 0) {
+      console.log("User has parties, populating dropdown");
       // Clear existing options except the first one
       partySelect.innerHTML = '<option value="">– Just me –</option>';
       
@@ -241,15 +270,20 @@ async function populatePartyDropdown() {
         option.value = party.id;
         option.textContent = party.name;
         partySelect.appendChild(option);
+        console.log("Added party option:", party.name, "with ID:", party.id);
       });
       
       partySelectWrapper.style.display = "block";
+      console.log("Party dropdown made visible");
     } else {
+      console.log("User has no parties, hiding dropdown");
       partySelectWrapper.style.display = "none";
     }
   } catch (error) {
     console.error("Failed to load user parties:", error);
-    partySelectWrapper.style.display = "none";
+    if (partySelectWrapper) {
+      partySelectWrapper.style.display = "none";
+    }
   }
 }
 
