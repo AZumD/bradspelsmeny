@@ -175,6 +175,7 @@ const navHTML = `
 </div>`;
 
 document.body.insertAdjacentHTML('beforeend', navHTML);
+initPixelNav();
 
 function getAccessToken() {
   return localStorage.getItem('userToken');
@@ -366,39 +367,36 @@ async function updateNotificationIcon() {
 }
 
 function initPixelNav() {
-  const adminToggle = document.getElementById("adminMenuToggle");
-  const adminDropdown = document.getElementById("adminMenuDropdown");
-
-  // Show admin toggle if user is admin
-  if (getUserRole() === 'admin') {
-    if (adminToggle) adminToggle.style.display = "block";
+    const nav = document.getElementById('pixelNav');
+    if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
+      nav.style.display = 'flex';
+    }
+  
+    const adminToggle = document.getElementById("adminMenuToggle");
+    const adminDropdown = document.getElementById("adminMenuDropdown");
+    const logoutIcon = document.getElementById("logoutIcon");
+  
+    // ✅ Show/hide elements based on role
+    if (getUserRole() === "admin") {
+      if (adminToggle) adminToggle.style.display = "inline-block";
+      if (logoutIcon) logoutIcon.style.display = "none";
+    }
+  
+    // ✅ Always bind toggle logic if elements exist
+    if (adminToggle && adminDropdown) {
+      adminToggle.addEventListener("click", () => {
+        adminDropdown.style.display =
+          adminDropdown.style.display === "none" ? "block" : "none";
+      });
+  
+      document.addEventListener("click", (e) => {
+        if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
+          adminDropdown.style.display = "none";
+        }
+      });
+    }
   }
-
-  // ✅ Always bind toggle logic if elements exist
-  if (adminToggle && adminDropdown) {
-    adminToggle.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent immediate close
-      const dropdown = document.getElementById("adminMenuDropdown");
-
-      if (!dropdown) return;
-
-      const rect = adminToggle.getBoundingClientRect();
-
-      dropdown.style.position = "fixed"; // Viewport anchored
-      dropdown.style.top = `${rect.bottom}px`;
-      dropdown.style.left = `${rect.left}px`;
-
-      const currentlyVisible = dropdown.style.display === "flex";
-      dropdown.style.display = currentlyVisible ? "none" : "flex";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!adminDropdown.contains(e.target) && !adminToggle.contains(e.target)) {
-        adminDropdown.style.display = "none";
-      }
-    });
-  }
-}
+  
 
 // Notification modal toggle
 const notifBtn = document.getElementById('notificationIcon');
@@ -426,6 +424,3 @@ if (notifIcon) {
 
 document.getElementById("logoutIcon")?.addEventListener("click", logout);
 document.getElementById("adminLogout")?.addEventListener("click", logout);
-
-// Initialize navigation
-initPixelNav();
