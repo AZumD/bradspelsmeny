@@ -103,13 +103,13 @@
   color:white;
   padding:10px;
   border-radius:50%;
-  background:transperant;
+  background:transparent;
   cursor:pointer;
   z-index:1000;
   transition:background-color 0.3s ease,transform 0.2s ease;
 }
 #notificationIcon:hover {
-  background:transperant;
+  background:transparent;
   transform:scale(1.05);
 }
 .notification-item button {
