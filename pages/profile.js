@@ -206,7 +206,7 @@ async function fetchFavoritesAndWishlist(userId) {
 
     if (wishlist.length) {
       wishContainer.innerHTML = '';
-      wishlist.forEach(g => wishContainer.appendChild(createGameCard(g)));
+      wishlist.forEach(g => wishContainer.appendChild(createGameCard(g, true)));
     } else if (wishRes && wishRes.ok) wishContainer.innerHTML = '<div class="placeholder-box">No wishlist entries yet.</div>';
   } catch {
     favContainer.innerHTML = '<div class="placeholder-box">Failed to load favorites.</div>';

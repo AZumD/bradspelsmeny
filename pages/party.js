@@ -289,6 +289,7 @@ async function loadActiveSession(partyId) {
       <div style="font-weight:bold;">${game.title_en}</div>
       <div style="font-size:0.8rem;color:#7a5a30;">Startade: ${formattedStart}</div>
     `;
+    info.style.textAlign = 'left';
 
     // Assemble
     sessionBox.append(thumb, info);

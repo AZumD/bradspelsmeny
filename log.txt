@@ -77,3 +77,47 @@ Task: Replace emoji-based session layout with proper horizontal flex layout feat
 
 ## RESULT
 The active session now has a professional, consistent look that matches the favorites list design. The thumbnail is clickable and opens the game modal, making the UI feel cohesive and interactive. The layout is responsive and maintains the visual hierarchy with proper spacing and typography. 🎮✨
+
+# UI Alignment Fixes
+Date: 2024-12-19
+Task: Fix wishlist grid layout and party session text alignment issues
+
+## CHANGES MADE
+
+### PART 1: Wishlist Layout — Match Favorites Grid
+**Target**: profile.html wishlist section
+
+**Issue**: Wishlist thumbnails were showing as full cards instead of minimal thumbnails in grid layout
+**Solution**: 
+- Updated profile.js to use `createGameCard(g, true)` for wishlist items
+- This ensures wishlist uses minimal thumbnail cards like favorites
+- CSS already had correct `.wishlist-grid` styles matching `.favorites-grid`
+
+**Files Modified**:
+- `pages/profile.js`: Changed wishlist to use minimal game cards
+
+### PART 2: Party Page Session Text Alignment
+**Target**: party.html active session section
+
+**Issue**: Text next to thumbnail was being pulled in two directions due to inherited center alignment from placeholder-box
+**Solution**:
+- Added `info.style.textAlign = 'left';` in loadActiveSession() function
+- This overrides inherited center alignment and keeps text cleanly left-aligned
+
+**Files Modified**:
+- `pages/party.js`: Added left text alignment for session info
+
+## TECHNICAL DETAILS
+- Wishlist now uses same minimal card style as favorites (48×48 thumbnails)
+- Session text properly left-aligned next to thumbnail
+- Both fixes maintain existing functionality and styling consistency
+- No CSS changes needed - existing grid styles were already correct
+
+## VERIFICATION
+- ✅ Wishlist displays in proper grid layout like favorites
+- ✅ Session title and start time are left-aligned
+- ✅ No breaking changes to existing functionality
+- ✅ Visual consistency maintained across components
+
+## RESULT
+Both UI snarls have been resolved! The wishlist now displays in a clean grid layout matching the favorites, and the party session text is properly aligned. The interface feels more cohesive and professional. 🎮✨
