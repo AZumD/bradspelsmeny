@@ -154,7 +154,7 @@ const navHTML = `
     </button>
   </nav>
 
- <ul id="adminMenuDropdown" style="display:none;position:fixed;top:0;left:0;">
+ <ul id="adminMenuDropdown" class="admin-popup-menu" style="display:none;">
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
@@ -221,31 +221,17 @@ function getAccessToken() {
   
     // ✅ Always bind toggle logic if elements exist
     if (adminToggle && adminDropdown) {
-        adminToggle.addEventListener("click", (e) => {
-  e.stopPropagation(); // Prevent immediate close
-  const dropdown = document.getElementById("adminMenuDropdown");
+      adminToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const visible = adminDropdown.style.display !== "none";
+        adminDropdown.style.display = visible ? "none" : "flex";
+      });
 
-  if (!dropdown) return;
-
-  const rect = adminToggle.getBoundingClientRect();
-
-  dropdown.style.position = "fixed"; // Viewport anchored
-  dropdown.style.top = `${rect.bottom}px`;
-  dropdown.style.left = `${rect.left}px`;
-
-  const currentlyVisible = dropdown.style.display === "block";
-  dropdown.style.display = currentlyVisible ? "none" : "block";
-});
-
-          
-          
-          
-  
-          document.addEventListener("click", (e) => {
-            if (!adminDropdown.contains(e.target) && !adminToggle.contains(e.target)) {
-              adminDropdown.style.display = "none";
-            }
-          });
+      document.addEventListener("click", (e) => {
+        if (!adminDropdown.contains(e.target) && !adminToggle.contains(e.target)) {
+          adminDropdown.style.display = "none";
+        }
+      });
           
     }
   }
