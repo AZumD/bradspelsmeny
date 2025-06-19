@@ -161,3 +161,52 @@ LENDING LAYOUT SIMPLIFICATION - COMPLETED
    - Error handling maintained
 
 The lending page now uses a cleaner, more compact horizontal layout while maintaining all core functionality. Games display as simple rows with title and action buttons, making the interface more streamlined and easier to scan.
+
+PHASE 2: FRONTEND LENDING AS PARTY SUPPORT - COMPLETED
+
+✅ TASKS COMPLETED:
+
+1. Added Party Dropdown to Lend Modal (admin/lending.html):
+   - Added partySelectWrapper div with proper styling and initial display: none
+   - Added partySelect dropdown with default "– Inget sällskap –" option
+   - Positioned between user select and table step sections
+   - Made party selection optional as specified
+
+2. Enhanced JavaScript for Party Support (admin/lending.js):
+   - Added DOM element references for partySelectWrapper and partySelect
+   - Updated openLendModal() to reset party dropdown and hide wrapper on modal open
+   - Modified user select change event listener to:
+     * Fetch parties from GET /users/:user_id/parties endpoint
+     * Populate partySelect dropdown with party names and IDs
+     * Show/hide partySelectWrapper based on whether user has parties
+     * Handle errors gracefully with proper fallback behavior
+   - Updated confirmLend() function to include party_id in lending request
+   - Updated new user form submission to reset party dropdown for newly created users
+
+3. API Integration:
+   - Implemented proper fetchWithAuth() calls to /users/:user_id/parties endpoint
+   - Added party_id field to lending request body (null if no party selected)
+   - Maintained existing error handling and user feedback patterns
+
+4. UI/UX Improvements:
+   - Party dropdown only appears when user has parties
+   - Graceful fallback when user has no parties or API errors occur
+   - Consistent styling with existing modal elements
+   - Optional party selection as specified
+
+## VERIFICATION
+- ✅ Party dropdown properly integrated into lend modal
+- ✅ Dynamic party loading based on user selection
+- ✅ Party ID included in lending requests
+- ✅ Graceful error handling and fallback behavior
+- ✅ No breaking changes to existing functionality
+- ✅ Consistent with existing code patterns and styling
+
+## RESULT
+The lending system now supports lending games to parties, allowing staff members to:
+- Select a user and optionally choose a party they belong to
+- Lend games on behalf of entire parties rather than just individual users
+- Maintain backward compatibility with individual user lending
+- Handle cases where users have no parties gracefully
+
+The implementation follows the existing code patterns and maintains all current functionality while adding the new party support feature.

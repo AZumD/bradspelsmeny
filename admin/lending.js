@@ -35,6 +35,8 @@ const userSelect = document.getElementById('userSelect');
 const tableStep = document.getElementById('tableStep');
 const lendGameId = document.getElementById('lendGameId');
 const tableNumber = document.getElementById('tableNumber');
+const partySelectWrapper = document.getElementById('partySelectWrapper');
+const partySelect = document.getElementById('partySelect');
 
 // Close button elements
 const closeImageModalBtn = document.getElementById('closeImageModalBtn');
@@ -124,6 +126,8 @@ async function openLendModal(gameId) {
     lendGameId.value = gameId;
     tableNumber.value = '';
     tableStep.style.display = 'none';
+    partySelectWrapper.style.display = 'none';
+    partySelect.innerHTML = '<option value="">– Inget sällskap –</option>';
     showModal(lendModal);
   } catch (err) {
     console.error('Failed to load users:', err);
@@ -265,6 +269,7 @@ async function confirmLend() {
   const gameId = lendGameId.value;
   const userId = userSelect.value;
   const tableNum = tableNumber.value.trim();
+  const partyId = partySelect.value || null;
 
   if (!userId || !tableNum) {
     alert("Please select a user and enter a table number.");
@@ -277,7 +282,7 @@ async function confirmLend() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId, note: `Table ${tableNum}` })
+      body: JSON.stringify({ userId, note: `Table ${tableNum}`, party_id: partyId })
     });
 
     closeLendModal();
@@ -339,6 +344,8 @@ function bindEventListeners() {
         userSelect.innerHTML += `<option value="${newUserId}" selected>${lastName}, ${firstName}, ${phone || 'No phone'}</option>`;
         userSelect.value = newUserId;
         tableStep.style.display = 'block';
+        partySelectWrapper.style.display = 'none';
+        partySelect.innerHTML = '<option value="">– Inget sällskap –</option>';
       } else {
         alert('❌ Failed to create user.');
       }
@@ -349,8 +356,29 @@ function bindEventListeners() {
   });
 
   // User select change
-  userSelect.addEventListener('change', () => {
+  userSelect.addEventListener('change', async () => {
     tableStep.style.display = userSelect.value ? 'block' : 'none';
+    
+    if (userSelect.value) {
+      try {
+        // Fetch parties for the selected user
+        const res = await fetchWithAuth(`${API_BASE}/users/${userSelect.value}/parties`);
+        const parties = await res.json();
+        
+        if (Array.isArray(parties) && parties.length > 0) {
+          partySelect.innerHTML = '<option value="">– Inget sällskap –</option>' +
+            parties.map(party => `<option value="${party.id}">${party.name}</option>`).join('');
+          partySelectWrapper.style.display = 'block';
+        } else {
+          partySelectWrapper.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Failed to fetch parties:', err);
+        partySelectWrapper.style.display = 'none';
+      }
+    } else {
+      partySelectWrapper.style.display = 'none';
+    }
   });
 
   // Close modals when clicking outside
