@@ -11,14 +11,14 @@ import {
 
 async function guardAdminSession() {
   const token = getAccessToken();
-  const refreshToken = getRefreshToken();
+  const storedRefreshToken = getRefreshToken();
 
-  if (!token && !refreshToken) {
+  if (!token && !storedRefreshToken) {
     window.location.href = "login.html";
     return false;
   }
 
-  if (!token && refreshToken) {
+  if (!token && storedRefreshToken) {
     const refreshed = await refreshToken();
     if (!refreshed) {
       window.location.href = "login.html";
