@@ -196,31 +196,22 @@ function getAccessToken() {
     const token = getAccessToken();
     if (!token) return null;
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role || null;
-    } catch {
-      return null;
-    }
-  }
-  
-
-  function initPixelNav() {
-    const nav = document.getElementById('pixelNav');
-    if (nav && getAccessToken() && !isTokenExpired(getAccessToken())) {
-      nav.style.display = 'flex';
-    }
-  
-    const adminToggle = document.getElementById("adminMenuToggle");
-    const adminDropdown = document.getElementById("adminMenuDropdown");
-    const logoutIcon = document.getElementById("logoutIcon");
-  
-    // ✅ Show/hide elements based on role
-    if (getUserRole() === "admin") {
-      if (adminToggle) adminToggle.style.display = "inline-block";
-      if (logoutIcon) logoutIcon.style.display = "none";
-    }
-  
-    // ✅ Always bind toggle logic if elements exist
+      adminToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const rect = adminToggle.getBoundingClientRect();
+        adminDropdown.style.top = `${rect.bottom}px`;
+        adminDropdown.style.left = `${rect.left}px`;
+        adminDropdown.style.display =
+          adminDropdown.style.display === "flex" ? "none" : "flex";
+      });
+      document.addEventListener("click", (e) => {
+        if (
+          !adminDropdown.contains(e.target) &&
+          !adminToggle.contains(e.target)
+        ) {
+          adminDropdown.style.display = "none";
+        }
+      });
     if (adminToggle && adminDropdown) {
         adminToggle.addEventListener("click", (e) => {
   e.stopPropagation(); // Prevent immediate close
