@@ -204,47 +204,44 @@ async function createGameCard(game) {
 
   card.className = 'lending-card';
   card.innerHTML = `
-    <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #5a2a0c;">${game.title_sv}</h3>
-    <div style="font-size: 0.7rem; margin-bottom: 0.5rem;">
-      <div>👥 ${game.players_min || '?'}-${game.players_max || '?'} spelare</div>
-      <div>⏱️ ${game.time_min || '?'}-${game.time_max || '?'} min</div>
-      <div>🎂 ${game.age_min || '?'}+ år</div>
-      <div style="font-weight: bold; color: ${game.lent_out ? '#8c3c1a' : '#2d5a2d'};">
-        ${game.lent_out ? '🔴 Utlånad' : '🟢 Tillgänglig'}
-      </div>
-    </div>
-    ${extra}
-    <div class="buttons" style="margin-top: 0.5rem;">
-      <button class="btn-action" data-action="${game.lent_out ? 'return' : 'lend'}" data-game-id="${game.id}">
-        ${game.lent_out ? 'Return' : 'Lend Out'}
-      </button>
-      <button class="btn-image" data-image="${game.img}">🖼️</button>
-      <button class="btn-history" data-game-id="${game.id}">📜</button>
-    </div>
+    <span>${game.title_sv || game.title}${extra}</span>
+    <span class="button-group">
+      <button data-action="image" data-image="${game.img}" data-game-id="${game.id}" title="Visa bild">🖼️</button>
+      <button data-action="history" data-game-id="${game.id}" title="Historik">📜</button>
+      ${game.lent_out
+        ? `<button data-action="return" data-game-id="${game.id}" title="Returnera">⬅️</button>`
+        : `<button data-action="lend" data-game-id="${game.id}" title="Låna ut">✅</button>`}
+    </span>
   `;
 
   // Add event listeners to the buttons
-  const actionBtn = card.querySelector('.btn-action');
-  const imageBtn = card.querySelector('.btn-image');
-  const historyBtn = card.querySelector('.btn-history');
+  const imageBtn = card.querySelector('[data-action="image"]');
+  const historyBtn = card.querySelector('[data-action="history"]');
+  const actionBtn = card.querySelector('[data-action="return"], [data-action="lend"]');
 
-  actionBtn.addEventListener('click', async () => {
-    const gameId = parseInt(actionBtn.dataset.gameId);
-    if (actionBtn.dataset.action === 'return') {
-      await handleReturn(gameId);
-    } else {
-      await openLendModal(gameId);
-    }
-  });
+  if (imageBtn) {
+    imageBtn.addEventListener('click', () => {
+      openImageModal(imageBtn.dataset.image);
+    });
+  }
 
-  imageBtn.addEventListener('click', () => {
-    openImageModal(imageBtn.dataset.image);
-  });
+  if (historyBtn) {
+    historyBtn.addEventListener('click', async () => {
+      const gameId = parseInt(historyBtn.dataset.gameId);
+      await openHistoryModal(gameId);
+    });
+  }
 
-  historyBtn.addEventListener('click', async () => {
-    const gameId = parseInt(historyBtn.dataset.gameId);
-    await openHistoryModal(gameId);
-  });
+  if (actionBtn) {
+    actionBtn.addEventListener('click', async () => {
+      const gameId = parseInt(actionBtn.dataset.gameId);
+      if (actionBtn.dataset.action === 'return') {
+        await handleReturn(gameId);
+      } else {
+        await openLendModal(gameId);
+      }
+    });
+  }
 
   return card;
 }

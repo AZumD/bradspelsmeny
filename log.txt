@@ -127,3 +127,37 @@ LENDING PAGE LAYOUT FIX - COMPLETED
    - Event listeners maintained
 
 The lending page now displays games in a clean, organized grid layout with individual cards showing comprehensive game information while maintaining all existing functionality.
+
+LENDING LAYOUT SIMPLIFICATION - COMPLETED
+
+✅ TASKS COMPLETED:
+
+1. Updated CSS styling for simplified lending layout:
+   - Modified .lending-grid to use flex-direction: column with no gaps
+   - Simplified .lending-card to:
+     * Background: transparent
+     * Border: only bottom 2px dashed #d9b370
+     * Layout: flex with space-between alignment
+     * Padding: 0.8rem 0.4rem
+     * Font-size: 0.9rem
+   - Added .button-group styling with 6px gap for button alignment
+
+2. Simplified createGameCard() function in admin/lending.js:
+   - Removed complex game information display (players, time, age, status)
+   - Changed to simple horizontal layout with game title and action buttons
+   - Updated button structure to use data-action attributes:
+     * 🖼️ for image display
+     * 📜 for history
+     * ✅ for lending (available games)
+     * ⬅️ for returning (lent games)
+   - Added proper title attributes for accessibility
+   - Maintained all existing event listeners and functionality
+
+3. Preserved all existing functionality:
+   - Modal behavior unchanged
+   - Card-level click handlers maintained
+   - Lending logic preserved
+   - Search and filtering unchanged
+   - Error handling maintained
+
+The lending page now uses a cleaner, more compact horizontal layout while maintaining all core functionality. Games display as simple rows with title and action buttons, making the interface more streamlined and easier to scan.
