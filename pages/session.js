@@ -33,7 +33,9 @@ async function loadSessionData() {
 
         // Update UI with game info
         const thumb = document.getElementById('gameThumbnail');
-        thumb.src = currentSession.img || '../img/default-thumb.webp';
+        thumb.src = currentSession.img?.includes("http")
+            ? currentSession.img
+            : `../${currentSession.img || "img/default-thumb.webp"}`;
         thumb.alt = currentSession.game_title || 'Game thumbnail';
         thumb.onerror = () => { thumb.src = '../img/default-thumb.webp'; };
 

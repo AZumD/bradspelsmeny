@@ -311,7 +311,9 @@ function renderActiveSession(session) {
 
   // Create thumbnail
   const thumb = document.createElement('img');
-  thumb.src = session.img || '../img/default-thumb.webp';
+  thumb.src = session.img?.includes("http")
+    ? session.img
+    : `../${session.img || "img/default-thumb.webp"}`;
   thumb.alt = session.game_title || 'Game thumbnail';
   thumb.title = session.game_title || 'Game thumbnail';
   thumb.className = 'game-thumbnail';
