@@ -34,11 +34,11 @@ async function loadSessionData() {
         // Update UI with game info
         const thumb = document.getElementById('gameThumbnail');
         thumb.src = currentSession.img || '../img/default-thumb.webp';
-        thumb.alt = currentSession.title || 'Game thumbnail';
+        thumb.alt = currentSession.game_title || 'Game thumbnail';
         thumb.onerror = () => { thumb.src = '../img/default-thumb.webp'; };
 
         const titleEl = document.getElementById('gameTitle');
-        titleEl.textContent = currentSession.title;
+        titleEl.textContent = currentSession.game_title || 'Untitled Game';
         titleEl.style.overflow = 'hidden';
         titleEl.style.textOverflow = 'ellipsis';
         titleEl.style.whiteSpace = 'nowrap';
@@ -50,7 +50,7 @@ async function loadSessionData() {
         // Load and render rounds
         await loadSessionRounds();
 
-        console.log("✨ Session view loaded successfully");
+        console.log("✨ Session view loaded successfully with game:", currentSession.game_title);
     } catch (err) {
         console.error('Failed to load session:', err);
         document.body.innerHTML = "<p style='padding:2rem;'>❌ This session doesn't exist or you don't have access.</p>";
