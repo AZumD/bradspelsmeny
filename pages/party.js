@@ -247,15 +247,19 @@ async function loadActiveSession(partyId) {
     const res = await fetchWithAuth(`${API_BASE}/party-sessions/active/${partyId}`);
     if (!res.ok) throw new Error("No active session");
 
-    const data = await res.json();
-    const start = new Date(data.started_at);
+    const session = await res.json();
+    const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
+    if (!gameRes.ok) throw new Error("Failed to fetch game info");
+
+    const game = await gameRes.json();
+    const start = new Date(session.started_at);
     const formattedStart = start.toLocaleString("sv-SE", {
       dateStyle: "short",
       timeStyle: "short",
     });
 
     sessionBox.innerHTML = `
-      <strong>${data.game_title}</strong><br />
+      🎮 <strong>${game.title}</strong><br />
       ⏳ Startade: ${formattedStart}
     `;
     sessionBox.classList.add('fade-in');
