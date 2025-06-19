@@ -154,7 +154,7 @@ const navHTML = `
     </button>
   </nav>
 
- <ul id="adminMenuDropdown" style="display:none;position:fixed;top:0;left:0;">
+ <ul id="adminMenuDropdown" class="admin-popup-menu" style="display:none;position:fixed;top:0;left:0;">
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
