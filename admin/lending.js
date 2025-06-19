@@ -174,17 +174,6 @@ async function confirmLend() {
   fetchGames();
 }
 
-async function returnGame(gameId) {
-  await fetchWithAuth(`${API_BASE}/return/${gameId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({})
-  });
-
-  fetchGames();
-}
 
 function openImageModal(imgUrl) {
   const modal = document.getElementById('imageModal');
