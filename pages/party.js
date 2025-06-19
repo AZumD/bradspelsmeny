@@ -267,7 +267,7 @@ async function loadActiveSession(partyId) {
     });
 
     sessionBox.innerHTML = `
-      🎮 <strong>${game.title}</strong><br />
+      🎮 <strong>${game.title_en}</strong><br />
       ⏳ Startade: ${formattedStart}
     `;
     sessionBox.classList.add('fade-in');
