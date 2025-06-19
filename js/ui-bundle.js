@@ -47,8 +47,6 @@ const css = `
 }
 .admin-popup-menu {
   position:fixed;
-  top:0;
-  left:0;
   background:#fffdf7;
   border:2px dashed #c9a04e;
   padding:0.8rem;
@@ -384,10 +382,17 @@ function initPixelNav() {
   
     // ✅ Always bind toggle logic if elements exist
     if (adminToggle && adminDropdown) {
-      adminToggle.addEventListener("click", () => {
-        adminDropdown.style.display =
-          adminDropdown.style.display === "none" ? "block" : "none";
-      });
+        adminToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+          
+            const rect = adminToggle.getBoundingClientRect();
+            adminDropdown.style.position = "fixed";
+            adminDropdown.style.top = `${rect.top - adminDropdown.offsetHeight - 8}px`; // 8px gap above
+            adminDropdown.style.left = `${rect.left}px`;
+            adminDropdown.style.display =
+              adminDropdown.style.display === "block" ? "none" : "block";
+          });
+          
   
       document.addEventListener("click", (e) => {
         if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
