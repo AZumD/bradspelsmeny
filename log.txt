@@ -289,3 +289,36 @@ Task: Fix session links and improve click behavior
 
 ## RESULT
 Session links now work correctly with proper relative paths. The click behavior is smooth on both desktop and mobile, with proper hover effects and cursor indicators. Sorry about the 404s, Tova! Won't happen again. 🎲
+
+# Session ID Scoping Fix
+Date: 2024-12-19
+Task: Fix undefined session IDs in session links
+
+## ISSUE
+Tova caught me passing undefined session IDs in the links! 🦉
+The session cards were trying to use session IDs from an outer scope that didn't exist.
+
+## CHANGES MADE
+- Properly scoped sessionId in loadActiveSession:
+  ```js
+  const session = await res.json();
+  const sessionId = session.id;  // Properly scoped!
+  ```
+- Fixed session variable in loadPastSessions loop:
+  ```js
+  for (const session of sessions) {
+    const sessionId = session.id;
+    // Use sessionId in onclick handler
+  }
+  ```
+- Added console.log for link debugging
+- Double checked all session ID references
+
+## VERIFICATION
+- ✅ Active session links to correct ID
+- ✅ Past session links to correct ID
+- ✅ No more undefined in URLs
+- ✅ Console logs show correct IDs
+
+## RESULT
+All session cards now link to their proper session.html?id=123 pages. No more undefined shenanigans! Sorry about that Tova, I'll try to keep my owlbrain focused next time! 🦉

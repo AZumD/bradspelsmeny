@@ -251,6 +251,7 @@ async function loadActiveSession(partyId) {
     if (!res.ok) throw new Error("No active session");
 
     const session = await res.json();
+    const sessionId = session.id;
     console.log("Session data:", session);
     
     const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
@@ -287,7 +288,8 @@ async function loadActiveSession(partyId) {
     sessionBox.onmouseout = () => sessionBox.style.backgroundColor = '#f9f6f2';
     sessionBox.onclick = (e) => {
       e.preventDefault();
-      window.location.href = `session.html?id=${session.id}`;
+      console.log("Navigating to active session:", sessionId);
+      window.location.href = `session.html?id=${sessionId}`;
     };
 
     // Create thumbnail
@@ -346,9 +348,10 @@ async function loadPastSessions(partyId) {
       return;
     }
 
-    for (const s of sessions) {
-      const gameRes = await fetchWithAuth(`${API_BASE}/games/${s.game_id}`);
-      const game = gameRes.ok ? await gameRes.json() : { title_en: s.game_title || "Unknown", img: "" };
+    for (const session of sessions) {
+      const sessionId = session.id;
+      const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
+      const game = gameRes.ok ? await gameRes.json() : { title_en: session.game_title || "Unknown", img: "" };
 
       const card = document.createElement("div");
       card.className = "session-card";
@@ -370,7 +373,8 @@ async function loadPastSessions(partyId) {
       card.onmouseout = () => card.style.backgroundColor = '#f9f6f2';
       card.onclick = (e) => {
         e.preventDefault();
-        window.location.href = `session.html?id=${s.id}`;
+        console.log("Navigating to past session:", sessionId);
+        window.location.href = `session.html?id=${sessionId}`;
       };
 
       const thumb = document.createElement("img");
@@ -380,13 +384,13 @@ async function loadPastSessions(partyId) {
       thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover';
       thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
 
-      const started = new Date(s.started_at).toLocaleString("sv-SE", {
+      const started = new Date(session.started_at).toLocaleString("sv-SE", {
         dateStyle: "short",
         timeStyle: "short"
       });
 
-      const ended = s.returned_at
-        ? new Date(s.returned_at).toLocaleString("sv-SE", {
+      const ended = session.returned_at
+        ? new Date(session.returned_at).toLocaleString("sv-SE", {
             dateStyle: "short",
             timeStyle: "short"
           })
