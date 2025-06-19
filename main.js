@@ -14,7 +14,8 @@ import {
 
 import {
   fetchPublicGames,
-  fetchAllGames
+  fetchAllGames,
+  getUserProfile
 } from './js/modules/api.js';
 
 const translations = {
@@ -65,6 +66,7 @@ let currentLang = 'en';
 let currentCategory = 'all';
 let userFavorites = [];
 let userWishlist = [];
+let games = [];
 
 function isTokenExpired(token) {
   try {
@@ -174,10 +176,10 @@ function renderCategories() {
   }
 }
 
-function bindOrderButtons() {
+async function bindOrderButtons() {
   const buttons = document.querySelectorAll(".order-button");
   buttons.forEach(button => {
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", async (e) => {
       const userData = localStorage.getItem("userData");
       const gameCard = e.target.closest(".game-card");
       const gameId = gameCard.dataset.gameId;
@@ -198,6 +200,8 @@ function bindOrderButtons() {
           inputs.forEach(input => input.disabled = true);
         }
         if (notice) notice.style.display = "block";
+        // Populate party dropdown for logged-in users
+        await populatePartyDropdown();
       } else {
         if (userFields) {
           userFields.style.display = "block";
@@ -211,6 +215,42 @@ function bindOrderButtons() {
       modal.style.display = "flex";
     });
   });
+}
+
+async function populatePartyDropdown() {
+  const userData = localStorage.getItem("userData");
+  const partySelectWrapper = document.getElementById("partySelectWrapper");
+  const partySelect = document.getElementById("partySelect");
+  
+  if (!userData) {
+    partySelectWrapper.style.display = "none";
+    return;
+  }
+  
+  try {
+    const user = JSON.parse(userData);
+    const userProfile = await getUserProfile(user.id);
+    
+    if (userProfile.parties && userProfile.parties.length > 0) {
+      // Clear existing options except the first one
+      partySelect.innerHTML = '<option value="">– Just me –</option>';
+      
+      // Add party options
+      userProfile.parties.forEach(party => {
+        const option = document.createElement('option');
+        option.value = party.id;
+        option.textContent = party.name;
+        partySelect.appendChild(option);
+      });
+      
+      partySelectWrapper.style.display = "block";
+    } else {
+      partySelectWrapper.style.display = "none";
+    }
+  } catch (error) {
+    console.error("Failed to load user parties:", error);
+    partySelectWrapper.style.display = "none";
+  }
 }
 
 function continueAsGuest() {
@@ -240,7 +280,7 @@ async function renderGames() {
   const heading = document.getElementById('categoryHeading');
   heading.textContent = translations[currentLang].categories[currentCategory];
 
-  const games = await getGameApiUrl();
+  games = await getGameApiUrl();
   const isMember = isMemberUser();
 
   let filtered = currentCategory === 'all'
@@ -303,7 +343,7 @@ async function renderGames() {
 
     container.appendChild(card);
   });
-  bindOrderButtons();
+  await bindOrderButtons();
 }
 
 // Distance helper for geolocation
@@ -448,6 +488,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       phone: phone,
       table_id: formData.get("table_id")
     };
+
+    // Add party_id if selected
+    const partyId = formData.get("party_id");
+    if (partyId) {
+      payload.party_id = partyId;
+    }
 
     try {
       const res = await fetchWithAuth(`${API_BASE}/order-game`, {

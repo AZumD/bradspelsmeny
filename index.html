@@ -584,6 +584,14 @@
           Table Number:<br />
           <input type="text" name="table_id" pattern="[1-9][0-9]*" required placeholder="Enter your table number" />
         </label><br />
+        <div id="partySelectWrapper" style="display: none;">
+          <label for="partySelect">Borrow as a party?</label><br />
+          <select name="party_id" id="partySelect">
+            <option value="">– Just me –</option>
+            <!-- Populate dynamically -->
+          </select>
+        </div>
+        <br />
         <button type="submit">Order</button>
         <button type="button" id="closeModal">Cancel</button>
       </form>

@@ -482,41 +482,40 @@ form {
 
 /* ========== COLLAPSIBLE SECTIONS ========== */
 .collapsible-section {
-    margin-bottom: 1rem;
-    border: 2px dashed #d9b370;
-    border-radius: 8px;
-    background-color: #f9f6f2;
-    overflow: hidden;
-  }
-  
-  .collapsible-header {
-    background-color: #fff3d6;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.7rem;
-    padding: 10px 12px;
-    border: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #5a2a0c;
-    box-sizing: border-box;
-  }
-  
-  .collapsible-header:hover {
-    background-color: #fbe7b8;
-  }
-  
-  .caret {
-    font-size: 0.9rem;
-  }
-  
-  .collapsible-content {
-    padding: 12px;
-    font-family: 'VT323', monospace;
-    font-size: 0.8rem;
-    color: #5a2a0c;
-  }
-  
+  margin-bottom: 1rem;
+  border: 2px dashed #d9b370;
+  border-radius: 8px;
+  background-color: #f9f6f2;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  background-color: #fff3d6;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  padding: 10px 12px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #5a2a0c;
+  box-sizing: border-box;
+}
+
+.collapsible-header:hover {
+  background-color: #fbe7b8;
+}
+
+.caret {
+  font-size: 0.9rem;
+}
+
+.collapsible-content {
+  padding: 12px;
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: #5a2a0c;
+}
