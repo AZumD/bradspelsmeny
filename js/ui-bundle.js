@@ -155,7 +155,6 @@ const navHTML = `
   </nav>
 
  <ul id="adminMenuDropdown" class="admin-popup-menu" style="display:none;">
-
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
@@ -213,6 +212,7 @@ function getAccessToken() {
         }
       });
     if (adminToggle && adminDropdown) {
+
         adminToggle.addEventListener("click", (e) => {
   e.stopPropagation(); // Prevent immediate close
   const dropdown = document.getElementById("adminMenuDropdown");
@@ -228,17 +228,14 @@ function getAccessToken() {
   const currentlyVisible = dropdown.style.display === "flex";
   dropdown.style.display = currentlyVisible ? "none" : "flex";
 });
-
-          
-          
-          
-  
-          document.addEventListener("click", (e) => {
-            if (!adminDropdown.contains(e.target) && !adminToggle.contains(e.target)) {
-              adminDropdown.style.display = "none";
-            }
-          });
-          
+      document.addEventListener("click", (e) => {
+        if (
+          !adminDropdown.contains(e.target) &&
+          !adminToggle.contains(e.target)
+        ) {
+          adminDropdown.style.display = "none";
+        }
+      });
     }
   }
 
