@@ -266,11 +266,34 @@ async function loadActiveSession(partyId) {
       timeStyle: "short",
     });
 
-    sessionBox.innerHTML = `
-      🎮 <strong>${game.title_en}</strong><br />
-      ⏳ Startade: ${formattedStart}
-    `;
+    // Clear & prep container
+    sessionBox.innerHTML = '';
     sessionBox.classList.add('fade-in');
+    sessionBox.style.display = 'flex';
+    sessionBox.style.alignItems = 'center';
+    sessionBox.style.gap = '12px';
+
+    // Create thumbnail
+    const thumb = document.createElement('img');
+    thumb.src = game.img.startsWith('http') ? game.img : `../${game.img}`;
+    thumb.alt = game.title_en;
+    thumb.title = game.title_en;
+    thumb.className = 'game-thumbnail';
+    thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;cursor:pointer';
+    thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
+    thumb.onclick = () => openGameModal('favoriteGameModal', game);
+
+    // Create text
+    const info = document.createElement('div');
+    info.innerHTML = `
+      <div style="font-weight:bold;">${game.title_en}</div>
+      <div style="font-size:0.8rem;color:#7a5a30;">Startade: ${formattedStart}</div>
+    `;
+
+    // Assemble
+    sessionBox.append(thumb, info);
+    
+    console.log("✅ Active session layout updated with thumbnail and text");
   } catch (err) {
     console.error("❌ loadActiveSession error:", err);
     sessionBox.innerHTML = `🚫 No active session currently.`;
