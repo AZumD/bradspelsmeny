@@ -86,3 +86,44 @@ The lending system is now:
 - Ready for production use
 
 All broken inline handlers have been replaced with proper event listeners, and the modal system uses consistent class-based toggling instead of manual display manipulation.
+
+LENDING PAGE LAYOUT FIX - COMPLETED
+
+✅ TASKS COMPLETED:
+
+1. Added CSS styling for lending grid layout:
+   - Added .lending-grid to existing grid classes in css/master.css
+   - Added specific .lending-grid styling with 12px gap and 0.5rem padding
+   - Added .lending-card styling with:
+     * Background: #fffaf0
+     * Border: 2px dashed #d9b370
+     * Border-radius: 8px
+     * Padding: 1rem
+     * Max-width: 300px
+     * Box-shadow: 2px 2px 4px rgba(90,42,12,0.15)
+     * Font: VT323 monospace, 0.8rem
+     * Color: #5a2a0c
+
+2. Updated renderGameLists() function in admin/lending.js:
+   - Set availableContainer.className = 'lending-grid'
+   - Set lentOutContainer.className = 'lending-grid'
+   - Maintained existing search filtering and card creation logic
+
+3. Updated createGameCard() function in admin/lending.js:
+   - Changed card.className from 'section-title' to 'lending-card'
+   - Added structured game information display:
+     * Game title with proper styling
+     * Player count (min-max)
+     * Time duration (min-max minutes)
+     * Age requirement
+     * Status indicator (🟢 Tillgänglig / 🔴 Utlånad)
+   - Maintained all existing button functionality (lend/return, image, history)
+   - Preserved lending information display for lent out games
+
+4. Preserved all existing functionality:
+   - Modal logic unchanged
+   - Search filtering unchanged
+   - Lending/return behavior unchanged
+   - Event listeners maintained
+
+The lending page now displays games in a clean, organized grid layout with individual cards showing comprehensive game information while maintaining all existing functionality.

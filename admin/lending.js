@@ -167,6 +167,10 @@ async function renderGameLists() {
   const available = allGames.filter(g => !g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
   const lentOut = allGames.filter(g => g.lent_out && (g.title_sv || '').toLowerCase().includes(searchTerm));
 
+  // Set container classes to lending-grid
+  availableContainer.className = 'lending-grid';
+  lentOutContainer.className = 'lending-grid';
+
   availableContainer.innerHTML = '<p>Laddar spel...</p>';
   lentOutContainer.innerHTML = '<p>Laddar spel...</p>';
 
@@ -198,10 +202,19 @@ async function createGameCard(game) {
     }
   }
 
-  card.className = 'section-title';
+  card.className = 'lending-card';
   card.innerHTML = `
-    <h3>${game.title_sv}${extra}</h3>
-    <div class="buttons">
+    <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #5a2a0c;">${game.title_sv}</h3>
+    <div style="font-size: 0.7rem; margin-bottom: 0.5rem;">
+      <div>👥 ${game.players_min || '?'}-${game.players_max || '?'} spelare</div>
+      <div>⏱️ ${game.time_min || '?'}-${game.time_max || '?'} min</div>
+      <div>🎂 ${game.age_min || '?'}+ år</div>
+      <div style="font-weight: bold; color: ${game.lent_out ? '#8c3c1a' : '#2d5a2d'};">
+        ${game.lent_out ? '🔴 Utlånad' : '🟢 Tillgänglig'}
+      </div>
+    </div>
+    ${extra}
+    <div class="buttons" style="margin-top: 0.5rem;">
       <button class="btn-action" data-action="${game.lent_out ? 'return' : 'lend'}" data-game-id="${game.id}">
         ${game.lent_out ? 'Return' : 'Lend Out'}
       </button>
