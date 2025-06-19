@@ -189,7 +189,7 @@ function getAccessToken() {
     } catch {
       return true;
     }
-  }adminToggle.
+  }
   
   function getUserRole() {
     const token = getAccessToken();
