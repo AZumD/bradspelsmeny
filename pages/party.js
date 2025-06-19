@@ -310,12 +310,12 @@ async function loadPastSessions(partyId) {
 
   try {
     const res = await fetchWithAuth(`${API_BASE}/party-sessions/history/${partyId}`);
-    if (!res.ok) throw new Error("No sessions");
+    if (!res.ok) throw new Error("Failed to fetch sessions");
 
     const sessions = await res.json();
 
     if (!sessions.length) {
-      container.innerHTML = `<div class="placeholder-box">No past sessions found</div>`;
+      container.innerHTML = '<div class="placeholder-box">No past sessions yet</div>';
       return;
     }
 
@@ -328,6 +328,10 @@ async function loadPastSessions(partyId) {
       card.style.display = 'flex';
       card.style.alignItems = 'center';
       card.style.gap = '12px';
+      card.style.marginBottom = '10px';
+      card.style.backgroundColor = '#f9f6f2';
+      card.style.borderRadius = '8px';
+      card.style.padding = '10px';
 
       const thumb = document.createElement("img");
       thumb.src = game.img?.startsWith("http") ? game.img : `../${game.img}`;
@@ -352,7 +356,7 @@ async function loadPastSessions(partyId) {
       const textBox = document.createElement("div");
       textBox.style.textAlign = "left";
       textBox.innerHTML = `
-        <div style="font-weight:bold;">${game.title_en}</div>
+        <div style="font-weight:bold;font-size:0.9rem;">${game.title_en}</div>
         <div style="font-size:0.8rem;color:#7a5a30;">
           Start: ${started}<br>
           Returned: ${ended}
@@ -362,9 +366,11 @@ async function loadPastSessions(partyId) {
       card.append(thumb, textBox);
       container.appendChild(card);
     }
+
+    console.log("✅ Past sessions loaded and rendered");
   } catch (err) {
-    console.error("❌ Failed to load past sessions:", err);
-    container.innerHTML = `<div class="placeholder-box">❌ Could not load past sessions</div>`;
+    console.error("Failed to load past sessions:", err);
+    container.innerHTML = '<div class="placeholder-box">No past sessions yet</div>';
   }
 }
 
