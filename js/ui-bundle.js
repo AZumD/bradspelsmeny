@@ -154,7 +154,7 @@ const navHTML = `
     </button>
   </nav>
 
-  <ul id="adminMenuDropdown" style="display:none;position:absolute;background-color:#fffdf7;border:2px dashed #d9b370;padding:10px;font-family:'Press Start 2P',monospace;font-size:0.6rem;list-style:none;z-index:999;">
+ <ul id="adminMenuDropdown" style="display:none;position:fixed;top:0;left:0;">
     <li><a href="/bradspelsmeny/admin/index.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-admin.webp" alt="Admin Dash" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/edit-games.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-editgames.webp" alt="Edit Games" width="48" height="48" /></a></li>
     <li><a href="/bradspelsmeny/admin/user-db.html"><img src="https://azumd.github.io/bradspelsmeny/img/icons/icon-friends.webp" alt="User DB" width="48" height="48" /></a></li>
@@ -221,23 +221,26 @@ function getAccessToken() {
   
     // ✅ Always bind toggle logic if elements exist
     if (adminToggle && adminDropdown) {
-        adminToggle.addEventListener("click", () => {
+        adminToggle.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent closing from global click listener
+          
             const rect = adminToggle.getBoundingClientRect();
           
-            adminDropdown.style.position = "fixed"; // fixed instead of absolute
-            adminDropdown.style.top = `${rect.bottom}px`;  // no scrollY
+            adminDropdown.style.position = "fixed";
+            adminDropdown.style.top = `${rect.bottom}px`;
             adminDropdown.style.left = `${rect.left}px`;
-          
-            adminDropdown.style.display =
-              adminDropdown.style.display === "none" ? "block" : "none";
+            adminDropdown.style.display = adminDropdown.style.display === "block" ? "none" : "block";
           });
           
+          
+          
   
-      document.addEventListener("click", (e) => {
-        if (!adminToggle.contains(e.target) && !adminDropdown.contains(e.target)) {
-          adminDropdown.style.display = "none";
-        }
-      });
+          document.addEventListener("click", (e) => {
+            if (!adminDropdown.contains(e.target) && !adminToggle.contains(e.target)) {
+              adminDropdown.style.display = "none";
+            }
+          });
+          
     }
   }
 
