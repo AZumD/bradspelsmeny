@@ -387,7 +387,7 @@ function initPixelNav() {
           
             const rect = adminToggle.getBoundingClientRect();
             adminDropdown.style.position = "fixed";
-            adminDropdown.style.top = `${rect.top - adminDropdown.offsetHeight - 38}px`; // 8px gap above
+            adminDropdown.style.top = `${rect.top - adminDropdown.offsetHeight - 500}px`; // 8px gap above
             adminDropdown.style.left = `${rect.left}px`;
             adminDropdown.style.display =
               adminDropdown.style.display === "block" ? "none" : "block";
