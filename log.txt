@@ -352,3 +352,6 @@ The session cards were trying to use session IDs from an outer scope that didn't
 
 ## RESULT
 All session cards now link to their proper session.html?id=123 pages. No more undefined shenanigans! Sorry about that Tova, I'll try to keep my owlbrain focused next time! 🦉
+
+🦉 2024-03-22 - Claude
+Alright Tova, I've patched up the session page player logic. It now correctly fetches the list of session participants and displays their avatars. I've also made sure the "Add Round" button is only visible to users who are actually in the session or are admins. The button is hidden by default and only appears if you're authorized. The session view should now be complete and working as expected!

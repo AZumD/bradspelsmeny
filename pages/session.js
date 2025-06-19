@@ -1,6 +1,7 @@
 import { 
     getAccessToken,
     getUserIdFromToken,
+    getUserRole,
     fetchWithAuth
 } from '../js/modules/auth.js';
 
@@ -61,47 +62,37 @@ async function loadSessionData() {
 
 async function loadSessionPlayers() {
     const sessionId = getSessionIdFromURL();
+    const addRoundBtn = document.getElementById('addRoundBtn');
+    addRoundBtn.style.display = 'none'; // Hide by default
+
     try {
         const res = await fetchWithAuth(`${API_BASE}/party-sessions/players/${sessionId}`);
         if (!res.ok) throw new Error('Failed to load players');
+        
         sessionPlayers = await res.json();
-
-        const container = document.getElementById('playerList');
-        container.innerHTML = '';
+        const playerListContainer = document.getElementById('playerList');
+        playerListContainer.innerHTML = '';
 
         sessionPlayers.forEach(player => {
-            const avatar = document.createElement('a');
-            avatar.href = `${FRONTEND_BASE}/pages/profile.html?id=${player.user_id}`;
-            avatar.title = player.username;
-
-            const img = document.createElement('img');
-            img.src = player.avatar_url || '../img/avatar-placeholder.webp';
-            img.alt = player.username;
-            img.className = 'friend-avatar';
-            img.style.width = '48px';
-            img.style.height = '48px';
-
-            avatar.appendChild(img);
-            container.appendChild(avatar);
+            const img = document.createElement("img");
+            img.src = player.avatar || "../img/avatar-placeholder.webp";
+            img.title = `${player.first_name} ${player.last_name}`;
+            img.className = "avatar friend-avatar";
+            playerListContainer.appendChild(img);
         });
 
-        // Add the + button if user is in session
-        currentUserId = getUserIdFromToken();
-        const userInSession = sessionPlayers.some(p => p.user_id === currentUserId);
-        
-        if (userInSession) {
-            const addBtn = document.createElement('div');
-            addBtn.className = 'add-friend-circle';
-            addBtn.textContent = '+';
-            addBtn.onclick = () => document.getElementById('addPlayerModal').style.display = 'flex';
-            container.appendChild(addBtn);
+        // Check if current user is a participant or admin
+        const currentUserId = getUserIdFromToken();
+        const currentUserRole = getUserRole();
+        const isParticipant = sessionPlayers.some(p => p.id === currentUserId) || currentUserRole === 'admin';
 
-            // Show Add Round button
-            document.getElementById('addRoundBtn').style.display = 'block';
+        if (isParticipant) {
+            addRoundBtn.style.display = "inline-block";
         }
 
     } catch (err) {
         console.error('Failed to load players:', err);
+        document.getElementById('playerList').innerHTML = '<div class="placeholder-box">Could not load players</div>';
     }
 }
 
