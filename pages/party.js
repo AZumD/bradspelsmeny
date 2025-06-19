@@ -248,10 +248,18 @@ async function loadActiveSession(partyId) {
     if (!res.ok) throw new Error("No active session");
 
     const session = await res.json();
+    console.log("🎯 Session data:", session);
+    
     const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
-    if (!gameRes.ok) throw new Error("Failed to fetch game info");
+    if (!gameRes.ok) {
+      console.error("❌ Game fetch failed:", await gameRes.text());
+      sessionBox.innerHTML = `⚠️ Kunde inte hämta spelinfo`;
+      return;
+    }
 
     const game = await gameRes.json();
+    console.log("🎲 Loaded game response:", game);
+    
     const start = new Date(session.started_at);
     const formattedStart = start.toLocaleString("sv-SE", {
       dateStyle: "short",
@@ -264,6 +272,7 @@ async function loadActiveSession(partyId) {
     `;
     sessionBox.classList.add('fade-in');
   } catch (err) {
+    console.error("❌ loadActiveSession error:", err);
     sessionBox.innerHTML = `🚫 No active session currently.`;
   }
 }
