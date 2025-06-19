@@ -13,14 +13,14 @@
     </div>
 
     <div class="collapsible-section">
-      <button class="collapsible-header" onclick="toggleSection('lentOutGames', this)">
+      <button class="collapsible-header" data-section="lentOutGames">
         Utlånade spel <span class="caret">▼</span>
       </button>
       <div id="lentOutGames" class="collapsible-content"></div>
     </div>
 
     <div class="collapsible-section">
-      <button class="collapsible-header" onclick="toggleSection('availableGames', this)">
+      <button class="collapsible-header" data-section="availableGames">
         Tillgängliga spel <span class="caret">▼</span>
       </button>
       <div id="availableGames" class="collapsible-content"></div>
@@ -34,7 +34,7 @@
     <div class="modal-content">
       <img id="modalImage" style="max-width: 100%;" />
       <div style="margin-top: 1rem;">
-        <button onclick="closeImageModal()" class="pixel-button">Stäng</button>
+        <button id="closeImageModalBtn" class="pixel-button">Stäng</button>
       </div>
     </div>
   </div>
@@ -45,7 +45,7 @@
       <h3>Historik</h3>
       <ul id="historyList"></ul>
       <div style="margin-top: 1rem;">
-        <button onclick="closeHistoryModal()" class="pixel-button">Stäng</button>
+        <button id="closeHistoryModalBtn" class="pixel-button">Stäng</button>
       </div>
     </div>
   </div>
@@ -65,12 +65,12 @@
         <label for="tableNumber">Bordsnummer:</label>
         <input type="text" id="tableNumber" placeholder="t.ex. 12 eller B4" />
         <div style="margin-top: 1rem;">
-          <button onclick="confirmLend()" class="pixel-button">✅ Bekräfta utlåning</button>
+          <button id="confirmLendBtn" class="pixel-button">✅ Bekräfta utlåning</button>
         </div>
       </div>
 
       <div style="margin-top: 1rem;">
-        <button onclick="closeLendModal()" class="pixel-button">❌ Avbryt</button>
+        <button id="closeLendModalBtn" class="pixel-button">❌ Avbryt</button>
       </div>
     </div>
   </div>
@@ -88,7 +88,7 @@
         <input type="text" id="newPhone" />
         <div style="margin-top: 1rem;">
           <button type="submit" class="pixel-button">Skapa användare</button>
-          <button type="button" onclick="closeNewUserModal()" class="pixel-button">Avbryt</button>
+          <button type="button" id="closeNewUserModalBtn" class="pixel-button">Avbryt</button>
         </div>
       </form>
     </div>

@@ -17,6 +17,34 @@ import {
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
 const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
+// DOM Elements
+const searchInput = document.getElementById('searchInput');
+const availableContainer = document.getElementById('availableGames');
+const lentOutContainer = document.getElementById('lentOutGames');
+const addUserButton = document.getElementById('addUserButton');
+const newUserModal = document.getElementById('newUserModal');
+const newUserForm = document.getElementById('newUserForm');
+
+// Modal elements
+const imageModal = document.getElementById('imageModal');
+const historyModal = document.getElementById('historyModal');
+const lendModal = document.getElementById('lendModal');
+const modalImage = document.getElementById('modalImage');
+const historyList = document.getElementById('historyList');
+const userSelect = document.getElementById('userSelect');
+const tableStep = document.getElementById('tableStep');
+const lendGameId = document.getElementById('lendGameId');
+const tableNumber = document.getElementById('tableNumber');
+
+// Close button elements
+const closeImageModalBtn = document.getElementById('closeImageModalBtn');
+const closeHistoryModalBtn = document.getElementById('closeHistoryModalBtn');
+const closeLendModalBtn = document.getElementById('closeLendModalBtn');
+const closeNewUserModalBtn = document.getElementById('closeNewUserModalBtn');
+const confirmLendBtn = document.getElementById('confirmLendBtn');
+
+let allGames = [];
+
 async function guardAdminSession() {
   const token = getAccessToken();
   const storedRefreshToken = getRefreshToken();
@@ -37,19 +65,91 @@ async function guardAdminSession() {
   return true;
 }
 
-const searchInput = document.getElementById('searchInput');
-const availableContainer = document.getElementById('availableGames');
-const lentOutContainer = document.getElementById('lentOutGames');
-const addUserButton = document.getElementById('addUserButton');
-const newUserModal = document.getElementById('newUserModal');
-const newUserForm = document.getElementById('newUserForm');
-
-let allGames = [];
-
 function getUserIdFromUrl() {
   return new URLSearchParams(window.location.search).get('id');
 }
 
+// Modal functions
+function showModal(modal) {
+  modal.classList.add('show');
+}
+
+function hideModal(modal) {
+  modal.classList.remove('show');
+}
+
+function openImageModal(imgUrl) {
+  modalImage.src = `${API_BASE}${imgUrl}`;
+  showModal(imageModal);
+}
+
+function closeImageModal() {
+  hideModal(imageModal);
+}
+
+async function openHistoryModal(gameId) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/history/${gameId}`);
+    const logs = await res.json();
+
+    historyList.innerHTML = logs.map(log =>
+      `<li><b>${log.action.toUpperCase()}</b> – ${log.first_name || 'Unknown'} ${log.last_name || ''} @ ${log.timestamp} <i>${log.note || ''}</i></li>`
+    ).join('');
+
+    showModal(historyModal);
+  } catch (err) {
+    console.error('Failed to load history:', err);
+    alert('❌ Failed to load game history.');
+  }
+}
+
+function closeHistoryModal() {
+  hideModal(historyModal);
+}
+
+async function openLendModal(gameId) {
+  try {
+    const res = await fetchWithAuth(`${API_BASE}/users`);
+    const users = await res.json();
+
+    if (!Array.isArray(users)) {
+      alert('❌ Failed to load users.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    userSelect.innerHTML = '<option value="">-- Select User --</option>' +
+      users.map(u => `<option value="${u.id}">${u.last_name}, ${u.first_name}, ${u.phone || 'No phone'}</option>`).join('');
+
+    lendGameId.value = gameId;
+    tableNumber.value = '';
+    tableStep.style.display = 'none';
+    showModal(lendModal);
+  } catch (err) {
+    console.error('Failed to load users:', err);
+    alert('❌ Failed to load users.');
+  }
+}
+
+function closeLendModal() {
+  hideModal(lendModal);
+}
+
+function closeNewUserModal() {
+  hideModal(newUserModal);
+}
+
+// Collapsible section functions
+function toggleSection(id, button) {
+  const section = document.getElementById(id);
+  const caret = button.querySelector('.caret');
+  const isOpen = section.style.display === 'flex';
+
+  section.style.display = isOpen ? 'none' : 'flex';
+  caret.textContent = isOpen ? '▼' : '▲';
+}
+
+// Game functions
 async function fetchGames() {
   try {
     const res = await fetchWithAuth(`${API_BASE}/games`);
@@ -102,194 +202,177 @@ async function createGameCard(game) {
   card.innerHTML = `
     <h3>${game.title_sv}${extra}</h3>
     <div class="buttons">
-      <button class="btn-action" onclick="${game.lent_out ? `returnGame(${game.id})` : `openLendModal(${game.id})`}">
+      <button class="btn-action" data-action="${game.lent_out ? 'return' : 'lend'}" data-game-id="${game.id}">
         ${game.lent_out ? 'Return' : 'Lend Out'}
       </button>
-      <button onclick="openImageModal('${game.img}')">🖼️</button>
-      <button onclick="openHistoryModal(${game.id})">📜</button>
+      <button class="btn-image" data-image="${game.img}">🖼️</button>
+      <button class="btn-history" data-game-id="${game.id}">📜</button>
     </div>
   `;
+
+  // Add event listeners to the buttons
+  const actionBtn = card.querySelector('.btn-action');
+  const imageBtn = card.querySelector('.btn-image');
+  const historyBtn = card.querySelector('.btn-history');
+
+  actionBtn.addEventListener('click', async () => {
+    const gameId = parseInt(actionBtn.dataset.gameId);
+    if (actionBtn.dataset.action === 'return') {
+      await handleReturn(gameId);
+    } else {
+      await openLendModal(gameId);
+    }
+  });
+
+  imageBtn.addEventListener('click', () => {
+    openImageModal(imageBtn.dataset.image);
+  });
+
+  historyBtn.addEventListener('click', async () => {
+    const gameId = parseInt(historyBtn.dataset.gameId);
+    await openHistoryModal(gameId);
+  });
+
   return card;
 }
 
-async function openLendModal(gameId) {
-  const res = await fetchWithAuth(`${API_BASE}/users`);
-  const users = await res.json();
-
-  if (!Array.isArray(users)) {
-    alert('❌ Failed to load users.');
-    window.location.href = 'login.html';
-    return;
+async function handleReturn(gameId) {
+  try {
+    await fetchWithAuth(`${API_BASE}/return/${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    await fetchGames();
+  } catch (err) {
+    console.error('Failed to return game:', err);
+    alert('❌ Failed to return game.');
   }
-
-  const modal = document.getElementById('lendModal');
-  const userSelect = document.getElementById('userSelect');
-  const tableStep = document.getElementById('tableStep');
-
-  userSelect.innerHTML = '<option value="">-- Select User --</option>' +
-    users.map(u => `<option value="${u.id}">${u.last_name}, ${u.first_name}, ${u.phone || 'No phone'}</option>`).join('');
-
-  document.getElementById('lendGameId').value = gameId;
-  document.getElementById('tableNumber').value = '';
-  tableStep.style.display = 'none';
-  modal.style.display = 'block';
-
-  userSelect.onchange = () => {
-    tableStep.style.display = userSelect.value ? 'block' : 'none';
-  };
-}
-
-function closeLendModal() {
-  document.getElementById('lendModal').style.display = 'none';
-}
-
-function toggleSection(id, button) {
-  const section = document.getElementById(id);
-  const caret = button.querySelector('.caret');
-  const isOpen = section.style.display === 'flex';
-
-  section.style.display = isOpen ? 'none' : 'flex';
-  caret.textContent = isOpen ? '▼' : '▲';
 }
 
 async function confirmLend() {
-  const gameId = document.getElementById('lendGameId').value;
-  const userId = document.getElementById('userSelect').value;
-  const tableNumber = document.getElementById('tableNumber').value.trim();
+  const gameId = lendGameId.value;
+  const userId = userSelect.value;
+  const tableNum = tableNumber.value.trim();
 
-  if (!userId || !tableNumber) {
+  if (!userId || !tableNum) {
     alert("Please select a user and enter a table number.");
     return;
   }
 
-  await fetchWithAuth(`${API_BASE}/lend/${gameId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ userId, note: `Table ${tableNumber}` })
+  try {
+    await fetchWithAuth(`${API_BASE}/lend/${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId, note: `Table ${tableNum}` })
+    });
+
+    closeLendModal();
+    await fetchGames();
+  } catch (err) {
+    console.error('Failed to lend game:', err);
+    alert('❌ Failed to lend game.');
+  }
+}
+
+// Event Listeners
+function bindEventListeners() {
+  // Search input
+  searchInput.addEventListener('input', renderGameLists);
+
+  // Collapsible sections
+  document.querySelectorAll('.collapsible-header').forEach(button => {
+    button.addEventListener('click', () => {
+      const sectionId = button.dataset.section;
+      toggleSection(sectionId, button);
+    });
   });
 
-  closeLendModal();
-  fetchGames();
-}
+  // Modal close buttons
+  closeImageModalBtn.addEventListener('click', closeImageModal);
+  closeHistoryModalBtn.addEventListener('click', closeHistoryModal);
+  closeLendModalBtn.addEventListener('click', closeLendModal);
+  closeNewUserModalBtn.addEventListener('click', closeNewUserModal);
 
+  // Confirm lend button
+  confirmLendBtn.addEventListener('click', confirmLend);
 
-function openImageModal(imgUrl) {
-  const modal = document.getElementById('imageModal');
-  document.getElementById('modalImage').src = `${API_BASE}${imgUrl}`;
-  modal.style.display = 'block';
-}
-
-function closeImageModal() {
-  document.getElementById('imageModal').style.display = 'none';
-}
-
-async function openHistoryModal(gameId) {
-  const modal = document.getElementById('historyModal');
-  const historyList = document.getElementById('historyList');
-  const res = await fetchWithAuth(`${API_BASE}/history/${gameId}`);
-  const logs = await res.json();
-
-  historyList.innerHTML = logs.map(log =>
-    `<li><b>${log.action.toUpperCase()}</b> – ${log.first_name || 'Unknown'} ${log.last_name || ''} @ ${log.timestamp} <i>${log.note || ''}</i></li>`
-  ).join('');
-
-  modal.style.display = 'block';
-}
-
-function closeHistoryModal() {
-  document.getElementById('historyModal').style.display = 'none';
-}
-
-if (addUserButton) {
+  // Add user button
   addUserButton.addEventListener('click', () => {
-    newUserModal.style.display = 'block';
+    showModal(newUserModal);
   });
-}
 
-if (newUserForm) {
+  // New user form
   newUserForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const firstName = document.getElementById('newFirstName').value;
     const lastName = document.getElementById('newLastName').value;
     const phone = document.getElementById('newPhone').value;
 
-    const res = await fetchWithAuth(`${API_BASE}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
-    });
+    try {
+      const res = await fetchWithAuth(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, phone })
+      });
 
-    const data = await res.json();
-    const newUserId = data.user?.id;
-    newUserModal.style.display = 'none';
+      const data = await res.json();
+      const newUserId = data.user?.id;
+      closeNewUserModal();
 
-    if (newUserId) {
-      const userSelect = document.getElementById('userSelect');
-      const tableStep = document.getElementById('tableStep');
-
-      userSelect.innerHTML += `<option value="${newUserId}" selected>${lastName}, ${firstName}, ${phone || 'No phone'}</option>`;
-      userSelect.value = newUserId;
-      tableStep.style.display = 'block';
-    } else {
+      if (newUserId) {
+        userSelect.innerHTML += `<option value="${newUserId}" selected>${lastName}, ${firstName}, ${phone || 'No phone'}</option>`;
+        userSelect.value = newUserId;
+        tableStep.style.display = 'block';
+      } else {
+        alert('❌ Failed to create user.');
+      }
+    } catch (err) {
+      console.error('Failed to create user:', err);
       alert('❌ Failed to create user.');
     }
   });
-}
 
-function closeNewUserModal() {
-  newUserModal.style.display = 'none';
-}
+  // User select change
+  userSelect.addEventListener('change', () => {
+    tableStep.style.display = userSelect.value ? 'block' : 'none';
+  });
 
-searchInput.addEventListener('input', renderGameLists);
-
-// ✅ Guarded entrypoint
-window.onload = async () => {
-  if (await guardAdminSession()) {
-    await fetchGames();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-
-  const myId = getUserIdFromToken();
-  const viewedId = getUserIdFromUrl() || myId;
-  const profileUserId = viewedId;
-  document.getElementById('availableGames').style.display = 'flex';
-  document.getElementById('lentOutGames').style.display = 'flex';
-
-    // Set caret to open (▲) on load
-    document.querySelectorAll('.collapsible-header .caret').forEach(c => c.textContent = '▲');
-  window.addEventListener('click', (e) => {
-    document.querySelectorAll('.modal').forEach((modal) => {
-      if (e.target === modal && getComputedStyle(modal).display !== 'none') {
-        modal.style.display = 'none';
+  // Close modals when clicking outside
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        hideModal(modal);
       }
     });
   });
-});
-
-async function loadGames() {
-  const games = await fetchAllGames();
-  // ... rest of the function
 }
 
-async function loadCurrentLend(game) {
-  const currentLend = await getGameById(game.id);
-  // ... rest of the function
+// Initialize
+async function init() {
+  if (await guardAdminSession()) {
+    bindEventListeners();
+    await fetchGames();
+    
+    // Set initial state
+    document.getElementById('availableGames').style.display = 'flex';
+    document.getElementById('lentOutGames').style.display = 'flex';
+    
+    // Set caret to open (▲) on load
+    document.querySelectorAll('.collapsible-header .caret').forEach(c => c.textContent = '▲');
+  }
 }
 
-async function handleLend(gameId) {
-  await lendGame(gameId);
-  // ... rest of the function
-}
-
-async function handleReturn(gameId) {
-  await returnGame(gameId);
-  // ... rest of the function
+// Start when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 
 
