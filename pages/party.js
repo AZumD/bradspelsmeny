@@ -251,17 +251,16 @@ async function loadActiveSession(partyId) {
     if (!res.ok) throw new Error("No active session");
 
     const session = await res.json();
-    console.log("🎯 Session data:", session);
+    console.log("Session data:", session);
     
     const gameRes = await fetchWithAuth(`${API_BASE}/games/${session.game_id}`);
     if (!gameRes.ok) {
-      console.error("❌ Game fetch failed:", await gameRes.text());
-      sessionBox.innerHTML = `⚠️ Kunde inte hämta spelinfo`;
+      console.error("Game fetch failed:", await gameRes.text());
+      sessionBox.innerHTML = `Could not fetch game info`;
       return;
     }
 
     const game = await gameRes.json();
-    console.log("🎲 Loaded game response:", game);
     
     const start = new Date(session.started_at);
     const formattedStart = start.toLocaleString("sv-SE", {
@@ -272,9 +271,20 @@ async function loadActiveSession(partyId) {
     // Clear & prep container
     sessionBox.innerHTML = '';
     sessionBox.classList.add('fade-in');
-    sessionBox.style.display = 'flex';
-    sessionBox.style.alignItems = 'center';
-    sessionBox.style.gap = '12px';
+    sessionBox.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background-color: #f9f6f2;
+      border-radius: 8px;
+      border: 1px dashed #d9b370;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    `;
+    sessionBox.onmouseover = () => sessionBox.style.backgroundColor = '#fff3d6';
+    sessionBox.onmouseout = () => sessionBox.style.backgroundColor = '#f9f6f2';
+    sessionBox.onclick = () => window.location.href = `session.html?id=${session.id}`;
 
     // Create thumbnail
     const thumb = document.createElement('img');
@@ -282,25 +292,24 @@ async function loadActiveSession(partyId) {
     thumb.alt = game.title_en;
     thumb.title = game.title_en;
     thumb.className = 'game-thumbnail';
-    thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;cursor:pointer';
+    thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover';
     thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
-    thumb.onclick = () => openGameModal('favoriteGameModal', game);
 
     // Create text
     const info = document.createElement('div');
     info.innerHTML = `
       <div style="font-weight:bold;">${game.title_en}</div>
-      <div style="font-size:0.8rem;color:#7a5a30;">Startade: ${formattedStart}</div>
+      <div style="font-size:0.8rem;color:#7a5a30;">Started: ${formattedStart}</div>
     `;
     info.style.textAlign = 'left';
 
     // Assemble
     sessionBox.append(thumb, info);
     
-    console.log("✅ Active session layout updated with thumbnail and text");
+    console.log("✅ Active session layout updated");
   } catch (err) {
-    console.error("❌ loadActiveSession error:", err);
-    sessionBox.innerHTML = `🚫 No active session currently.`;
+    console.error("Failed to load active session:", err);
+    sessionBox.innerHTML = `No active session currently.`;
   }
 }
 
@@ -339,23 +348,29 @@ async function loadPastSessions(partyId) {
 
       const card = document.createElement("div");
       card.className = "session-card";
-      card.style.display = 'flex';
-      card.style.alignItems = 'center';
-      card.style.gap = '12px';
-      card.style.marginBottom = '8px';
-      card.style.backgroundColor = '#f9f6f2';
-      card.style.borderRadius = '8px';
-      card.style.padding = '10px';
-      card.style.borderBottom = '1px dashed #d9b370';
-      card.style.fontFamily = "'VT323', monospace";
+      card.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        padding: 10px;
+        background-color: #f9f6f2;
+        border-radius: 8px;
+        border: 1px dashed #d9b370;
+        font-family: 'VT323', monospace;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      `;
+      card.onmouseover = () => card.style.backgroundColor = '#fff3d6';
+      card.onmouseout = () => card.style.backgroundColor = '#f9f6f2';
+      card.onclick = () => window.location.href = `session.html?id=${s.id}`;
 
       const thumb = document.createElement("img");
       thumb.src = game.img?.startsWith("http") ? game.img : `../${game.img}`;
       thumb.alt = game.title_en;
       thumb.title = game.title_en;
-      thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover;cursor:pointer';
+      thumb.style.cssText = 'width:48px;height:48px;border-radius:8px;border:2px solid #c9a04e;object-fit:cover';
       thumb.onerror = () => { thumb.src = `${FRONTEND_BASE}/img/default-thumb.webp`; };
-      thumb.onclick = () => openGameModal("favoriteGameModal", game);
 
       const started = new Date(s.started_at).toLocaleString("sv-SE", {
         dateStyle: "short",
@@ -385,7 +400,7 @@ async function loadPastSessions(partyId) {
       container.appendChild(card);
     }
 
-    console.log("🎲 Past sessions scroll and font styling applied");
+    console.log("✨ Past sessions updated with clickable cards");
   } catch (err) {
     console.error("Failed to load past sessions:", err);
     container.innerHTML = '<div class="placeholder-box">No past sessions yet</div>';

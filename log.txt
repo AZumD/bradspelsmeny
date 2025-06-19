@@ -259,3 +259,34 @@ Task: Create session.html and session.js for viewing game session details
 
 ## RESULT
 The new session view page provides a clean, retro-styled interface for tracking game sessions. Players can be added smoothly, and round results are easy to record and view. The VT323 font gives it that perfect gaming vibe while maintaining readability.
+
+# Session Linking Update
+Date: 2024-12-19
+Task: Make active and past sessions clickable, linking to session view page
+
+## CHANGES MADE
+
+### Updated loadActiveSession() and loadPastSessions() in party.js:
+- Added clickable behavior to active session box
+- Made past session cards clickable
+- Added hover effects with smooth transitions
+- Removed individual thumbnail click handlers
+- Added proper cursor styling
+- Unified card styling between active and past sessions
+
+## TECHNICAL DETAILS
+- Session cards now link to session.html?id=SESSION_ID
+- Hover effect: background-color transitions to #fff3d6
+- Consistent styling with dashed borders
+- Smooth 0.2s transitions
+- Proper cursor:pointer on interactive elements
+
+## VERIFICATION
+- ✅ Active session links correctly
+- ✅ Past session cards link correctly
+- ✅ Hover effects work smoothly
+- ✅ Styling consistent across sections
+- ✅ Mobile tap behavior works
+
+## RESULT
+The party page now provides a more intuitive interface with clickable session cards that smoothly transition on hover. Users can easily navigate to detailed session views for both active and past gaming sessions.
