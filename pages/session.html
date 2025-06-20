@@ -57,18 +57,8 @@
             <span class="close-button" onclick="document.getElementById('addRoundModal').style.display='none'">&times;</span>
             <h2 id="roundNumber" style="font-family:'Press Start 2P',cursive;font-size:1rem;margin-bottom:1rem;">Add Round Results</h2>
             
-            <div style="margin-bottom:1rem;">
-                <h3 style="font-family:'VT323',monospace;font-size:1.2rem;margin-bottom:0.5rem;">Winners</h3>
-                <div id="winnersList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;">
-                    <!-- Winner checkboxes will be added here -->
-                </div>
-            </div>
-
-            <div style="margin-bottom:1rem;">
-                <h3 style="font-family:'VT323',monospace;font-size:1.2rem;margin-bottom:0.5rem;">Losers</h3>
-                <div id="losersList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;">
-                    <!-- Loser checkboxes will be added here -->
-                </div>
+            <div id="playerSelectionList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem;">
+                <!-- Interactive player list will be added here -->
             </div>
 
             <button id="submitRound" class="action-button">Save Round Results</button>

@@ -315,6 +315,27 @@ body {
     color: #3f1f00;
   }
 
+  #addRoundBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    border-radius: 50%;
+    border: 2px dashed #c9a04e;
+    background-color: #fffdf7;
+    cursor: pointer;
+    line-height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Override default button padding */
+    color: #c9a04e;
+  }
+
+  #addRoundBtn:hover {
+    background-color: #fbe7b8;
+    transform: scale(1.1);
+    box-shadow: none; /* Override default button shadow */
+  }
 
 /* ========== WIDGET STYLES ========== */
 #orderFeed {

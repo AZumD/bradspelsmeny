@@ -75,8 +75,9 @@ async function loadSessionRounds() {
         const data = await res.json();
         const { rounds, members } = data;
 
-        // Update global sessionPlayers variable for the modal
+        // Update global sessionPlayers variable and create a lookup map
         sessionPlayers = members || [];
+        const memberMap = new Map(sessionPlayers.map(m => [m.id, m]));
 
         const roundsContainer = document.getElementById('roundsList');
         roundsContainer.innerHTML = '';
@@ -129,7 +130,9 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
-            card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${round.first_name} ${round.last_name}</p>`;
+            const winner = memberMap.get(round.winner_id);
+            const winnerName = winner ? `${winner.first_name} ${winner.last_name}` : `Winner ID: ${round.winner_id}`;
+            card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${winnerName}</p>`;
 
             roundsContainer.appendChild(card);
         });
@@ -154,50 +157,63 @@ async function loadSessionRounds() {
     }
 }
 
+function toggleStatus(el) {
+    const current = el.dataset.status;
+    const next = current === 'none' ? 'winner' : current === 'winner' ? 'loser' : 'none';
+    el.dataset.status = next;
+  
+    const statusIcon = el.querySelector('.status-icon');
+    if (next === 'winner') {
+        statusIcon.textContent = '👑';
+        el.style.borderColor = '#d4af37';
+    } else if (next === 'loser') {
+        statusIcon.textContent = '🗑️';
+        el.style.borderColor = '#c0c0c0';
+    } else {
+        statusIcon.textContent = '';
+        el.style.borderColor = '#d9b370';
+    }
+}
+
 // Modal handling for adding players
 document.getElementById('addRoundBtn').onclick = () => {
     const modal = document.getElementById('addRoundModal');
-    
-    // Populate player checkboxes
-    const winnersDiv = document.getElementById('winnersList');
-    const losersDiv = document.getElementById('losersList');
-    winnersDiv.innerHTML = '';
-    losersDiv.innerHTML = '';
+    const playerSelectionList = document.getElementById('playerSelectionList');
+    playerSelectionList.innerHTML = '';
 
     const lastRound = document.getElementById('roundsList').children.length;
     document.getElementById('roundNumber').textContent = `Adding Round ${lastRound + 1}`;
 
-    sessionPlayers.forEach(player => {
-        const createPlayerCheckbox = (player, list) => {
-            const label = document.createElement('label');
-            label.style.display = 'flex';
-            label.style.alignItems = 'center';
-            label.style.marginBottom = '8px';
-            label.style.cursor = 'pointer';
+    sessionPlayers.forEach((player, index) => {
+        const playerEntry = document.createElement('div');
+        playerEntry.className = 'player-selection-entry fade-in';
+        playerEntry.dataset.status = 'none';
+        playerEntry.dataset.playerId = player.id;
+        playerEntry.style.display = 'flex';
+        playerEntry.style.alignItems = 'center';
+        playerEntry.style.padding = '8px';
+        playerEntry.style.border = '2px solid #d9b370';
+        playerEntry.style.borderRadius = '8px';
+        playerEntry.style.cursor = 'pointer';
+        playerEntry.style.animationDelay = `${index * 50}ms`;
+        playerEntry.title = `${player.first_name} ${player.last_name}`;
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = player.id;
-            checkbox.name = list === 'winners' ? 'winner' : 'loser';
-            checkbox.style.marginRight = '8px';
+        const img = document.createElement('img');
+        img.src = player.avatar_url || player.avatar || "../img/avatar-placeholder.webp";
+        img.className = 'avatar';
+        img.style.marginRight = '10px';
 
-            const img = document.createElement('img');
-            img.src = player.avatar_url || player.avatar || "../img/avatar-placeholder.webp";
-            img.className = 'avatar friend-avatar';
-            img.style.width = '32px';
-            img.style.height = '32px';
+        const name = document.createElement('span');
+        name.textContent = `${player.first_name} ${player.last_name}`;
+        name.style.flexGrow = '1';
 
-            const name = document.createTextNode(` ${player.first_name} ${player.last_name.charAt(0)}.`);
-            
-            label.appendChild(checkbox);
-            label.appendChild(img);
-            label.appendChild(name);
+        const statusIcon = document.createElement('span');
+        statusIcon.className = 'status-icon';
+        statusIcon.style.fontSize = '1.5rem';
 
-            return label;
-        };
-        
-        winnersDiv.appendChild(createPlayerCheckbox(player, 'winners'));
-        losersDiv.appendChild(createPlayerCheckbox(player, 'losers'));
+        playerEntry.append(img, name, statusIcon);
+        playerEntry.onclick = () => toggleStatus(playerEntry);
+        playerSelectionList.appendChild(playerEntry);
     });
 
     modal.style.display = 'flex';
@@ -205,20 +221,13 @@ document.getElementById('addRoundBtn').onclick = () => {
 
 // Handle round submission
 document.getElementById('submitRound').onclick = async () => {
-    const winners = Array.from(document.querySelectorAll('input[name="winner"]:checked'))
-        .map(cb => parseInt(cb.value));
-    const losers = Array.from(document.querySelectorAll('input[name="loser"]:checked'))
-        .map(cb => parseInt(cb.value));
+    const winners = Array.from(document.querySelectorAll('.player-selection-entry[data-status="winner"]'))
+        .map(el => parseInt(el.dataset.playerId));
+    const losers = Array.from(document.querySelectorAll('.player-selection-entry[data-status="loser"]'))
+        .map(el => parseInt(el.dataset.playerId));
 
     if (winners.length === 0) {
         alert('Please select at least one winner.');
-        return;
-    }
-
-    // Ensure players are not in both lists
-    const intersection = winners.filter(id => losers.includes(id));
-    if (intersection.length > 0) {
-        alert("A player can't be both a winner and a loser.");
         return;
     }
 
@@ -235,13 +244,16 @@ document.getElementById('submitRound').onclick = async () => {
             })
         });
 
-        if (!res.ok) throw new Error('Failed to save round');
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to save round');
+        }
 
         document.getElementById('addRoundModal').style.display = 'none';
         await loadSessionRounds();
     } catch (err) {
         console.error('Failed to save round:', err);
-        alert('Could not save round results');
+        alert(`Could not save round results: ${err.message}`);
     }
 };
 
