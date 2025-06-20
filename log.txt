@@ -361,3 +361,6 @@ Tidied up the session page player list! I've updated the HTML and JS to use the 
 
 2025-06-20 - Claude
 ✅ Updated session player avatars to match friends/member styling using .friend-avatar and .avatar inside .member-list. Also added a nice fade-in animation to polish it off. The frontend is looking more unified now!
+
+2025-06-20 - Claude
+✅ Fixed avatar layout in session view by using .profile-avatar for game image and .avatar inside .friend-avatar for players. This untangles the CSS and makes the layout consistent with the rest of the site.
