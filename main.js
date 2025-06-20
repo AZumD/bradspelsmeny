@@ -9,7 +9,8 @@ import {
   refreshToken, 
   fetchWithAuth,
   clearTokens,
-  logout
+  logout,
+  parseJwt
 } from './js/modules/auth.js';
 
 import {
@@ -473,28 +474,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const getCurrentPosition = () =>
-      new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-      });
+    const token = getAccessToken();
+    const decoded = parseJwt(token);
+    const isAdmin = decoded?.role === 'admin';
 
-    try {
-      const position = await getCurrentPosition();
-      const distance = getDistanceFromLatLonInMeters(
-        RESTAURANT_LAT,
-        RESTAURANT_LNG,
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      if (distance > ALLOWED_RADIUS_METERS) {
-        alert("🚫 You are too far from the restaurant to place an order.");
+    if (!isAdmin) {
+      const getCurrentPosition = () =>
+        new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+
+      try {
+        const position = await getCurrentPosition();
+        const distance = getDistanceFromLatLonInMeters(
+          RESTAURANT_LAT,
+          RESTAURANT_LNG,
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        if (distance > ALLOWED_RADIUS_METERS) {
+          alert("🚫 You are too far from the restaurant to place an order.");
+          submitButton.disabled = false;
+          return;
+        }
+      } catch (error) {
+        alert("🚫 Unable to verify your location. Please allow location access and try again.");
         submitButton.disabled = false;
         return;
       }
-    } catch (error) {
-      alert("🚫 Unable to verify your location. Please allow location access and try again.");
-      submitButton.disabled = false;
-      return;
     }
 
     const gameId = orderModal.dataset.gameId;

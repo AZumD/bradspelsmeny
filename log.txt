@@ -1,2 +1,1 @@
-2025-06-20 - Claude
-🔁 Verified frontend rendering of active_session_id from backend party route. Fallbacks removed, display logic refined.
+2025-06-20 - Claude 🧭 Admins now bypass GPS location check in game order flow
