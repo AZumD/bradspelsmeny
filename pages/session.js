@@ -130,9 +130,15 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
-            const winner = memberMap.get(round.winner_id);
-            const winnerName = winner ? `${winner.first_name} ${winner.last_name}` : `Winner ID: ${round.winner_id}`;
+            const winnerName = round.first_name && round.last_name
+                ? `${round.first_name} ${round.last_name}`
+                : `User ID: ${round.winner_id}`;
+
             card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${winnerName}</p>`;
+            
+            if (round.notes) {
+                card.title = round.notes;
+            }
 
             roundsContainer.appendChild(card);
         });
