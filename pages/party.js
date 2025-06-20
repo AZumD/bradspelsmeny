@@ -234,13 +234,25 @@ async function fetchPartyData() {
     const activeSessionId = data.active_session_id;
     console.log("🐤 Active session ID:", activeSessionId);
     const sessionBox = document.getElementById('activeSessionBox');
+
     if (activeSessionId) {
-      sessionBox.style.display = 'block';
-      sessionBox.onclick = () => {
-        window.location.href = `${FRONTEND_BASE}/pages/session.html?id=${activeSessionId}`;
-      };
+      try {
+        const sessionRes = await fetchWithAuth(`${API_BASE}/party-sessions/${activeSessionId}`);
+        if (!sessionRes.ok) {
+          throw new Error("Failed to load active session details");
+        }
+        const session = await sessionRes.json();
+        renderActiveSession(session);
+        sessionBox.style.display = 'flex';
+      } catch (err) {
+        console.error("❌ Failed to render active session:", err);
+        sessionBox.innerHTML = '<div class="placeholder-box">Could not load active session.</div>';
+        sessionBox.style.display = 'block';
+      }
     } else {
-      sessionBox.style.display = 'none';
+      sessionBox.innerHTML = '<div class="placeholder-box">No active session.</div>';
+      sessionBox.style.display = 'block';
+      sessionBox.onclick = null;
     }
 
     // Load past sessions
