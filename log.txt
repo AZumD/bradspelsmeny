@@ -1,1 +1,2 @@
-2025-06-20 - Claude 🧭 Admins now bypass GPS location check in game order flow
+2025-06-20 - Claude
+✨ Polished session view: refactored player/round loading, restored winner/loser selection modal, and improved round display logic.

@@ -47,7 +47,8 @@ async function loadSessionData() {
         titleEl.style.whiteSpace = 'nowrap';
         titleEl.style.maxWidth = '100%';
 
-        // Load and render rounds, which also gives us the players
+        // Load members, then rounds
+        await loadSessionMembers();
         await loadSessionRounds();
 
         // Authorize the "Add Round" button
@@ -66,25 +67,17 @@ async function loadSessionData() {
     }
 }
 
-async function loadSessionRounds() {
+async function loadSessionMembers() {
     const sessionId = getSessionIdFromURL();
+    const playerListContainer = document.getElementById('playerList');
+    playerListContainer.innerHTML = '';
+
     try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/rounds/${sessionId}`);
-        if (!res.ok) throw new Error('Failed to load rounds');
+        const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/members`);
+        if (!res.ok) throw new Error('Failed to load session members');
         
-        const data = await res.json();
-        const { rounds, members } = data;
+        sessionPlayers = await res.json();
 
-        // Update global sessionPlayers variable and create a lookup map
-        sessionPlayers = members || [];
-        const memberMap = new Map(sessionPlayers.map(m => [m.id, m]));
-
-        const roundsContainer = document.getElementById('roundsList');
-        roundsContainer.innerHTML = '';
-
-        // Render player list
-        const playerListContainer = document.getElementById('playerList');
-        playerListContainer.innerHTML = '';
         if (sessionPlayers.length > 0) {
             sessionPlayers.forEach((player, index) => {
                 const playerAvatar = document.createElement('div');
@@ -102,8 +95,11 @@ async function loadSessionRounds() {
         } else {
             playerListContainer.innerHTML = '<div class="placeholder-box">No players found in this session.</div>';
         }
-
-        // Add the "Add Player" button
+    } catch (err) {
+        console.error('Failed to load session members:', err);
+        playerListContainer.innerHTML = '<div class="placeholder-box">Could not load players.</div>';
+    } finally {
+        // Always add the "Add Player" button
         const addPlayerButton = document.createElement('div');
         addPlayerButton.className = 'add-friend-circle';
         addPlayerButton.title = 'Add non-party member';
@@ -112,6 +108,20 @@ async function loadSessionRounds() {
             document.getElementById('addPlayerModal').style.display = 'flex';
         };
         playerListContainer.appendChild(addPlayerButton);
+    }
+}
+
+async function loadSessionRounds() {
+    const sessionId = getSessionIdFromURL();
+    const roundsContainer = document.getElementById('roundsList');
+    roundsContainer.innerHTML = '';
+
+    try {
+        const res = await fetchWithAuth(`${API_BASE}/party-sessions/rounds/${sessionId}`);
+        if (!res.ok) throw new Error('Failed to load rounds');
+        
+        const data = await res.json();
+        const { rounds } = data; // Members are now loaded separately
 
         if (!rounds || !rounds.length) {
             roundsContainer.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
@@ -130,8 +140,9 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
-            console.log(`📦 Round ${round.round_number} winners:`, round.winners);
-            console.log("📦 Full round object:", round);
+            if (!round.winners) {
+                console.warn("⚠️ Round winner data missing:", round);
+            }
 
             const winnerNames = round.winners && round.winners.length
                 ? round.winners.map(w => `${w.first_name} ${w.last_name}`).join(', ')
@@ -176,7 +187,7 @@ async function loadSessionRounds() {
 
     } catch (err) {
         console.error('Failed to load rounds:', err);
-        document.getElementById('roundsList').innerHTML = 
+        roundsContainer.innerHTML = 
             '<div class="placeholder-box">Could not load rounds</div>';
     }
 }
@@ -255,14 +266,14 @@ document.getElementById('submitRound').onclick = async () => {
         return;
     }
 
+    const sessionId = getSessionIdFromURL();
     try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/round`, {
+        const res = await fetchWithAuth(`${API_BASE}/party-sessions/rounds/${sessionId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                session_id: getSessionIdFromURL(),
                 winners,
                 losers
             })
