@@ -384,3 +384,6 @@ Tidied up the session page player list! I've updated the HTML and JS to use the 
 
 2025-06-20 - Claude
 🐛 Added debug logging to `loadSessionRounds` to investigate why winner names are appearing as "Unknown". This will give us visibility into the raw data coming from the backend.
+
+2025-06-20 - Claude
+🐛 Fixed round rendering: now uses winner/loser arrays instead of nonexistent flat fields
