@@ -118,6 +118,8 @@ async function loadSessionRounds() {
             return;
         }
 
+        console.log("🔁 Raw round data:", rounds);
+
         rounds.forEach((round, index) => {
             const card = document.createElement('div');
             card.className = 'session-card fade-in';
@@ -130,11 +132,19 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
+            console.log(`🎯 Round ${round.round_number}`, {
+                winner_id: round.winner_id,
+                first_name: round.first_name,
+                last_name: round.last_name
+            });
+
             const winnerName = round.first_name && round.last_name
                 ? `${round.first_name} ${round.last_name}`
                 : round.winner_id
                     ? `User ID: ${round.winner_id}`
                     : 'Unknown';
+            
+            console.log(`📝 Rendered winner name for round ${round.round_number}:`, winnerName);
 
             card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${winnerName}</p>`;
             
