@@ -86,16 +86,11 @@ async function loadSessionRounds() {
         playerListContainer.innerHTML = '';
         if (sessionPlayers.length > 0) {
             sessionPlayers.forEach(player => {
-                const playerAvatar = document.createElement('div');
-                playerAvatar.className = 'friend-avatar';
-                playerAvatar.title = `${player.first_name} ${player.last_name}`;
-
                 const img = document.createElement('img');
                 img.src = player.avatar_url || player.avatar || '../img/avatar-placeholder.webp';
                 img.className = 'avatar';
-
-                playerAvatar.appendChild(img);
-                playerListContainer.appendChild(playerAvatar);
+                img.title = `${player.first_name} ${player.last_name}`;
+                playerListContainer.appendChild(img);
             });
         } else {
             playerListContainer.innerHTML = '<div class="placeholder-box">No players found in this session.</div>';
