@@ -101,12 +101,17 @@ async function loadSessionRounds() {
     try {
         const res = await fetchWithAuth(`${API_BASE}/party-sessions/rounds/${sessionId}`);
         if (!res.ok) throw new Error('Failed to load rounds');
-        const rounds = await res.json();
+        
+        const data = await res.json();
+        const { rounds, members } = data;
+
+        // Update global sessionPlayers variable for the modal
+        sessionPlayers = members || [];
 
         const container = document.getElementById('roundsList');
         container.innerHTML = '';
 
-        if (!rounds.length) {
+        if (!rounds || !rounds.length) {
             container.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
             return;
         }
@@ -123,14 +128,7 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
-            const winners = round.winners.map(w => w.username).join(', ');
-            const losers = round.losers.map(l => l.username).join(', ');
-
-            card.innerHTML = `
-                <div style="font-size:1.2rem;margin-bottom:4px;">Round ${index + 1}</div>
-                <div style="color:#2e7d32;margin-bottom:2px;">🏆 Winners: ${winners}</div>
-                <div style="color:#c62828;">💀 Losers: ${losers}</div>
-            `;
+            card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${round.first_name} ${round.last_name}</p>`;
 
             container.appendChild(card);
         });
@@ -165,24 +163,40 @@ document.getElementById('addRoundBtn').onclick = () => {
     winnersDiv.innerHTML = '';
     losersDiv.innerHTML = '';
 
-    sessionPlayers.forEach(player => {
-        const winnerLabel = document.createElement('label');
-        winnerLabel.style.display = 'block';
-        winnerLabel.style.marginBottom = '4px';
-        winnerLabel.innerHTML = `
-            <input type="checkbox" name="winner" value="${player.user_id}">
-            ${player.username}
-        `;
-        winnersDiv.appendChild(winnerLabel);
+    const lastRound = document.getElementById('roundsList').children.length;
+    document.getElementById('roundNumber').textContent = `Adding Round ${lastRound + 1}`;
 
-        const loserLabel = document.createElement('label');
-        loserLabel.style.display = 'block';
-        loserLabel.style.marginBottom = '4px';
-        loserLabel.innerHTML = `
-            <input type="checkbox" name="loser" value="${player.user_id}">
-            ${player.username}
-        `;
-        losersDiv.appendChild(loserLabel);
+    sessionPlayers.forEach(player => {
+        const createPlayerCheckbox = (player, list) => {
+            const label = document.createElement('label');
+            label.style.display = 'flex';
+            label.style.alignItems = 'center';
+            label.style.marginBottom = '8px';
+            label.style.cursor = 'pointer';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = player.id;
+            checkbox.name = list === 'winners' ? 'winner' : 'loser';
+            checkbox.style.marginRight = '8px';
+
+            const img = document.createElement('img');
+            img.src = player.avatar_url || player.avatar || "../img/avatar-placeholder.webp";
+            img.className = 'avatar friend-avatar';
+            img.style.width = '32px';
+            img.style.height = '32px';
+
+            const name = document.createTextNode(` ${player.first_name} ${player.last_name.charAt(0)}.`);
+            
+            label.appendChild(checkbox);
+            label.appendChild(img);
+            label.appendChild(name);
+
+            return label;
+        };
+        
+        winnersDiv.appendChild(createPlayerCheckbox(player, 'winners'));
+        losersDiv.appendChild(createPlayerCheckbox(player, 'losers'));
     });
 
     modal.style.display = 'flex';
@@ -195,8 +209,15 @@ document.getElementById('submitRound').onclick = async () => {
     const losers = Array.from(document.querySelectorAll('input[name="loser"]:checked'))
         .map(cb => parseInt(cb.value));
 
-    if (!winners.length || !losers.length) {
-        alert('Please select at least one winner and one loser');
+    if (winners.length === 0) {
+        alert('Please select at least one winner.');
+        return;
+    }
+
+    // Ensure players are not in both lists
+    const intersection = winners.filter(id => losers.includes(id));
+    if (intersection.length > 0) {
+        alert("A player can't be both a winner and a loser.");
         return;
     }
 
