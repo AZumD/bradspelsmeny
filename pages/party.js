@@ -199,7 +199,7 @@ async function fetchPartyData() {
   if (!partyId) return;
 
   try {
-    const res = await fetchWithAuth(`${API_BASE}/party/${partyId}`);
+    const res = await fetchWithAuth(`${API_BASE}/party/${partyId}`, { cache: 'no-cache' });
     let data;
     try {
       data = await res.json();
@@ -210,6 +210,9 @@ async function fetchPartyData() {
     if (!res.ok) {
       throw new Error(data.error || 'Failed to fetch party');
     }
+
+    console.log("🧪 Party data loaded:", data);
+    console.log("🧪 Active session ID:", data.active_session_id);
 
     if (!data.name) {
       throw new Error('Malformed party data');
@@ -230,9 +233,8 @@ async function fetchPartyData() {
 
     document.getElementById('sessionList').innerHTML = '<div class="placeholder-box">No sessions yet</div>';
 
-    // --- New active_session_id logic ---
+    // --- Active Session Logic ---
     const activeSessionId = data.active_session_id;
-    console.log("🐤 Active session ID:", activeSessionId);
     const sessionBox = document.getElementById('activeSessionBox');
 
     if (activeSessionId) {
@@ -250,8 +252,9 @@ async function fetchPartyData() {
         sessionBox.style.display = 'block';
       }
     } else {
-      sessionBox.innerHTML = '<div class="placeholder-box">No active session.</div>';
+      sessionBox.innerHTML = `<div class="placeholder-box" style="cursor: help; text-align: center;" title="A party leader can start a new session from the game library.">No active session.</div>`;
       sessionBox.style.display = 'block';
+      sessionBox.style.cursor = 'default';
       sessionBox.onclick = null;
     }
 
@@ -269,40 +272,6 @@ async function fetchPartyData() {
     if (memberListEl) memberListEl.innerHTML = '<div class="placeholder-box">Could not load members</div>';
     if (codeBoxEl) codeBoxEl.textContent = '—';
     if (avatarEl) avatarEl.src = '../img/avatar-party-placeholder.webp';
-  }
-}
-
-async function loadActiveSession(partyId) {
-  const sessionBox = document.getElementById("activeSessionBox");
-  try {
-    const res = await fetchWithAuth(`${API_BASE}/party/${partyId}`);
-    if (!res.ok) throw new Error("Failed to load party");
-    
-    const data = await res.json();
-    console.log("Loaded party object:", data);
-
-    if (data && data.active_session_id) {
-      fetch(`${API_BASE}/party-sessions/${data.active_session_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(res => {
-          if (!res.ok) throw new Error("Failed to load active session");
-          return res.json();
-        })
-        .then(session => {
-          renderActiveSession(session);
-        })
-        .catch(err => {
-          console.error("❌ Failed to load active session:", err);
-          document.getElementById("activeSessionBox").textContent = "No active session.";
-        });
-    } else {
-      console.warn("⚠️ No active_session_id found in party object.");
-      document.getElementById("activeSessionBox").textContent = "No active session.";
-    }
-  } catch (err) {
-    console.error("Failed to load party:", err);
-    sessionBox.innerHTML = `Could not fetch party info`;
   }
 }
 

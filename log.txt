@@ -1,3 +1,2 @@
 2025-06-20 - Claude
-🧹 Refactored party view to remove redundant active session fetch.
-🔗 Added support for dynamic active_session_id from backend in party view
+🔁 Verified frontend rendering of active_session_id from backend party route. Fallbacks removed, display logic refined.
