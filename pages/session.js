@@ -6,10 +6,9 @@ import {
 } from '../js/modules/auth.js';
 
 const API_BASE = 'https://bradspelsmeny-backend-production.up.railway.app';
-const FRONTEND_BASE = 'https://azumd.github.io/bradspelsmeny';
 
 let currentSession = null;
-let sessionPlayers = [];
+let sessionMembers = [];
 let currentUserId = null;
 
 function getSessionIdFromURL() {
@@ -54,7 +53,7 @@ async function loadSessionData() {
         // Authorize the "Add Round" button
         const currentUserId = getUserIdFromToken();
         const currentUserRole = getUserRole();
-        const isParticipant = sessionPlayers.some(p => p.id === currentUserId) || currentUserRole === 'admin';
+        const isParticipant = sessionMembers.some(p => p.id === currentUserId) || currentUserRole === 'admin';
 
         if (isParticipant) {
             document.getElementById('addRoundBtn').style.display = "inline-block";
@@ -69,45 +68,38 @@ async function loadSessionData() {
 
 async function loadSessionMembers() {
     const sessionId = getSessionIdFromURL();
-    const playerListContainer = document.getElementById('playerList');
+    const playerListContainer = document.getElementById('sessionPlayerList');
     playerListContainer.innerHTML = '';
 
     try {
         const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/members`);
         if (!res.ok) throw new Error('Failed to load session members');
         
-        sessionPlayers = await res.json();
+        sessionMembers = await res.json();
 
-        if (sessionPlayers.length > 0) {
-            sessionPlayers.forEach((player, index) => {
+        if (sessionMembers.length > 0) {
+            playerListContainer.style.opacity = 0;
+            sessionMembers.forEach((player, index) => {
                 const playerAvatar = document.createElement('div');
                 playerAvatar.className = 'friend-avatar fade-in';
-                playerAvatar.title = `${player.first_name} ${player.last_name.charAt(0)}.`;
+                playerAvatar.title = `${player.first_name} ${player.last_name}`;
                 playerAvatar.style.animationDelay = `${index * 50}ms`;
 
                 const img = document.createElement('img');
-                img.src = player.avatar_url || player.avatar || '../img/avatar-placeholder.webp';
+                img.src = player.avatar_url || '../img/avatar-placeholder.webp';
+                img.alt = `${player.first_name} ${player.last_name}`;
                 img.className = 'avatar';
                 
                 playerAvatar.appendChild(img);
                 playerListContainer.appendChild(playerAvatar);
             });
+            playerListContainer.style.animation = 'fadeIn 0.5s forwards';
         } else {
-            playerListContainer.innerHTML = '<div class="placeholder-box">No players found in this session.</div>';
+            playerListContainer.innerHTML = '<div class="placeholder-box">No players in this session.</div>';
         }
     } catch (err) {
         console.error('Failed to load session members:', err);
         playerListContainer.innerHTML = '<div class="placeholder-box">Could not load players.</div>';
-    } finally {
-        // Always add the "Add Player" button
-        const addPlayerButton = document.createElement('div');
-        addPlayerButton.className = 'add-friend-circle';
-        addPlayerButton.title = 'Add non-party member';
-        addPlayerButton.innerHTML = '+';
-        addPlayerButton.onclick = () => {
-            document.getElementById('addPlayerModal').style.display = 'flex';
-        };
-        playerListContainer.appendChild(addPlayerButton);
     }
 }
 
@@ -121,10 +113,10 @@ async function loadSessionRounds() {
         if (!res.ok) throw new Error('Failed to load rounds');
         
         const data = await res.json();
-        const { rounds } = data; // Members are now loaded separately
+        const { rounds } = data;
 
         if (!rounds || !rounds.length) {
-            roundsContainer.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
+            roundsContainer.innerHTML = '<div class="placeholder-box">No rounds yet</div>';
             return;
         }
 
@@ -140,33 +132,28 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
-            if (!round.winners) {
-                console.warn("⚠️ Round winner data missing:", round);
-            }
-
             const winnerNames = round.winners && round.winners.length
-                ? round.winners.map(w => `${w.first_name} ${w.last_name}`).join(', ')
-                : 'No winners';
+                ? round.winners.map(w => w.first_name ? `${w.first_name} ${w.last_name}` : `User #${w.user_id}`).join(', ')
+                : 'N/A';
 
             const loserNames = round.losers && round.losers.length
-                ? round.losers.map(l => `${l.first_name} ${l.last_name}`).join(', ')
-                : '';
+                ? round.losers.map(l => l.first_name ? `${l.first_name} ${l.last_name}` : `User #${l.user_id}`).join(', ')
+                : 'N/A';
 
-            const text = `🎲 Round ${round.round_number} — Winner: ${winnerNames}`;
-            const p = document.createElement("p");
-            p.textContent = text;
-            card.appendChild(p);
+            const roundNumberEl = document.createElement('p');
+            roundNumberEl.textContent = `🎲 Round ${round.round_number}`;
+            roundNumberEl.style.fontWeight = 'bold';
 
-            let titleText = '';
-            if (loserNames) {
-                titleText += `Losers: ${loserNames}`;
-            }
+            const winnersEl = document.createElement('p');
+            winnersEl.innerHTML = `👑 <span style="font-weight:bold;">Winners:</span> ${winnerNames}`;
+            
+            const losersEl = document.createElement('p');
+            losersEl.innerHTML = `🗑️ <span style="font-weight:bold;">Losers:</span> ${loserNames}`;
+
+            card.append(roundNumberEl, winnersEl, losersEl);
+            
             if (round.notes) {
-                if (titleText) titleText += ' | ';
-                titleText += `Notes: ${round.notes}`;
-            }
-            if (titleText) {
-                card.title = titleText;
+                card.title = `Notes: ${round.notes}`;
             }
 
             roundsContainer.appendChild(card);
@@ -219,7 +206,7 @@ document.getElementById('addRoundBtn').onclick = () => {
     const lastRound = document.getElementById('roundsList').children.length;
     document.getElementById('roundNumber').textContent = `Adding Round ${lastRound + 1}`;
 
-    sessionPlayers.forEach((player, index) => {
+    sessionMembers.forEach((player, index) => {
         const playerEntry = document.createElement('div');
         playerEntry.className = 'player-selection-entry fade-in';
         playerEntry.dataset.status = 'none';
@@ -234,7 +221,7 @@ document.getElementById('addRoundBtn').onclick = () => {
         playerEntry.title = `${player.first_name} ${player.last_name}`;
 
         const img = document.createElement('img');
-        img.src = player.avatar_url || player.avatar || "../img/avatar-placeholder.webp";
+        img.src = player.avatar_url || "../img/avatar-placeholder.webp";
         img.className = 'avatar';
         img.style.marginRight = '10px';
 
@@ -254,80 +241,57 @@ document.getElementById('addRoundBtn').onclick = () => {
     modal.style.display = 'flex';
 };
 
-// Handle round submission
 document.getElementById('submitRound').onclick = async () => {
-    const winners = Array.from(document.querySelectorAll('.player-selection-entry[data-status="winner"]'))
-        .map(el => parseInt(el.dataset.playerId));
-    const losers = Array.from(document.querySelectorAll('.player-selection-entry[data-status="loser"]'))
-        .map(el => parseInt(el.dataset.playerId));
+    const sessionId = getSessionIdFromURL();
+    const playerEntries = document.querySelectorAll('.player-selection-entry');
+    
+    const winners = [];
+    const losers = [];
 
-    if (winners.length === 0) {
-        alert('Please select at least one winner.');
+    playerEntries.forEach(entry => {
+        if (entry.dataset.status === 'winner') {
+            winners.push(entry.dataset.playerId);
+        } else if (entry.dataset.status === 'loser') {
+            losers.push(entry.dataset.playerId);
+        }
+    });
+
+    if (winners.length === 0 && losers.length === 0) {
+        alert("Please select at least one winner or loser.");
         return;
     }
 
-    const sessionId = getSessionIdFromURL();
     try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/rounds/${sessionId}`, {
+        const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/round`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                winners,
-                losers
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ winners, losers })
         });
 
         if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.error || 'Failed to save round');
+            throw new Error(errorData.message || 'Failed to submit round.');
         }
 
         document.getElementById('addRoundModal').style.display = 'none';
-        await loadSessionRounds();
+        await loadSessionRounds(); // Refresh the rounds list
+        console.log("✅ Round submitted successfully!");
+
     } catch (err) {
-        console.error('Failed to save round:', err);
-        alert(`Could not save round results: ${err.message}`);
+        console.error('Error submitting round:', err);
+        alert(`Error: ${err.message}`);
     }
 };
 
-// Handle adding new players
-document.getElementById('submitAddPlayer').onclick = async () => {
-    const select = document.getElementById('playerSelect');
-    const userId = parseInt(select.value);
-    
-    if (!userId) {
-        alert('Please select a player to add');
-        return;
-    }
-
-    const sessionId = getSessionIdFromURL();
-
-    try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/add-user`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_id: userId,
-                added_by: currentUserId
-            })
-        });
-
-        if (!res.ok) throw new Error('Failed to add player');
-
-        document.getElementById('addPlayerModal').style.display = 'none';
-        await loadSessionRounds();
-    } catch (err) {
-        console.error('Failed to add player:', err);
-        alert('Could not add player to session');
-    }
-};
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', loadSessionData);
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    // A little delay for assets to load, plus a nice fade-in for the whole view
+    document.body.style.opacity = 0;
+    loadSessionData().then(() => {
+        document.body.style.transition = 'opacity 0.5s';
+        document.body.style.opacity = 1;
+    });
+});
 
 // Close modals when clicking outside
 window.onclick = (event) => {
