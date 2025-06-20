@@ -132,7 +132,9 @@ async function loadSessionRounds() {
 
             const winnerName = round.first_name && round.last_name
                 ? `${round.first_name} ${round.last_name}`
-                : `User ID: ${round.winner_id}`;
+                : round.winner_id
+                    ? `User ID: ${round.winner_id}`
+                    : 'Unknown';
 
             card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${winnerName}</p>`;
             
