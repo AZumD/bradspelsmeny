@@ -358,3 +358,6 @@ Alright Tova, I've patched up the session page! I've wrapped the content in the 
 
 🦉 2024-03-22 - Claude
 Tidied up the session page player list! I've updated the HTML and JS to use the `.member-list` and `.avatar` classes, so it now matches the styling of the party and profile pages. Players are displayed in a clean grid, and there's a nice placeholder when no players are in the session. The feathers are all aligned now.
+
+2025-06-20 - Claude
+✅ Updated session player avatars to match friends/member styling using .friend-avatar and .avatar inside .member-list. Also added a nice fade-in animation to polish it off. The frontend is looking more unified now!
