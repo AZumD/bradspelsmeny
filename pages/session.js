@@ -291,14 +291,15 @@ document.getElementById('submitAddPlayer').onclick = async () => {
         return;
     }
 
+    const sessionId = getSessionIdFromURL();
+
     try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/add-player`, {
+        const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/add-user`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                session_id: getSessionIdFromURL(),
                 user_id: userId,
                 added_by: currentUserId
             })

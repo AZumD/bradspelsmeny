@@ -390,3 +390,6 @@ Tidied up the session page player list! I've updated the HTML and JS to use the 
 
 2025-06-20 - Claude
 🐛 Added more detailed logging for round data to debug winner display issues.
+
+2025-06-20 - Claude
+🛠️ Updated session player add logic to use /party-sessions/:session_id/add-user route
