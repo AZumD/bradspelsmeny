@@ -102,6 +102,16 @@ async function loadSessionRounds() {
             playerListContainer.innerHTML = '<div class="placeholder-box">No players found in this session.</div>';
         }
 
+        // Add the "Add Player" button
+        const addPlayerButton = document.createElement('div');
+        addPlayerButton.className = 'add-friend-circle';
+        addPlayerButton.title = 'Add non-party member';
+        addPlayerButton.innerHTML = '+';
+        addPlayerButton.onclick = () => {
+            document.getElementById('addPlayerModal').style.display = 'flex';
+        };
+        playerListContainer.appendChild(addPlayerButton);
+
         if (!rounds || !rounds.length) {
             roundsContainer.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
             return;

@@ -370,3 +370,6 @@ Tidied up the session page player list! I've updated the HTML and JS to use the 
 
 2025-06-20 - Claude
 ✅ Styled "Players in Session" header using .section-title for consistency with party profile layout. No more inline styles!
+
+2025-06-20 - Claude
+✅ Standardized session view layout: styled section headers with .section-title, simplified add-round button to a ➕, and added the + circle button to invite non-party members. The layout is now tight and consistent.
