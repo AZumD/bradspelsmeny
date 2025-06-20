@@ -229,10 +229,20 @@ async function fetchPartyData() {
     renderMemberList(members);
 
     document.getElementById('sessionList').innerHTML = '<div class="placeholder-box">No sessions yet</div>';
-    
-    // Load active session
-    await loadActiveSession(partyId);
-    
+
+    // --- New active_session_id logic ---
+    const activeSessionId = data.active_session_id;
+    console.log("🐤 Active session ID:", activeSessionId);
+    const sessionBox = document.getElementById('activeSessionBox');
+    if (activeSessionId) {
+      sessionBox.style.display = 'block';
+      sessionBox.onclick = () => {
+        window.location.href = `${FRONTEND_BASE}/pages/session.html?id=${activeSessionId}`;
+      };
+    } else {
+      sessionBox.style.display = 'none';
+    }
+
     // Load past sessions
     await loadPastSessions(partyId);
   } catch (err) {
