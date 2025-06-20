@@ -47,52 +47,22 @@ async function loadSessionData() {
         titleEl.style.whiteSpace = 'nowrap';
         titleEl.style.maxWidth = '100%';
 
-        // Load and render players
-        await loadSessionPlayers();
-
-        // Load and render rounds
+        // Load and render rounds, which also gives us the players
         await loadSessionRounds();
 
-        console.log("✨ Session view loaded successfully with game:", currentSession.game_title);
-    } catch (err) {
-        console.error('Failed to load session:', err);
-        document.body.innerHTML = "<p style='padding:2rem;'>❌ This session doesn't exist or you don't have access.</p>";
-    }
-}
-
-async function loadSessionPlayers() {
-    const sessionId = getSessionIdFromURL();
-    const addRoundBtn = document.getElementById('addRoundBtn');
-    addRoundBtn.style.display = 'none'; // Hide by default
-
-    try {
-        const res = await fetchWithAuth(`${API_BASE}/party-sessions/players/${sessionId}`);
-        if (!res.ok) throw new Error('Failed to load players');
-        
-        sessionPlayers = await res.json();
-        const playerListContainer = document.getElementById('playerList');
-        playerListContainer.innerHTML = '';
-
-        sessionPlayers.forEach(player => {
-            const img = document.createElement("img");
-            img.src = player.avatar || "../img/avatar-placeholder.webp";
-            img.title = `${player.first_name} ${player.last_name}`;
-            img.className = "avatar friend-avatar";
-            playerListContainer.appendChild(img);
-        });
-
-        // Check if current user is a participant or admin
+        // Authorize the "Add Round" button
         const currentUserId = getUserIdFromToken();
         const currentUserRole = getUserRole();
         const isParticipant = sessionPlayers.some(p => p.id === currentUserId) || currentUserRole === 'admin';
 
         if (isParticipant) {
-            addRoundBtn.style.display = "inline-block";
+            document.getElementById('addRoundBtn').style.display = "inline-block";
         }
 
+        console.log("✨ Session view loaded successfully with game:", currentSession.game_title);
     } catch (err) {
-        console.error('Failed to load players:', err);
-        document.getElementById('playerList').innerHTML = '<div class="placeholder-box">Could not load players</div>';
+        console.error('Failed to load session:', err);
+        document.body.innerHTML = "<p style='padding:2rem;'>❌ This session doesn't exist or you don't have access.</p>";
     }
 }
 
@@ -108,11 +78,31 @@ async function loadSessionRounds() {
         // Update global sessionPlayers variable for the modal
         sessionPlayers = members || [];
 
-        const container = document.getElementById('roundsList');
-        container.innerHTML = '';
+        const roundsContainer = document.getElementById('roundsList');
+        roundsContainer.innerHTML = '';
+
+        // Render player list
+        const playerListContainer = document.getElementById('playerList');
+        playerListContainer.innerHTML = '';
+        if (sessionPlayers.length > 0) {
+            sessionPlayers.forEach(player => {
+                const playerAvatar = document.createElement('div');
+                playerAvatar.className = 'friend-avatar';
+                playerAvatar.title = `${player.first_name} ${player.last_name}`;
+
+                const img = document.createElement('img');
+                img.src = player.avatar_url || player.avatar || '../img/avatar-placeholder.webp';
+                img.className = 'avatar';
+
+                playerAvatar.appendChild(img);
+                playerListContainer.appendChild(playerAvatar);
+            });
+        } else {
+            playerListContainer.innerHTML = '<div class="placeholder-box">No players found in this session.</div>';
+        }
 
         if (!rounds || !rounds.length) {
-            container.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
+            roundsContainer.innerHTML = '<div class="placeholder-box">No rounds played yet</div>';
             return;
         }
 
@@ -130,7 +120,7 @@ async function loadSessionRounds() {
 
             card.innerHTML = `<p>🎲 Round ${round.round_number} — Winner: ${round.first_name} ${round.last_name}</p>`;
 
-            container.appendChild(card);
+            roundsContainer.appendChild(card);
         });
 
         // Add keyframe animation if not already present
@@ -270,7 +260,7 @@ document.getElementById('submitAddPlayer').onclick = async () => {
         if (!res.ok) throw new Error('Failed to add player');
 
         document.getElementById('addPlayerModal').style.display = 'none';
-        await loadSessionPlayers();
+        await loadSessionRounds();
     } catch (err) {
         console.error('Failed to add player:', err);
         alert('Could not add player to session');
