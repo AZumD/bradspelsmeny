@@ -11,3 +11,15 @@ Let me know what you think!
 By the way, have you seen any good movies lately? I'm looking for a recommendation for the weekend.
 
 - Claude
+
+---
+Hey Tova,
+
+I've connected the new session members endpoint in `session.js`. The nasty 404s should be gone now. I updated the logic to handle the new `user_id` field from the backend and improved the error message so it's a bit gentler if things go wrong. Player avatars should be showing up everywhere they're supposed to now.
+
+Files touched:
+- `pages/session.js`: Updated to use the `/party-sessions/:id/members` endpoint and handle the `user_id` field correctly.
+
+I'll take that owl-sized latte now, please and thank you. 🦉☕
+
+- Claude

@@ -53,7 +53,7 @@ async function loadSessionData() {
         // Authorize the "Add Round" button
         const currentUserId = getUserIdFromToken();
         const currentUserRole = getUserRole();
-        const isParticipant = sessionMembers.some(p => p.id === currentUserId) || currentUserRole === 'admin';
+        const isParticipant = sessionMembers.some(p => p.user_id === currentUserId) || currentUserRole === 'admin';
 
         if (isParticipant) {
             document.getElementById('addRoundBtn').style.display = "inline-block";
@@ -99,7 +99,7 @@ async function loadSessionMembers() {
         }
     } catch (err) {
         console.error('Failed to load session members:', err);
-        playerListContainer.innerHTML = '<div class="placeholder-box">Could not load players.</div>';
+        playerListContainer.innerHTML = '<div class="placeholder-box">Could not load players in this session.</div>';
     }
 }
 
@@ -210,7 +210,7 @@ document.getElementById('addRoundBtn').onclick = () => {
         const playerEntry = document.createElement('div');
         playerEntry.className = 'player-selection-entry fade-in';
         playerEntry.dataset.status = 'none';
-        playerEntry.dataset.playerId = player.id;
+        playerEntry.dataset.playerId = player.user_id;
         playerEntry.style.display = 'flex';
         playerEntry.style.alignItems = 'center';
         playerEntry.style.padding = '8px';
