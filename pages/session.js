@@ -130,6 +130,9 @@ async function loadSessionRounds() {
             card.style.opacity = '0';
             card.style.animation = `fadeIn 0.3s ease-in forwards ${index * 0.1}s`;
 
+            console.log(`📦 Round ${round.round_number} winners:`, round.winners);
+            console.log("📦 Full round object:", round);
+
             const winnerNames = round.winners && round.winners.length
                 ? round.winners.map(w => `${w.first_name} ${w.last_name}`).join(', ')
                 : 'No winners';
