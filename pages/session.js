@@ -70,35 +70,45 @@ async function loadSessionMembers() {
     const sessionId = getSessionIdFromURL();
     const playerListContainer = document.getElementById('sessionPlayerList');
     playerListContainer.innerHTML = '';
+    console.log("📡 Fetching members for session ID:", sessionId);
 
     try {
         const res = await fetchWithAuth(`${API_BASE}/party-sessions/${sessionId}/members`);
-        if (!res.ok) throw new Error('Failed to load session members');
-        
-        sessionMembers = await res.json();
-
-        if (sessionMembers.length > 0) {
-            playerListContainer.style.opacity = 0;
-            sessionMembers.forEach((player, index) => {
-                const playerAvatar = document.createElement('div');
-                playerAvatar.className = 'friend-avatar fade-in';
-                playerAvatar.title = `${player.first_name} ${player.last_name}`;
-                playerAvatar.style.animationDelay = `${index * 50}ms`;
-
-                const img = document.createElement('img');
-                img.src = player.avatar_url || '../img/avatar-placeholder.webp';
-                img.alt = `${player.first_name} ${player.last_name}`;
-                img.className = 'avatar';
-                
-                playerAvatar.appendChild(img);
-                playerListContainer.appendChild(playerAvatar);
-            });
-            playerListContainer.style.animation = 'fadeIn 0.5s forwards';
-        } else {
-            playerListContainer.innerHTML = '<div class="placeholder-box">No players in this session.</div>';
+        console.log("🔽 Raw response from /party-sessions/:id/members:", res);
+        if (!res.ok) {
+            throw new Error(`Failed to load session members with status: ${res.status}`);
         }
+        
+        const members = await res.json();
+        console.log("📦 Parsed member data:", members);
+        sessionMembers = members; // Assign to global scope
+
+        if (!Array.isArray(members) || members.length === 0) {
+            console.warn("⚠️ No members returned for session:", sessionId);
+            playerListContainer.innerHTML = '<div class="placeholder-box">No players in this session.</div>';
+            return;
+        }
+        
+        playerListContainer.style.opacity = 0;
+        members.forEach((member, index) => {
+            console.log("🎨 Rendering player:", member);
+            const playerAvatar = document.createElement('div');
+            playerAvatar.className = 'friend-avatar fade-in';
+            playerAvatar.title = `${member.first_name} ${member.last_name}`;
+            playerAvatar.style.animationDelay = `${index * 50}ms`;
+
+            const img = document.createElement('img');
+            img.src = member.avatar_url || '../img/avatar-placeholder.webp';
+            img.alt = `${member.first_name} ${member.last_name}`;
+            img.className = 'avatar';
+            
+            playerAvatar.appendChild(img);
+            playerListContainer.appendChild(playerAvatar);
+        });
+        playerListContainer.style.animation = 'fadeIn 0.5s forwards';
+
     } catch (err) {
-        console.error('Failed to load session members:', err);
+        console.error("❌ Failed to load session members:", err);
         playerListContainer.innerHTML = '<div class="placeholder-box">Could not load players in this session.</div>';
     }
 }

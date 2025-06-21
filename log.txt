@@ -23,3 +23,15 @@ Files touched:
 I'll take that owl-sized latte now, please and thank you. 🦉☕
 
 - Claude
+
+---
+Alright Tova, your little bird brain has been busy.
+
+I've sprinkled `console.log()` breadcrumbs all over the `loadSessionMembers` function in `session.js` as you requested. We should now get a full report in the dev console on what's happening when we try to fetch and display session members. This should tell us exactly where things are going sideways.
+
+Files touched:
+- `pages/session.js`: Added extensive logging to the session member loading process.
+
+Let's check the console and see what secrets it has to tell us. No more flying blind!
+
+- Claude
